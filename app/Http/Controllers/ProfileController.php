@@ -1,0 +1,106 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Grade;
+use App\Support\Uploads;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
+use Illuminate\View\View;
+
+class ProfileController extends Controller
+{
+    public function edit(Request $request): View
+    {
+        return view('profil.edit', [
+            'user' => $request->user(),
+            'grades' => Grade::orderBy('level')->get(),
+        ]);
+    }
+
+    public function update(Request $request): RedirectResponse
+    {
+        $user = $request->user();
+
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'username' => [
+                'required', 'string', 'min:3', 'max:30',
+                'regex:/^[a-zA-Z0-9._-]+$/',
+                Rule::unique('users', 'username')->ignore($user->id),
+            ],
+            'email' => [
+                Rule::requiredIf($user->isTeacher()),
+                'nullable', 'string', 'lowercase', 'email', 'max:255',
+                Rule::unique('users', 'email')->ignore($user->id),
+            ],
+            'grade_level' => [
+                Rule::requiredIf($user->isStudent()),
+                'nullable', 'integer',
+                Rule::exists('grades', 'level'),
+            ],
+            'avatar' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+        ], [
+            'name.required' => __('Sila isi nama anda.'),
+            'username.required' => __('Sila isi nama pengguna.'),
+            'username.unique' => __('Nama pengguna ini sudah diambil.'),
+            'username.regex' => __('Nama pengguna hanya boleh mengandungi huruf, nombor, titik, garis bawah dan sengkang.'),
+            'email.required' => __('Guru perlu memberikan alamat emel.'),
+            'email.unique' => __('Emel ini sudah didaftarkan.'),
+            'grade_level.required' => __('Sila pilih Tahun anda.'),
+            'avatar.max' => __('Gambar profil terlalu besar. Had ialah 2 MB.'),
+        ]);
+
+        $user->fill([
+            'name' => $validated['name'],
+            'username' => $validated['username'],
+            'email' => $validated['email'] ?? null,
+        ]);
+
+        if ($user->isStudent()) {
+            $user->grade_id = Grade::where('level', $validated['grade_level'])->value('id');
+        }
+
+        $oldAvatar = $user->avatar;
+
+        if ($request->hasFile('avatar')) {
+            $user->avatar = Uploads::store($request->file('avatar'), 'avatars');
+        }
+
+        $user->save();
+
+        if ($request->hasFile('avatar') && $oldAvatar) {
+            Storage::disk('uploads')->delete($oldAvatar);
+        }
+
+        return redirect()->route('profile.edit')->with('status', __('Profil berjaya dikemas kini.'));
+    }
+
+    public function destroy(Request $request): RedirectResponse
+    {
+        $request->validateWithBag('userDeletion', [
+            'password' => ['required', 'current_password'],
+        ], [
+            'password.required' => __('Sila masukkan kata laluan anda untuk mengesahkan.'),
+            'password.current_password' => __('Kata laluan tidak betul.'),
+        ]);
+
+        $user = $request->user();
+
+        Auth::logout();
+
+        if ($user->avatar) {
+            Storage::disk('uploads')->delete($user->avatar);
+        }
+
+        $user->delete();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect('/');
+    }
+}

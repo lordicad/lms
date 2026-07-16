@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="{{ app()->getLocale() }}" @class(['theme-dark' => ($theme ?? 'light') === 'dark'])>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <title>{{ isset($title) ? $title.' | '.config('app.name') : config('app.name') }}</title>
+
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+</head>
+
+<body class="min-h-screen bg-bg font-sans {{ auth()->user()?->isStudent() ? 'type-student' : '' }}">
+    <a href="#kandungan" class="skip-link">{{ __('Terus ke kandungan') }}</a>
+
+    @php($user = auth()->user())
+
+    <header class="sticky top-0 z-30 border-b border-line bg-surface">
+        <nav class="mx-auto flex h-[72px] max-w-7xl items-center gap-4 px-4 sm:px-6" aria-label="{{ __('Navigasi utama') }}">
+            <a href="{{ $user->homeRoute() }}" class="flex shrink-0 items-center gap-2">
+                <span class="rounded-control bg-brand px-2 py-1 text-sm font-extrabold text-on-brand">LMS</span>
+                <span class="text-lg font-extrabold text-ink">MOE</span>
+            </a>
+
+            {{-- Desktop nav stays on one line: the label set is short on purpose. --}}
+            <div class="ml-2 hidden items-center gap-1 lg:flex">
+                @if ($user->isTeacher())
+                    <x-nav-link :href="route('cikgu.dashboard')" :active="request()->routeIs('cikgu.dashboard')">{{ __('Papan Pemuka') }}</x-nav-link>
+                    <x-nav-link :href="route('cikgu.video.index')" :active="request()->routeIs('cikgu.video.*')">{{ __('Video') }}</x-nav-link>
+                    <x-nav-link :href="route('cikgu.bahan.index')" :active="request()->routeIs('cikgu.bahan.*')">{{ __('Bahan') }}</x-nav-link>
+                    <x-nav-link :href="route('cikgu.kuiz.index')" :active="request()->routeIs('cikgu.kuiz.*')">{{ __('Kuiz') }}</x-nav-link>
+                    <x-nav-link :href="route('cikgu.bab.index')" :active="request()->routeIs('cikgu.bab.*')">{{ __('Bab') }}</x-nav-link>
+                    <x-nav-link :href="route('cikgu.ranking')" :active="request()->routeIs('cikgu.ranking')">{{ __('Ranking') }}</x-nav-link>
+                    <x-nav-link :href="route('cikgu.bakat')" :active="request()->routeIs('cikgu.bakat')">{{ __('Bakat') }}</x-nav-link>
+                @elseif ($user->isAdmin())
+                    <x-nav-link :href="route('admin.bakat')" :active="request()->routeIs('admin.bakat*')">{{ __('Skor Bakat') }}</x-nav-link>
+                @else
+                    <x-nav-link :href="route('belajar.index')" :active="request()->routeIs('belajar.*')">{{ __('Belajar') }}</x-nav-link>
+                    <x-nav-link :href="route('ranking.index')" :active="request()->routeIs('ranking.index')">{{ __('Ranking') }}</x-nav-link>
+                @endif
+            </div>
+
+            <div class="ml-auto flex items-center gap-2">
+                <x-lang-toggle class="hidden sm:inline-flex" />
+                <x-theme-toggle class="hidden sm:inline-flex" />
+
+                @if ($user->isTeacher())
+                    <a href="{{ route('cikgu.video.create') }}" class="btn-primary btn-sm hidden sm:inline-flex">
+                        <x-icon name="plus" class="h-4 w-4" />
+                        {{ __('Video Baharu') }}
+                    </a>
+                @endif
+
+                <x-dropdown align="right" width="56">
+                    <x-slot name="trigger">
+                        <button type="button"
+                                class="flex items-center gap-2 rounded-control p-1 pr-2 transition-colors hover:bg-surface-2">
+                            <x-avatar :user="$user" size="sm" />
+                            <span class="hidden max-w-[10rem] truncate text-sm font-bold text-ink sm:block">{{ $user->name }}</span>
+                            <x-icon name="chevron-down" class="h-4 w-4 text-ink-2" />
+                            <span class="sr-only">{{ __('Buka menu akaun') }}</span>
+                        </button>
+                    </x-slot>
+
+                    <x-slot name="content">
+                        <div class="border-b border-line px-4 py-3">
+                            <p class="truncate font-bold text-ink">{{ $user->name }}</p>
+                            <p class="truncate text-sm text-ink-2">
+                                @if ($user->isAdmin()) {{ __('Admin MOE') }}
+                                @elseif ($user->isTeacher()) {{ __('Guru') }}
+                                @else {{ $user->grade?->name ?? __('Murid') }}
+                                @endif
+                            </p>
+                        </div>
+
+                        <x-dropdown-link :href="route('profile.edit')">{{ __('Profil Saya') }}</x-dropdown-link>
+
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit"
+                                    class="block w-full px-4 py-2.5 text-left text-sm font-semibold text-ink transition-colors hover:bg-surface-2">
+                                {{ __('Log Keluar') }}
+                            </button>
+                        </form>
+                    </x-slot>
+                </x-dropdown>
+
+                <button type="button" class="btn-ghost btn-sm lg:hidden" x-data
+                        @click="$dispatch('toggle-mobile-nav')"
+                        aria-controls="menu-mudah-alih">
+                    <x-icon name="menu" class="h-5 w-5" />
+                    <span class="sr-only">{{ __('Menu') }}</span>
+                </button>
+            </div>
+        </nav>
+
+        <div id="menu-mudah-alih" x-data="{ open: false }" @toggle-mobile-nav.window="open = !open"
+             x-show="open" x-cloak x-transition.opacity class="border-t border-line lg:hidden">
+            <div class="mx-auto max-w-7xl space-y-1 px-4 py-3">
+                @if ($user->isTeacher())
+                    <x-nav-link :href="route('cikgu.dashboard')" :active="request()->routeIs('cikgu.dashboard')" block>{{ __('Papan Pemuka') }}</x-nav-link>
+                    <x-nav-link :href="route('cikgu.video.index')" :active="request()->routeIs('cikgu.video.*')" block>{{ __('Video') }}</x-nav-link>
+                    <x-nav-link :href="route('cikgu.bahan.index')" :active="request()->routeIs('cikgu.bahan.*')" block>{{ __('Bahan') }}</x-nav-link>
+                    <x-nav-link :href="route('cikgu.kuiz.index')" :active="request()->routeIs('cikgu.kuiz.*')" block>{{ __('Kuiz') }}</x-nav-link>
+                    <x-nav-link :href="route('cikgu.bab.index')" :active="request()->routeIs('cikgu.bab.*')" block>{{ __('Bab') }}</x-nav-link>
+                    <x-nav-link :href="route('cikgu.ranking')" :active="request()->routeIs('cikgu.ranking')" block>{{ __('Ranking') }}</x-nav-link>
+                    <x-nav-link :href="route('cikgu.bakat')" :active="request()->routeIs('cikgu.bakat')" block>{{ __('Bakat') }}</x-nav-link>
+                @elseif ($user->isAdmin())
+                    <x-nav-link :href="route('admin.bakat')" :active="request()->routeIs('admin.bakat*')" block>{{ __('Skor Bakat') }}</x-nav-link>
+                @else
+                    <x-nav-link :href="route('belajar.index')" :active="request()->routeIs('belajar.*')" block>{{ __('Belajar') }}</x-nav-link>
+                    <x-nav-link :href="route('ranking.index')" :active="request()->routeIs('ranking.index')" block>{{ __('Ranking') }}</x-nav-link>
+                @endif
+
+                <div class="flex items-stretch gap-2 border-t border-line pt-3">
+                    <x-lang-toggle block class="flex-1" />
+                    <x-theme-toggle />
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main id="kandungan" class="mx-auto max-w-7xl px-4 py-8 sm:px-6">
+        <x-flash />
+
+        {{ $slot }}
+    </main>
+
+    <footer class="mx-auto max-w-7xl px-4 pb-10 pt-4 text-sm text-ink-2 sm:px-6">
+        <p>{{ config('app.name') }}. {{ __('Platform pembelajaran untuk sekolah rendah.') }}</p>
+    </footer>
+
+    {{-- Page-specific behaviour (quiz runner, quiz builder). Runs before Alpine starts. --}}
+    @stack('scripts')
+</body>
+</html>

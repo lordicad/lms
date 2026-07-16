@@ -1,0 +1,49 @@
+*.log
+.DS_Store
+.env
+.env.backup
+.env.production
+.env.deploy
+.phpactor.json
+.phpunit.result.cache
+/.fleet
+/.idea
+/.nova
+/.phpunit.cache
+/.vscode
+/.zed
+/auth.json
+/node_modules
+/public/build
+/public/hot
+/public/storage
+/storage/*.key
+/storage/pail
+/vendor
+Homestead.json
+Homestead.yaml
+Thumbs.db
+
+# Teacher uploads never enter the repo. The folder scaffolding and the
+# no-execute rule do.
+/public/uploads/*
+!/public/uploads/.htaccess
+!/public/uploads/*/
+/public/uploads/*/*
+!/public/uploads/*/.gitkeep
+
+# Deploy secrets and owner-supplied inputs.
+/Filezilla_creds.md
+/taste-skill-main.zip
+/deploy/deploy.log
+
+# Artisan tinker --execute temp files
+__run_*.php
+
+# Laravel runtime artifacts (compiled views, framework cache, sessions)
+/storage/framework/cache/data/*
+!/storage/framework/cache/data/.gitkeep
+/storage/framework/sessions/*
+!/storage/framework/sessions/.gitkeep
+/storage/framework/views/*
+!/storage/framework/views/.gitkeep
