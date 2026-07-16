@@ -4,7 +4,7 @@ import 'core/auth/auth_repository.dart';
 import 'core/auth/auth_user.dart';
 import 'core/theme/lms_theme.dart';
 import 'features/auth/login_screen.dart';
-import 'features/student/student_home_screen.dart';
+import 'features/student/student_shell.dart';
 import 'features/teacher/teacher_dashboard_screen.dart';
 
 void main() {
@@ -79,7 +79,7 @@ class _RoleHome extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return switch (user.role) {
-      UserRole.student => StudentHomeScreen(user: user, onSignOut: onSignOut),
+      UserRole.student => StudentShell(user: user, onSignOut: onSignOut),
       UserRole.teacher => TeacherDashboardScreen(
         user: user,
         onSignOut: onSignOut,
