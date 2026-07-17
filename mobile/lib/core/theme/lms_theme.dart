@@ -44,7 +44,7 @@ ThemeData buildLmsTheme() {
     useMaterial3: true,
     colorScheme: scheme,
     scaffoldBackgroundColor: LmsColors.background,
-    fontFamily: 'sans-serif',
+    fontFamily: 'Plus Jakarta Sans',
     textTheme: const TextTheme(
       headlineLarge: TextStyle(
         fontWeight: FontWeight.w800,
