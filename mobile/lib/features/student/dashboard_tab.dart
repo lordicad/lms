@@ -275,7 +275,7 @@ class _Thumb extends StatelessWidget {
             ? Image.network(
                 url!,
                 fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => const _ThumbFallback(),
+                errorBuilder: (_, _, _) => const _ThumbFallback(),
               )
             : const _ThumbFallback(),
       ),
