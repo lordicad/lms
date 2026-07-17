@@ -41,7 +41,21 @@
         <x-cikgu-filters :subjects="$subjects" :grades="$grades" :action="route('admin.kandungan.video')" />
     </div>
 
-    <section class="mt-6">
+    {{--
+        Preview is a modal rather than a trip to the watch page: an admin is auditing a list, not
+        studying, so they should stay on it. Deliberately not <x-player>, which counts views and
+        saves watch progress — this is a look, not a lesson.
+
+        The player markup lives in an <template x-if>, so closing destroys the element and the
+        video (or the YouTube iframe) stops. Merely hiding it would keep the audio playing.
+    --}}
+    <section class="mt-6"
+             x-data="{
+                 lesson: null,
+                 open(data) { this.lesson = data; document.body.classList.add('overflow-hidden'); },
+                 close() { this.lesson = null; document.body.classList.remove('overflow-hidden'); },
+             }"
+             @keydown.escape.window="close()">
         @if ($lessons->isEmpty())
             <x-empty icon="video" :title="__('Tiada video untuk dipaparkan')"
                      :text="__('Tiada video yang sepadan dengan tapisan ini.')" />
@@ -72,11 +86,18 @@
                                 <td class="px-3 py-2 tabular-nums text-ink-2">{{ $lesson->created_at->translatedFormat('j M Y') }}</td>
                                 <td class="px-3 py-2 text-right tabular-nums text-ink-2">{{ number_format($lesson->favourites_count) }}</td>
                                 <td class="px-3 py-2 text-right">
-                                    <a href="{{ route('video.show', $lesson) }}" class="btn-ghost btn-sm">
+                                    <button type="button" class="btn-ghost btn-sm"
+                                            @click="open(@js([
+                                                'title' => $lesson->title,
+                                                'teacher' => $lesson->teacher?->name,
+                                                'kind' => $lesson->isYoutube() ? 'youtube' : 'upload',
+                                                'src' => $lesson->isYoutube() ? $lesson->embedUrl() : $lesson->videoUrl(),
+                                                'poster' => $lesson->thumbnailUrl(),
+                                            ]))">
                                         <x-icon name="eye" class="h-4 w-4" />
                                         {{ __('Lihat') }}
                                         <span class="sr-only">{{ $lesson->title }}</span>
-                                    </a>
+                                    </button>
                                 </td>
                             </tr>
                         @endforeach
@@ -88,5 +109,47 @@
                 {{ $lessons->links() }}
             </div>
         @endif
+
+        {{--
+            The whole dialog is an x-if rather than an x-show: closing must *remove* the player,
+            not just hide it, or a hidden YouTube iframe keeps playing audio over the page.
+            x-if also means there is no stale overlay left able to swallow clicks.
+        --}}
+        <template x-if="lesson">
+            <div class="fixed inset-0 z-50 flex items-center justify-center p-4"
+                 role="dialog" aria-modal="true" :aria-label="lesson.title">
+                <div class="absolute inset-0 bg-black/70" @click="close()" aria-hidden="true"></div>
+
+                <div class="relative w-full max-w-3xl overflow-hidden rounded-card border border-line bg-surface shadow-hero">
+                    <div class="flex items-start justify-between gap-4 border-b border-line px-4 py-3">
+                        <div class="min-w-0">
+                            <h2 class="truncate font-extrabold text-ink" x-text="lesson.title"></h2>
+                            <p class="truncate text-xs text-ink-2" x-text="lesson.teacher"></p>
+                        </div>
+
+                        <button type="button" class="btn-ghost btn-sm shrink-0" @click="close()" x-init="$el.focus()">
+                            <x-icon name="x" class="h-4 w-4" />
+                            <span class="sr-only">{{ __('Tutup') }}</span>
+                        </button>
+                    </div>
+
+                    <div class="bg-black">
+                        <template x-if="lesson.kind === 'youtube'">
+                            <div class="aspect-video">
+                                <iframe class="h-full w-full" :src="lesson.src" :title="lesson.title"
+                                        frameborder="0" referrerpolicy="strict-origin-when-cross-origin"
+                                        allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                        allowfullscreen></iframe>
+                            </div>
+                        </template>
+
+                        <template x-if="lesson.kind === 'upload'">
+                            <video class="aspect-video w-full" controls preload="metadata"
+                                   :src="lesson.src" :poster="lesson.poster"></video>
+                        </template>
+                    </div>
+                </div>
+            </div>
+        </template>
     </section>
 </x-app-layout>
