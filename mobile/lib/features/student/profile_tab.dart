@@ -5,10 +5,16 @@ import '../../core/theme/lms_theme.dart';
 
 /// The student's profile: identity, Tahun, and a confirmed sign-out.
 class ProfileTab extends StatelessWidget {
-  const ProfileTab({super.key, required this.user, required this.onSignOut});
+  const ProfileTab({
+    super.key,
+    required this.user,
+    required this.onSignOut,
+    this.roleLabel = 'Murid',
+  });
 
   final AuthUser user;
   final Future<void> Function() onSignOut;
+  final String roleLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +55,7 @@ class ProfileTab extends StatelessWidget {
                 _InfoRow(icon: Icons.mail_outline_rounded, label: 'Emel', value: user.email!),
               ],
               const Divider(height: 1),
-              const _InfoRow(icon: Icons.badge_outlined, label: 'Peranan', value: 'Murid'),
+              _InfoRow(icon: Icons.badge_outlined, label: 'Peranan', value: roleLabel),
             ],
           ),
         ),

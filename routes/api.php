@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\Student\FavouriteController;
 use App\Http\Controllers\Api\Student\LearnController;
 use App\Http\Controllers\Api\Student\LessonController;
 use App\Http\Controllers\Api\Student\QuizController;
+use App\Http\Controllers\Api\Teacher\DashboardController as TeacherDashboardController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -49,4 +50,11 @@ Route::middleware('auth:sanctum')->prefix('student')->group(function () {
     Route::post('quizzes/{quiz}/start', [QuizController::class, 'start']);
     Route::post('attempts/{attempt}/submit', [QuizController::class, 'submit']);
     Route::get('attempts/{attempt}/result', [QuizController::class, 'result']);
+});
+
+/*
+| Teacher surface. Token-protected; the controllers enforce the teacher role.
+*/
+Route::middleware('auth:sanctum')->prefix('teacher')->group(function () {
+    Route::get('dashboard', TeacherDashboardController::class);
 });
