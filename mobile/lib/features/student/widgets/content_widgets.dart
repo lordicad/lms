@@ -231,6 +231,25 @@ class LessonRow extends StatelessWidget {
   }
 }
 
+/// Picks a Material icon for a subject from its name, so each subject reads at a
+/// glance (matching the WeLearn concept). Falls back to a book for anything else.
+IconData subjectIcon(SubjectCard subject) {
+  final name = subject.name.toLowerCase();
+  bool has(String s) => name.contains(s);
+
+  if (has('matematik') || has('math')) return Icons.calculate_rounded;
+  if (has('sains') || has('science')) return Icons.science_rounded;
+  if (has('english') || has('inggeris')) return Icons.translate_rounded;
+  if (has('islam') || has('agama')) return Icons.mosque_rounded;
+  if (has('sejarah')) return Icons.history_edu_rounded;
+  if (has('seni') || has('lukis')) return Icons.palette_rounded;
+  if (has('jasmani') || has('kesihatan') || has('pj')) return Icons.fitness_center_rounded;
+  if (has('reka bentuk') || has('teknologi') || has('rbt')) return Icons.build_rounded;
+  if (has('muzik')) return Icons.music_note_rounded;
+  if (has('moral')) return Icons.volunteer_activism_rounded;
+  return Icons.menu_book_rounded; // Bahasa Melayu and default
+}
+
 class SubjectTile extends StatelessWidget {
   const SubjectTile({super.key, required this.subject, required this.onTap});
 
@@ -255,10 +274,10 @@ class SubjectTile extends StatelessWidget {
             Container(
               decoration: BoxDecoration(
                 color: color.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(11),
               ),
               padding: const EdgeInsets.all(10),
-              child: Icon(Icons.menu_book_rounded, color: color),
+              child: Icon(subjectIcon(subject), color: color),
             ),
             const SizedBox(width: 12),
             Expanded(

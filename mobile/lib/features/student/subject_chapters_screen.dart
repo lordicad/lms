@@ -131,9 +131,24 @@ class _ChapterCard extends StatelessWidget {
                     _summary(chapter),
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
+                  if (chapter.lessonsCount > 0) ...[
+                    const SizedBox(height: 8),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(99),
+                      child: LinearProgressIndicator(
+                        value: chapter.watchedCount / chapter.lessonsCount,
+                        minHeight: 5,
+                        backgroundColor: LmsColors.surfaceMuted,
+                        valueColor: AlwaysStoppedAnimation(
+                          done ? LmsColors.success : LmsColors.brand,
+                        ),
+                      ),
+                    ),
+                  ],
                 ],
               ),
             ),
+            const SizedBox(width: 8),
             const Icon(Icons.chevron_right, color: LmsColors.inkMuted),
           ],
         ),
