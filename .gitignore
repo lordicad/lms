@@ -1,9 +1,10 @@
 *.log
 .DS_Store
-.env
-.env.backup
-.env.production
-.env.deploy
+# Ignore every .env variant and make the template the one exception: the list this
+# replaces named four by hand and still let .env.production.bak through, and this
+# repo is public.
+.env*
+!.env.example
 .phpactor.json
 .phpunit.result.cache
 /.fleet
