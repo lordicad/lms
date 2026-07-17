@@ -1,4 +1,4 @@
-/// Data models for the teacher mobile surface (/api/teacher/*).
+// Data models for the teacher mobile surface (/api/teacher/*).
 
 int _int(Object? v) => v is int ? v : int.tryParse('$v') ?? 0;
 String? _strOrNull(Object? v) => v?.toString();
