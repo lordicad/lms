@@ -17,8 +17,28 @@ class TeacherApi {
   final http.Client _http;
 
   Future<TeacherDashboardData> dashboard(String token) async {
+    final json = await _get(token, '/teacher/dashboard');
+    return TeacherDashboardData.fromJson(json);
+  }
+
+  Future<List<TeacherVideo>> videos(String token) async {
+    final json = await _get(token, '/teacher/content/videos');
+    return _mapList(json['videos'], TeacherVideo.fromJson);
+  }
+
+  Future<List<TeacherMaterial>> materials(String token) async {
+    final json = await _get(token, '/teacher/content/materials');
+    return _mapList(json['materials'], TeacherMaterial.fromJson);
+  }
+
+  Future<List<TeacherQuiz>> quizzes(String token) async {
+    final json = await _get(token, '/teacher/content/quizzes');
+    return _mapList(json['quizzes'], TeacherQuiz.fromJson);
+  }
+
+  Future<Map<String, dynamic>> _get(String token, String path) async {
     final response = await _http.get(
-      Uri.parse('$baseUrl/teacher/dashboard'),
+      Uri.parse('$baseUrl$path'),
       headers: {'Accept': 'application/json', 'Authorization': 'Bearer $token'},
     );
 
@@ -29,9 +49,14 @@ class TeacherApi {
       if (response.statusCode == 401) {
         throw const ApiException('Sesi tamat. Sila log masuk semula.');
       }
-      throw ApiException((map['message'] as String?) ?? 'Tidak dapat memuatkan papan pemuka.');
+      throw ApiException((map['message'] as String?) ?? 'Tidak dapat memuatkan data.');
     }
 
-    return TeacherDashboardData.fromJson(map);
+    return map;
+  }
+
+  List<T> _mapList<T>(Object? raw, T Function(Map<String, dynamic>) fromJson) {
+    if (raw is! List) return const [];
+    return raw.whereType<Map<String, dynamic>>().map(fromJson).toList(growable: false);
   }
 }

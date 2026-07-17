@@ -21,4 +21,10 @@ class TeacherRepository {
   }
 
   Future<TeacherDashboardData> dashboard() async => _api.dashboard(await _token());
+
+  Future<List<TeacherVideo>> videos() async => _api.videos(await _token());
+
+  Future<List<TeacherMaterial>> materials() async => _api.materials(await _token());
+
+  Future<List<TeacherQuiz>> quizzes() async => _api.quizzes(await _token());
 }

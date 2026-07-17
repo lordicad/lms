@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\Student\FavouriteController;
 use App\Http\Controllers\Api\Student\LearnController;
 use App\Http\Controllers\Api\Student\LessonController;
 use App\Http\Controllers\Api\Student\QuizController;
+use App\Http\Controllers\Api\Teacher\ContentController as TeacherContentController;
 use App\Http\Controllers\Api\Teacher\DashboardController as TeacherDashboardController;
 use Illuminate\Support\Facades\Route;
 
@@ -57,4 +58,8 @@ Route::middleware('auth:sanctum')->prefix('student')->group(function () {
 */
 Route::middleware('auth:sanctum')->prefix('teacher')->group(function () {
     Route::get('dashboard', TeacherDashboardController::class);
+
+    Route::get('content/videos', [TeacherContentController::class, 'videos']);
+    Route::get('content/materials', [TeacherContentController::class, 'materials']);
+    Route::get('content/quizzes', [TeacherContentController::class, 'quizzes']);
 });

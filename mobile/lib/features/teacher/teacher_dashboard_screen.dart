@@ -7,6 +7,7 @@ import '../../core/theme/lms_theme.dart';
 import '../../shared/widgets/app_header.dart';
 import '../student/profile_tab.dart';
 import '../student/widgets/content_widgets.dart';
+import 'content_hub_tab.dart';
 
 /// The teacher shell: a branded header and a bottom nav between the (live) dashboard
 /// and the profile. Content management and analytics arrive in later teacher phases.
@@ -28,6 +29,7 @@ class _TeacherDashboardScreenState extends State<TeacherDashboardScreen> {
   Widget build(BuildContext context) {
     final tabs = [
       _DashboardTab(repository: _repository, user: widget.user),
+      ContentHubTab(repository: _repository),
       ProfileTab(user: widget.user, onSignOut: widget.onSignOut, roleLabel: 'Guru'),
     ];
 
@@ -54,6 +56,11 @@ class _TeacherDashboardScreenState extends State<TeacherDashboardScreen> {
             icon: Icon(Icons.dashboard_outlined),
             selectedIcon: Icon(Icons.dashboard),
             label: 'Papan Pemuka',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.folder_open_outlined),
+            selectedIcon: Icon(Icons.folder),
+            label: 'Kandungan',
           ),
           NavigationDestination(
             icon: Icon(Icons.person_outline),
