@@ -40,6 +40,30 @@ echo "==> Fetching origin/$BRANCH"
 git fetch --prune origin "$BRANCH"
 git reset --hard "origin/$BRANCH"
 
+# --- Install PHP dependencies (only if composer is reachable) ------------------
+# The webhook's shell env often has no composer on PATH. When it doesn't, this is
+# skipped and you must run `composer install` by hand after adding a package.
+# Non-fatal: a failure here leaves the existing vendor/ in place.
+if command -v composer >/dev/null 2>&1; then
+    echo "==> composer install"
+    composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist \
+        || echo "!! composer install failed (continuing with existing vendor/)"
+else
+    echo "!! composer not on PATH; skipping. Run 'composer install' by hand after adding a package."
+fi
+
+# --- Build front-end assets (only if Node is available) -----------------------
+# This host may have no Node; then the committed public/build (shipped via git)
+# is used as-is. Non-fatal either way. npm ci is reproducible but reinstalls
+# node_modules each run — slower; falls back to npm install if ci fails.
+if command -v npm >/dev/null 2>&1; then
+    echo "==> npm ci && npm run build"
+    npm ci --no-audit --no-fund || npm install --no-audit --no-fund || echo "!! npm install failed"
+    npm run build || echo "!! npm run build failed (continuing with existing public/build)"
+else
+    echo "!! npm not on PATH; skipping build, using the committed public/build."
+fi
+
 # --- Split deployment: push freshly built assets into the served docroot -------
 # index.php in the docroot calls usePublicPath(__DIR__), so Laravel reads the Vite
 # manifest from the DOCROOT's build/, not the repo's public/build/. If we don't copy
