@@ -48,9 +48,12 @@ Alpine.data('navPill', () => ({
     },
 
     // Move to whichever nav link the pointer/focus is on (event delegation).
+    // Only tabs sitting directly in the bar count: a link inside a dropdown panel
+    // is offset from that panel's own wrapper, not from the bar, so following one
+    // would throw the pill to a meaningless position.
     follow(event) {
         const link = event.target.closest('a');
-        if (link) this.moveTo(link);
+        if (link && link.parentElement === this.$el) this.moveTo(link);
     },
 
     pillStyle() {
