@@ -80,6 +80,30 @@ class Material extends Model
         };
     }
 
+    /**
+     * Direct URL to the stored file. The download route is the one students use — it returns the
+     * original filename and counts the download — so this is only for showing a file in place,
+     * where a forced attachment would defeat the point.
+     */
+    public function fileUrl(): ?string
+    {
+        return $this->file_path ? Storage::disk('uploads')->url($this->file_path) : null;
+    }
+
+    /**
+     * What a browser can actually show inline: PDFs render natively and images are images.
+     * Word, PowerPoint and Excel cannot be displayed without shipping the file to a third-party
+     * viewer, so they report 'none' and the UI offers the download instead of faking a preview.
+     */
+    public function previewKind(): string
+    {
+        return match ($this->extension()) {
+            'pdf' => 'pdf',
+            'png', 'jpg', 'jpeg' => 'image',
+            default => 'none',
+        };
+    }
+
     public function humanSize(): string
     {
         if ($this->size_kb >= 1024) {

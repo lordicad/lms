@@ -23,7 +23,12 @@ class DownloadController extends Controller
 
         abort_unless($disk->exists($material->file_path), Response::HTTP_NOT_FOUND);
 
-        $material->increment('download_count');
+        // An MOE admin opening a file from the oversight list is auditing it, not using it, so
+        // it must not move the teacher's number — the same reason a teacher's own play never
+        // counts as a view (see WatchController::markViewed).
+        if (! $request->user()->isAdmin()) {
+            $material->increment('download_count');
+        }
 
         return $disk->download($material->file_path, $material->original_name);
     }
