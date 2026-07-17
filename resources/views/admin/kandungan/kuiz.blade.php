@@ -67,13 +67,15 @@
                      :text="__('Tiada kuiz yang sepadan dengan tapisan ini.')" />
         @else
             <div class="card overflow-x-auto p-2">
-                <table class="w-full min-w-[60rem] text-sm">
+                <table class="w-full min-w-[64rem] text-sm">
                     <thead>
                         <tr class="border-b border-line text-left text-ink-2">
                             <th class="px-3 py-2 font-semibold">{{ __('Tajuk Kuiz') }}</th>
                             <th class="px-3 py-2 font-semibold">{{ __('Subjek') }}</th>
                             <th class="px-3 py-2 font-semibold">{{ __('Tahun') }}</th>
                             <th class="px-3 py-2 text-right font-semibold">{{ __('Percubaan') }}</th>
+                            <th class="px-3 py-2 text-right font-semibold">{{ __('Lulus') }}</th>
+                            <th class="px-3 py-2 text-right font-semibold">{{ __('Tidak lulus') }}</th>
                             <th class="px-3 py-2 font-semibold">{{ __('Tarikh Dimuat Naik') }}</th>
                             <th class="px-3 py-2 text-right font-semibold">{{ __('Tindakan') }}</th>
                         </tr>
@@ -94,6 +96,24 @@
                                 <td class="px-3 py-2 text-ink-2">{{ $quiz->chapter->subject->displayName() }}</td>
                                 <td class="px-3 py-2 text-ink-2">{{ $quiz->chapter->grade->name }}</td>
                                 <td class="px-3 py-2 text-right tabular-nums text-ink-2">{{ number_format($quiz->attempts_count) }}</td>
+
+                                {{-- Fail is the remainder, not its own query: anything completed that is not
+                                     a pass is a fail, so the two always add up to Percubaan. --}}
+                                <td class="px-3 py-2 text-right tabular-nums">
+                                    @if ($quiz->attempts_count > 0)
+                                        <span class="font-bold text-success">{{ number_format($quiz->pass_count) }}</span>
+                                    @else
+                                        <span class="text-ink-2">—</span>
+                                    @endif
+                                </td>
+                                <td class="px-3 py-2 text-right tabular-nums">
+                                    @if ($quiz->attempts_count > 0)
+                                        <span class="font-bold text-danger">{{ number_format($quiz->attempts_count - $quiz->pass_count) }}</span>
+                                    @else
+                                        <span class="text-ink-2">—</span>
+                                    @endif
+                                </td>
+
                                 <td class="px-3 py-2 tabular-nums text-ink-2">{{ $quiz->created_at->translatedFormat('j M Y') }}</td>
                                 <td class="px-3 py-2 text-right">
                                     <button type="button" class="btn-ghost btn-sm"

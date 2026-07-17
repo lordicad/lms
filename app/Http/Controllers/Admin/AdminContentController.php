@@ -81,7 +81,10 @@ class AdminContentController extends Controller
                 // interactive quizzes have any; a file quiz is a document, not a question set.
                 'questions.options',
             ])
-            ->withCount(['attempts as attempts_count' => fn (Builder $q) => $q->whereNotNull('completed_at')])
+            ->withCount([
+                'attempts as attempts_count' => fn (Builder $q) => $q->completed(),
+                'attempts as pass_count' => fn (Builder $q) => $q->completed()->passed(),
+            ])
             ->latest('id')
             ->paginate(20)
             ->withQueryString();
