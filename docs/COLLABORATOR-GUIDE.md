@@ -20,6 +20,30 @@ There is no separate "deploy" step and no staging server. `git push origin main`
 You do **not** need any deploy token, password, or server access to deploy — your
 GitHub push triggers everything automatically.
 
+**A deploy ships all of `main`, not just your commit.** `deploy.sh` does
+`git reset --hard origin/main`, so your push carries live whatever anyone else
+has already pushed. With several people on `main` and no review gate, "my change
+is small" does not bound what your deploy releases. Pull first and look at what
+you are about to take live with you.
+
+## The everyday loop
+
+```bash
+git pull --rebase origin main   # main moves fast; do this first
+# ...make your change...
+npm run build                   # ONLY if you touched Blade / resources / tailwind.config.js
+git add -p                      # stage deliberately — never `git add -A`
+git commit
+git push origin main            # ← this is the deploy; live in ~2s
+```
+
+Nothing else is required — no token, no manual trigger. Triggering `deploy.php`
+by hand after a push only deploys the same commit twice.
+
+Then **look at the live page you changed** (hard-refresh, Ctrl/Cmd+F5). This repo
+has **no PHP test suite**, so your own eyes are the only check that a change
+works in production.
+
 ---
 
 ## How the auto-deploy works
@@ -29,41 +53,86 @@ you: git push origin main
         │
         ▼
 GitHub webhook  ──►  the server runs deploy.sh:
-                       1. git reset --hard origin/main   (pulls your code)
-                       2. composer install               (PHP dependencies)
-                       3. npm run build                  (front-end assets)
-                       4. copy built assets to the web docroot
-                       5. clear + rebuild Laravel caches
+                       1. git reset --hard origin/main   (pulls whatever is on main)
+                       2. composer install               (SKIPPED — not on PATH)
+                       3. php artisan migrate --force    (schema changes apply)
+                       4. npm run build                  (SKIPPED — not on PATH)
+                       5. copy committed public/build/ to the web docroot
+                       6. clear + rebuild Laravel caches
 ```
 
-The server has PHP, Composer and Node, so **you don't have to build anything
-before pushing** — it builds server-side. A deploy takes roughly 30–90 seconds.
+A deploy takes about **2 seconds**.
+
+### ⚠️ The webhook shell has no Composer and no npm
+
+Steps 2 and 4 skip on **every** deploy. The log says so plainly:
+
+```
+!! composer not on PATH; skipping. Run 'composer install' by hand.
+!! npm not on PATH; skipping build, using the committed public/build.
+```
+
+This has one consequence that will bite you:
+
+> **The committed `public/build/` IS production.** It is not a fallback.
+
+Tailwind only sees your classes at build time, so if you change a Blade view and
+push without rebuilding, the site deploys a stylesheet **missing those classes**.
+Nothing errors — the page just renders unstyled. Always:
+
+```bash
+npm run build          # then commit public/build/ with your change
+```
+
+Likewise, a new Composer package needs a manual `composer install` on the server.
+
+### The build guard
+
+Remembering the rule above is not a plan, so the repo ships a `pre-push` hook
+that enforces it: push front-end sources to `main` without a matching
+`public/build/` change and git refuses, naming the files. Enable it **once per
+clone** (git does not do this automatically, and a hook only protects the clone
+that has it):
+
+```bash
+git config core.hooksPath .githooks
+```
+
+It only blocks pushes to `main`, since only `main` deploys. To override when you
+know the build is already current:
+
+```bash
+git push --no-verify
+```
 
 ### What auto-deploys, and what doesn't
 
 | Change | Goes live on push? |
 |---|---|
 | PHP, Blade views, routes, config | ✅ Instantly |
-| Front-end CSS/JS (`resources/`) | ✅ Yes — the server runs `npm run build` |
-| New Composer package | ✅ Yes — the server runs `composer install` |
-| **Database migrations** | ❌ **No — run manually** (see below) |
-| **Seeders** | ❌ **No — run manually** |
+| Front-end CSS/JS (`resources/`) | ⚠️ **Only if you ran `npm run build` and committed `public/build/`** |
+| **Database migrations** | ✅ Yes — `deploy.sh` runs `migrate --force` |
+| New Composer package | ❌ No — needs manual `composer install` on the server |
+| **Seeders** | ❌ No — run manually |
 
-### Migrations & seeders are manual (by design)
+### Migrations run automatically
 
-Schema changes do **not** run automatically — this is deliberate, so a push can
-never alter or drop production data by surprise. If your change includes a new
-migration:
+A migration merged to `main` hits the production database the moment it is
+pushed. There is **no review gate** between merge and live schema:
 
-1. Commit and push it as usual.
-2. Tell the project owner — someone with server access must run it once:
-   ```bash
-   php artisan migrate --force
-   php artisan db:seed --class=Kurikulum2027Seeder --force   # only if needed
-   ```
+- Write migrations that are safe to apply unattended.
+- **Back up the database before pushing anything destructive** (dropped columns,
+  type changes, renames). Nothing will stop you.
 
-Until that's run, code expecting the new columns will error in production. So
-**flag any PR/commit that adds a migration.**
+The migrate step is non-fatal, so a failure does not abort the deploy. That makes
+`!! migrate failed` in the log a **broken release, not a warning** — the new code
+is already live against the old schema.
+
+Seeders stay manual (they are not idempotent and would re-run on every push):
+
+```bash
+php artisan db:seed --class=Kurikulum2027Seeder --force
+```
 
 ---
 
@@ -80,6 +149,9 @@ npm install
 
 cp .env.example .env
 php artisan key:generate
+
+# Enable the repo's git hooks (once per clone) — see "The build guard" below.
+git config core.hooksPath .githooks
 
 # configure your DB in .env, then:
 php artisan migrate
@@ -101,15 +173,22 @@ Notes:
 
 **Do**
 - Keep `main` working — it's production.
+- `git pull --rebase origin main` before you start and before you push.
+- Run `npm run build` and commit `public/build/` whenever you touch Blade,
+  `resources/`, or `tailwind.config.js`.
 - Put any new env var in `.env.example` (blank), never the real value.
-- Call out migrations so the owner runs them after your push.
+- Back up the database before pushing a destructive migration — it applies on
+  push, unattended.
+- Look at the live page after deploying. There are no tests to catch you.
 
 **Don't**
 - Don't commit `.env`, real credentials, API keys, or anything under
-  `public/uploads/`.
+  `public/uploads/`. This repo is **public** — a leaked secret is public within
+  seconds of a push, and rewriting history does not un-leak it.
+- Don't `git add -A`. Stage deliberately: it is how untracked secrets and
+  half-finished work reach `main`.
 - Don't push half-finished work straight to `main` — it goes live.
-- Don't run `php artisan migrate` against production yourself unless you have
-  server access and have coordinated it.
+- Don't push a schema change you have not thought about. Nothing gates it.
 
 ---
 
@@ -130,10 +209,9 @@ After you push, you can confirm it went out:
 
 This repo ships with a **`/ship` skill** for Claude Code
 ([`.claude/skills/ship/SKILL.md`](../.claude/skills/ship/SKILL.md)). In Claude
-Code, just say **"ship it"** (or run `/ship`) and Claude will: build front-end
-assets if they changed, commit, push to `main` (which auto-deploys), and warn you
-about any migration that needs a manual server run. It follows the exact rules in
-this guide, so you don't have to remember them.
+Code, just say **"ship it"** (or run `/ship`) and Claude will: pull, rebuild
+front-end assets if they changed, commit, and push to `main` (which auto-deploys).
+It follows the exact rules in this guide, so you don't have to remember them.
 
 ## More detail
 

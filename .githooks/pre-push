@@ -1,0 +1,68 @@
+#!/usr/bin/env bash
+#
+# Refuse a push to main that changes front-end sources without rebuilding
+# public/build/.
+#
+# Why this hook exists: the deploy host has no npm, so `npm run build` is skipped
+# on every deploy and the COMMITTED public/build/ is what production serves.
+# Tailwind only sees class names at build time, so pushing a Blade/CSS/JS change
+# without rebuilding deploys a stylesheet missing those classes. Nothing errors —
+# the page just renders unstyled, which is easy to miss and hard to trace.
+#
+# Enable once per clone:
+#     git config core.hooksPath .githooks
+#
+# Bypass (only when you know the build is already current):
+#     git push --no-verify
+
+set -uo pipefail
+
+zero='0000000000000000000000000000000000000000'
+status=0
+
+while read -r _local_ref local_sha remote_ref remote_sha; do
+    # Deleting a remote branch pushes the zero sha; nothing to check.
+    [ "$local_sha" = "$zero" ] && continue
+
+    # Only main auto-deploys, so only main is worth blocking.
+    [ "$remote_ref" = 'refs/heads/main' ] || continue
+
+    if [ "$remote_sha" = "$zero" ]; then
+        range="$local_sha"                 # new branch: check its whole diff
+    else
+        range="$remote_sha..$local_sha"
+    fi
+
+    changed="$(git diff --name-only "$range" 2>/dev/null)" || continue
+    [ -n "$changed" ] || continue
+
+    sources="$(printf '%s\n' "$changed" \
+        | grep -E '\.blade\.php$|^resources/(js|css)/|^tailwind\.config\.js$')" || true
+    [ -n "$sources" ] || continue
+
+    built="$(printf '%s\n' "$changed" | grep -E '^public/build/')" || true
+    [ -n "$built" ] && continue
+
+    cat >&2 <<EOF
+
+  pre-push: BLOCKED — front-end sources changed but public/build/ did not.
+
+  The deploy host cannot build. Whatever is committed in public/build/ is what
+  production serves, so this push would deploy a stylesheet missing the classes
+  used by:
+
+$(printf '%s\n' "$sources" | sed 's/^/      /')
+
+  Fix:
+      npm run build
+      git add public/build
+      git commit --amend --no-edit     # or a new commit
+
+  If the build is genuinely already current:
+      git push --no-verify
+
+EOF
+    status=1
+done
+
+exit "$status"
