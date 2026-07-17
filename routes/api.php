@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\Student\FavouriteController;
 use App\Http\Controllers\Api\Student\LearnController;
 use App\Http\Controllers\Api\Student\LessonController;
+use App\Http\Controllers\Api\Student\QuizController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -41,4 +42,10 @@ Route::middleware('auth:sanctum')->prefix('student')->group(function () {
 
     Route::get('favourites', [FavouriteController::class, 'index']);
     Route::post('lessons/{lesson}/favourite', [FavouriteController::class, 'toggle']);
+
+    // Interactive quiz flow: intro -> start attempt -> submit -> result.
+    Route::get('quizzes/{quiz}', [QuizController::class, 'intro']);
+    Route::post('quizzes/{quiz}/start', [QuizController::class, 'start']);
+    Route::post('attempts/{attempt}/submit', [QuizController::class, 'submit']);
+    Route::get('attempts/{attempt}/result', [QuizController::class, 'result']);
 });
