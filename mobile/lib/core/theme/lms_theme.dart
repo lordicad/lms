@@ -1,33 +1,42 @@
 import 'package:flutter/material.dart';
 
-/// Mobile equivalents of the live LMS colour and radius tokens.
+/// WeLearn design tokens — a warm green identity layered over the LMS MOE product.
+///
+/// Token names are kept stable; only the values changed from the old teal set, so
+/// every screen reskins to WeLearn at once. New tokens (forest, accent, …) were
+/// added for the WeLearn hero surfaces.
 abstract final class LmsColors {
-  static const background = Color(0xFFF7F8FA);
-  static const surface = Color(0xFFFFFFFF);
-  static const surfaceMuted = Color(0xFFF1F3F6);
-  static const ink = Color(0xFF0F172A);
-  static const inkMuted = Color(0xFF5B6675);
-  static const brand = Color(0xFF0F766E);
-  static const brandStrong = Color(0xFF115E56);
-  static const brandSoft = Color(0xFFE6F5F2);
-  static const border = Color(0x140F172A);
+  static const background = Color(0xFFF6F8F3); // off-white page
+  static const surface = Color(0xFFFFFFFF); // cards, panels, dialogs
+  static const surfaceMuted = Color(0xFFEDF2E8); // inputs, tracks, skeleton
+  static const ink = Color(0xFF17251A); // headings, primary text
+  static const inkMuted = Color(0xFF5F6F60); // supporting text
+  static const inkFaint = Color(0xFF8A968B); // tertiary text, inactive icons
+  static const brand = Color(0xFF4A7C3A); // primary CTA, active navigation
+  static const brandStrong = Color(0xFF3E6B33); // links, pressed state
+  static const brandSoft = Color(0xFFEAF2E3); // badges, icon containers
+  static const forest = Color(0xFF1B3520); // dark hero / teacher header
+  static const accent = Color(0xFF8FBF6F); // progress + CTA on dark surfaces
+  static const onAccent = Color(0xFF12290F); // text/icon on [accent]
+  static const border = Color(0x141A2B1E); // rgba(26,43,30,.08)
   static const success = Color(0xFF15803D);
   static const warning = Color(0xFFB45309);
+  static const danger = Color(0xFFB91C1C);
 }
 
 ThemeData buildLmsTheme() {
   const scheme = ColorScheme.light(
     primary: LmsColors.brand,
     onPrimary: Colors.white,
-    secondary: LmsColors.brand,
+    secondary: LmsColors.brandStrong,
     onSecondary: Colors.white,
     surface: LmsColors.surface,
     onSurface: LmsColors.ink,
-    error: Color(0xFFB91C1C),
+    error: LmsColors.danger,
   );
 
   final outlinedBorder = OutlineInputBorder(
-    borderRadius: BorderRadius.circular(10),
+    borderRadius: BorderRadius.circular(12),
     borderSide: const BorderSide(color: LmsColors.border),
   );
 
@@ -63,8 +72,24 @@ ThemeData buildLmsTheme() {
       elevation: 0,
       margin: EdgeInsets.zero,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(16),
         side: const BorderSide(color: LmsColors.border),
+      ),
+    ),
+    navigationBarTheme: NavigationBarThemeData(
+      backgroundColor: LmsColors.surface,
+      indicatorColor: LmsColors.brandSoft,
+      elevation: 0,
+      height: 68,
+      labelTextStyle: const WidgetStatePropertyAll(
+        TextStyle(fontSize: 11, fontWeight: FontWeight.w700),
+      ),
+      iconTheme: WidgetStateProperty.resolveWith(
+        (states) => IconThemeData(
+          color: states.contains(WidgetState.selected)
+              ? LmsColors.brand
+              : LmsColors.inkFaint,
+        ),
       ),
     ),
     inputDecorationTheme: InputDecorationTheme(
@@ -77,7 +102,7 @@ ThemeData buildLmsTheme() {
         borderSide: const BorderSide(color: LmsColors.brand, width: 2),
       ),
       errorBorder: outlinedBorder.copyWith(
-        borderSide: const BorderSide(color: Color(0xFFB91C1C)),
+        borderSide: const BorderSide(color: LmsColors.danger),
       ),
     ),
     filledButtonTheme: FilledButtonThemeData(
@@ -85,7 +110,7 @@ ThemeData buildLmsTheme() {
         backgroundColor: LmsColors.brand,
         foregroundColor: Colors.white,
         minimumSize: const Size.fromHeight(52),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         textStyle: const TextStyle(fontWeight: FontWeight.w800),
       ),
     ),

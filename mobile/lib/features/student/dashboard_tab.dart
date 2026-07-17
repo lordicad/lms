@@ -83,20 +83,29 @@ class _DashboardTabState extends State<DashboardTab> {
                     Text('Hai, ${_firstName(widget.user.name)}!',
                         style: Theme.of(context).textTheme.headlineLarge),
                     const SizedBox(height: 4),
-                    Text('Teruskan pembelajaran untuk $gradeName.'),
+                    Text('Jom sambung belajar untuk $gradeName.'),
                     const SizedBox(height: 16),
-                    _PointsCard(points: data.points, rank: data.rank),
+                    if (data.continueWatching.isNotEmpty)
+                      _ContinueHero(
+                        lesson: data.continueWatching.first,
+                        onResume: () => _openLesson(data.continueWatching.first),
+                      )
+                    else
+                      _PointsCard(points: data.points, rank: data.rank),
                   ],
                 ),
               ),
-              if (data.continueWatching.isNotEmpty) ...[
+              if (data.continueWatching.length > 1) ...[
                 const SizedBox(height: 24),
                 const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 20),
                   child: SectionTitle('Sambung menonton'),
                 ),
                 const SizedBox(height: 12),
-                LessonRail(lessons: data.continueWatching, onTapLesson: _openLesson),
+                LessonRail(
+                  lessons: data.continueWatching.sublist(1),
+                  onTapLesson: _openLesson,
+                ),
               ],
               const SizedBox(height: 24),
               const Padding(
@@ -125,6 +134,167 @@ class _DashboardTabState extends State<DashboardTab> {
   }
 
   static String _firstName(String name) => name.trim().split(RegExp(r'\s+')).first;
+}
+
+/// The WeLearn "Sambung belajar" hero: a dark forest card carrying the lesson the
+/// student left unfinished — thumbnail, subject/chapter, progress and a Resume CTA.
+class _ContinueHero extends StatelessWidget {
+  const _ContinueHero({required this.lesson, required this.onResume});
+
+  final LessonCard lesson;
+  final VoidCallback onResume;
+
+  @override
+  Widget build(BuildContext context) {
+    final percent = lesson.percent.clamp(0, 100);
+
+    return Container(
+      decoration: BoxDecoration(
+        color: LmsColors.forest,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: const [
+          BoxShadow(color: Color(0x381B3520), blurRadius: 18, offset: Offset(0, 6)),
+        ],
+      ),
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _Thumb(url: lesson.thumbnailUrl),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'SAMBUNG BELAJAR',
+                      style: TextStyle(
+                        fontSize: 10.5,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 0.6,
+                        color: Color(0xFFA9C79B),
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      lesson.title,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 15,
+                        height: 1.3,
+                        fontWeight: FontWeight.w800,
+                        color: Colors.white,
+                      ),
+                    ),
+                    if ((lesson.subjectName ?? '').isNotEmpty) ...[
+                      const SizedBox(height: 3),
+                      Text(
+                        lesson.subjectName!,
+                        style: const TextStyle(fontSize: 11.5, color: Color(0xFFB9CCB8)),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          Row(
+            children: [
+              Expanded(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(99),
+                  child: LinearProgressIndicator(
+                    value: percent / 100,
+                    minHeight: 7,
+                    backgroundColor: Colors.white24,
+                    valueColor: const AlwaysStoppedAnimation(LmsColors.accent),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Text(
+                '$percent%',
+                style: const TextStyle(
+                  fontSize: 11.5,
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xFFB9CCB8),
+                ),
+              ),
+              const SizedBox(width: 10),
+              GestureDetector(
+                onTap: onResume,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 9),
+                  decoration: BoxDecoration(
+                    color: LmsColors.accent,
+                    borderRadius: BorderRadius.circular(11),
+                  ),
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.play_arrow_rounded, size: 16, color: LmsColors.onAccent),
+                      SizedBox(width: 4),
+                      Text(
+                        'Sambung',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w800,
+                          fontSize: 12.5,
+                          color: LmsColors.onAccent,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _Thumb extends StatelessWidget {
+  const _Thumb({required this.url});
+
+  final String? url;
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(12),
+      child: SizedBox(
+        width: 118,
+        height: 76,
+        child: (url != null && url!.isNotEmpty)
+            ? Image.network(
+                url!,
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => const _ThumbFallback(),
+              )
+            : const _ThumbFallback(),
+      ),
+    );
+  }
+}
+
+class _ThumbFallback extends StatelessWidget {
+  const _ThumbFallback();
+
+  @override
+  Widget build(BuildContext context) {
+    return const ColoredBox(
+      color: Color(0xFF24402B),
+      child: Center(
+        child: Icon(Icons.play_circle_fill_rounded, color: Colors.white70, size: 30),
+      ),
+    );
+  }
 }
 
 class _PointsCard extends StatelessWidget {

@@ -26,12 +26,12 @@ class AppHeader extends StatelessWidget {
           const DecoratedBox(
             decoration: BoxDecoration(
               color: LmsColors.brand,
-              borderRadius: BorderRadius.all(Radius.circular(8)),
+              borderRadius: BorderRadius.all(Radius.circular(9)),
             ),
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 9, vertical: 5),
+              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 5),
               child: Text(
-                'LMS',
+                'W',
                 style: TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.w800,
@@ -41,7 +41,7 @@ class AppHeader extends StatelessWidget {
           ),
           const SizedBox(width: 8),
           const Text(
-            'MOE',
+            'WeLearn',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
           ),
           const Spacer(),
