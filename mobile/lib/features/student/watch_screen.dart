@@ -2,6 +2,7 @@ import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/content/content_models.dart';
 import '../../core/content/content_repository.dart';
@@ -202,11 +203,54 @@ class _WatchScreenState extends State<WatchScreen> {
   }
 
   Widget _scaffold(LessonDetail lesson, Widget player) {
+    final resumeAt = lesson.progress?.positionSeconds ?? 0;
+    final completed = lesson.progress?.completed ?? false;
+
     return Scaffold(
-      appBar: AppBar(title: Text(lesson.subject.displayName, overflow: TextOverflow.ellipsis)),
+      appBar: AppBar(
+        title: Text(lesson.subject.displayName, overflow: TextOverflow.ellipsis),
+        actions: [
+          IconButton(
+            tooltip: 'Kegemaran',
+            onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Menyimpan kegemaran akan tersedia tidak lama lagi.'),
+              ),
+            ),
+            icon: Icon(
+              lesson.favourited ? Icons.favorite : Icons.favorite_border,
+              color: lesson.favourited ? LmsColors.danger : null,
+            ),
+          ),
+        ],
+      ),
       body: ListView(
         children: [
           player,
+          if (resumeAt > 0 && !completed)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
+                decoration: BoxDecoration(
+                  color: LmsColors.brandSoft,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.history_rounded, size: 18, color: LmsColors.brandStrong),
+                    const SizedBox(width: 8),
+                    Text(
+                      'Disambung dari ${_fmt(resumeAt)}',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w700,
+                        color: LmsColors.brandStrong,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           Padding(
             padding: const EdgeInsets.all(20),
             child: Column(
@@ -263,28 +307,97 @@ class _MaterialRow extends StatelessWidget {
   const _MaterialRow({required this.material});
   final MaterialItem material;
 
+  Future<void> _open() async {
+    final uri = Uri.tryParse(material.downloadUrl);
+    if (uri != null) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final (icon, color) = _fileStyle(material.extension);
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        children: [
-          const Icon(Icons.description_outlined, color: LmsColors.brand),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(material.title, style: Theme.of(context).textTheme.titleMedium),
-                Text(
-                  '${material.extension.toUpperCase()} · ${material.humanSize}',
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-              ],
-            ),
+      padding: const EdgeInsets.only(bottom: 8),
+      child: InkWell(
+        onTap: _open,
+        borderRadius: BorderRadius.circular(13),
+        child: Container(
+          decoration: BoxDecoration(
+            color: LmsColors.surface,
+            borderRadius: BorderRadius.circular(13),
+            border: Border.all(color: LmsColors.border),
           ),
-        ],
+          padding: const EdgeInsets.all(12),
+          child: Row(
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                padding: const EdgeInsets.all(9),
+                child: Icon(icon, color: color, size: 20),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      material.title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      [
+                        material.extension.toUpperCase(),
+                        if (material.humanSize.isNotEmpty) material.humanSize,
+                      ].join(' · '),
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+              const Icon(Icons.download_rounded, color: LmsColors.inkFaint, size: 20),
+            ],
+          ),
+        ),
       ),
     );
+  }
+}
+
+/// mm:ss for a resume position.
+String _fmt(int seconds) {
+  final m = seconds ~/ 60;
+  final s = (seconds % 60).toString().padLeft(2, '0');
+  return '$m:$s';
+}
+
+/// An icon + accent colour for a material by its file extension.
+(IconData, Color) _fileStyle(String ext) {
+  switch (ext.toLowerCase()) {
+    case 'pdf':
+      return (Icons.picture_as_pdf_rounded, LmsColors.danger);
+    case 'doc':
+    case 'docx':
+      return (Icons.description_rounded, Color(0xFF2E5E7E));
+    case 'ppt':
+    case 'pptx':
+      return (Icons.slideshow_rounded, LmsColors.warning);
+    case 'xls':
+    case 'xlsx':
+      return (Icons.grid_on_rounded, LmsColors.success);
+    case 'jpg':
+    case 'jpeg':
+    case 'png':
+    case 'gif':
+      return (Icons.image_rounded, Color(0xFF3E7D6A));
+    default:
+      return (Icons.insert_drive_file_rounded, LmsColors.inkMuted);
   }
 }
