@@ -40,6 +40,27 @@ echo "==> Fetching origin/$BRANCH"
 git fetch --prune origin "$BRANCH"
 git reset --hard "origin/$BRANCH"
 
+# --- Split deployment: push freshly built assets into the served docroot -------
+# index.php in the docroot calls usePublicPath(__DIR__), so Laravel reads the Vite
+# manifest from the DOCROOT's build/, not the repo's public/build/. If we don't copy
+# the new build over, the live site serves stale hashed filenames after a deploy.
+#
+# Enable by setting PUBLIC_DOCROOT in .env to the served docroot, e.g.
+#   PUBLIC_DOCROOT=/home3/weststar/public_html/lms-moe.weststar-dev.com
+# Leave it blank on non-split hosts and this step is skipped.
+PUBLIC_DOCROOT="$(sed -n 's/^PUBLIC_DOCROOT=//p' .env 2>/dev/null | head -n1 | tr -d '\r' | sed -e 's/^["'\'']//' -e 's/["'\'']$//')"
+if [ -n "$PUBLIC_DOCROOT" ] && [ -d "$PUBLIC_DOCROOT" ]; then
+    echo "==> Syncing public/build -> $PUBLIC_DOCROOT/build"
+    if command -v rsync >/dev/null 2>&1; then
+        rsync -a --delete public/build/ "$PUBLIC_DOCROOT/build/"
+    else
+        rm -rf "$PUBLIC_DOCROOT/build"
+        cp -a public/build "$PUBLIC_DOCROOT/build"
+    fi
+elif [ -n "$PUBLIC_DOCROOT" ]; then
+    echo "!! PUBLIC_DOCROOT is set to '$PUBLIC_DOCROOT' but that directory does not exist; skipping asset sync." >&2
+fi
+
 # --- Clear stale caches before touching the DB --------------------------------
 echo "==> Clearing caches"
 "$PHP" artisan optimize:clear

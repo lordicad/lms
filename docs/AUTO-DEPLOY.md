@@ -31,6 +31,14 @@ npm run build
 git add public/build && git commit -m "build assets"
 ```
 
+**Split deployment.** The served docroot is a separate directory from the repo's
+`public/`; its `index.php` calls `usePublicPath(__DIR__)`, so Laravel reads the
+Vite manifest from the docroot's `build/`. Set `PUBLIC_DOCROOT` in the server
+`.env` to that docroot and `deploy.sh` will `rsync public/build/` into it on every
+deploy. Without it, the site serves stale hashed asset filenames after a deploy.
+The docroot's `index.php` / `.htaccess` and the `deploy.php` shim are maintained
+by hand there and are intentionally not tracked in git.
+
 New PHP dependencies also need a manual `composer install` on the host — the
 webhook user has no Composer.
 
