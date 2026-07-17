@@ -29,6 +29,7 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'is_active',
         'grade_id',
         'avatar',
         'locale',
@@ -46,9 +47,19 @@ class User extends Authenticatable
     {
         return [
             'grade_id' => 'integer',
+            'is_active' => 'boolean',
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Deactivated accounts cannot sign in. Their content stays published on purpose — see the
+     * is_active migration — so this gates access, not the library.
+     */
+    public function isActive(): bool
+    {
+        return (bool) $this->is_active;
     }
 
     public function isAdmin(): bool

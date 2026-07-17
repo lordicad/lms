@@ -65,6 +65,17 @@ class LoginRequest extends FormRequest
             ]);
         }
 
+        // Deactivated by MOE. Checked after the attempt, not folded into the credentials, so the
+        // message can say what is actually wrong: telling someone with the right password that
+        // their password is wrong just generates a support ticket. Their content stays published.
+        if (! Auth::user()->isActive()) {
+            Auth::logout();
+
+            throw ValidationException::withMessages([
+                'login' => __('Akaun ini telah dinyahaktifkan. Sila hubungi pentadbir sekolah anda.'),
+            ]);
+        }
+
         RateLimiter::clear($this->throttleKey());
     }
 

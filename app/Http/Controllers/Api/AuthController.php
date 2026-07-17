@@ -36,6 +36,14 @@ class AuthController extends Controller
             ]);
         }
 
+        // Same gate as the web login: the mobile app is a second front door, and a deactivated
+        // account must not be able to walk through it.
+        if (! $user->isActive()) {
+            throw ValidationException::withMessages([
+                'login' => [__('Akaun ini telah dinyahaktifkan. Sila hubungi pentadbir sekolah anda.')],
+            ]);
+        }
+
         $token = $user->createToken($validated['device_name'])->plainTextToken;
 
         return response()->json([

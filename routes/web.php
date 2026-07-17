@@ -181,6 +181,9 @@ Route::middleware(['auth', 'role:admin'])
         Route::get('bakat/eksport', [AdminTalentController::class, 'export'])->name('bakat.export');
         Route::get('bakat/{teacher}', [AdminTalentController::class, 'show'])->name('bakat.show');
 
+        // Deactivate/reactivate a teacher's sign-in. POST, not GET: it changes state.
+        Route::post('guru/{teacher}/status', [AdminTalentController::class, 'toggleStatus'])->name('guru.status');
+
         // Kandungan: oversight of every teacher's library. Read-only.
         Route::get('kandungan/video', [AdminContentController::class, 'video'])->name('kandungan.video');
         Route::get('kandungan/bahan', [AdminContentController::class, 'material'])->name('kandungan.bahan');

@@ -4,58 +4,205 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Grade;
+use App\Models\Lesson;
+use App\Models\Material;
+use App\Models\Quiz;
 use App\Models\Subject;
 use App\Models\User;
 use App\Services\TalentService;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
- * MOE oversight — the teacher talent dashboard. Read-only. A "shortlist for review", not a raw
- * leaderboard: the framing (and the prominent disclaimer in the view) keep this a signal, not a
- * verdict. Admins get no content-authoring tools.
+ * MOE oversight of the teaching cohort. Read-only except for one switch: an admin may deactivate
+ * a teacher's sign-in. Nothing here edits or removes content — deleting a teacher would cascade
+ * through their lessons, materials and quizzes and take students' history with it, so the action
+ * deliberately does not exist.
+ *
+ * Two sections filter independently, so their query strings are namespaced: `subjek`/`tahun` drive
+ * the teacher list, `p_subjek`/`p_tahun` the contributor board. Each form re-posts the other's
+ * values so filtering one never silently resets the other.
  */
 class AdminTalentController extends Controller
 {
-    public function index(Request $request, TalentService $talent): View
+    public function index(Request $request): View
     {
-        $cohort = $talent->cohort();
-
         $subjectSlug = $request->string('subjek')->toString() ?: null;
         $gradeLevel = $request->integer('tahun') ?: null;
-        $shortlist = $request->boolean('shortlist');
+        $contribSubject = $request->string('p_subjek')->toString() ?: null;
+        $contribGrade = $request->integer('p_tahun') ?: null;
 
-        // Filters narrow to teachers who have a counted lesson in the chosen subject / grade.
-        if ($subjectSlug) {
-            $cohort = $cohort->filter(fn ($row) => $row->lessons->contains(
-                fn ($entry) => $entry->lesson->chapter->subject->slug === $subjectSlug,
-            ));
-        }
-
-        if ($gradeLevel) {
-            $cohort = $cohort->filter(fn ($row) => $row->lessons->contains(
-                fn ($entry) => $entry->lesson->chapter->grade->level === $gradeLevel,
-            ));
-        }
-
-        // Shortlist surfaces quality + outcome over sheer reach, so a big cohort can't dominate,
-        // and hides teachers without enough data to judge.
-        if ($shortlist) {
-            $cohort = $cohort
-                ->filter(fn ($row) => $row->sufficient)
-                ->sortByDesc(fn ($row) => $row->norm['quality'] + ($row->norm['outcome'] ?? 0));
-        }
+        $teachers = $this->teachers($subjectSlug, $gradeLevel);
 
         return view('admin.bakat', [
-            'cohort' => $cohort->values(),
-            'subjects' => Subject::orderBy('sort_order')->get(),
-            'grades' => Grade::orderBy('level')->get(),
+            // Guru
+            'teachers' => $teachers,
+            'subjectsByTeacher' => $this->subjectsByTeacher($teachers->pluck('id')->all()),
+            'totalTeachers' => User::where('role', User::ROLE_TEACHER)->count(),
+            'activeCount' => User::where('role', User::ROLE_TEACHER)->where('is_active', true)->count(),
+            'inactiveCount' => User::where('role', User::ROLE_TEACHER)->where('is_active', false)->count(),
             'subjectSlug' => $subjectSlug,
             'gradeLevel' => $gradeLevel,
-            'shortlist' => $shortlist,
+
+            // Penyumbang teratas
+            'contributors' => $this->contributors($contribSubject, $contribGrade),
+            'contribSubject' => $contribSubject,
+            'contribGrade' => $contribGrade,
+
+            // Kandungan terbaik (library-wide: it answers "what is working best", not
+            // "what is working best in Tahun 3", so it deliberately ignores both filters)
+            'topVideo' => Lesson::published()->with('chapter.subject')->orderByDesc('views_count')->first(),
+            'topMaterial' => Material::with('chapter.subject')->orderByDesc('download_count')->first(),
+            'topQuiz' => $this->topQuiz(),
+
+            'subjects' => Subject::orderBy('sort_order')->get(),
+            'grades' => Grade::orderBy('level')->get(),
         ]);
     }
+
+    /**
+     * Flip a teacher's sign-in on or off. Their published content is untouched either way.
+     */
+    public function toggleStatus(Request $request, User $teacher): RedirectResponse
+    {
+        abort_unless($teacher->isTeacher(), 404);
+
+        $teacher->update(['is_active' => ! $teacher->is_active]);
+
+        return back()->with('status', $teacher->is_active
+            ? __('Akaun :name telah diaktifkan.', ['name' => $teacher->name])
+            : __('Akaun :name telah dinyahaktifkan. Kandungan mereka kekal untuk murid.', ['name' => $teacher->name]));
+    }
+
+    // --- Guru --------------------------------------------------------------------------
+
+    /**
+     * Teachers, narrowed to those holding content in the chosen Subjek/Tahun. A teacher belongs to
+     * no subject of their own — they are placed by what they have posted — so the filter reaches
+     * through all three content types, and the counts are scoped the same way to stay consistent
+     * with it.
+     */
+    private function teachers(?string $subjectSlug, ?int $gradeLevel)
+    {
+        $scope = fn (Builder $query): Builder => $query
+            ->when($subjectSlug, fn (Builder $q) => $q->whereHas(
+                'chapter.subject',
+                fn (Builder $s) => $s->where('slug', $subjectSlug),
+            ))
+            ->when($gradeLevel, fn (Builder $q) => $q->whereHas(
+                'chapter.grade',
+                fn (Builder $g) => $g->where('level', $gradeLevel),
+            ));
+
+        return User::where('role', User::ROLE_TEACHER)
+            ->when($subjectSlug || $gradeLevel, fn (Builder $q) => $q->where(
+                fn (Builder $sub) => $sub
+                    ->whereHas('lessons', $scope)
+                    ->orWhereHas('materials', $scope)
+                    ->orWhereHas('quizzes', $scope),
+            ))
+            ->withCount([
+                'lessons as video_count' => $scope,
+                'materials as material_count' => $scope,
+                'quizzes as quiz_count' => $scope,
+            ])
+            ->orderBy('name')
+            ->paginate(20)
+            ->withQueryString();
+    }
+
+    /**
+     * Subject names per teacher, unioned across the three content types, so the table can say where
+     * a teacher actually works. One query rather than eager-loading every lesson of every teacher
+     * just to read its subject.
+     *
+     * @param  array<int, int>  $teacherIds
+     * @return Collection<int, Collection<int, string>>
+     */
+    private function subjectsByTeacher(array $teacherIds): Collection
+    {
+        if ($teacherIds === []) {
+            return collect();
+        }
+
+        $of = fn (string $table) => DB::table($table)
+            ->join('chapters', 'chapters.id', '=', "{$table}.chapter_id")
+            ->whereIn("{$table}.teacher_id", $teacherIds)
+            ->select("{$table}.teacher_id", 'chapters.subject_id');
+
+        return $of('lessons')
+            ->union($of('materials'))
+            ->union($of('quizzes'))
+            ->get()
+            ->groupBy('teacher_id')
+            ->map(fn ($rows) => $rows->pluck('subject_id')->unique()->values());
+    }
+
+    // --- Penyumbang teratas ------------------------------------------------------------
+
+    /**
+     * The ten biggest contributors: how much published content they have put in, and what it drew.
+     * Ranked on content because that is what "contributor" means here; views break ties, so a
+     * teacher with the same output but more reach sits higher.
+     */
+    private function contributors(?string $subjectSlug, ?int $gradeLevel): Collection
+    {
+        $scope = fn (Builder $query): Builder => $query
+            ->when($subjectSlug, fn (Builder $q) => $q->whereHas(
+                'chapter.subject',
+                fn (Builder $s) => $s->where('slug', $subjectSlug),
+            ))
+            ->when($gradeLevel, fn (Builder $q) => $q->whereHas(
+                'chapter.grade',
+                fn (Builder $g) => $g->where('level', $gradeLevel),
+            ));
+
+        $published = fn (Builder $query): Builder => $scope($query->where('is_published', true));
+
+        $rows = User::where('role', User::ROLE_TEACHER)
+            ->withCount([
+                'lessons as published_videos' => $published,
+                'materials as published_materials' => $scope,
+                'quizzes as published_quizzes' => $published,
+            ])
+            ->withSum(['lessons as views_sum' => $published], 'views_count')
+            ->withSum(['lessons as favourites_sum' => $published], 'favourites_count')
+            ->get()
+            ->map(function (User $teacher) {
+                $teacher->published_content = $teacher->published_videos
+                    + $teacher->published_materials
+                    + $teacher->published_quizzes;
+
+                return $teacher;
+            })
+            ->filter(fn (User $teacher) => $teacher->published_content > 0)
+            ->sortByDesc(fn (User $teacher) => [$teacher->published_content, (int) $teacher->views_sum])
+            ->take(10)
+            ->values();
+
+        return $rows;
+    }
+
+    // --- Kandungan terbaik -------------------------------------------------------------
+
+    private function topQuiz(): ?Quiz
+    {
+        return Quiz::with('chapter.subject')
+            ->withCount([
+                'attempts as attempt_total' => fn (Builder $q) => $q->completed(),
+                'attempts as pass_total' => fn (Builder $q) => $q->completed()->passed(),
+            ])
+            ->orderByDesc('attempt_total')
+            ->having('attempt_total', '>', 0)
+            ->first();
+    }
+
+    // --- Per-teacher talent detail + export (unchanged) ---------------------------------
 
     public function show(User $teacher, TalentService $talent): View
     {
