@@ -10,26 +10,22 @@ cPanel Terminal.
 
 1. `git fetch` + `git reset --hard origin/main` (discards local drift; `.env` and
    `public/uploads/` are untouched — they are not tracked).
-2. `artisan optimize:clear`.
-3. Runs the **idempotent** reference seeders: `GradeSeeder`, then
-   `Kurikulum2027Seeder` (both `updateOrCreate`).
-4. Rebuilds `config` and `view` caches (non-fatal).
-5. `artisan storage:link` (best-effort).
+2. `composer install --no-dev --optimize-autoloader` (if composer is on PATH).
+3. `npm ci && npm run build`, then copy `public/build/` into the docroot (if npm
+   is on PATH; otherwise the committed `public/build/` is used).
+4. `artisan optimize:clear`, then rebuild `config` and `view` caches (non-fatal).
 
-It does **NOT** run migrations. Manual-migration policy — run schema changes by
-hand first, then trigger the deploy:
+It does **NOT** run migrations or seeders. Run those by hand when a release needs
+them:
 
 ```bash
 php artisan migrate --force
+php artisan db:seed --class=Kurikulum2027Seeder --force
 ```
 
-Built front-end assets ship in git (`public/build/`) because the host has no
-Node. After changing anything under `resources/`, rebuild and commit:
-
-```bash
-npm run build
-git add public/build && git commit -m "build assets"
-```
+The host has both `composer` and `npm`, so the build happens server-side on each
+deploy. `public/build/` is still committed as a fallback for when the build step
+is unavailable (e.g. the webhook shell lacks Node on PATH).
 
 **Split deployment.** The served docroot is a separate directory from the repo's
 `public/`; its `index.php` calls `usePublicPath(__DIR__)`, so Laravel reads the

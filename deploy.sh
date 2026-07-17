@@ -3,12 +3,13 @@
 # Auto-deploy for LMS MOE (Laravel). Runs on the host, triggered by
 # public/deploy.php (webhook) or by hand from the cPanel Terminal.
 #
-# MANUAL-MIGRATION POLICY: this script does NOT run migrations. When a release
-# ships schema changes, run them yourself first, then trigger the deploy:
-#
+# Steps: git pull -> composer install -> front-end build -> optimize/cache.
+# It does NOT run migrations or seeders — run those by hand when a release needs
+# them:
 #     php artisan migrate --force
+#     php artisan db:seed --class=Kurikulum2027Seeder --force
 #
-# Only three things are project-specific; they are marked CONFIGURE below.
+# Two things are project-specific; they are marked CONFIGURE below.
 
 set -euo pipefail
 
@@ -34,28 +35,28 @@ cd "$(dirname "$0")"
 echo "==> Deploy start ($(date))"
 echo "==> Using PHP: $("$PHP" -v | head -n1)"
 
-# --- Pull the exact remote state, discard any local drift ---------------------
+# --- 1. Pull the exact remote state, discard any local drift ------------------
 # reset --hard only touches TRACKED files, so .env and public/uploads survive.
 echo "==> Fetching origin/$BRANCH"
 git fetch --prune origin "$BRANCH"
 git reset --hard "origin/$BRANCH"
 
-# --- Install PHP dependencies (only if composer is reachable) ------------------
-# The webhook's shell env often has no composer on PATH. When it doesn't, this is
-# skipped and you must run `composer install` by hand after adding a package.
-# Non-fatal: a failure here leaves the existing vendor/ in place.
+# --- 2. Install PHP dependencies ----------------------------------------------
+# Guarded by command -v and non-fatal: if composer is not on PATH (e.g. the
+# webhook shell) the deploy continues with the existing vendor/.
 if command -v composer >/dev/null 2>&1; then
     echo "==> composer install"
     composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist \
         || echo "!! composer install failed (continuing with existing vendor/)"
 else
-    echo "!! composer not on PATH; skipping. Run 'composer install' by hand after adding a package."
+    echo "!! composer not on PATH; skipping. Run 'composer install' by hand."
 fi
 
-# --- Build front-end assets (only if Node is available) -----------------------
-# This host may have no Node; then the committed public/build (shipped via git)
-# is used as-is. Non-fatal either way. npm ci is reproducible but reinstalls
-# node_modules each run — slower; falls back to npm install if ci fails.
+# --- 3. Front-end build -------------------------------------------------------
+# Build into public/build, then copy it into the served docroot. On this split
+# deployment the docroot is separate from the repo (index.php calls
+# usePublicPath), so the build MUST be copied there or the live site keeps
+# serving old hashed assets. Guarded and non-fatal.
 if command -v npm >/dev/null 2>&1; then
     echo "==> npm ci && npm run build"
     npm ci --no-audit --no-fund || npm install --no-audit --no-fund || echo "!! npm install failed"
@@ -64,14 +65,7 @@ else
     echo "!! npm not on PATH; skipping build, using the committed public/build."
 fi
 
-# --- Split deployment: push freshly built assets into the served docroot -------
-# index.php in the docroot calls usePublicPath(__DIR__), so Laravel reads the Vite
-# manifest from the DOCROOT's build/, not the repo's public/build/. If we don't copy
-# the new build over, the live site serves stale hashed filenames after a deploy.
-#
-# Enable by setting PUBLIC_DOCROOT in .env to the served docroot, e.g.
-#   PUBLIC_DOCROOT=/home3/weststar/public_html/lms-moe.weststar-dev.com
-# Leave it blank on non-split hosts and this step is skipped.
+# Copy built assets into the served docroot (set PUBLIC_DOCROOT in .env).
 PUBLIC_DOCROOT="$(sed -n 's/^PUBLIC_DOCROOT=//p' .env 2>/dev/null | head -n1 | tr -d '\r' | sed -e 's/^["'\'']//' -e 's/["'\'']$//')"
 if [ -n "$PUBLIC_DOCROOT" ] && [ -d "$PUBLIC_DOCROOT" ]; then
     echo "==> Syncing public/build -> $PUBLIC_DOCROOT/build"
@@ -82,28 +76,14 @@ if [ -n "$PUBLIC_DOCROOT" ] && [ -d "$PUBLIC_DOCROOT" ]; then
         cp -a public/build "$PUBLIC_DOCROOT/build"
     fi
 elif [ -n "$PUBLIC_DOCROOT" ]; then
-    echo "!! PUBLIC_DOCROOT is set to '$PUBLIC_DOCROOT' but that directory does not exist; skipping asset sync." >&2
+    echo "!! PUBLIC_DOCROOT '$PUBLIC_DOCROOT' does not exist; skipping asset sync." >&2
 fi
 
-# --- Clear stale caches before touching the DB --------------------------------
-echo "==> Clearing caches"
+# --- 4. Optimize & cache ------------------------------------------------------
+echo "==> Optimize & cache"
 "$PHP" artisan optimize:clear
-
-# --- CONFIGURE 3: idempotent reference seeders (safe to run every deploy) ------
-# Each uses updateOrCreate/firstOrCreate. Order matters: grades before curriculum.
-# NEVER add DatabaseSeeder or the demo/admin seeders here.
-echo "==> Seeding reference data"
-"$PHP" artisan db:seed --class=GradeSeeder --force
-"$PHP" artisan db:seed --class=Kurikulum2027Seeder --force
-
-# --- Rebuild production caches (non-fatal: app still serves if a rebuild fails)-
-echo "==> Rebuilding caches"
 "$PHP" artisan config:cache || echo "!! config:cache failed (continuing, app runs uncached)"
 "$PHP" artisan view:cache   || echo "!! view:cache failed (continuing)"
-# route:cache is intentionally omitted: closure routes would break it. Enable
-# it here only after confirming every route is in a controller.
-
-# --- Link storage (no-op if it already exists / symlinks unsupported) ---------
-"$PHP" artisan storage:link 2>/dev/null || true
+# route:cache is intentionally omitted: closure routes would break it.
 
 echo "==> Deploy done ($(date))"
