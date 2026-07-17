@@ -30,7 +30,11 @@ class _StudentShellState extends State<StudentShell> {
     final gradeName = widget.user.grade?.name ?? 'Tahun anda';
 
     final tabs = [
-      DashboardTab(repository: _repository, user: widget.user),
+      DashboardTab(
+        repository: _repository,
+        user: widget.user,
+        onSeeAllSubjects: () => setState(() => _index = 1),
+      ),
       SubjectsTab(repository: _repository),
       SavedTab(repository: _repository),
       QuizzesTab(repository: _repository),

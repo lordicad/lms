@@ -11,10 +11,18 @@ import 'widgets/content_widgets.dart';
 /// The student home: greeting, points, continue watching, subjects, newest videos.
 /// Mirrors the web belajar dashboard, trimmed to the essentials for this first slice.
 class DashboardTab extends StatefulWidget {
-  const DashboardTab({super.key, required this.repository, required this.user});
+  const DashboardTab({
+    super.key,
+    required this.repository,
+    required this.user,
+    this.onSeeAllSubjects,
+  });
 
   final ContentRepository repository;
   final AuthUser user;
+
+  /// Jumps to the full Subjek tab from the home "Lihat semua" link.
+  final VoidCallback? onSeeAllSubjects;
 
   @override
   State<DashboardTab> createState() => _DashboardTabState();
@@ -108,14 +116,32 @@ class _DashboardTabState extends State<DashboardTab> {
                 ),
               ],
               const SizedBox(height: 24),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20),
-                child: SectionTitle('Subjek'),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: SectionTitle(
+                  'Subjek',
+                  trailing: data.subjects.length > 4
+                      ? GestureDetector(
+                          onTap: widget.onSeeAllSubjects,
+                          child: const Text(
+                            'Lihat semua',
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w700,
+                              color: LmsColors.brandStrong,
+                            ),
+                          ),
+                        )
+                      : null,
+                ),
               ),
               const SizedBox(height: 12),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: _SubjectsGrid(subjects: data.subjects, onTap: _openSubject),
+                child: _SubjectsGrid(
+                  subjects: data.subjects.take(4).toList(),
+                  onTap: _openSubject,
+                ),
               ),
               if (data.newest.isNotEmpty) ...[
                 const SizedBox(height: 24),
