@@ -184,6 +184,7 @@ Route::middleware(['auth', 'role:admin'])
         // Kandungan: oversight of every teacher's library. Read-only.
         Route::get('kandungan/video', [AdminContentController::class, 'video'])->name('kandungan.video');
         Route::get('kandungan/bahan', [AdminContentController::class, 'material'])->name('kandungan.bahan');
+        Route::get('kandungan/kuiz', [AdminContentController::class, 'quiz'])->name('kandungan.kuiz');
     });
 
 /*

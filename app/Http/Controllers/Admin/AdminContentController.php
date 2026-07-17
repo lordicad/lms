@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Grade;
 use App\Models\Lesson;
 use App\Models\Material;
+use App\Models\Quiz;
+use App\Models\QuizAttempt;
 use App\Models\Subject;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -66,12 +68,51 @@ class AdminContentController extends Controller
         ]);
     }
 
+    public function quiz(Request $request): View
+    {
+        $filtered = fn (): Builder => $this->filterByChapter(Quiz::query(), $request);
+
+        $quizzes = $filtered()
+            ->with([
+                'chapter.subject',
+                'chapter.grade',
+                'teacher',
+                // Questions ride along so the preview dialog needs no second request. Only
+                // interactive quizzes have any; a file quiz is a document, not a question set.
+                'questions.options',
+            ])
+            ->withCount(['attempts as attempts_count' => fn (Builder $q) => $q->whereNotNull('completed_at')])
+            ->latest('id')
+            ->paginate(20)
+            ->withQueryString();
+
+        // Attempts are counted through the quiz, so the same Subjek/Tahun filter applies and the
+        // cards keep describing the rows on screen. Every completed attempt counts, retries
+        // included: this reports usage, not standings.
+        $attempts = fn (): Builder => QuizAttempt::query()
+            ->completed()
+            ->whereHas('quiz', fn (Builder $q) => $this->filterByChapter($q, $request));
+
+        $totalAttempts = $attempts()->count();
+        $passCount = $attempts()->passed()->count();
+
+        return view('admin.kandungan.kuiz', [
+            'quizzes' => $quizzes,
+            'totalCount' => $filtered()->count(),
+            'attemptCount' => $totalAttempts,
+            'passCount' => $passCount,
+            'failCount' => $totalAttempts - $passCount,
+            'subjects' => Subject::orderBy('sort_order')->get(),
+            'grades' => Grade::orderBy('level')->get(),
+        ]);
+    }
+
     /**
      * Subjek and Tahun narrow anything hanging off a chapter. They are separate `when()`s, so
      * subject alone, Tahun alone, or the two together all work without a special case.
      *
-     * @param  Builder<Lesson>|Builder<Material>  $query
-     * @return Builder<Lesson>|Builder<Material>
+     * @param  Builder<Lesson>|Builder<Material>|Builder<Quiz>  $query
+     * @return Builder<Lesson>|Builder<Material>|Builder<Quiz>
      */
     private function filterByChapter(Builder $query, Request $request): Builder
     {

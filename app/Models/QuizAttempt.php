@@ -9,6 +9,17 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class QuizAttempt extends Model
 {
+    /**
+     * What the admin oversight page reads as a pass.
+     *
+     * The ministry has set no pass mark and the app deliberately has none: a student is never
+     * told they failed. This is the reporting threshold only, and it matches the celebration
+     * screen's 80% on purpose, so "well done" to a child and "pass" to MOE mean the same thing.
+     * If a real pass mark ever arrives, it belongs in config/lms.php — and it should not silently
+     * move what children are congratulated for.
+     */
+    public const PASS_AT = 80;
+
     protected $fillable = [
         'quiz_id',
         'student_id',
@@ -82,7 +93,23 @@ class QuizAttempt extends Model
      */
     public function isCelebration(): bool
     {
-        return $this->percentage() >= 80;
+        return $this->percentage() >= self::PASS_AT;
+    }
+
+    public function isPassed(): bool
+    {
+        return $this->percentage() >= self::PASS_AT;
+    }
+
+    /**
+     * Attempts at or above the pass mark. Guards max_score, because a quiz whose questions were
+     * all deleted leaves attempts scoring 0/0 — dividing by that would error, and they are not
+     * passes.
+     */
+    public function scopePassed(Builder $query): Builder
+    {
+        return $query->where('max_score', '>', 0)
+            ->whereRaw('(score / max_score) * 100 >= ?', [self::PASS_AT]);
     }
 
     /**

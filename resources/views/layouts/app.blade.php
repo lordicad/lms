@@ -45,9 +45,7 @@
                     <x-nav-dropdown :label="__('Kandungan')" :active="request()->routeIs('admin.kandungan.*')">
                         <x-dropdown-link :href="route('admin.kandungan.video')">{{ __('Video') }}</x-dropdown-link>
                         <x-dropdown-link :href="route('admin.kandungan.bahan')">{{ __('Bahan') }}</x-dropdown-link>
-
-                        {{-- Not built yet: shown so the menu reads complete, but inert rather than a dead link. --}}
-                        <span class="block cursor-not-allowed px-4 py-2.5 text-sm font-semibold text-ink-2/50">{{ __('Kuiz') }}</span>
+                        <x-dropdown-link :href="route('admin.kandungan.kuiz')">{{ __('Kuiz') }}</x-dropdown-link>
                     </x-nav-dropdown>
 
                     <x-nav-link :href="route('admin.bakat')" :active="request()->routeIs('admin.bakat*')" pill>{{ __('Skor Bakat') }}</x-nav-link>
@@ -126,6 +124,7 @@
                     {{-- Flattened on mobile: a hover menu has no meaning on touch. --}}
                     <x-nav-link :href="route('admin.kandungan.video')" :active="request()->routeIs('admin.kandungan.video')" block>{{ __('Kandungan') }}: {{ __('Video') }}</x-nav-link>
                     <x-nav-link :href="route('admin.kandungan.bahan')" :active="request()->routeIs('admin.kandungan.bahan')" block>{{ __('Kandungan') }}: {{ __('Bahan') }}</x-nav-link>
+                    <x-nav-link :href="route('admin.kandungan.kuiz')" :active="request()->routeIs('admin.kandungan.kuiz')" block>{{ __('Kandungan') }}: {{ __('Kuiz') }}</x-nav-link>
                     <x-nav-link :href="route('admin.bakat')" :active="request()->routeIs('admin.bakat*')" block>{{ __('Skor Bakat') }}</x-nav-link>
                 @else
                     <x-nav-link :href="route('belajar.index')" :active="request()->routeIs('belajar.*')" block>{{ __('Belajar') }}</x-nav-link>
