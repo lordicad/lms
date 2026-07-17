@@ -23,20 +23,27 @@
             </a>
 
             {{-- Desktop nav stays on one line: the label set is short on purpose. --}}
-            <div class="ml-2 hidden items-center gap-1 lg:flex">
+            <div class="relative ml-2 hidden items-center gap-1 lg:flex"
+                 x-data="navPill"
+                 @mouseover="follow($event)" @focusin="follow($event)" @mouseleave="settle()">
+                {{-- Shared sliding highlight: glides between tabs and rests on the active one. --}}
+                <span aria-hidden="true" x-cloak x-show="show"
+                      :style="pillStyle()"
+                      class="pointer-events-none absolute rounded-control bg-brand-soft transition-all duration-300 ease-out"></span>
+
                 @if ($user->isTeacher())
-                    <x-nav-link :href="route('cikgu.dashboard')" :active="request()->routeIs('cikgu.dashboard')">{{ __('Papan Pemuka') }}</x-nav-link>
-                    <x-nav-link :href="route('cikgu.video.index')" :active="request()->routeIs('cikgu.video.*')">{{ __('Video') }}</x-nav-link>
-                    <x-nav-link :href="route('cikgu.bahan.index')" :active="request()->routeIs('cikgu.bahan.*')">{{ __('Bahan') }}</x-nav-link>
-                    <x-nav-link :href="route('cikgu.kuiz.index')" :active="request()->routeIs('cikgu.kuiz.*')">{{ __('Kuiz') }}</x-nav-link>
-                    <x-nav-link :href="route('cikgu.bab.index')" :active="request()->routeIs('cikgu.bab.*')">{{ __('Bab') }}</x-nav-link>
-                    <x-nav-link :href="route('cikgu.ranking')" :active="request()->routeIs('cikgu.ranking')">{{ __('Ranking') }}</x-nav-link>
-                    <x-nav-link :href="route('cikgu.bakat')" :active="request()->routeIs('cikgu.bakat')">{{ __('Bakat') }}</x-nav-link>
+                    <x-nav-link :href="route('cikgu.dashboard')" :active="request()->routeIs('cikgu.dashboard')" pill>{{ __('Papan Pemuka') }}</x-nav-link>
+                    <x-nav-link :href="route('cikgu.video.index')" :active="request()->routeIs('cikgu.video.*')" pill>{{ __('Video') }}</x-nav-link>
+                    <x-nav-link :href="route('cikgu.bahan.index')" :active="request()->routeIs('cikgu.bahan.*')" pill>{{ __('Bahan') }}</x-nav-link>
+                    <x-nav-link :href="route('cikgu.kuiz.index')" :active="request()->routeIs('cikgu.kuiz.*')" pill>{{ __('Kuiz') }}</x-nav-link>
+                    <x-nav-link :href="route('cikgu.bab.index')" :active="request()->routeIs('cikgu.bab.*')" pill>{{ __('Bab') }}</x-nav-link>
+                    <x-nav-link :href="route('cikgu.ranking')" :active="request()->routeIs('cikgu.ranking')" pill>{{ __('Ranking') }}</x-nav-link>
+                    <x-nav-link :href="route('cikgu.bakat')" :active="request()->routeIs('cikgu.bakat')" pill>{{ __('Bakat') }}</x-nav-link>
                 @elseif ($user->isAdmin())
-                    <x-nav-link :href="route('admin.bakat')" :active="request()->routeIs('admin.bakat*')">{{ __('Skor Bakat') }}</x-nav-link>
+                    <x-nav-link :href="route('admin.bakat')" :active="request()->routeIs('admin.bakat*')" pill>{{ __('Skor Bakat') }}</x-nav-link>
                 @else
-                    <x-nav-link :href="route('belajar.index')" :active="request()->routeIs('belajar.*')">{{ __('Belajar') }}</x-nav-link>
-                    <x-nav-link :href="route('ranking.index')" :active="request()->routeIs('ranking.index')">{{ __('Ranking') }}</x-nav-link>
+                    <x-nav-link :href="route('belajar.index')" :active="request()->routeIs('belajar.*')" pill>{{ __('Belajar') }}</x-nav-link>
+                    <x-nav-link :href="route('ranking.index')" :active="request()->routeIs('ranking.index')" pill>{{ __('Ranking') }}</x-nav-link>
                 @endif
             </div>
 
