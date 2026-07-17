@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\Student\FavouriteController;
 use App\Http\Controllers\Api\Student\LearnController;
 use App\Http\Controllers\Api\Student\LessonController;
 use Illuminate\Support\Facades\Route;
@@ -37,4 +38,7 @@ Route::middleware('auth:sanctum')->prefix('student')->group(function () {
     Route::get('lessons/{lesson}', [LessonController::class, 'show']);
     Route::post('lessons/{lesson}/viewed', [LessonController::class, 'markViewed']);
     Route::post('lessons/{lesson}/progress', [LessonController::class, 'saveProgress']);
+
+    Route::get('favourites', [FavouriteController::class, 'index']);
+    Route::post('lessons/{lesson}/favourite', [FavouriteController::class, 'toggle']);
 });

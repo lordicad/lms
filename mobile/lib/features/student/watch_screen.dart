@@ -34,6 +34,9 @@ class _WatchScreenState extends State<WatchScreen> {
   int _lastSavedAt = 0; // seconds position last persisted
   DateTime _lastSaveTime = DateTime.fromMillisecondsSinceEpoch(0);
 
+  bool _favourited = false;
+  bool _favSaving = false;
+
   @override
   void initState() {
     super.initState();
@@ -44,7 +47,10 @@ class _WatchScreenState extends State<WatchScreen> {
     try {
       final lesson = await widget.repository.lesson(widget.lessonId);
       if (!mounted) return;
-      setState(() => _lesson = lesson);
+      setState(() {
+        _lesson = lesson;
+        _favourited = lesson.favourited;
+      });
       _setupPlayer(lesson);
     } catch (e) {
       if (mounted) setState(() => _error = e);
@@ -98,6 +104,22 @@ class _WatchScreenState extends State<WatchScreen> {
     if (video == null || !video.value.isInitialized) return;
     if (video.value.isPlaying) {
       _maybeSaveProgress(video.value.position.inSeconds, video.value.duration.inSeconds);
+    }
+  }
+
+  Future<void> _toggleFavourite() async {
+    if (_favSaving) return;
+    setState(() {
+      _favSaving = true;
+      _favourited = !_favourited; // optimistic
+    });
+    try {
+      final result = await widget.repository.toggleFavourite(widget.lessonId);
+      if (mounted) setState(() => _favourited = result);
+    } catch (_) {
+      if (mounted) setState(() => _favourited = !_favourited); // revert
+    } finally {
+      if (mounted) setState(() => _favSaving = false);
     }
   }
 
@@ -212,14 +234,10 @@ class _WatchScreenState extends State<WatchScreen> {
         actions: [
           IconButton(
             tooltip: 'Kegemaran',
-            onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Menyimpan kegemaran akan tersedia tidak lama lagi.'),
-              ),
-            ),
+            onPressed: _favSaving ? null : _toggleFavourite,
             icon: Icon(
-              lesson.favourited ? Icons.favorite : Icons.favorite_border,
-              color: lesson.favourited ? LmsColors.danger : null,
+              _favourited ? Icons.favorite : Icons.favorite_border,
+              color: _favourited ? LmsColors.danger : null,
             ),
           ),
         ],

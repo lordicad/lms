@@ -42,4 +42,9 @@ class ContentRepository {
   Future<void> saveProgress(int lessonId, {required int positionSeconds, int? durationSeconds}) async =>
       _api.saveProgress(await _token(), lessonId,
           positionSeconds: positionSeconds, durationSeconds: durationSeconds);
+
+  Future<List<LessonCard>> favourites() async => _api.favourites(await _token());
+
+  Future<bool> toggleFavourite(int lessonId) async =>
+      _api.toggleFavourite(await _token(), lessonId);
 }

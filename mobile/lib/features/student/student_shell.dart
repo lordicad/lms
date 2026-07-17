@@ -4,6 +4,7 @@ import '../../core/auth/auth_user.dart';
 import '../../core/content/content_repository.dart';
 import '../../shared/widgets/app_header.dart';
 import 'dashboard_tab.dart';
+import 'saved_tab.dart';
 import 'subjects_tab.dart';
 
 /// The student's shell: a branded header, a bottom nav switching between the dashboard and
@@ -29,6 +30,7 @@ class _StudentShellState extends State<StudentShell> {
     final tabs = [
       DashboardTab(repository: _repository, user: widget.user),
       SubjectsTab(repository: _repository),
+      SavedTab(repository: _repository),
     ];
 
     return Scaffold(
@@ -59,6 +61,11 @@ class _StudentShellState extends State<StudentShell> {
             icon: Icon(Icons.menu_book_outlined),
             selectedIcon: Icon(Icons.menu_book),
             label: 'Subjek',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.bookmark_border),
+            selectedIcon: Icon(Icons.bookmark),
+            label: 'Simpan',
           ),
         ],
       ),

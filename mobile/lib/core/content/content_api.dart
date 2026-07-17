@@ -58,6 +58,22 @@ class ContentApi {
     });
   }
 
+  Future<List<LessonCard>> favourites(String token) async {
+    final json = await _get(token, '/student/favourites');
+    final list = json['lessons'];
+    if (list is! List) return const [];
+    return list
+        .whereType<Map<String, dynamic>>()
+        .map(LessonCard.fromJson)
+        .toList(growable: false);
+  }
+
+  /// Toggles the favourite state of a lesson; returns the new state.
+  Future<bool> toggleFavourite(String token, int lessonId) async {
+    final json = await _post(token, '/student/lessons/$lessonId/favourite', const {});
+    return json['favourited'] == true;
+  }
+
   Future<Map<String, dynamic>> _get(String token, String path, {int? grade}) async {
     final query = grade == null ? '' : '?grade=$grade';
     final response = await _http.get(
