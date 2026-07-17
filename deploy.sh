@@ -3,10 +3,10 @@
 # Auto-deploy for LMS MOE (Laravel). Runs on the host, triggered by
 # public/deploy.php (webhook) or by hand from the cPanel Terminal.
 #
-# Steps: git pull -> composer install -> front-end build -> optimize/cache.
-# It does NOT run migrations or seeders — run those by hand when a release needs
-# them:
-#     php artisan migrate --force
+# Steps: git pull -> composer install -> migrate -> front-end build -> optimize/cache.
+#
+# Migrations run automatically. Seeders do NOT — run those by hand when a release
+# needs them:
 #     php artisan db:seed --class=Kurikulum2027Seeder --force
 #
 # Two things are project-specific; they are marked CONFIGURE below.
@@ -52,7 +52,17 @@ else
     echo "!! composer not on PATH; skipping. Run 'composer install' by hand."
 fi
 
-# --- 3. Front-end build -------------------------------------------------------
+# --- 3. Database migrations ---------------------------------------------------
+# --force is required: the deploy shell is non-interactive, so migrate would
+# otherwise refuse to run in production rather than prompt.
+#
+# Non-fatal to match the steps around it. A failure here is louder than it looks:
+# the new code is already checked out and will run against the old schema, so
+# treat "!! migrate failed" in the log as a broken release, not a warning.
+echo "==> migrate"
+"$PHP" artisan migrate --force || echo "!! migrate failed — new code is live against the OLD schema; fix this now."
+
+# --- 4. Front-end build -------------------------------------------------------
 # Build into public/build, then copy it into the served docroot. On this split
 # deployment the docroot is separate from the repo (index.php calls
 # usePublicPath), so the build MUST be copied there or the live site keeps
@@ -79,7 +89,7 @@ elif [ -n "$PUBLIC_DOCROOT" ]; then
     echo "!! PUBLIC_DOCROOT '$PUBLIC_DOCROOT' does not exist; skipping asset sync." >&2
 fi
 
-# --- 4. Optimize & cache ------------------------------------------------------
+# --- 5. Optimize & cache ------------------------------------------------------
 echo "==> Optimize & cache"
 "$PHP" artisan optimize:clear
 "$PHP" artisan config:cache || echo "!! config:cache failed (continuing, app runs uncached)"
