@@ -49,6 +49,7 @@
                     </x-nav-dropdown>
 
                     <x-nav-link :href="route('admin.bakat')" :active="request()->routeIs('admin.bakat*')" pill>{{ __('Skor Bakat') }}</x-nav-link>
+                    <x-nav-link :href="route('admin.murid')" :active="request()->routeIs('admin.murid')" pill>{{ __('Murid') }}</x-nav-link>
                 @else
                     <x-nav-link :href="route('belajar.index')" :active="request()->routeIs('belajar.*')" pill>{{ __('Belajar') }}</x-nav-link>
                     <x-nav-link :href="route('ranking.index')" :active="request()->routeIs('ranking.index')" pill>{{ __('Ranking') }}</x-nav-link>
@@ -126,6 +127,7 @@
                     <x-nav-link :href="route('admin.kandungan.bahan')" :active="request()->routeIs('admin.kandungan.bahan')" block>{{ __('Kandungan') }}: {{ __('Bahan') }}</x-nav-link>
                     <x-nav-link :href="route('admin.kandungan.kuiz')" :active="request()->routeIs('admin.kandungan.kuiz')" block>{{ __('Kandungan') }}: {{ __('Kuiz') }}</x-nav-link>
                     <x-nav-link :href="route('admin.bakat')" :active="request()->routeIs('admin.bakat*')" block>{{ __('Skor Bakat') }}</x-nav-link>
+                    <x-nav-link :href="route('admin.murid')" :active="request()->routeIs('admin.murid')" block>{{ __('Murid') }}</x-nav-link>
                 @else
                     <x-nav-link :href="route('belajar.index')" :active="request()->routeIs('belajar.*')" block>{{ __('Belajar') }}</x-nav-link>
                     <x-nav-link :href="route('ranking.index')" :active="request()->routeIs('ranking.index')" block>{{ __('Ranking') }}</x-nav-link>

@@ -10,6 +10,7 @@ use App\Http\Controllers\Cikgu\QuizStatsController;
 use App\Http\Controllers\Cikgu\TalentController;
 use App\Http\Controllers\Cikgu\TeacherRankingController;
 use App\Http\Controllers\Admin\AdminContentController;
+use App\Http\Controllers\Admin\AdminStudentController;
 use App\Http\Controllers\Admin\AdminTalentController;
 use App\Http\Controllers\YoutubeConnectController;
 use App\Http\Controllers\ChapterBrowseController;
@@ -180,6 +181,8 @@ Route::middleware(['auth', 'role:admin'])
         // 'eksport' must precede the {teacher} wildcard so it is not swallowed by model binding.
         Route::get('bakat/eksport', [AdminTalentController::class, 'export'])->name('bakat.export');
         Route::get('bakat/{teacher}', [AdminTalentController::class, 'show'])->name('bakat.show');
+
+        Route::get('murid', [AdminStudentController::class, 'index'])->name('murid');
 
         // Deactivate/reactivate a teacher's sign-in. POST, not GET: it changes state.
         Route::post('guru/{teacher}/status', [AdminTalentController::class, 'toggleStatus'])->name('guru.status');
