@@ -376,3 +376,224 @@ List<T> _list<T>(Object? raw, T Function(Map<String, dynamic>) fromJson) {
       .map(fromJson)
       .toList(growable: false);
 }
+
+List<int> _intList(Object? raw) {
+  if (raw is! List) return const [];
+  return raw.map(_int).toList(growable: false);
+}
+
+// --- Quiz models (mirror the /api/student/quizzes + /attempts endpoints) ---
+
+class QuizOption {
+  const QuizOption({
+    required this.id,
+    required this.letter,
+    required this.text,
+    this.isCorrect = false,
+  });
+
+  final int id;
+  final String letter;
+  final String text;
+  final bool isCorrect; // only meaningful on the result payload
+
+  factory QuizOption.fromJson(Map<String, dynamic> j) => QuizOption(
+    id: _int(j['id']),
+    letter: _str(j['letter']),
+    text: _str(j['text']),
+    isCorrect: _bool(j['is_correct']),
+  );
+}
+
+class QuizQuestion {
+  const QuizQuestion({
+    required this.id,
+    required this.text,
+    required this.type,
+    required this.points,
+    required this.options,
+  });
+
+  final int id;
+  final String text;
+  final String type; // 'single' | 'multiple'
+  final int points;
+  final List<QuizOption> options;
+
+  bool get isMultiple => type == 'multiple';
+
+  factory QuizQuestion.fromJson(Map<String, dynamic> j) => QuizQuestion(
+    id: _int(j['id']),
+    text: _str(j['text']),
+    type: _str(j['type']),
+    points: _int(j['points']),
+    options: _list(j['options'], QuizOption.fromJson),
+  );
+}
+
+class QuizStart {
+  const QuizStart({
+    required this.attemptId,
+    required this.secondsLeft,
+    required this.quizTitle,
+    required this.questions,
+  });
+
+  final int attemptId;
+  final int? secondsLeft;
+  final String quizTitle;
+  final List<QuizQuestion> questions;
+
+  factory QuizStart.fromJson(Map<String, dynamic> j) => QuizStart(
+    attemptId: _int(j['attempt_id']),
+    secondsLeft: _intOrNull(j['seconds_left']),
+    quizTitle: _str((j['quiz'] as Map<String, dynamic>?)?['title']),
+    questions: _list(j['questions'], QuizQuestion.fromJson),
+  );
+}
+
+class QuizAttemptSummary {
+  const QuizAttemptSummary({
+    required this.id,
+    required this.score,
+    required this.maxScore,
+    required this.percent,
+    required this.countsForRanking,
+  });
+
+  final int id;
+  final int score;
+  final int maxScore;
+  final int percent;
+  final bool countsForRanking;
+
+  factory QuizAttemptSummary.fromJson(Map<String, dynamic> j) => QuizAttemptSummary(
+    id: _int(j['id']),
+    score: _int(j['score']),
+    maxScore: _int(j['max_score']),
+    percent: _int(j['percent']),
+    countsForRanking: _bool(j['counts_for_ranking']),
+  );
+}
+
+class QuizIntro {
+  const QuizIntro({
+    required this.id,
+    required this.title,
+    required this.description,
+    required this.type,
+    required this.durationMinutes,
+    required this.subjectName,
+    required this.chapterLabel,
+    required this.questionCount,
+    required this.maxScore,
+    required this.fileUrl,
+    required this.hasRankedAttempt,
+    required this.myAttempts,
+  });
+
+  final int id;
+  final String title;
+  final String? description;
+  final String type; // 'interactive' | 'file'
+  final int? durationMinutes;
+  final String? subjectName;
+  final String chapterLabel;
+  final int questionCount;
+  final int maxScore;
+  final String? fileUrl;
+  final bool hasRankedAttempt;
+  final List<QuizAttemptSummary> myAttempts;
+
+  bool get isFile => type == 'file';
+
+  factory QuizIntro.fromJson(Map<String, dynamic> j) {
+    final subject = j['subject'] as Map<String, dynamic>?;
+    final chapter = j['chapter'] as Map<String, dynamic>?;
+    final quiz = j['quiz'] as Map<String, dynamic>? ?? const {};
+    return QuizIntro(
+      id: _int(quiz['id']),
+      title: _str(quiz['title']),
+      description: _strOrNull(quiz['description']),
+      type: _str(quiz['type']),
+      durationMinutes: _intOrNull(quiz['duration_minutes']),
+      subjectName: subject == null ? null : _strOrNull(subject['display_name']),
+      chapterLabel: _str(chapter?['label']),
+      questionCount: _int(j['question_count']),
+      maxScore: _int(j['max_score']),
+      fileUrl: _strOrNull(j['file_url']),
+      hasRankedAttempt: _bool(j['has_ranked_attempt']),
+      myAttempts: _list(j['my_attempts'], QuizAttemptSummary.fromJson),
+    );
+  }
+}
+
+class QuizResultQuestion {
+  const QuizResultQuestion({
+    required this.id,
+    required this.text,
+    required this.type,
+    required this.isCorrect,
+    required this.yourOptionIds,
+    required this.options,
+  });
+
+  final int id;
+  final String text;
+  final String type;
+  final bool isCorrect;
+  final List<int> yourOptionIds;
+  final List<QuizOption> options;
+
+  factory QuizResultQuestion.fromJson(Map<String, dynamic> j) => QuizResultQuestion(
+    id: _int(j['id']),
+    text: _str(j['text']),
+    type: _str(j['type']),
+    isCorrect: _bool(j['is_correct']),
+    yourOptionIds: _intList(j['your_option_ids']),
+    options: _list(j['options'], QuizOption.fromJson),
+  );
+}
+
+class QuizResult {
+  const QuizResult({
+    required this.attemptId,
+    required this.score,
+    required this.maxScore,
+    required this.percent,
+    required this.correctCount,
+    required this.questionCount,
+    required this.countsForRanking,
+    required this.isCelebration,
+    required this.quizTitle,
+    required this.questions,
+  });
+
+  final int attemptId;
+  final int score;
+  final int maxScore;
+  final int percent;
+  final int correctCount;
+  final int questionCount;
+  final bool countsForRanking;
+  final bool isCelebration;
+  final String quizTitle;
+  final List<QuizResultQuestion> questions;
+
+  factory QuizResult.fromJson(Map<String, dynamic> j) {
+    final attempt = j['attempt'] as Map<String, dynamic>? ?? const {};
+    final quiz = j['quiz'] as Map<String, dynamic>? ?? const {};
+    return QuizResult(
+      attemptId: _int(attempt['id']),
+      score: _int(attempt['score']),
+      maxScore: _int(attempt['max_score']),
+      percent: _int(attempt['percent']),
+      correctCount: _int(attempt['correct_count']),
+      questionCount: _int(attempt['question_count']),
+      countsForRanking: _bool(attempt['counts_for_ranking']),
+      isCelebration: _bool(attempt['is_celebration']),
+      quizTitle: _str(quiz['title']),
+      questions: _list(j['questions'], QuizResultQuestion.fromJson),
+    );
+  }
+}

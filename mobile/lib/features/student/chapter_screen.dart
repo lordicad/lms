@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../core/content/content_models.dart';
 import '../../core/content/content_repository.dart';
 import '../../core/theme/lms_theme.dart';
+import 'quiz_intro_screen.dart';
 import 'watch_screen.dart';
 import 'widgets/content_widgets.dart';
 
@@ -35,6 +36,19 @@ class _ChapterScreenState extends State<ChapterScreen> {
       MaterialPageRoute(builder: (_) => WatchScreen(repository: widget.repository, lessonId: id)),
     );
     _reload(); // refresh watched/progress ticks after returning
+  }
+
+  Future<void> _openQuiz(QuizItem quiz) async {
+    await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => QuizIntroScreen(
+          repository: widget.repository,
+          quizId: quiz.id,
+          title: quiz.title,
+        ),
+      ),
+    );
+    _reload(); // attempt counts may have changed
   }
 
   @override
@@ -90,7 +104,7 @@ class _ChapterScreenState extends State<ChapterScreen> {
               if (data.quizzes.isNotEmpty) ...[
                 const SectionTitle('Kuiz'),
                 const SizedBox(height: 8),
-                ...data.quizzes.map((q) => _QuizTile(quiz: q)),
+                ...data.quizzes.map((q) => _QuizTile(quiz: q, onTap: () => _openQuiz(q))),
               ],
             ],
           );
@@ -116,20 +130,20 @@ class _MaterialTile extends StatelessWidget {
 }
 
 class _QuizTile extends StatelessWidget {
-  const _QuizTile({required this.quiz});
+  const _QuizTile({required this.quiz, required this.onTap});
   final QuizItem quiz;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
+    final isFile = quiz.type == 'file';
     return ListTile(
       contentPadding: EdgeInsets.zero,
-      leading: const Icon(Icons.quiz_outlined, color: LmsColors.brand),
+      leading: Icon(isFile ? Icons.description_outlined : Icons.quiz_outlined, color: LmsColors.brand),
       title: Text(quiz.title, style: Theme.of(context).textTheme.titleMedium),
       subtitle: Text(quiz.myAttemptsCount > 0 ? 'Percubaan: ${quiz.myAttemptsCount}' : 'Belum dicuba'),
-      trailing: const Chip(label: Text('Akan datang'), visualDensity: VisualDensity.compact),
-      onTap: () => ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Kuiz di mobile akan datang tidak lama lagi.')),
-      ),
+      trailing: const Icon(Icons.chevron_right, color: LmsColors.inkMuted),
+      onTap: onTap,
     );
   }
 }

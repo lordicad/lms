@@ -74,6 +74,30 @@ class ContentApi {
     return json['favourited'] == true;
   }
 
+  Future<QuizIntro> quizIntro(String token, int quizId) async {
+    final json = await _get(token, '/student/quizzes/$quizId');
+    return QuizIntro.fromJson(json);
+  }
+
+  Future<QuizStart> startQuiz(String token, int quizId) async {
+    final json = await _post(token, '/student/quizzes/$quizId/start', const {});
+    return QuizStart.fromJson(json);
+  }
+
+  /// [answers] maps a question id to the selected option ids.
+  Future<QuizResult> submitQuiz(String token, int attemptId, Map<int, List<int>> answers) async {
+    final body = {
+      'answers': answers.map((questionId, optionIds) => MapEntry('$questionId', optionIds)),
+    };
+    final json = await _post(token, '/student/attempts/$attemptId/submit', body);
+    return QuizResult.fromJson(json);
+  }
+
+  Future<QuizResult> quizResult(String token, int attemptId) async {
+    final json = await _get(token, '/student/attempts/$attemptId/result');
+    return QuizResult.fromJson(json);
+  }
+
   Future<Map<String, dynamic>> _get(String token, String path, {int? grade}) async {
     final query = grade == null ? '' : '?grade=$grade';
     final response = await _http.get(
