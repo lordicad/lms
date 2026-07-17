@@ -19,6 +19,50 @@ class QuizController extends StudentApiController
 {
     public function __construct(private readonly QuizGrader $grader) {}
 
+    /**
+     * Every published quiz in the student's Tahun, with their ranked score where finished.
+     * Mirrors the web StudentQuizController (kuiz-saya).
+     */
+    public function list(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        $grade = $this->resolveGrade($request, $user);
+
+        if (! $grade) {
+            return response()->json(['quizzes' => []]);
+        }
+
+        $quizzes = Quiz::published()
+            ->whereHas('chapter', fn ($q) => $q->where('grade_id', $grade->id)->where('is_active', true))
+            ->with('chapter.subject')
+            ->withCount('questions')
+            ->orderByDesc('id')
+            ->get();
+
+        $rankedByQuiz = QuizAttempt::where('student_id', $user->id)
+            ->where('counts_for_ranking', true)
+            ->whereIn('quiz_id', $quizzes->pluck('id'))
+            ->get()
+            ->keyBy('quiz_id');
+
+        return response()->json([
+            'quizzes' => $quizzes->map(function ($quiz) use ($rankedByQuiz) {
+                $ranked = $rankedByQuiz->get($quiz->id);
+
+                return [
+                    'id' => $quiz->id,
+                    'title' => $quiz->title,
+                    'type' => $quiz->type,
+                    'subject_name' => $quiz->chapter?->subject?->displayName(),
+                    'chapter_label' => $quiz->chapter?->label(),
+                    'question_count' => $quiz->questions_count,
+                    'attempted' => $ranked !== null,
+                    'percent' => $ranked?->percentage(),
+                ];
+            })->all(),
+        ]);
+    }
+
     public function intro(Request $request, Quiz $quiz): JsonResponse
     {
         $user = $request->user();

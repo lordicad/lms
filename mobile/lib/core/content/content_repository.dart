@@ -48,6 +48,8 @@ class ContentRepository {
   Future<bool> toggleFavourite(int lessonId) async =>
       _api.toggleFavourite(await _token(), lessonId);
 
+  Future<List<QuizListItem>> quizzes() async => _api.quizzes(await _token());
+
   Future<QuizIntro> quizIntro(int quizId) async => _api.quizIntro(await _token(), quizId);
 
   Future<QuizStart> startQuiz(int quizId) async => _api.startQuiz(await _token(), quizId);

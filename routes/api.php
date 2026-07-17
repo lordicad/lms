@@ -43,7 +43,8 @@ Route::middleware('auth:sanctum')->prefix('student')->group(function () {
     Route::get('favourites', [FavouriteController::class, 'index']);
     Route::post('lessons/{lesson}/favourite', [FavouriteController::class, 'toggle']);
 
-    // Interactive quiz flow: intro -> start attempt -> submit -> result.
+    // Interactive quiz flow: list -> intro -> start attempt -> submit -> result.
+    Route::get('quizzes', [QuizController::class, 'list']);
     Route::get('quizzes/{quiz}', [QuizController::class, 'intro']);
     Route::post('quizzes/{quiz}/start', [QuizController::class, 'start']);
     Route::post('attempts/{attempt}/submit', [QuizController::class, 'submit']);

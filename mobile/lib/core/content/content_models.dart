@@ -597,3 +597,38 @@ class QuizResult {
     );
   }
 }
+
+class QuizListItem {
+  const QuizListItem({
+    required this.id,
+    required this.title,
+    required this.type,
+    required this.subjectName,
+    required this.chapterLabel,
+    required this.questionCount,
+    required this.attempted,
+    required this.percent,
+  });
+
+  final int id;
+  final String title;
+  final String type; // 'interactive' | 'file'
+  final String? subjectName;
+  final String? chapterLabel;
+  final int questionCount;
+  final bool attempted;
+  final int? percent; // ranked score, when attempted
+
+  bool get isFile => type == 'file';
+
+  factory QuizListItem.fromJson(Map<String, dynamic> j) => QuizListItem(
+    id: _int(j['id']),
+    title: _str(j['title']),
+    type: _str(j['type']),
+    subjectName: _strOrNull(j['subject_name']),
+    chapterLabel: _strOrNull(j['chapter_label']),
+    questionCount: _int(j['question_count']),
+    attempted: _bool(j['attempted']),
+    percent: _intOrNull(j['percent']),
+  );
+}

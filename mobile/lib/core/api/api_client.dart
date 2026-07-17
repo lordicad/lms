@@ -23,11 +23,11 @@ class LoginResult {
 class ApiClient {
   ApiClient({http.Client? httpClient}) : _http = httpClient ?? http.Client();
 
-  /// Override per environment, for example:
-  /// flutter run --dart-define=API_BASE_URL=https://lms-moe.weststar-dev.com/api
+  /// Defaults to production; override per environment, for example:
+  /// flutter run --dart-define=API_BASE_URL=http://10.0.2.2:8000/api  (local emulator)
   static const baseUrl = String.fromEnvironment(
     'API_BASE_URL',
-    defaultValue: 'http://10.0.2.2:8000/api',
+    defaultValue: 'https://lms-moe.weststar-dev.com/api',
   );
 
   final http.Client _http;

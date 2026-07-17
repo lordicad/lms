@@ -191,25 +191,19 @@ class _BrandMark extends StatelessWidget {
         DecoratedBox(
           decoration: BoxDecoration(
             color: LmsColors.brand,
-            borderRadius: BorderRadius.all(Radius.circular(8)),
+            borderRadius: BorderRadius.all(Radius.circular(10)),
           ),
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-            child: Text(
-              'LMS',
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.w800,
-              ),
-            ),
+            padding: EdgeInsets.symmetric(horizontal: 11, vertical: 7),
+            child: Icon(Icons.school_rounded, color: Colors.white, size: 22),
           ),
         ),
-        SizedBox(width: 8),
+        SizedBox(width: 10),
         Text(
-          'MOE',
+          'WeLearn',
           style: TextStyle(
             color: LmsColors.ink,
-            fontSize: 20,
+            fontSize: 22,
             fontWeight: FontWeight.w800,
           ),
         ),

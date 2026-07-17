@@ -12,7 +12,7 @@ class ContentApi {
 
   static const baseUrl = String.fromEnvironment(
     'API_BASE_URL',
-    defaultValue: 'http://10.0.2.2:8000/api',
+    defaultValue: 'https://lms-moe.weststar-dev.com/api',
   );
 
   final http.Client _http;
@@ -72,6 +72,16 @@ class ContentApi {
   Future<bool> toggleFavourite(String token, int lessonId) async {
     final json = await _post(token, '/student/lessons/$lessonId/favourite', const {});
     return json['favourited'] == true;
+  }
+
+  Future<List<QuizListItem>> quizzes(String token) async {
+    final json = await _get(token, '/student/quizzes');
+    final list = json['quizzes'];
+    if (list is! List) return const [];
+    return list
+        .whereType<Map<String, dynamic>>()
+        .map(QuizListItem.fromJson)
+        .toList(growable: false);
   }
 
   Future<QuizIntro> quizIntro(String token, int quizId) async {
