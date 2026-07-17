@@ -11,15 +11,24 @@ cPanel Terminal.
 1. `git fetch` + `git reset --hard origin/main` (discards local drift; `.env` and
    `public/uploads/` are untouched — they are not tracked).
 2. `composer install --no-dev --optimize-autoloader` (if composer is on PATH).
-3. `npm ci && npm run build`, then copy `public/build/` into the docroot (if npm
+3. `artisan migrate --force`.
+4. `npm ci && npm run build`, then copy `public/build/` into the docroot (if npm
    is on PATH; otherwise the committed `public/build/` is used).
-4. `artisan optimize:clear`, then rebuild `config` and `view` caches (non-fatal).
+5. `artisan optimize:clear`, then rebuild `config` and `view` caches (non-fatal).
 
-It does **NOT** run migrations or seeders. Run those by hand when a release needs
-them:
+**Migrations run on every deploy**, so a migration merged to `main` reaches the
+production database the moment it is pushed. There is no review gate between the
+two: write migrations that are safe to apply unattended, and take a database
+backup before pushing anything destructive (dropped columns, type changes).
+
+The step is non-fatal so a failure cannot leave the deploy half-finished, which
+means `!! migrate failed` in the log is a **broken release, not a warning** — the
+new code is already live against the old schema.
+
+Seeders are **not** run: they are not idempotent and would re-run on every push.
+Run one by hand when a release needs it:
 
 ```bash
-php artisan migrate --force
 php artisan db:seed --class=Kurikulum2027Seeder --force
 ```
 
