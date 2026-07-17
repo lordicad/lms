@@ -9,6 +9,7 @@ use App\Http\Controllers\Cikgu\QuizController;
 use App\Http\Controllers\Cikgu\QuizStatsController;
 use App\Http\Controllers\Cikgu\TalentController;
 use App\Http\Controllers\Cikgu\TeacherRankingController;
+use App\Http\Controllers\Admin\AdminContentController;
 use App\Http\Controllers\Admin\AdminTalentController;
 use App\Http\Controllers\YoutubeConnectController;
 use App\Http\Controllers\ChapterBrowseController;
@@ -179,6 +180,9 @@ Route::middleware(['auth', 'role:admin'])
         // 'eksport' must precede the {teacher} wildcard so it is not swallowed by model binding.
         Route::get('bakat/eksport', [AdminTalentController::class, 'export'])->name('bakat.export');
         Route::get('bakat/{teacher}', [AdminTalentController::class, 'show'])->name('bakat.show');
+
+        // Kandungan: oversight of every teacher's library. Read-only.
+        Route::get('kandungan/video', [AdminContentController::class, 'video'])->name('kandungan.video');
     });
 
 /*

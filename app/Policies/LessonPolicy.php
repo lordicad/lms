@@ -26,10 +26,12 @@ class LessonPolicy
     }
 
     /**
-     * Students only ever reach published lessons; the owning teacher can preview drafts.
+     * Students only ever reach published lessons; the owning teacher can preview drafts, and MOE
+     * admins can open anything from the oversight list — read-only, so this stays a view-only
+     * exception and does not extend to update/delete.
      */
     public function view(User $user, Lesson $lesson): bool
     {
-        return $lesson->is_published || $user->id === $lesson->teacher_id;
+        return $lesson->is_published || $user->id === $lesson->teacher_id || $user->isAdmin();
     }
 }
