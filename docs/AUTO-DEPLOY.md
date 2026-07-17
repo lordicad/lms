@@ -23,9 +23,19 @@ php artisan migrate --force
 php artisan db:seed --class=Kurikulum2027Seeder --force
 ```
 
-The host has both `composer` and `npm`, so the build happens server-side on each
-deploy. `public/build/` is still committed as a fallback for when the build step
-is unavailable (e.g. the webhook shell lacks Node on PATH).
+The webhook shell has **neither `composer` nor `npm` on PATH**, so both steps
+above skip every time and the deploy log says so:
+
+```
+!! composer not on PATH; skipping. Run 'composer install' by hand.
+!! npm not on PATH; skipping build, using the committed public/build.
+```
+
+So the committed `public/build/` is not a fallback — it **is** what production
+serves. Always run `npm run build` and commit the result alongside any change to
+a Blade view, `resources/js`, or `resources/css`; Tailwind's content globs only
+pick up new classes at build time, so skipping it deploys a stylesheet that is
+missing them.
 
 **Split deployment.** The served docroot is a separate directory from the repo's
 `public/`; its `index.php` calls `usePublicPath(__DIR__)`, so Laravel reads the
