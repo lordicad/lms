@@ -34,9 +34,15 @@ Thumbs.db
 !/public/uploads/*/.gitkeep
 
 # Deploy secrets and owner-supplied inputs.
+# `.env*` above does not cover these: it only matches names that START with .env.
+/.deploy.env
+/autodeploy.md
 /Filezilla_creds.md
 /taste-skill-main.zip
 /deploy/deploy.log
+# Generated dummy-account credential list. Never commit — this repo is public.
+/dummy-credentials.csv
+/gencreds_tmp.php
 
 # Artisan tinker --execute temp files
 __run_*.php
