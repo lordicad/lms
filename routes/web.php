@@ -200,5 +200,6 @@ Route::middleware(['auth', 'role:admin'])
 */
 
 Route::middleware('auth')->get('/api/bab', [ChapterController::class, 'lookup'])->name('api.bab');
+Route::middleware('auth')->get('/api/bab-video', [LessonController::class, 'lookup'])->name('api.bab.video');
 
 require __DIR__.'/auth.php';

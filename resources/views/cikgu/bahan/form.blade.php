@@ -21,19 +21,26 @@
 
             <x-chapter-picker :subjects="$subjects" :grades="$grades" :chapter="$chapter" />
 
-            @if ($lessons->isNotEmpty() || $lesson)
-                <div class="tp-field" style="border-top:1px solid var(--tp-line);padding-top:16px">
-                    <label for="lesson_id" class="tp-label">{{ __('Lampirkan pada video (pilihan)') }}</label>
-                    <select id="lesson_id" name="lesson_id" class="tp-select">
-                        <option value="">{{ __('Tiada. Papar pada halaman Bab sahaja.') }}</option>
-                        @foreach ($lessons as $option)
-                            <option value="{{ $option->id }}" @selected(old('lesson_id', $material->lesson_id) == $option->id)>{{ $option->title }}</option>
-                        @endforeach
-                    </select>
-                    <p class="tp-hint">{{ __('Bahan yang dilampirkan dipaparkan di bawah pemain video, dalam bahagian "Bahan sokongan".') }}</p>
-                    @error('lesson_id') <span class="tp-error">{{ $message }}</span> @enderror
-                </div>
-            @endif
+            {{-- Attach to a video (optional). The list loads the chosen Bab's own videos. --}}
+            <div class="tp-field" style="border-top:1px solid var(--tp-line);padding-top:16px"
+                 x-data="videoAttach({
+                     selected: {{ old('lesson_id', $material->lesson_id) ?: 'null' }},
+                     preset: @js($lessons->map(fn ($l) => ['id' => $l->id, 'title' => $l->title])->values()),
+                     endpoint: '{{ route('api.bab.video') }}',
+                     labels: { loading: @js(__('Memuatkan video...')), none: @js(__('Tiada. Papar pada halaman Bab sahaja.')) },
+                 })"
+                 @chapter-changed.window="onChapter($event.detail.chapter)">
+                <label for="lesson_id" class="tp-label">{{ __('Lampirkan pada video (pilihan)') }}</label>
+                <select id="lesson_id" name="lesson_id" class="tp-select" x-model.number="selected" :disabled="loading">
+                    <option value="" x-text="loading ? labels.loading : labels.none"></option>
+                    <template x-for="v in videos" :key="v.id">
+                        <option :value="v.id" x-text="v.title"></option>
+                    </template>
+                </select>
+                <p class="tp-hint" x-show="! loading && videos.length === 0" x-cloak>{{ __('Tiada video dalam bab ini lagi. Pilih bab yang mempunyai video, atau biarkan kosong.') }}</p>
+                <p class="tp-hint">{{ __('Bahan yang dilampirkan dipaparkan di bawah pemain video, dalam bahagian "Bahan sokongan".') }}</p>
+                @error('lesson_id') <span class="tp-error">{{ $message }}</span> @enderror
+            </div>
         </div>
 
         {{-- File --}}
@@ -66,4 +73,37 @@
             <a href="{{ route('cikgu.bahan.index') }}" class="tp-btn-outline" style="min-height:48px">{{ __('Batal') }}</a>
         </div>
     </form>
+
+    @push('scripts')
+        <script>
+            function videoAttach({ selected, preset, endpoint, labels }) {
+                return {
+                    selected,
+                    videos: preset ?? [],
+                    endpoint,
+                    labels,
+                    loading: false,
+
+                    onChapter(chapterId) {
+                        if (! chapterId) { this.videos = []; return; }
+
+                        const keep = this.selected;
+                        this.loading = true;
+
+                        fetch(`${this.endpoint}?chapter=${chapterId}`, { headers: { 'Accept': 'application/json' } })
+                            .then((response) => response.ok ? response.json() : [])
+                            .then((data) => {
+                                this.videos = data;
+                                // Keep the current pick only if it belongs to the new Bab.
+                                this.$nextTick(() => {
+                                    this.selected = data.some((v) => v.id === keep) ? keep : null;
+                                });
+                            })
+                            .catch(() => { this.videos = []; })
+                            .finally(() => { this.loading = false; });
+                    },
+                };
+            }
+        </script>
+    @endpush
 </x-cikgu-layout>

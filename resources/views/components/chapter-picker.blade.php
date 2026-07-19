@@ -108,6 +108,10 @@
                     loading: false,
 
                     init() {
+                        // Let sibling fields (e.g. the material "attach to a video" list) react to the
+                        // chosen Bab. Harmless where nothing listens (video/quiz forms).
+                        this.$watch('chapter', (value) => this.$dispatch('chapter-changed', { chapter: value }));
+
                         if (this.subject && this.grade) this.reload(true);
                     },
 

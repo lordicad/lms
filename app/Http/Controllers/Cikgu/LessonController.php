@@ -18,6 +18,29 @@ use Illuminate\View\View;
 
 class LessonController extends Controller
 {
+    /**
+     * JSON list of the teacher's own videos in a chapter, for the "Attach to a video"
+     * dropdown on the material form. Mirrors ChapterController@lookup (/api/bab).
+     */
+    public function lookup(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $chapterId = $request->integer('chapter');
+
+        $lessons = $chapterId
+            ? $request->user()->lessons()
+                ->where('chapter_id', $chapterId)
+                ->orderByDesc('id')
+                ->get(['id', 'title'])
+            : collect();
+
+        return response()->json(
+            $lessons->map(fn (Lesson $lesson) => [
+                'id' => $lesson->id,
+                'title' => $lesson->title,
+            ])->values()
+        );
+    }
+
     public function index(Request $request): View
     {
         $lessons = $request->user()->lessons()
