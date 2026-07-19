@@ -18,7 +18,7 @@
         <form method="GET" action="{{ route('ranking.index') }}" style="display:flex;align-items:center;gap:10px">
             <span style="font-family:'Geist',sans-serif;font-size:13.5px;font-weight:700;color:#6C6F87">{{ __('Subjek:') }}</span>
             <select name="subjek" onchange="this.form.submit()"
-                    style="min-height:44px;border:1.5px solid rgba(46,44,80,.12);border-radius:12px;padding:0 14px;background:#fff;font-family:'Geist',sans-serif;font-weight:800;font-size:14px;color:#28293F;cursor:pointer">
+                    style="min-height:44px;border:1.5px solid rgba(46,44,80,.12);border-radius:12px;padding:0 36px 0 14px;-webkit-appearance:none;-moz-appearance:none;appearance:none;background:#fff url(&quot;data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='24'%20height='24'%20viewBox='0%200%2024%2024'%20fill='none'%20stroke='%2328293F'%20stroke-width='2.5'%20stroke-linecap='round'%20stroke-linejoin='round'%3E%3Cpath%20d='M6%209l6%206%206-6'/%3E%3C/svg%3E&quot;) no-repeat right 12px center;background-size:12px;font-family:'Geist',sans-serif;font-weight:800;font-size:14px;color:#28293F;cursor:pointer">
                 <option value="">{{ __('Keseluruhan') }}</option>
                 @foreach ($subjects->groupBy('category') as $category => $group)
                     <optgroup label="{{ \App\Models\Subject::categoryLabel($category) }}">

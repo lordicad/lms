@@ -103,7 +103,7 @@
                 @if ($user->isStudent())
                     <div>
                         <label for="grade_level" style="{{ $labelStyle }}">{{ __('Tahun') }}</label>
-                        <select id="grade_level" name="grade_level" style="{{ $inputStyle }};cursor:pointer">
+                        <select id="grade_level" name="grade_level" style="{{ $inputStyle }};cursor:pointer;-webkit-appearance:none;-moz-appearance:none;appearance:none;background-image:url(&quot;data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='24'%20height='24'%20viewBox='0%200%2024%2024'%20fill='none'%20stroke='%232D2F44'%20stroke-width='2.5'%20stroke-linecap='round'%20stroke-linejoin='round'%3E%3Cpath%20d='M6%209l6%206%206-6'/%3E%3C/svg%3E&quot;);background-repeat:no-repeat;background-position:right 14px center;background-size:12px;padding-right:38px">
                             <option value="">{{ __('Sila pilih Tahun') }}</option>
                             @foreach ($grades as $grade)
                                 <option value="{{ $grade->level }}" @selected(old('grade_level', $user->grade?->level) == $grade->level)>{{ $grade->name }}</option>

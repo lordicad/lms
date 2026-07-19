@@ -152,6 +152,11 @@
             padding: 0 16px; font-family: 'Nunito', sans-serif; font-size: 15px; color: var(--ink-2);
             background: var(--field-bg);
         }
+        .wla-select {
+            appearance: none; -webkit-appearance: none; -moz-appearance: none; padding-right: 42px; cursor: pointer;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236C6F87' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+            background-repeat: no-repeat; background-position: right 16px center; background-size: 16px;
+        }
         .wla-input:focus, .wla-select:focus { outline: none; border-color: var(--brand); box-shadow: 0 0 0 3px rgba(62,107,69,.15); }
         .wla-input[aria-invalid="true"], .wla-select[aria-invalid="true"] { border-color: var(--err-ink); }
         .wla-hint { font-weight: 600; font-size: 12.5px; color: var(--faint); }
