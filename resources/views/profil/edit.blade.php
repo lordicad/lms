@@ -50,17 +50,30 @@
 
             {{-- Badges --}}
             @php($badges = [
-                ['icon' => '🔥', 'name' => __('Rajin Belajar'), 'desc' => __('5 kuiz selesai'), 'got' => $stats['quizzes'] >= 5],
-                ['icon' => '🎯', 'name' => __('Markah Penuh'), 'desc' => __('100% dalam kuiz'), 'got' => $stats['perfect']],
-                ['icon' => '🎬', 'name' => __('Penonton Setia'), 'desc' => __('25 video ditonton'), 'got' => $stats['videos'] >= 25],
-                ['icon' => '🚀', 'name' => __('Top 10'), 'desc' => __('Capai ranking top 10'), 'got' => $stats['rank'] && $stats['rank'] <= 10],
+                ['icon' => '🔥', 'name' => __('Rajin Belajar'), 'desc' => __('5 kuiz selesai'), 'got' => $stats['quizzes'] >= 5, 'tint' => '#FEF0CE', 'ring' => '#E8A33D', 'ribbon' => '#F3B94C'],
+                ['icon' => '🎯', 'name' => __('Markah Penuh'), 'desc' => __('100% dalam kuiz'), 'got' => $stats['perfect'], 'tint' => '#FBE4ED', 'ring' => '#D96A96', 'ribbon' => '#E886AC'],
+                ['icon' => '🎬', 'name' => __('Penonton Setia'), 'desc' => __('25 video ditonton'), 'got' => $stats['videos'] >= 25, 'tint' => '#E9E4F9', 'ring' => '#8A6FD0', 'ribbon' => '#A48CE0'],
+                ['icon' => '🚀', 'name' => __('Top 10'), 'desc' => __('Capai ranking top 10'), 'got' => $stats['rank'] && $stats['rank'] <= 10, 'tint' => '#EDEDF1', 'ring' => '#B9B8C6', 'ribbon' => '#C9C8D4'],
             ])
             <div style="display:flex;flex-direction:column;gap:12px">
                 <h3 style="margin:0;font-family:'Geist',sans-serif;font-size:17px;font-weight:800;color:#28293F">{{ __('Lencana Saya') }}</h3>
                 <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px">
                     @foreach ($badges as $b)
-                        <div style="background:#fff;border:1px solid rgba(46,44,80,.08);border-radius:18px;padding:18px 14px;display:flex;flex-direction:column;align-items:center;gap:6px;box-shadow:0 4px 16px rgba(46,44,80,.04);{{ $b['got'] ? '' : 'opacity:.7' }}">
-                            <span style="font-size:28px;filter:{{ $b['got'] ? 'none' : 'grayscale(1) opacity(.45)' }}">{{ $b['icon'] }}</span>
+                        @php($filter = $b['got'] ? 'none' : 'grayscale(1) opacity(.45)')
+                        <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:6px 0;{{ $b['got'] ? '' : 'opacity:.75' }}">
+                            {{-- Rosette medal (ribbon tails + scalloped medal + tinted disc + emoji) --}}
+                            <div style="position:relative;width:78px;height:90px;display:flex;justify-content:center">
+                                <span style="position:absolute;top:36px;left:21px;width:26px;height:46px;background:{{ $b['ribbon'] }};filter:brightness(.82) saturate(1.15);transform:rotate(28deg);transform-origin:50% 0;clip-path:polygon(0 0,100% 0,100% 100%,50% 74%,0 100%)"></span>
+                                <span style="position:absolute;top:36px;right:21px;width:26px;height:46px;background:{{ $b['ribbon'] }};filter:brightness(.82) saturate(1.15);transform:rotate(-28deg);transform-origin:50% 0;clip-path:polygon(0 0,100% 0,100% 100%,50% 74%,0 100%)"></span>
+                                <span style="position:absolute;top:6px;left:13px;width:52px;height:52px;background:{{ $b['ribbon'] }};border-radius:9px"></span>
+                                <span style="position:absolute;top:6px;left:13px;width:52px;height:52px;background:{{ $b['ribbon'] }};border-radius:9px;transform:rotate(30deg)"></span>
+                                <span style="position:absolute;top:6px;left:13px;width:52px;height:52px;background:{{ $b['ribbon'] }};border-radius:9px;transform:rotate(60deg)"></span>
+                                <span style="position:absolute;top:5px;width:54px;height:54px;border-radius:50%;background:{{ $b['tint'] }};display:grid;place-items:center;box-shadow:0 4px 12px rgba(46,44,80,.16)">
+                                    <span style="width:41px;height:41px;border-radius:50%;background:#fff;border:2px solid {{ $b['ring'] }};display:grid;place-items:center">
+                                        <span style="font-size:19px;filter:{{ $filter }}">{{ $b['icon'] }}</span>
+                                    </span>
+                                </span>
+                            </div>
                             <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:13px;color:#28293F;text-align:center">{{ $b['name'] }}</span>
                             <span style="font-size:11.5px;font-weight:700;color:#8B8AA3;text-align:center">{{ $b['desc'] }}</span>
                         </div>
