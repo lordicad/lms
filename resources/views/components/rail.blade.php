@@ -7,26 +7,14 @@
 --}}
 
 <section x-data="rail()" {{ $attributes }}>
+    {{-- Header matches the inline-styled section headers on the student home so
+         the heading + "See all" line up identically across sections. --}}
     @if ($title)
-        <div class="mb-4 flex items-center justify-between gap-3">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:16px">
             <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:21px;font-weight:800;color:#28293F">{{ $title }}</h2>
-
-            <div class="flex items-center gap-3">
-                @if ($seeAll)
-                    <a href="{{ $seeAll }}" style="font-size:13.5px;font-weight:700">{{ $seeAllLabel ?? __('Lihat semua') }}</a>
-                @endif
-
-                <div class="hidden items-center gap-1.5 sm:flex">
-                    <button type="button" class="rail-btn" @click="nudge(-1)" :disabled="atStart"
-                            aria-label="{{ __('Skrol ke kiri') }}">
-                        <x-icon name="chevron-left" class="h-5 w-5" />
-                    </button>
-                    <button type="button" class="rail-btn" @click="nudge(1)" :disabled="atEnd"
-                            aria-label="{{ __('Skrol ke kanan') }}">
-                        <x-icon name="chevron-right" class="h-5 w-5" />
-                    </button>
-                </div>
-            </div>
+            @if ($seeAll)
+                <a href="{{ $seeAll }}" style="font-size:13.5px;font-weight:700">{{ $seeAllLabel ?? __('Lihat semua') }}</a>
+            @endif
         </div>
     @endif
 
