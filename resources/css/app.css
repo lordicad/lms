@@ -147,6 +147,76 @@
         --sc-wash-amt: 20%;
     }
 
+    /*
+     * WeLearn — the student surface palette. Warm cream + a single teal accent, scoped to
+     * .type-student so the teacher/admin surfaces keep the neutral base tokens above. Same token
+     * NAMES, so every student component (cards, rails, chips, buttons, nav) recolours for free.
+     * .type-student sits after :root, so its light values win; .theme-dark .type-student is more
+     * specific still, so the warm-dark ramp wins whenever the server emits <html class="theme-dark">.
+     */
+    .type-student {
+        --c-bg: 250 245 238;          /* #FAF5EE warm cream */
+        --c-surface: 255 255 255;     /* #FFFFFF cards, panels, sidebar */
+        --c-surface-2: 236 235 244;   /* #ECEBF4 pill tracks, hover, inputs */
+        --c-surface-3: 239 237 249;   /* #EFEDF9 pressed, popovers */
+        --c-ink: 40 41 63;            /* #28293F */
+        --c-ink-2: 139 138 163;       /* #8B8AA3 muted */
+
+        --c-brand: 23 144 123;        /* #17907B teal — the one accent */
+        --c-brand-strong: 43 179 155; /* #2BB39B hover */
+        --c-brand-soft: 220 242 238;  /* #DCF2EE accent wash (active nav, tints) */
+        --c-on-brand: 255 255 255;
+
+        --c-success: 15 122 104;      /* #0F7A68 */
+        --c-success-soft: 220 242 238;/* #DCF2EE */
+        --c-warn: 138 106 18;         /* #8A6A12 */
+        --c-warn-soft: 254 240 206;   /* #FEF0CE */
+        --c-danger: 194 73 54;        /* #C24936 */
+        --c-danger-soft: 253 231 224; /* #FDE7E0 */
+
+        --border-subtle: rgba(46, 44, 80, 0.08);
+        --border-strong: rgba(46, 44, 80, 0.14);
+
+        --shadow-card: 0 4px 16px rgba(46, 44, 80, 0.04);
+        --shadow-lift: 0 10px 24px rgba(46, 44, 80, 0.09);
+        --shadow-hero: 0 10px 30px rgba(66, 118, 174, 0.18);
+
+        /* Rounder than the base: WeLearn cards are 18px, panels 22px, controls 12px. */
+        --r-sm: 0.75rem;
+        --r-control: 0.75rem;
+        --r-md: 1.125rem;
+        --r-lg: 1.25rem;
+        --r-xl: 1.375rem;
+    }
+
+    .theme-dark .type-student {
+        --c-bg: 27 23 18;             /* #1B1712 warm charcoal */
+        --c-surface: 36 31 24;        /* #241F18 */
+        --c-surface-2: 44 38 32;      /* #2C2620 */
+        --c-surface-3: 53 46 39;      /* #352E27 */
+        --c-ink: 243 238 230;         /* #F3EEE6 */
+        --c-ink-2: 169 166 176;       /* #A9A6B0 */
+
+        --c-brand: 43 179 155;        /* #2BB39B — teal lifts on dark */
+        --c-brand-strong: 70 201 178; /* #46C9B2 */
+        --c-brand-soft: 23 51 46;     /* #17332E */
+        --c-on-brand: 8 17 15;
+
+        --c-success: 63 201 168;
+        --c-success-soft: 23 51 46;
+        --c-warn: 227 179 65;
+        --c-warn-soft: 58 47 20;
+        --c-danger: 235 94 90;
+        --c-danger-soft: 58 30 26;
+
+        --border-subtle: rgba(255, 255, 255, 0.08);
+        --border-strong: rgba(255, 255, 255, 0.14);
+
+        --shadow-card: 0 4px 16px rgba(0, 0, 0, 0.4);
+        --shadow-lift: 0 10px 24px rgba(0, 0, 0, 0.55);
+        --shadow-hero: 0 10px 30px rgba(0, 0, 0, 0.6);
+    }
+
     html {
         -webkit-text-size-adjust: 100%;
     }
