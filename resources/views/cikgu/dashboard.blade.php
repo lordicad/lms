@@ -40,10 +40,6 @@
         <div class="tp-card" style="overflow:hidden">
             <div style="display:flex;align-items:center;gap:12px;padding:18px 22px;border-bottom:1px solid rgba(46,44,80,.07)">
                 <h2 class="tp-g" style="font-size:17px;font-weight:800;color:#28293F;flex:1">{{ __('Video Terbaru Saya') }}</h2>
-                <a href="{{ route('cikgu.video.create') }}" class="tp-btn tp-btn-sm">
-                    <x-icon name="plus" class="h-4 w-4" />
-                    {{ __('Muat Naik Video') }}
-                </a>
             </div>
 
             @forelse ($recentLessons as $lesson)
@@ -71,7 +67,6 @@
         <div class="tp-card" style="overflow:hidden">
             <div style="display:flex;align-items:center;gap:12px;padding:18px 22px;border-bottom:1px solid rgba(46,44,80,.07)">
                 <h2 class="tp-g" style="font-size:17px;font-weight:800;color:#28293F;flex:1">{{ __('Kuiz Saya') }}</h2>
-                <a href="{{ route('cikgu.kuiz.mod') }}" class="tp-btn-outline tp-btn-sm">+ {{ __('Cipta Kuiz') }}</a>
             </div>
 
             @forelse ($recentQuizzes as $quiz)
