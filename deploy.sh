@@ -85,6 +85,19 @@ if [ -n "$PUBLIC_DOCROOT" ] && [ -d "$PUBLIC_DOCROOT" ]; then
         rm -rf "$PUBLIC_DOCROOT/build"
         cp -a public/build "$PUBLIC_DOCROOT/build"
     fi
+
+    # Also mirror public/images -> docroot so file-referenced static assets (e.g.
+    # the WeLearn auth logo at /images/welearn-banner.png) resolve. Additive — no
+    # --delete — so nothing already living in the docroot's images/ is removed.
+    if [ -d public/images ]; then
+        echo "==> Syncing public/images -> $PUBLIC_DOCROOT/images"
+        mkdir -p "$PUBLIC_DOCROOT/images"
+        if command -v rsync >/dev/null 2>&1; then
+            rsync -a public/images/ "$PUBLIC_DOCROOT/images/"
+        else
+            cp -a public/images/. "$PUBLIC_DOCROOT/images/"
+        fi
+    fi
 elif [ -n "$PUBLIC_DOCROOT" ]; then
     echo "!! PUBLIC_DOCROOT '$PUBLIC_DOCROOT' does not exist; skipping asset sync." >&2
 fi
