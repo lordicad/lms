@@ -11,6 +11,7 @@ use App\Http\Controllers\Cikgu\TalentController;
 use App\Http\Controllers\Cikgu\TeacherRankingController;
 use App\Http\Controllers\Admin\AdminContentController;
 use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\AdminStudentController;
 use App\Http\Controllers\Admin\AdminTalentController;
 use App\Http\Controllers\YoutubeConnectController;
@@ -182,9 +183,15 @@ Route::middleware(['auth', 'role:admin'])
         // Utama — the read-only platform overview.
         Route::get('/', AdminDashboardController::class)->name('dashboard');
 
-        // Pengguna and Tetapan are signposted in the nav but not yet built out; a faithful
-        // placeholder keeps the shell complete without pretending a feature exists.
-        Route::view('pengguna', 'admin.pengguna')->name('pengguna');
+        // Pengguna — CRUD for teacher and student accounts.
+        Route::get('pengguna', [AdminUserController::class, 'index'])->name('pengguna');
+        Route::get('pengguna/baru', [AdminUserController::class, 'create'])->name('pengguna.create');
+        Route::post('pengguna', [AdminUserController::class, 'store'])->name('pengguna.store');
+        Route::get('pengguna/{user}/sunting', [AdminUserController::class, 'edit'])->name('pengguna.edit');
+        Route::put('pengguna/{user}', [AdminUserController::class, 'update'])->name('pengguna.update');
+        Route::delete('pengguna/{user}', [AdminUserController::class, 'destroy'])->name('pengguna.destroy');
+        Route::post('pengguna/{user}/status', [AdminUserController::class, 'toggleStatus'])->name('pengguna.status');
+
         Route::view('tetapan', 'admin.tetapan')->name('tetapan');
 
         // Admin's own profile, in the admin shell (the shared profile.* endpoints do the saving).
