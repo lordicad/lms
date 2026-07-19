@@ -144,32 +144,5 @@
             </form>
         </section>
 
-        {{-- Delete account --}}
-        <section style="{{ $cardStyle }};border-color:rgba(194,73,54,.3)">
-            <h2 style="{{ $h2Style }};color:#C24936">{{ __('Padam akaun') }}</h2>
-            <p style="margin:0 0 14px;font-size:14px;color:#8B8AA3;max-width:60ch">{{ __('Akaun dan semua rekod anda akan dipadam sepenuhnya. Tindakan ini tidak boleh dibatalkan.') }}</p>
-            <form method="POST" action="{{ route('profile.destroy') }}" x-data="{ confirming: false }" style="display:flex;flex-direction:column;gap:16px">
-                @csrf
-                @method('DELETE')
-                <button type="button" x-show="! confirming" @click="confirming = true" style="align-self:flex-start;min-height:48px;border:none;cursor:pointer;border-radius:13px;background:#C24936;color:#fff;font-family:'Geist',sans-serif;font-weight:800;font-size:15px;padding:0 22px">🗑 {{ __('Padam Akaun Saya') }}</button>
-                <div x-show="confirming" x-cloak style="display:flex;flex-direction:column;gap:14px">
-                    <div>
-                        <label for="delete_password" style="{{ $labelStyle }}">{{ __('Masukkan kata laluan untuk mengesahkan') }}</label>
-                        <input id="delete_password" name="password" type="password" style="{{ $inputStyle }}">
-                        @error('password', 'userDeletion')<p style="{{ $errStyle }}">{{ $message }}</p>@enderror
-                    </div>
-                    <div style="display:flex;gap:12px">
-                        <button type="submit" style="min-height:48px;border:none;cursor:pointer;border-radius:13px;background:#C24936;color:#fff;font-family:'Geist',sans-serif;font-weight:800;font-size:14.5px;padding:0 22px">{{ __('Ya, padam akaun saya') }}</button>
-                        <button type="button" @click="confirming = false" class="wl-btn-secondary" style="min-height:48px;cursor:pointer;border-radius:13px;border:1.5px solid rgba(46,44,80,.12);background:#fff;color:#28293F;font-family:'Geist',sans-serif;font-weight:800;font-size:14.5px;padding:0 22px">{{ __('Batal') }}</button>
-                    </div>
-                </div>
-            </form>
-        </section>
     </div>
-
-    @push('scripts')
-        <script>
-            document.addEventListener('alpine:init', () => {}); // Alpine present via app.js
-        </script>
-    @endpush
 </x-dynamic-component>
