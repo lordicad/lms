@@ -45,8 +45,12 @@
             font-family:'Nunito',sans-serif; color:var(--tp-body);
         }
         .tp *,.tp *::before,.tp *::after { box-sizing:border-box; }
-        .tp a { color:var(--tp-teal); text-decoration:none; }
-        .tp a:hover { color:var(--tp-teal-hover); }
+        .tp a { text-decoration:none; }
+        /* Only plain (class-less) content links get the teal colour. Links styled as buttons,
+           the avatar, nav items, etc. carry their own class colour and must not be overridden
+           (a teal button link would otherwise get teal text on a teal fill — invisible). */
+        .tp a:not([class]) { color:var(--tp-teal); }
+        .tp a:not([class]):hover { color:var(--tp-teal-hover); }
         .tp h1,.tp h2,.tp h3 { margin:0; }
         .tp input:focus,.tp select:focus,.tp textarea:focus {
             outline:none; border-color:var(--tp-teal) !important;
