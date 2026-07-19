@@ -24,7 +24,7 @@
                 :heading="__('Cikgu')"
                 :sub="__('Gambaran keseluruhan cikgu, penyumbang terbaik dan kandungan paling berjaya')">
 
-    <div style="display:flex;flex-direction:column;gap:32px">
+    <div style="display:flex;flex-direction:column;gap:48px">
 
         {{-- ============================ Teacher stats ============================ --}}
         <div style="display:flex;flex-direction:column;gap:12px">
