@@ -253,7 +253,7 @@
                 <div class="wl-col" style="gap:22px">
                     <span class="wl-eyebrow"><span class="dot"></span>{{ __('Belajar · Membesar · Berjaya') }}</span>
 
-                    <h1 class="wl-h1">{{ __('Belajar di mana-mana,') }}<br>{{ __('bila-bila masa.') }}</h1>
+                    <h1 class="wl-h1">{{ __('Belajar di mana-mana,') }}<br><span style="color:#56793F">{{ __('bila-bila masa.') }}</span></h1>
 
                     <p class="wl-lead">{{ __('Video pelajaran, bahan dan kuiz daripada cikgu anda — semuanya tersusun mengikut Subjek dan Tahun, sedia ditonton seperti perkhidmatan penstriman kegemaran anda.') }}</p>
 
