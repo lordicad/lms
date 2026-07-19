@@ -7,7 +7,7 @@
         $h2Style = 'margin:0 0 6px;font-family:\'Geist\',sans-serif;font-size:20px;font-weight:800;color:#28293F';
     @endphp
 
-    <div style="display:flex;flex-direction:column;gap:22px;max-width:820px;margin:0 auto;width:100%">
+    <div style="display:flex;flex-direction:column;gap:32px;max-width:820px;margin:0 auto;width:100%">
         @if ($stats)
             {{-- Header --}}
             <div style="background:#fff;border:1px solid rgba(46,44,80,.08);border-radius:22px;padding:28px;display:flex;align-items:center;gap:22px;box-shadow:0 8px 24px rgba(46,44,80,.06);flex-wrap:wrap">
