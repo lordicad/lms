@@ -210,6 +210,10 @@
         .tp-typecard:hover { box-shadow:var(--tp-shadow-lift); transform:translateY(-2px); }
         .tp-typeopt { border:1.5px solid var(--tp-line-2); background:#fff; border-radius:14px; padding:16px 18px; display:flex; flex-direction:column; gap:6px; align-items:flex-start; text-align:left; cursor:pointer; text-decoration:none; }
         .tp-typeopt-head { display:flex; align-items:center; gap:10px; }
+        /* Quiz builder answer-option row. Kept as a class (not inline) because an Alpine
+           :style string would replace the whole style attribute and drop display:flex. */
+        .tp-optrow { border:1.5px solid rgba(46,44,80,.1); border-radius:13px; padding:10px 14px; display:flex; align-items:center; gap:12px; background:#fff; transition:all .12s; }
+        .tp-optrow.is-correct { border-color:#17907B; background:#E6F5F1; }
         .tp-typeopt:hover { border-color:var(--tp-teal); }
         .tp-typeopt.is-on { border-color:var(--tp-teal); background:var(--tp-active-bg); }
         .tp-formwrap { display:flex; flex-direction:column; gap:20px; max-width:860px; }

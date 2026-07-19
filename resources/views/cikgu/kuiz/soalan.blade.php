@@ -84,8 +84,7 @@
                         </legend>
 
                         <template x-for="(option, oIndex) in question.options" :key="option.uid">
-                            <div style="border:1.5px solid rgba(46,44,80,.1);border-radius:13px;padding:10px 14px;display:flex;align-items:center;gap:12px;background:#fff;transition:all .12s"
-                                 :style="option.is_correct ? 'border-color:#17907B;background:#E6F5F1' : ''">
+                            <div class="tp-optrow" :class="{ 'is-correct': option.is_correct }">
                                 <label style="display:flex;flex-shrink:0;cursor:pointer;align-items:center">
                                     <input :type="question.question_type === 'single' ? 'radio' : 'checkbox'"
                                            :name="`correct-${question.uid}`" :checked="option.is_correct"
