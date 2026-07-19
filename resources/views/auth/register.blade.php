@@ -38,8 +38,8 @@
                 <input id="username" name="username" type="text" value="{{ old('username') }}"
                        required autocomplete="username" class="wla-input" placeholder="cth: aiman123"
                        aria-describedby="username-help" @error('username') aria-invalid="true" @enderror>
+                <span id="username-help" class="wla-hint">{{ __('Untuk log masuk. Contoh: aisyah.t3') }}</span>
             </label>
-            <p id="username-help" class="wla-hint">{{ __('Untuk log masuk. Contoh: aisyah.t3') }}</p>
             @error('username')<p class="wla-field-error">{{ $message }}</p>@enderror
 
             {{-- Student-only: Tahun --}}
@@ -73,8 +73,8 @@
                                class="wla-input" style="background:var(--field-warn)"
                                placeholder="cth: WBK-2026" aria-describedby="teacher-code-help"
                                @error('teacher_code') aria-invalid="true" @enderror>
+                        <span id="teacher-code-help" class="wla-hint">{{ __('Dapatkan kod ini daripada pentadbir sekolah anda.') }}</span>
                     </label>
-                    <p id="teacher-code-help" class="wla-hint">{{ __('Dapatkan kod ini daripada pentadbir sekolah anda.') }}</p>
                     @error('teacher_code')<p class="wla-field-error">{{ $message }}</p>@enderror
                 </div>
             </div>
@@ -84,8 +84,8 @@
                 <input id="password" name="password" type="password" required autocomplete="new-password"
                        class="wla-input" placeholder="••••••••" aria-describedby="password-help"
                        @error('password') aria-invalid="true" @enderror>
+                <span id="password-help" class="wla-hint">{{ __('Sekurang-kurangnya 6 aksara.') }}</span>
             </label>
-            <p id="password-help" class="wla-hint">{{ __('Sekurang-kurangnya 6 aksara.') }}</p>
             @error('password')<p class="wla-field-error">{{ $message }}</p>@enderror
 
             <label for="password_confirmation" class="wla-label">
