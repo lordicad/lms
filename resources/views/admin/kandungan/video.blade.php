@@ -1,120 +1,90 @@
-<x-app-layout :title="__('Kandungan Video')">
-    <header>
-        <h1 class="text-3xl font-extrabold text-ink">{{ __('Kandungan Video') }}</h1>
-        <p class="mt-1 max-w-prose text-ink-2">
-            {{ __('Semua video yang dimuat naik oleh guru, merentas setiap subjek dan Tahun.') }}
-        </p>
-    </header>
+@php
+    $cols = 'grid-template-columns:minmax(0,2.2fr) 1.4fr .8fr .6fr 1fr .9fr .7fr;gap:12px;align-items:center';
+    $stats = [
+        ['icon' => '🎥', 'label' => __('Jumlah video'),      'value' => $totalCount],
+        ['icon' => '▶️', 'label' => __('Video YouTube'),     'value' => $youtubeCount],
+        ['icon' => '⬆️', 'label' => __('Video dimuat naik'), 'value' => $uploadCount],
+    ];
+@endphp
 
-    <section class="mt-8">
-        <h2 class="sr-only">{{ __('Ringkasan video') }}</h2>
+<x-admin-layout :title="__('Kandungan Video')"
+                :heading="__('Kandungan Video')"
+                :sub="__('Setiap video yang dimuat naik oleh cikgu, merentas semua subjek dan Tahun')">
 
-        <dl class="grid gap-4 sm:grid-cols-3">
-            <div class="card p-5">
-                <dt class="flex items-center gap-2 text-sm font-bold text-ink-2">
-                    <x-icon name="video" class="h-5 w-5" />
-                    {{ __('Jumlah video') }}
-                </dt>
-                <dd class="mt-2 text-3xl font-extrabold tabular-nums text-ink">{{ number_format($totalCount) }}</dd>
-            </div>
+    <div style="display:flex;flex-direction:column;gap:18px"
+         x-data="{
+             lesson: null,
+             open(data) { this.lesson = data; document.body.classList.add('overflow-hidden'); },
+             close() { this.lesson = null; document.body.classList.remove('overflow-hidden'); },
+         }"
+         @keydown.escape.window="close()">
 
-            <div class="card p-5">
-                <dt class="flex items-center gap-2 text-sm font-bold text-ink-2">
-                    <x-icon name="youtube" class="h-5 w-5" />
-                    {{ __('Video YouTube') }}
-                </dt>
-                <dd class="mt-2 text-3xl font-extrabold tabular-nums text-ink">{{ number_format($youtubeCount) }}</dd>
-            </div>
+        @include('admin.kandungan._tabs', ['active' => 'video'])
 
-            <div class="card p-5">
-                <dt class="flex items-center gap-2 text-sm font-bold text-ink-2">
-                    <x-icon name="upload" class="h-5 w-5" />
-                    {{ __('Video muat naik') }}
-                </dt>
-                <dd class="mt-2 text-3xl font-extrabold tabular-nums text-ink">{{ number_format($uploadCount) }}</dd>
-            </div>
-        </dl>
-    </section>
+        {{-- Stats --}}
+        <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px">
+            @foreach ($stats as $s)
+                <div style="background:#fff;border:1px solid rgba(46,44,80,.08);border-radius:16px;padding:20px 22px;display:flex;flex-direction:column;gap:8px;box-shadow:0 2px 10px rgba(46,44,80,.04)">
+                    <span style="font-size:13.5px;font-weight:700;color:#8B8AA3">{{ $s['icon'] }} {{ $s['label'] }}</span>
+                    <span style="font-family:'Geist',sans-serif;font-size:28px;font-weight:800;color:#28293F">{{ number_format($s['value']) }}</span>
+                </div>
+            @endforeach
+        </div>
 
-    {{-- Same Subjek/Tahun filter the teacher lists use; each side works alone or together. --}}
-    <div class="mt-8">
-        <x-cikgu-filters :subjects="$subjects" :grades="$grades" :action="route('admin.kandungan.video')" />
-    </div>
+        @include('admin.kandungan._filters', ['subjects' => $subjects, 'grades' => $grades, 'action' => route('admin.kandungan.video')])
 
-    {{--
-        Preview is a modal rather than a trip to the watch page: an admin is auditing a list, not
-        studying, so they should stay on it. Deliberately not <x-player>, which counts views and
-        saves watch progress — this is a look, not a lesson.
-
-        The player markup lives in an <template x-if>, so closing destroys the element and the
-        video (or the YouTube iframe) stops. Merely hiding it would keep the audio playing.
-    --}}
-    <section class="mt-6"
-             x-data="{
-                 lesson: null,
-                 open(data) { this.lesson = data; document.body.classList.add('overflow-hidden'); },
-                 close() { this.lesson = null; document.body.classList.remove('overflow-hidden'); },
-             }"
-             @keydown.escape.window="close()">
         @if ($lessons->isEmpty())
-            <x-empty icon="video" :title="__('Tiada video untuk dipaparkan')"
-                     :text="__('Tiada video yang sepadan dengan tapisan ini.')" />
+            <div class="tp-empty">
+                <span style="font-size:30px">🎬</span>
+                <h3 style="margin:0;font-family:'Geist',sans-serif;font-size:19px;font-weight:800;color:#28293F">{{ __('Tiada video untuk dipaparkan') }}</h3>
+                <p style="margin:0;font-size:14.5px;color:#8B8AA3;max-width:380px">{{ __('Tiada video yang sepadan dengan tapisan ini.') }}</p>
+            </div>
         @else
-            <div class="card overflow-x-auto p-2">
-                <table class="w-full min-w-[60rem] text-sm">
-                    <thead>
-                        <tr class="border-b border-line text-left text-ink-2">
-                            <th class="px-3 py-2 font-semibold">{{ __('Tajuk Video') }}</th>
-                            <th class="px-3 py-2 font-semibold">{{ __('Subjek') }}</th>
-                            <th class="px-3 py-2 font-semibold">{{ __('Tahun') }}</th>
-                            <th class="px-3 py-2 text-right font-semibold">{{ __('Tontonan') }}</th>
-                            <th class="px-3 py-2 font-semibold">{{ __('Tarikh Dimuat Naik') }}</th>
-                            <th class="px-3 py-2 text-right font-semibold">{{ __('Kegemaran') }}</th>
-                            <th class="px-3 py-2 text-right font-semibold">{{ __('Tindakan') }}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
+            <div style="background:#fff;border:1px solid rgba(46,44,80,.08);border-radius:18px;overflow:hidden;box-shadow:0 2px 10px rgba(46,44,80,.04)">
+                <div style="overflow-x:auto">
+                    <div style="min-width:860px">
+                        {{-- Header --}}
+                        <div style="display:grid;{{ $cols }};padding:14px 20px;border-bottom:1px solid rgba(46,44,80,.08)">
+                            <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:#8B8AA3">{{ __('Tajuk Video') }}</span>
+                            <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:#8B8AA3">{{ __('Subjek') }}</span>
+                            <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:#8B8AA3">{{ __('Tahun') }}</span>
+                            <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:#8B8AA3">{{ __('Tontonan') }}</span>
+                            <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:#8B8AA3">{{ __('Tarikh Siar') }}</span>
+                            <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:#8B8AA3">{{ __('Kegemaran') }}</span>
+                            <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:#8B8AA3;text-align:right">{{ __('Tindakan') }}</span>
+                        </div>
                         @foreach ($lessons as $lesson)
-                            <tr class="border-b border-line/60 last:border-0 hover:bg-surface-2/60">
-                                <td class="px-3 py-2">
-                                    <span class="block font-bold text-ink">{{ $lesson->title }}</span>
-                                    <span class="block text-xs text-ink-2">{{ $lesson->teacher?->name }}</span>
-                                </td>
-                                <td class="px-3 py-2 text-ink-2">{{ $lesson->chapter->subject->displayName() }}</td>
-                                <td class="px-3 py-2 text-ink-2">{{ $lesson->chapter->grade->name }}</td>
-                                <td class="px-3 py-2 text-right tabular-nums text-ink-2">{{ number_format($lesson->views_count) }}</td>
-                                <td class="px-3 py-2 tabular-nums text-ink-2">{{ $lesson->created_at->translatedFormat('j M Y') }}</td>
-                                <td class="px-3 py-2 text-right tabular-nums text-ink-2">{{ number_format($lesson->favourites_count) }}</td>
-                                <td class="px-3 py-2 text-right">
-                                    <button type="button" class="btn-ghost btn-sm"
-                                            @click="open(@js([
-                                                'title' => $lesson->title,
-                                                'teacher' => $lesson->teacher?->name,
-                                                'kind' => $lesson->isYoutube() ? 'youtube' : 'upload',
-                                                'src' => $lesson->isYoutube() ? $lesson->embedUrl() : $lesson->videoUrl(),
-                                                'poster' => $lesson->thumbnailUrl(),
-                                            ]))">
-                                        <x-icon name="eye" class="h-4 w-4" />
-                                        {{ __('Lihat') }}
-                                        <span class="sr-only">{{ $lesson->title }}</span>
-                                    </button>
-                                </td>
-                            </tr>
+                            <div class="tp-tr" style="display:grid;{{ $cols }};padding:12px 20px;border-bottom:1px solid rgba(46,44,80,.05)">
+                                <div style="display:flex;flex-direction:column;gap:1px;min-width:0">
+                                    <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:13.5px;color:#28293F;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $lesson->title }}</span>
+                                    <span style="font-size:11.5px;color:#8B8AA3">{{ $lesson->teacher?->name }}</span>
+                                </div>
+                                <span style="font-size:13px;font-weight:700;color:#4276AE">{{ $lesson->chapter->subject->displayName() }}</span>
+                                <span style="font-size:13px;font-weight:700;color:#6C6F87">{{ $lesson->chapter->grade->name }}</span>
+                                <span style="font-size:13px;font-weight:700;color:#6C6F87">{{ number_format($lesson->views_count) }}</span>
+                                <span style="font-size:13px;font-weight:700;color:#6C6F87">{{ $lesson->created_at->translatedFormat('j M Y') }}</span>
+                                <span style="font-size:13px;font-weight:700;color:#6C6F87">{{ number_format($lesson->favourites_count) }}</span>
+                                <button type="button" class="tp-linkbtn" style="justify-self:end"
+                                        @click="open(@js([
+                                            'title' => $lesson->title,
+                                            'teacher' => $lesson->teacher?->name,
+                                            'kind' => $lesson->isYoutube() ? 'youtube' : 'upload',
+                                            'src' => $lesson->isYoutube() ? $lesson->embedUrl() : $lesson->videoUrl(),
+                                            'poster' => $lesson->thumbnailUrl(),
+                                        ]))">
+                                    👁 {{ __('Lihat') }}<span class="sr-only">{{ $lesson->title }}</span>
+                                </button>
+                            </div>
                         @endforeach
-                    </tbody>
-                </table>
+                    </div>
+                </div>
             </div>
 
-            <div class="mt-4">
-                {{ $lessons->links() }}
-            </div>
+            <div>{{ $lessons->links() }}</div>
         @endif
 
-        {{--
-            The whole dialog is an x-if rather than an x-show: closing must *remove* the player,
-            not just hide it, or a hidden YouTube iframe keeps playing audio over the page.
-            x-if also means there is no stale overlay left able to swallow clicks.
-        --}}
+        {{-- Preview modal — a look, not a lesson: deliberately not the watch page (no view counted).
+             x-if so closing destroys the player and its audio. --}}
         <template x-if="lesson">
             <div class="fixed inset-0 z-50 flex items-center justify-center p-4"
                  role="dialog" aria-modal="true" :aria-label="lesson.title">
@@ -151,5 +121,5 @@
                 </div>
             </div>
         </template>
-    </section>
-</x-app-layout>
+    </div>
+</x-admin-layout>

@@ -1,213 +1,152 @@
-<x-app-layout :title="__('Murid')">
-    <header>
-        <h1 class="text-3xl font-extrabold text-ink">{{ __('Murid') }}</h1>
-        <p class="mt-1 max-w-prose text-ink-2">
-            {{ __('Gambaran keseluruhan murid dan aktiviti mereka di platform.') }}
-        </p>
-    </header>
+@php
+    $scols = 'grid-template-columns:minmax(0,1.8fr) .9fr 1fr 1.3fr 1fr .6fr .6fr;gap:12px;align-items:center';
 
-    {{--
-        Counts describe the school, not the table: they stay put when the filter below changes.
-    --}}
-    <section class="mt-8">
-        <h2 class="sr-only">{{ __('Ringkasan murid') }}</h2>
+    // Podium chrome per rank: medal, block height + gradient, avatar ring/tint. Exact from the prototype.
+    $pMeta = [
+        1 => ['medal' => '🥇', 'h' => 96, 'block' => 'linear-gradient(180deg,#F5CB5E,#E3A31C)', 'ring' => '#F0C24B', 'bg' => '#FEF3D3', 'fg' => '#8A6A12'],
+        2 => ['medal' => '🥈', 'h' => 68, 'block' => 'linear-gradient(180deg,#D5DAE2,#AEB6C2)', 'ring' => '#C7CDD6', 'bg' => '#EDF0F4', 'fg' => '#5B6472'],
+        3 => ['medal' => '🥉', 'h' => 50, 'block' => 'linear-gradient(180deg,#E0A987,#C07B52)', 'ring' => '#D9A188', 'bg' => '#F8E7DE', 'fg' => '#9A5B3C'],
+    ];
+@endphp
 
-        <dl class="grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-7">
-            <div class="card p-5">
-                <dt class="flex items-center gap-2 text-sm font-bold text-ink-2">
-                    <x-icon name="users" class="h-5 w-5" />
-                    {{ __('Jumlah') }}
-                </dt>
-                <dd class="mt-2 text-3xl font-extrabold tabular-nums text-ink">{{ number_format($totalStudents) }}</dd>
+<x-admin-layout :title="__('Murid')"
+                :heading="__('Murid')"
+                :sub="__('Gambaran keseluruhan murid dan aktiviti mereka di platform')">
+
+    <div style="display:flex;flex-direction:column;gap:22px">
+
+        {{-- Stats: total + one per Tahun --}}
+        <div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:12px">
+            <div style="background:#fff;border:1px solid rgba(46,44,80,.08);border-radius:14px;padding:16px 18px;display:flex;flex-direction:column;gap:6px;box-shadow:0 2px 10px rgba(46,44,80,.04)">
+                <span style="font-size:12.5px;font-weight:700;color:#8B8AA3">👥 {{ __('Jumlah') }}</span>
+                <span style="font-family:'Geist',sans-serif;font-size:24px;font-weight:800;color:#28293F">{{ number_format($totalStudents) }}</span>
             </div>
-
             @foreach ($grades as $grade)
-                <div class="card p-5">
-                    <dt class="text-sm font-bold text-ink-2">{{ $grade->name }}</dt>
-                    <dd class="mt-2 text-3xl font-extrabold tabular-nums text-ink">
-                        {{ number_format($countsByGrade[$grade->level] ?? 0) }}
-                    </dd>
+                <div style="background:#fff;border:1px solid rgba(46,44,80,.08);border-radius:14px;padding:16px 18px;display:flex;flex-direction:column;gap:6px;box-shadow:0 2px 10px rgba(46,44,80,.04)">
+                    <span style="font-size:12.5px;font-weight:700;color:#8B8AA3">{{ $grade->name }}</span>
+                    <span style="font-family:'Geist',sans-serif;font-size:24px;font-weight:800;color:#28293F">{{ number_format($countsByGrade[$grade->level] ?? 0) }}</span>
                 </div>
             @endforeach
-        </dl>
-    </section>
+        </div>
 
-    {{--
-        ======================================================================
-        Senarai murid
-        ======================================================================
-    --}}
-    <section class="mt-10">
-        <h2 class="text-xl font-extrabold text-ink">{{ __('Senarai Murid') }}</h2>
+        {{-- Roster --}}
+        <div style="display:flex;flex-direction:column;gap:12px">
+            <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:17px;font-weight:800;color:#28293F">{{ __('Senarai Murid') }}</h2>
 
-        <form method="GET" action="{{ route('admin.murid') }}" class="mt-4 flex flex-wrap items-end gap-3">
-            {{-- Keep every podium's subject choice while the roster filter changes. --}}
-            @foreach ($podiums as $podium)
-                @if ($podium->subjectSlug)
-                    <input type="hidden" name="subjek_{{ $podium->grade->level }}" value="{{ $podium->subjectSlug }}">
-                @endif
-            @endforeach
-
-            <div>
-                <label for="tahun" class="label mb-1">{{ __('Tahun') }}</label>
-                <select id="tahun" name="tahun" class="input min-h-[44px] py-2" onchange="this.form.submit()">
+            <form method="GET" action="{{ route('admin.murid') }}" style="display:flex;flex-direction:column;gap:6px;align-self:flex-start">
+                @foreach ($podiums as $podium)
+                    @if ($podium->subjectSlug)
+                        <input type="hidden" name="subjek_{{ $podium->grade->level }}" value="{{ $podium->subjectSlug }}">
+                    @endif
+                @endforeach
+                <label style="font-family:'Geist',sans-serif;font-size:12.5px;font-weight:800;color:#6C6F87">{{ __('Tahun') }}</label>
+                <select name="tahun" class="tp-filter-select" style="min-width:150px" onchange="this.form.submit()">
                     <option value="">{{ __('Semua tahun') }}</option>
                     @foreach ($grades as $grade)
                         <option value="{{ $grade->level }}" @selected($gradeLevel === $grade->level)>{{ $grade->name }}</option>
                     @endforeach
                 </select>
-            </div>
+                <noscript><button type="submit" class="tp-btn-ghost">{{ __('Tapis') }}</button></noscript>
+            </form>
 
-            <noscript><button type="submit" class="btn-secondary btn-sm">{{ __('Tapis') }}</button></noscript>
-
-            @if ($gradeLevel)
-                <a href="{{ route('admin.murid', request()->except('tahun')) }}" class="btn-ghost btn-sm">{{ __('Kosongkan') }}</a>
-            @endif
-        </form>
-
-        <div class="mt-4">
             @if ($students->isEmpty())
-                <x-empty icon="users" :title="__('Tiada murid untuk dipaparkan')"
-                         :text="__('Tiada murid yang sepadan dengan tapisan ini.')" />
-            @else
-                <div class="card overflow-x-auto p-2">
-                    <table class="w-full min-w-[60rem] text-sm">
-                        <thead>
-                            <tr class="border-b border-line text-left text-ink-2">
-                                <th class="px-3 py-2 font-semibold">{{ __('Nama Murid') }}</th>
-                                <th class="px-3 py-2 font-semibold">{{ __('Tahun') }}</th>
-                                <th class="px-3 py-2 text-right font-semibold">{{ __('Video Ditonton') }}</th>
-                                <th class="px-3 py-2 text-right font-semibold">{{ __('Bahan Dimuat Turun') }}</th>
-                                <th class="px-3 py-2 text-right font-semibold">{{ __('Percubaan Kuiz') }}</th>
-                                <th class="px-3 py-2 text-right font-semibold">{{ __('Lulus') }}</th>
-                                <th class="px-3 py-2 text-right font-semibold">{{ __('Tidak lulus') }}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($students as $student)
-                                <tr class="border-b border-line/60 last:border-0 hover:bg-surface-2/60">
-                                    <td class="px-3 py-2">
-                                        <span class="block font-bold text-ink">{{ $student->name }}</span>
-                                        <span class="block text-xs text-ink-2">{{ $student->username }}</span>
-                                    </td>
-                                    <td class="px-3 py-2 text-ink-2">{{ $student->grade?->name ?? '—' }}</td>
-                                    <td class="px-3 py-2 text-right tabular-nums text-ink-2">{{ number_format($student->videos_viewed) }}</td>
-
-                                    {{-- Downloads are counted per file, never per student, so there is no
-                                         honest number to put here. An em dash beats inventing one. --}}
-                                    <td class="px-3 py-2 text-right text-ink-2">—</td>
-
-                                    <td class="px-3 py-2 text-right tabular-nums text-ink-2">{{ number_format($student->attempts_count) }}</td>
-                                    <td class="px-3 py-2 text-right tabular-nums">
-                                        @if ($student->attempts_count > 0)
-                                            <span class="font-bold text-success">{{ number_format($student->pass_count) }}</span>
-                                        @else
-                                            <span class="text-ink-2">—</span>
-                                        @endif
-                                    </td>
-                                    <td class="px-3 py-2 text-right tabular-nums">
-                                        @if ($student->attempts_count > 0)
-                                            <span class="font-bold text-danger">{{ number_format($student->attempts_count - $student->pass_count) }}</span>
-                                        @else
-                                            <span class="text-ink-2">—</span>
-                                        @endif
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                <div class="tp-empty">
+                    <span style="font-size:30px">🧑‍🎓</span>
+                    <h3 style="margin:0;font-family:'Geist',sans-serif;font-size:19px;font-weight:800;color:#28293F">{{ __('Tiada murid untuk dipaparkan') }}</h3>
+                    <p style="margin:0;font-size:14.5px;color:#8B8AA3;max-width:380px">{{ __('Tiada murid yang sepadan dengan tapisan ini.') }}</p>
                 </div>
-
-                <p class="mt-3 text-xs text-ink-2">
-                    {{ __('Bahan dimuat turun tidak direkodkan per murid — hanya jumlah muat turun bagi setiap fail. Lulus bermaksud :percent% atau lebih.', ['percent' => \App\Models\QuizAttempt::PASS_AT]) }}
-                </p>
-
-                <div class="mt-4">{{ $students->links() }}</div>
+            @else
+                <div style="background:#fff;border:1px solid rgba(46,44,80,.08);border-radius:18px;overflow:hidden;box-shadow:0 2px 10px rgba(46,44,80,.04)">
+                    <div style="overflow-x:auto">
+                        <div style="min-width:860px">
+                            <div style="display:grid;{{ $scols }};padding:14px 20px;border-bottom:1px solid rgba(46,44,80,.08)">
+                                <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:#8B8AA3">{{ __('Nama Murid') }}</span>
+                                <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:#8B8AA3">{{ __('Tahun') }}</span>
+                                <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:#8B8AA3">{{ __('Video Ditonton') }}</span>
+                                <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:#8B8AA3">{{ __('Bahan Dimuat Turun') }}</span>
+                                <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:#8B8AA3">{{ __('Percubaan Kuiz') }}</span>
+                                <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:#8B8AA3">{{ __('Lulus') }}</span>
+                                <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:#8B8AA3">{{ __('Gagal') }}</span>
+                            </div>
+                            @foreach ($students as $student)
+                                @php($has = $student->attempts_count > 0)
+                                <div class="tp-tr" style="display:grid;{{ $scols }};padding:12px 20px;border-bottom:1px solid rgba(46,44,80,.05)">
+                                    <div style="display:flex;flex-direction:column;gap:1px;min-width:0">
+                                        <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:13.5px;color:#28293F">{{ $student->name }}</span>
+                                        <span style="font-size:11.5px;color:#8B8AA3">{{ $student->username }}</span>
+                                    </div>
+                                    <span style="font-size:13px;font-weight:700;color:#6C6F87">{{ $student->grade?->name ?? '—' }}</span>
+                                    <span style="font-size:13px;font-weight:700;color:#6C6F87">{{ number_format($student->videos_viewed) }}</span>
+                                    {{-- Downloads are counted per file, never per student — an em dash beats inventing one. --}}
+                                    <span style="font-size:13px;font-weight:700;color:#8B8AA3">—</span>
+                                    <span style="font-size:13px;font-weight:700;color:#4276AE">{{ number_format($student->attempts_count) }}</span>
+                                    <span style="font-size:13px;font-weight:800;color:{{ $has ? '#0F7A68' : '#8B8AA3' }}">{{ $has ? number_format($student->pass_count) : '—' }}</span>
+                                    <span style="font-size:13px;font-weight:800;color:{{ $has ? '#C24936' : '#8B8AA3' }}">{{ $has ? number_format($student->attempts_count - $student->pass_count) : '—' }}</span>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+                <span style="font-size:12.5px;color:#8B8AA3">{{ __('Muat turun bahan tidak direkodkan bagi setiap murid — hanya jumlah bagi setiap fail. Lulus bermaksud :percent% atau lebih.', ['percent' => \App\Models\QuizAttempt::PASS_AT]) }}</span>
+                <div>{{ $students->links() }}</div>
             @endif
         </div>
-    </section>
 
-    {{--
-        ======================================================================
-        Murid Teratas — a podium per Tahun
-        ======================================================================
-    --}}
-    <section class="mt-12">
-        <h2 class="text-xl font-extrabold text-ink">{{ __('Murid Teratas') }}</h2>
-        <p class="mt-1 max-w-prose text-sm text-ink-2">
-            {{ __('Tiga murid paling aktif bagi setiap Tahun. Keaktifan = video ditonton + percubaan kuiz + kegemaran. Ia mengukur penglibatan, bukan markah — jadi ia berbeza daripada papan Ranking yang dilihat murid.') }}
-        </p>
+        {{-- ========================= Top students per Tahun ========================= --}}
+        <div style="display:flex;flex-direction:column;gap:14px">
+            <div style="display:flex;flex-direction:column;gap:2px">
+                <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:17px;font-weight:800;color:#28293F">🌟 {{ __('Murid Terbaik') }}</h2>
+                <span style="font-size:13px;color:#8B8AA3;max-width:640px;line-height:1.5">{{ __('Tiga murid paling aktif dalam setiap Tahun. Aktiviti = video ditonton + percubaan kuiz + kegemaran. Ia mengukur penyertaan, bukan markah — jadi berbeza daripada papan Ranking yang dilihat murid.') }}</span>
+            </div>
 
-        <div class="mt-6 space-y-8">
             @foreach ($podiums as $podium)
-                <div class="card p-5">
-                    {{-- Year label, with that year's own subject filter beside it. --}}
-                    <div class="flex flex-wrap items-center justify-between gap-3">
-                        <h3 class="flex items-center gap-2">
-                            <span class="chip bg-brand-soft text-brand">{{ $podium->grade->name }}</span>
-                        </h3>
+                {{-- Visual order 2nd, 1st, 3rd — winner raised in the middle; ranks with no student are dropped. --}}
+                @php($slots = array_values(array_filter([
+                    isset($podium->students[1]) ? [2, $podium->students[1]] : null,
+                    isset($podium->students[0]) ? [1, $podium->students[0]] : null,
+                    isset($podium->students[2]) ? [3, $podium->students[2]] : null,
+                ])))
+                <div style="background:#fff;border:1px solid rgba(46,44,80,.08);border-radius:18px;padding:20px 24px;display:flex;flex-direction:column;gap:14px;box-shadow:0 2px 10px rgba(46,44,80,.04)">
+                    <div style="display:flex;align-items:center;gap:12px">
+                        <span style="background:#E4EEF9;color:#2E6CA8;border-radius:999px;padding:5px 14px;font-family:'Geist',sans-serif;font-size:12.5px;font-weight:800">{{ $podium->grade->name }}</span>
 
-                        <form method="GET" action="{{ route('admin.murid') }}" class="flex items-end gap-2">
-                            {{-- Preserve the roster filter and every other year's subject. --}}
+                        <form method="GET" action="{{ route('admin.murid') }}" style="margin-left:auto">
                             @if ($gradeLevel) <input type="hidden" name="tahun" value="{{ $gradeLevel }}"> @endif
                             @foreach ($podiums as $other)
                                 @if ($other->grade->level !== $podium->grade->level && $other->subjectSlug)
                                     <input type="hidden" name="subjek_{{ $other->grade->level }}" value="{{ $other->subjectSlug }}">
                                 @endif
                             @endforeach
-
-                            <label for="subjek_{{ $podium->grade->level }}" class="sr-only">{{ __('Subjek') }}</label>
-                            <select id="subjek_{{ $podium->grade->level }}" name="subjek_{{ $podium->grade->level }}"
-                                    class="input min-h-[40px] py-1.5 text-sm" onchange="this.form.submit()">
+                            <select name="subjek_{{ $podium->grade->level }}" class="tp-filter-select" style="min-width:170px;min-height:42px;border-radius:11px;font-size:13px" onchange="this.form.submit()">
                                 <option value="">{{ __('Semua subjek') }}</option>
-                                @foreach ($subjects->where('id', '!=', null) as $subject)
+                                @foreach ($subjects as $subject)
                                     <option value="{{ $subject->slug }}" @selected($podium->subjectSlug === $subject->slug)>{{ $subject->displayName() }}</option>
                                 @endforeach
                             </select>
-
-                            <noscript><button type="submit" class="btn-secondary btn-sm">{{ __('Tapis') }}</button></noscript>
+                            <noscript><button type="submit" class="tp-btn-ghost">{{ __('Tapis') }}</button></noscript>
                         </form>
                     </div>
 
-                    @if ($podium->students->isEmpty())
-                        <p class="mt-6 text-center text-sm text-ink-2">{{ __('Belum ada aktiviti murid untuk Tahun ini.') }}</p>
+                    @if (empty($slots))
+                        <span style="font-size:13px;color:#8B8AA3;text-align:center;padding:14px 0">{{ __('Tiada aktiviti murid untuk Tahun ini lagi.') }}</span>
                     @else
-                        {{-- Podium order: 2nd, 1st, 3rd — the winner stands in the middle on the tallest
-                             block. Ordered by rank in the DOM for screen readers, then re-ordered
-                             visually, so the markup still reads 1-2-3. --}}
-                        @php
-                            $blocks = [
-                                ['rank' => 2, 'height' => 'h-14', 'order' => 'order-1', 'tone' => 'bg-surface-3'],
-                                ['rank' => 1, 'height' => 'h-24', 'order' => 'order-2', 'tone' => 'bg-brand'],
-                                ['rank' => 3, 'height' => 'h-10', 'order' => 'order-3', 'tone' => 'bg-surface-3'],
-                            ];
-                        @endphp
-
-                        <ol class="mt-6 flex items-end justify-center gap-3 sm:gap-6">
-                            @foreach ($blocks as $block)
-                                @php($student = $podium->students[$block['rank'] - 1] ?? null)
-
-                                @if ($student)
-                                    <li class="{{ $block['order'] }} flex w-28 flex-col items-center sm:w-40">
-                                        <x-avatar :user="$student" size="sm" />
-
-                                        <p class="mt-2 w-full truncate text-center text-sm font-bold text-ink">{{ $student->name }}</p>
-                                        <p class="text-xs text-ink-2">{{ $student->effort }} {{ __('mata keaktifan') }}</p>
-
-                                        <div class="{{ $block['height'] }} {{ $block['tone'] }} mt-2 flex w-full items-center justify-center rounded-t-card">
-                                            <span @class([
-                                                'text-2xl font-extrabold tabular-nums',
-                                                'text-on-brand' => $block['rank'] === 1,
-                                                'text-ink-2' => $block['rank'] !== 1,
-                                            ])>{{ $block['rank'] }}</span>
-                                        </div>
-                                    </li>
-                                @endif
+                        <div style="display:flex;align-items:flex-end;justify-content:center;gap:14px;padding:26px 0 0">
+                            @foreach ($slots as [$rank, $student])
+                                @php($m = $pMeta[$rank])
+                                <div style="display:flex;flex-direction:column;align-items:center;gap:6px;width:150px">
+                                    <span style="position:relative">
+                                        <span style="width:52px;height:52px;border-radius:50%;background:{{ $m['bg'] }};color:{{ $m['fg'] }};display:grid;place-items:center;font-family:'Geist',sans-serif;font-weight:800;font-size:15px;border:3px solid {{ $m['ring'] }}">{{ $student->initials() }}</span>
+                                        <span style="position:absolute;bottom:-8px;right:-8px;font-size:22px;filter:drop-shadow(0 2px 4px rgba(46,44,80,.25))">{{ $m['medal'] }}</span>
+                                    </span>
+                                    <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:13.5px;color:#28293F;text-align:center">{{ $student->name }}</span>
+                                    <span style="font-size:11.5px;font-weight:700;color:#8B8AA3;text-align:center">{{ $student->effort }} {{ __('mata aktiviti') }}</span>
+                                    <div style="width:100%;height:{{ $m['h'] }}px;border-radius:14px 14px 6px 6px;background:{{ $m['block'] }};display:grid;place-items:center;color:#fff;font-family:'Geist',sans-serif;font-weight:800;font-size:22px;box-shadow:0 6px 16px rgba(46,44,80,.15)">{{ $rank }}</div>
+                                </div>
                             @endforeach
-                        </ol>
+                        </div>
                     @endif
                 </div>
             @endforeach
         </div>
-    </section>
-</x-app-layout>
+    </div>
+</x-admin-layout>

@@ -102,7 +102,9 @@ class ProfileController extends Controller
             Storage::disk('uploads')->delete($oldAvatar);
         }
 
-        return redirect()->route('profile.edit')->with('status', __('Profil berjaya dikemas kini.'));
+        // back(), not a fixed route: each role edits its profile on its own surface (the admin has a
+        // dedicated page), so returning to where the form was submitted keeps everyone in their shell.
+        return back()->with('status', __('Profil berjaya dikemas kini.'));
     }
 
     public function destroy(Request $request): RedirectResponse

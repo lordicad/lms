@@ -1,60 +1,98 @@
-<x-app-layout :title="$result->teacher->name">
-    <a href="{{ route('admin.bakat') }}" class="inline-flex items-center gap-2 text-sm font-bold text-ink-2 hover:text-ink">
-        <x-icon name="arrow-left" class="h-4 w-4" />
-        {{ __('Kembali ke senarai') }}
-    </a>
+@php
+    $r = $result;
+    $bars = [
+        ['label' => __('Penglibatan'),        'hint' => __('Tontonan + kegemaran murid (unik)'),          'value' => number_format((int) round($r->raw['engagement'])),                                                     'norm' => $r->norm['engagement'] ?? 0],
+        ['label' => __('Kualiti'),            'hint' => __('Kadar kegemaran per penonton'),               'value' => round($r->raw['quality'] * 100, 1).'%',                                                                'norm' => $r->norm['quality'] ?? 0],
+        ['label' => __('Hasil Pembelajaran'), 'hint' => __('Beza markah kuiz penonton vs purata bab'),    'value' => $r->raw['outcome'] === null ? '—' : (($r->raw['outcome'] > 0 ? '+' : '').$r->raw['outcome']),          'norm' => $r->norm['outcome'] ?? 0],
+        ['label' => __('Keluasan'),           'hint' => __('Bilangan bab disumbang'),                     'value' => (int) $r->raw['breadth'],                                                                              'norm' => $r->norm['breadth'] ?? 0],
+    ];
+    $lcols = 'grid-template-columns:minmax(0,2fr) 1fr .7fr .7fr .9fr;gap:12px;align-items:center';
+@endphp
 
-    <header class="mt-4 flex flex-wrap items-center gap-4">
-        <x-avatar :user="$result->teacher" size="lg" />
-        <div>
-            <h1 class="text-3xl font-extrabold text-ink">{{ $result->teacher->name }}</h1>
-            <p class="text-ink-2">
-                {{ $result->teacher->email ?? '—' }}
-                @if ($result->channels > 0)
-                    · {{ __(':n channel YouTube disahkan', ['n' => $result->channels]) }}
-                @endif
-            </p>
-        </div>
-    </header>
+<x-admin-layout :title="$r->teacher->name"
+                :heading="$r->teacher->name"
+                :sub="$r->teacher->email ? $r->teacher->email.($r->channels > 0 ? ' · '.trans_choice('{1}:n channel YouTube disahkan|[2,*]:n channel YouTube disahkan', $r->channels, ['n' => $r->channels]) : '') : '—'">
 
-    <section class="card card-pad mt-6">
-        <x-talent-scorecard :result="$result" />
-    </section>
+    <div style="display:flex;flex-direction:column;gap:20px">
 
-    <section class="mt-6">
-        <h2 class="text-xl font-extrabold text-ink">{{ __('Pecahan mengikut video') }}</h2>
+        <a href="{{ route('admin.bakat') }}" class="tp-linkbtn is-muted" style="align-self:flex-start;padding:0">
+            ← {{ __('Kembali ke senarai') }}
+        </a>
 
-        @if ($result->lessons->isEmpty())
-            <x-empty icon="video" :title="__('Belum ada video dikira')"
-                     :text="__('Guru ini belum ada video yang dikira untuk skor bakat.')" />
-        @else
-            <div class="card mt-3 overflow-x-auto p-2">
-                <table class="w-full min-w-[36rem] text-sm">
-                    <thead>
-                        <tr class="border-b border-line text-left text-ink-2">
-                            <th class="px-3 py-2 font-semibold">{{ __('Video') }}</th>
-                            <th class="px-3 py-2 font-semibold">{{ __('Milik') }}</th>
-                            <th class="px-3 py-2 text-right font-semibold">{{ __('Jangkauan') }}</th>
-                            <th class="px-3 py-2 text-right font-semibold">{{ __('Kegemaran') }}</th>
-                            <th class="px-3 py-2 text-right font-semibold">{{ __('Tamat tonton') }}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($result->lessons as $entry)
-                            <tr class="border-b border-line/60 last:border-0" style="--sc: {{ $entry->lesson->chapter->subject->rgb }}">
-                                <td class="px-3 py-2">
-                                    <span class="font-bold text-ink">{{ $entry->lesson->title }}</span>
-                                    <span class="block text-xs text-ink-2">{{ $entry->lesson->chapter->subject->name }} · Bab {{ $entry->lesson->chapter->number }}</span>
-                                </td>
-                                <td class="px-3 py-2"><x-ownership-badge :lesson="$entry->lesson" /></td>
-                                <td class="px-3 py-2 text-right tabular-nums text-ink">{{ $entry->reach }}</td>
-                                <td class="px-3 py-2 text-right tabular-nums text-ink">{{ $entry->favourites }}</td>
-                                <td class="px-3 py-2 text-right tabular-nums text-ink">{{ $entry->completion }}</td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+        {{-- Talent scorecard: the transparent headline + four sub-scores, in the WeLearn palette. --}}
+        <div style="background:#fff;border:1px solid rgba(46,44,80,.08);border-radius:18px;padding:24px;box-shadow:0 2px 10px rgba(46,44,80,.04);display:flex;flex-direction:column;gap:20px">
+            <div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px">
+                <div style="display:flex;flex-direction:column;gap:2px">
+                    <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#8B8AA3">{{ __('Skor Bakat') }}</span>
+                    @if ($r->sufficient && $r->headline !== null)
+                        <span style="font-family:'Geist',sans-serif;font-size:48px;font-weight:800;line-height:1;color:#28293F">{{ $r->headline }}<span style="font-size:22px;font-weight:800;color:#8B8AA3">/100</span></span>
+                    @else
+                        <span style="font-family:'Geist',sans-serif;font-size:24px;font-weight:800;color:#8B8AA3">{{ __('Data belum mencukupi') }}</span>
+                    @endif
+                </div>
+                <span style="font-size:13px;color:#8B8AA3">
+                    {{ __(':n murid terlibat', ['n' => $r->engaged_students]) }}
+                    @unless ($r->sufficient)
+                        · <span style="color:#8A6A12;font-weight:700">{{ __('perlu sekurang-kurangnya :min untuk skor', ['min' => config('talent.min_engaged_students')]) }}</span>
+                    @endunless
+                </span>
             </div>
-        @endif
-    </section>
-</x-app-layout>
+
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px">
+                @foreach ($bars as $bar)
+                    <div style="border:1px solid rgba(46,44,80,.08);border-radius:14px;padding:16px">
+                        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+                            <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:14px;color:#28293F">{{ $bar['label'] }}</span>
+                            <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:14px;color:#28293F">{{ $bar['value'] }}</span>
+                        </div>
+                        <div style="margin-top:10px;height:8px;border-radius:999px;background:rgba(46,44,80,.07);overflow:hidden">
+                            <div style="height:100%;border-radius:999px;background:#17907B;width:{{ round(($bar['norm']) * 100) }}%"></div>
+                        </div>
+                        <p style="margin:8px 0 0;font-size:12px;color:#8B8AA3">{{ $bar['hint'] }}</p>
+                    </div>
+                @endforeach
+            </div>
+
+            <x-talent-disclaimer />
+        </div>
+
+        {{-- Per-lesson breakdown --}}
+        <div style="display:flex;flex-direction:column;gap:12px">
+            <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:17px;font-weight:800;color:#28293F">{{ __('Pecahan mengikut video') }}</h2>
+
+            @if ($r->lessons->isEmpty())
+                <div class="tp-empty">
+                    <span style="font-size:30px">🎬</span>
+                    <h3 style="margin:0;font-family:'Geist',sans-serif;font-size:19px;font-weight:800;color:#28293F">{{ __('Belum ada video dikira') }}</h3>
+                    <p style="margin:0;font-size:14.5px;color:#8B8AA3;max-width:380px">{{ __('Guru ini belum ada video yang dikira untuk skor bakat.') }}</p>
+                </div>
+            @else
+                <div style="background:#fff;border:1px solid rgba(46,44,80,.08);border-radius:18px;overflow:hidden;box-shadow:0 2px 10px rgba(46,44,80,.04)">
+                    <div style="overflow-x:auto">
+                        <div style="min-width:640px">
+                            <div style="display:grid;{{ $lcols }};padding:14px 20px;border-bottom:1px solid rgba(46,44,80,.08)">
+                                <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:#8B8AA3">{{ __('Video') }}</span>
+                                <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:#8B8AA3">{{ __('Milik') }}</span>
+                                <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:#8B8AA3">{{ __('Jangkauan') }}</span>
+                                <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:#8B8AA3">{{ __('Kegemaran') }}</span>
+                                <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:#8B8AA3">{{ __('Tamat tonton') }}</span>
+                            </div>
+                            @foreach ($r->lessons as $entry)
+                                <div class="tp-tr" style="display:grid;{{ $lcols }};padding:12px 20px;border-bottom:1px solid rgba(46,44,80,.05)">
+                                    <div style="display:flex;flex-direction:column;gap:1px;min-width:0">
+                                        <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:13.5px;color:#28293F;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $entry->lesson->title }}</span>
+                                        <span style="font-size:11.5px;color:#8B8AA3">{{ $entry->lesson->chapter->subject->name }} · {{ __('Bab') }} {{ $entry->lesson->chapter->number }}</span>
+                                    </div>
+                                    <span><x-ownership-badge :lesson="$entry->lesson" /></span>
+                                    <span style="font-size:13px;font-weight:700;color:#6C6F87">{{ number_format($entry->reach) }}</span>
+                                    <span style="font-size:13px;font-weight:700;color:#6C6F87">{{ number_format($entry->favourites) }}</span>
+                                    <span style="font-size:13px;font-weight:700;color:#6C6F87">{{ number_format($entry->completion) }}</span>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+            @endif
+        </div>
+    </div>
+</x-admin-layout>

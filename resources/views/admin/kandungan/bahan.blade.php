@@ -1,138 +1,96 @@
-<x-app-layout :title="__('Kandungan Bahan')">
-    <header>
-        <h1 class="text-3xl font-extrabold text-ink">{{ __('Kandungan Bahan') }}</h1>
-        <p class="mt-1 max-w-prose text-ink-2">
-            {{ __('Semua bahan bantu mengajar yang dimuat naik oleh guru, merentas setiap subjek dan Tahun.') }}
-        </p>
-    </header>
+@php
+    $cols = 'grid-template-columns:minmax(0,2fr) 1.3fr .8fr .8fr 1.2fr 1fr 1.4fr;gap:12px;align-items:center';
+    $stats = [
+        ['icon' => '📁', 'label' => __('Jumlah bahan'), 'value' => $totalCount],
+        ['icon' => '📕', 'label' => 'PDF',              'value' => $pdfCount],
+        ['icon' => '📄', 'label' => 'DOCX',             'value' => $docxCount],
+        ['icon' => '📊', 'label' => 'PPTX',             'value' => $pptxCount],
+    ];
+@endphp
 
-    <section class="mt-8">
-        <h2 class="sr-only">{{ __('Ringkasan bahan') }}</h2>
+<x-admin-layout :title="__('Kandungan Bahan')"
+                :heading="__('Kandungan Bahan')"
+                :sub="__('Setiap bahan pengajaran yang dimuat naik oleh cikgu, merentas semua subjek dan Tahun')">
 
-        <dl class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <div class="card p-5">
-                <dt class="flex items-center gap-2 text-sm font-bold text-ink-2">
-                    <x-icon name="file" class="h-5 w-5" />
-                    {{ __('Jumlah bahan') }}
-                </dt>
-                <dd class="mt-2 text-3xl font-extrabold tabular-nums text-ink">{{ number_format($totalCount) }}</dd>
-            </div>
+    <div style="display:flex;flex-direction:column;gap:18px"
+         x-data="{
+             item: null,
+             open(data) { this.item = data; document.body.classList.add('overflow-hidden'); },
+             close() { this.item = null; document.body.classList.remove('overflow-hidden'); },
+         }"
+         @keydown.escape.window="close()">
 
-            <div class="card p-5">
-                <dt class="flex items-center gap-2 text-sm font-bold text-ink-2">
-                    <x-icon name="file-pdf" class="h-5 w-5" />
-                    {{ __('PDF') }}
-                </dt>
-                <dd class="mt-2 text-3xl font-extrabold tabular-nums text-ink">{{ number_format($pdfCount) }}</dd>
-            </div>
+        @include('admin.kandungan._tabs', ['active' => 'bahan'])
 
-            <div class="card p-5">
-                <dt class="flex items-center gap-2 text-sm font-bold text-ink-2">
-                    <x-icon name="file-text" class="h-5 w-5" />
-                    {{ __('DOCX') }}
-                </dt>
-                <dd class="mt-2 text-3xl font-extrabold tabular-nums text-ink">{{ number_format($docxCount) }}</dd>
-            </div>
+        {{-- Stats --}}
+        <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px">
+            @foreach ($stats as $s)
+                <div style="background:#fff;border:1px solid rgba(46,44,80,.08);border-radius:16px;padding:20px 22px;display:flex;flex-direction:column;gap:8px;box-shadow:0 2px 10px rgba(46,44,80,.04)">
+                    <span style="font-size:13.5px;font-weight:700;color:#8B8AA3">{{ $s['icon'] }} {{ $s['label'] }}</span>
+                    <span style="font-family:'Geist',sans-serif;font-size:28px;font-weight:800;color:#28293F">{{ number_format($s['value']) }}</span>
+                </div>
+            @endforeach
+        </div>
 
-            <div class="card p-5">
-                <dt class="flex items-center gap-2 text-sm font-bold text-ink-2">
-                    <x-icon name="presentation" class="h-5 w-5" />
-                    {{ __('PPTX') }}
-                </dt>
-                <dd class="mt-2 text-3xl font-extrabold tabular-nums text-ink">{{ number_format($pptxCount) }}</dd>
-            </div>
-        </dl>
-    </section>
+        @include('admin.kandungan._filters', ['subjects' => $subjects, 'grades' => $grades, 'action' => route('admin.kandungan.bahan')])
 
-    {{-- Same Subjek/Tahun filter as the video list; each side works alone or together. --}}
-    <div class="mt-8">
-        <x-cikgu-filters :subjects="$subjects" :grades="$grades" :action="route('admin.kandungan.bahan')" />
-    </div>
-
-    {{--
-        Preview keeps the admin on the list, the same way the video dialog does. PDFs and images
-        show in place; Word/PowerPoint/Excel cannot be rendered by a browser, so rather than fake
-        it (or hand the file to a third-party viewer) the dialog says so and offers the download.
-
-        x-if, not x-show: closing must remove the embedded file, not merely hide it.
-    --}}
-    <section class="mt-6"
-             x-data="{
-                 item: null,
-                 open(data) { this.item = data; document.body.classList.add('overflow-hidden'); },
-                 close() { this.item = null; document.body.classList.remove('overflow-hidden'); },
-             }"
-             @keydown.escape.window="close()">
         @if ($materials->isEmpty())
-            <x-empty icon="file" :title="__('Tiada bahan untuk dipaparkan')"
-                     :text="__('Tiada bahan yang sepadan dengan tapisan ini.')" />
+            <div class="tp-empty">
+                <span style="font-size:30px">📁</span>
+                <h3 style="margin:0;font-family:'Geist',sans-serif;font-size:19px;font-weight:800;color:#28293F">{{ __('Tiada bahan untuk dipaparkan') }}</h3>
+                <p style="margin:0;font-size:14.5px;color:#8B8AA3;max-width:380px">{{ __('Tiada bahan yang sepadan dengan tapisan ini.') }}</p>
+            </div>
         @else
-            <div class="card overflow-x-auto p-2">
-                <table class="w-full min-w-[64rem] text-sm">
-                    <thead>
-                        <tr class="border-b border-line text-left text-ink-2">
-                            <th class="px-3 py-2 font-semibold">{{ __('Tajuk Bahan') }}</th>
-                            <th class="px-3 py-2 font-semibold">{{ __('Subjek') }}</th>
-                            <th class="px-3 py-2 font-semibold">{{ __('Tahun') }}</th>
-                            <th class="px-3 py-2 text-right font-semibold">{{ __('Muat Turun') }}</th>
-                            <th class="px-3 py-2 font-semibold">{{ __('Jenis') }}</th>
-                            <th class="px-3 py-2 font-semibold">{{ __('Tarikh Dimuat Naik') }}</th>
-                            <th class="px-3 py-2 text-right font-semibold">{{ __('Tindakan') }}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
+            <div style="background:#fff;border:1px solid rgba(46,44,80,.08);border-radius:18px;overflow:hidden;box-shadow:0 2px 10px rgba(46,44,80,.04)">
+                <div style="overflow-x:auto">
+                    <div style="min-width:900px">
+                        <div style="display:grid;{{ $cols }};padding:14px 20px;border-bottom:1px solid rgba(46,44,80,.08)">
+                            <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:#8B8AA3">{{ __('Tajuk Bahan') }}</span>
+                            <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:#8B8AA3">{{ __('Subjek') }}</span>
+                            <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:#8B8AA3">{{ __('Tahun') }}</span>
+                            <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:#8B8AA3">{{ __('Muat Turun') }}</span>
+                            <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:#8B8AA3">{{ __('Jenis') }}</span>
+                            <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:#8B8AA3">{{ __('Tarikh Siar') }}</span>
+                            <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:#8B8AA3;text-align:right">{{ __('Tindakan') }}</span>
+                        </div>
                         @foreach ($materials as $material)
-                            <tr class="border-b border-line/60 last:border-0 hover:bg-surface-2/60">
-                                <td class="px-3 py-2">
-                                    <span class="block font-bold text-ink">{{ $material->title }}</span>
-                                    <span class="block text-xs text-ink-2">{{ $material->teacher?->name }}</span>
-                                </td>
-                                <td class="px-3 py-2 text-ink-2">{{ $material->chapter->subject->displayName() }}</td>
-                                <td class="px-3 py-2 text-ink-2">{{ $material->chapter->grade->name }}</td>
-                                <td class="px-3 py-2 text-right tabular-nums text-ink-2">{{ number_format($material->download_count) }}</td>
-                                <td class="px-3 py-2">
-                                    <span class="inline-flex items-center gap-1.5 text-ink-2">
-                                        <x-icon :name="$material->iconName()" class="h-4 w-4" />
-                                        <span class="uppercase">{{ $material->extension() }}</span>
-                                        <span class="text-xs">{{ $material->humanSize() }}</span>
-                                    </span>
-                                </td>
-                                <td class="px-3 py-2 tabular-nums text-ink-2">{{ $material->created_at->translatedFormat('j M Y') }}</td>
-                                <td class="px-3 py-2">
-                                    <div class="flex items-center justify-end gap-1">
-                                        <button type="button" class="btn-ghost btn-sm"
-                                                @click="open(@js([
-                                                    'title' => $material->title,
-                                                    'teacher' => $material->teacher?->name,
-                                                    'kind' => $material->previewKind(),
-                                                    'src' => $material->fileUrl(),
-                                                    'name' => $material->original_name,
-                                                    'type' => strtoupper($material->extension()),
-                                                    'downloadUrl' => route('muat-turun.bahan', $material),
-                                                ]))">
-                                            <x-icon name="eye" class="h-4 w-4" />
-                                            {{ __('Lihat') }}
-                                            <span class="sr-only">{{ $material->title }}</span>
-                                        </button>
-
-                                        <a href="{{ route('muat-turun.bahan', $material) }}" class="btn-ghost btn-sm">
-                                            <x-icon name="download" class="h-4 w-4" />
-                                            {{ __('Muat Turun') }}
-                                            <span class="sr-only">{{ $material->title }}</span>
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
+                            <div class="tp-tr" style="display:grid;{{ $cols }};padding:12px 20px;border-bottom:1px solid rgba(46,44,80,.05)">
+                                <div style="display:flex;flex-direction:column;gap:1px;min-width:0">
+                                    <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:13.5px;color:#28293F;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $material->title }}</span>
+                                    <span style="font-size:11.5px;color:#8B8AA3">{{ $material->teacher?->name }}</span>
+                                </div>
+                                <span style="font-size:13px;font-weight:700;color:#4276AE">{{ $material->chapter->subject->displayName() }}</span>
+                                <span style="font-size:13px;font-weight:700;color:#6C6F87">{{ $material->chapter->grade->name }}</span>
+                                <span style="font-size:13px;font-weight:700;color:#6C6F87">{{ number_format($material->download_count) }}</span>
+                                <span style="font-size:13px;font-weight:700;color:#6C6F87">📄 {{ strtoupper($material->extension()) }} <span style="font-size:11.5px;color:#8B8AA3">{{ $material->humanSize() }}</span></span>
+                                <span style="font-size:13px;font-weight:700;color:#6C6F87">{{ $material->created_at->translatedFormat('j M Y') }}</span>
+                                <div style="display:flex;justify-content:flex-end;gap:4px">
+                                    <button type="button" class="tp-linkbtn"
+                                            @click="open(@js([
+                                                'title' => $material->title,
+                                                'teacher' => $material->teacher?->name,
+                                                'kind' => $material->previewKind(),
+                                                'src' => $material->fileUrl(),
+                                                'name' => $material->original_name,
+                                                'type' => strtoupper($material->extension()),
+                                                'downloadUrl' => route('muat-turun.bahan', $material),
+                                            ]))">
+                                        👁 {{ __('Lihat') }}<span class="sr-only">{{ $material->title }}</span>
+                                    </button>
+                                    <a href="{{ route('muat-turun.bahan', $material) }}" class="tp-linkbtn is-muted">
+                                        ⬇ {{ __('Muat Turun') }}<span class="sr-only">{{ $material->title }}</span>
+                                    </a>
+                                </div>
+                            </div>
                         @endforeach
-                    </tbody>
-                </table>
+                    </div>
+                </div>
             </div>
 
-            <div class="mt-4">
-                {{ $materials->links() }}
-            </div>
+            <div>{{ $materials->links() }}</div>
         @endif
 
+        {{-- Preview modal. PDFs/images render in place; Office files offer the download rather than a fake render. --}}
         <template x-if="item">
             <div class="fixed inset-0 z-50 flex items-center justify-center p-4"
                  role="dialog" aria-modal="true" :aria-label="item.title">
@@ -189,5 +147,5 @@
                 </div>
             </div>
         </template>
-    </section>
-</x-app-layout>
+    </div>
+</x-admin-layout>

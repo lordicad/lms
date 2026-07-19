@@ -1,155 +1,104 @@
-<x-app-layout :title="__('Kandungan Kuiz')">
-    <header>
-        <h1 class="text-3xl font-extrabold text-ink">{{ __('Kandungan Kuiz') }}</h1>
-        <p class="mt-1 max-w-prose text-ink-2">
-            {{ __('Semua kuiz yang dibina oleh guru, merentas setiap subjek dan Tahun.') }}
-        </p>
-    </header>
+@php
+    $cols = 'grid-template-columns:minmax(0,2fr) 1.3fr .8fr .8fr .6fr .6fr 1fr .7fr;gap:12px;align-items:center';
+    $stats = [
+        ['icon' => '📝', 'label' => __('Jumlah kuiz'),      'value' => $totalCount,   'labelColor' => '#8B8AA3'],
+        ['icon' => '👥', 'label' => __('Jumlah percubaan'), 'value' => $attemptCount, 'labelColor' => '#8B8AA3'],
+        ['icon' => '✅', 'label' => __('Lulus'),            'value' => $passCount,    'labelColor' => '#0F7A68'],
+        ['icon' => '❌', 'label' => __('Gagal'),            'value' => $failCount,    'labelColor' => '#C24936'],
+    ];
+@endphp
 
-    <section class="mt-8">
-        <h2 class="sr-only">{{ __('Ringkasan kuiz') }}</h2>
+<x-admin-layout :title="__('Kandungan Kuiz')"
+                :heading="__('Kandungan Kuiz')"
+                :sub="__('Setiap kuiz yang dibina oleh cikgu, merentas semua subjek dan Tahun')">
 
-        <dl class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <div class="card p-5">
-                <dt class="flex items-center gap-2 text-sm font-bold text-ink-2">
-                    <x-icon name="quiz" class="h-5 w-5" />
-                    {{ __('Jumlah kuiz') }}
-                </dt>
-                <dd class="mt-2 text-3xl font-extrabold tabular-nums text-ink">{{ number_format($totalCount) }}</dd>
+    <div style="display:flex;flex-direction:column;gap:18px"
+         x-data="{
+             quiz: null,
+             open(data) { this.quiz = data; document.body.classList.add('overflow-hidden'); },
+             close() { this.quiz = null; document.body.classList.remove('overflow-hidden'); },
+         }"
+         @keydown.escape.window="close()">
+
+        @include('admin.kandungan._tabs', ['active' => 'kuiz'])
+
+        {{-- Stats + disclaimer --}}
+        <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px">
+                @foreach ($stats as $s)
+                    <div style="background:#fff;border:1px solid rgba(46,44,80,.08);border-radius:16px;padding:20px 22px;display:flex;flex-direction:column;gap:8px;box-shadow:0 2px 10px rgba(46,44,80,.04)">
+                        <span style="font-size:13.5px;font-weight:700;color:{{ $s['labelColor'] }}">{{ $s['icon'] }} {{ $s['label'] }}</span>
+                        <span style="font-family:'Geist',sans-serif;font-size:28px;font-weight:800;color:#28293F">{{ number_format($s['value']) }}</span>
+                    </div>
+                @endforeach
             </div>
+            <span style="font-size:12.5px;color:#8B8AA3">{{ __('Lulus bermaksud percubaan mendapat :percent% atau lebih. Setiap percubaan yang selesai dikira, termasuk ulangan.', ['percent' => \App\Models\QuizAttempt::PASS_AT]) }}</span>
+        </div>
 
-            <div class="card p-5">
-                <dt class="flex items-center gap-2 text-sm font-bold text-ink-2">
-                    <x-icon name="users" class="h-5 w-5" />
-                    {{ __('Jumlah percubaan') }}
-                </dt>
-                <dd class="mt-2 text-3xl font-extrabold tabular-nums text-ink">{{ number_format($attemptCount) }}</dd>
-            </div>
+        @include('admin.kandungan._filters', ['subjects' => $subjects, 'grades' => $grades, 'action' => route('admin.kandungan.kuiz')])
 
-            <div class="card p-5">
-                <dt class="flex items-center gap-2 text-sm font-bold text-ink-2">
-                    <x-icon name="check-circle" class="h-5 w-5 text-success" />
-                    {{ __('Lulus') }}
-                </dt>
-                <dd class="mt-2 text-3xl font-extrabold tabular-nums text-ink">{{ number_format($passCount) }}</dd>
-            </div>
-
-            <div class="card p-5">
-                <dt class="flex items-center gap-2 text-sm font-bold text-ink-2">
-                    <x-icon name="x-circle" class="h-5 w-5 text-danger" />
-                    {{ __('Tidak lulus') }}
-                </dt>
-                <dd class="mt-2 text-3xl font-extrabold tabular-nums text-ink">{{ number_format($failCount) }}</dd>
-            </div>
-        </dl>
-
-        {{-- The app never tells a child they failed, and the ministry has set no pass mark, so
-             this threshold is a reporting choice and needs saying out loud on the page. --}}
-        <p class="mt-3 text-xs text-ink-2">
-            {{ __('Lulus bermaksud percubaan mencapai :percent% atau lebih. Semua percubaan yang selesai dikira, termasuk percubaan ulangan.', ['percent' => \App\Models\QuizAttempt::PASS_AT]) }}
-        </p>
-    </section>
-
-    {{-- Same Subjek/Tahun filter as the video and bahan lists; each side works alone or together. --}}
-    <div class="mt-8">
-        <x-cikgu-filters :subjects="$subjects" :grades="$grades" :action="route('admin.kandungan.kuiz')" />
-    </div>
-
-    <section class="mt-6"
-             x-data="{
-                 quiz: null,
-                 open(data) { this.quiz = data; document.body.classList.add('overflow-hidden'); },
-                 close() { this.quiz = null; document.body.classList.remove('overflow-hidden'); },
-             }"
-             @keydown.escape.window="close()">
         @if ($quizzes->isEmpty())
-            <x-empty icon="quiz" :title="__('Tiada kuiz untuk dipaparkan')"
-                     :text="__('Tiada kuiz yang sepadan dengan tapisan ini.')" />
+            <div class="tp-empty">
+                <span style="font-size:30px">📝</span>
+                <h3 style="margin:0;font-family:'Geist',sans-serif;font-size:19px;font-weight:800;color:#28293F">{{ __('Tiada kuiz untuk dipaparkan') }}</h3>
+                <p style="margin:0;font-size:14.5px;color:#8B8AA3;max-width:380px">{{ __('Tiada kuiz yang sepadan dengan tapisan ini.') }}</p>
+            </div>
         @else
-            <div class="card overflow-x-auto p-2">
-                <table class="w-full min-w-[64rem] text-sm">
-                    <thead>
-                        <tr class="border-b border-line text-left text-ink-2">
-                            <th class="px-3 py-2 font-semibold">{{ __('Tajuk Kuiz') }}</th>
-                            <th class="px-3 py-2 font-semibold">{{ __('Subjek') }}</th>
-                            <th class="px-3 py-2 font-semibold">{{ __('Tahun') }}</th>
-                            <th class="px-3 py-2 text-right font-semibold">{{ __('Percubaan') }}</th>
-                            <th class="px-3 py-2 text-right font-semibold">{{ __('Lulus') }}</th>
-                            <th class="px-3 py-2 text-right font-semibold">{{ __('Tidak lulus') }}</th>
-                            <th class="px-3 py-2 font-semibold">{{ __('Tarikh Dimuat Naik') }}</th>
-                            <th class="px-3 py-2 text-right font-semibold">{{ __('Tindakan') }}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
+            <div style="background:#fff;border:1px solid rgba(46,44,80,.08);border-radius:18px;overflow:hidden;box-shadow:0 2px 10px rgba(46,44,80,.04)">
+                <div style="overflow-x:auto">
+                    <div style="min-width:900px">
+                        <div style="display:grid;{{ $cols }};padding:14px 20px;border-bottom:1px solid rgba(46,44,80,.08)">
+                            <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:#8B8AA3">{{ __('Tajuk Kuiz') }}</span>
+                            <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:#8B8AA3">{{ __('Subjek') }}</span>
+                            <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:#8B8AA3">{{ __('Tahun') }}</span>
+                            <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:#8B8AA3">{{ __('Percubaan') }}</span>
+                            <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:#8B8AA3">{{ __('Lulus') }}</span>
+                            <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:#8B8AA3">{{ __('Gagal') }}</span>
+                            <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:#8B8AA3">{{ __('Tarikh Siar') }}</span>
+                            <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:#8B8AA3;text-align:right">{{ __('Tindakan') }}</span>
+                        </div>
                         @foreach ($quizzes as $quiz)
-                            <tr class="border-b border-line/60 last:border-0 hover:bg-surface-2/60">
-                                <td class="px-3 py-2">
-                                    <span class="flex items-center gap-2">
-                                        <span class="font-bold text-ink">{{ $quiz->title }}</span>
-                                        {{-- A file quiz is a printable document; it has no questions to show. --}}
-                                        @if ($quiz->isFile())
-                                            <span class="chip bg-surface-2 text-ink-2">{{ __('Fail') }}</span>
-                                        @endif
-                                    </span>
-                                    <span class="block text-xs text-ink-2">{{ $quiz->teacher?->name }}</span>
-                                </td>
-                                <td class="px-3 py-2 text-ink-2">{{ $quiz->chapter->subject->displayName() }}</td>
-                                <td class="px-3 py-2 text-ink-2">{{ $quiz->chapter->grade->name }}</td>
-                                <td class="px-3 py-2 text-right tabular-nums text-ink-2">{{ number_format($quiz->attempts_count) }}</td>
-
-                                {{-- Fail is the remainder, not its own query: anything completed that is not
-                                     a pass is a fail, so the two always add up to Percubaan. --}}
-                                <td class="px-3 py-2 text-right tabular-nums">
-                                    @if ($quiz->attempts_count > 0)
-                                        <span class="font-bold text-success">{{ number_format($quiz->pass_count) }}</span>
-                                    @else
-                                        <span class="text-ink-2">—</span>
-                                    @endif
-                                </td>
-                                <td class="px-3 py-2 text-right tabular-nums">
-                                    @if ($quiz->attempts_count > 0)
-                                        <span class="font-bold text-danger">{{ number_format($quiz->attempts_count - $quiz->pass_count) }}</span>
-                                    @else
-                                        <span class="text-ink-2">—</span>
-                                    @endif
-                                </td>
-
-                                <td class="px-3 py-2 tabular-nums text-ink-2">{{ $quiz->created_at->translatedFormat('j M Y') }}</td>
-                                <td class="px-3 py-2 text-right">
-                                    <button type="button" class="btn-ghost btn-sm"
-                                            @click="open(@js([
-                                                'title' => $quiz->title,
-                                                'teacher' => $quiz->teacher?->name,
-                                                'type' => $quiz->type,
-                                                'downloadUrl' => $quiz->isFile() ? route('muat-turun.kuiz', $quiz) : null,
-                                                'questions' => $quiz->questions->map(fn ($question) => [
-                                                    'text' => $question->question_text,
-                                                    'multiple' => $question->isMultiple(),
-                                                    'points' => $question->points,
-                                                    'options' => $question->options->map(fn ($option) => [
-                                                        'letter' => $option->letter(),
-                                                        'text' => $option->option_text,
-                                                        'correct' => (bool) $option->is_correct,
-                                                    ])->all(),
+                            @php($hasAttempts = $quiz->attempts_count > 0)
+                            <div class="tp-tr" style="display:grid;{{ $cols }};padding:12px 20px;border-bottom:1px solid rgba(46,44,80,.05)">
+                                <div style="display:flex;flex-direction:column;gap:1px;min-width:0">
+                                    <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:13.5px;color:#28293F;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $quiz->title }}@if ($quiz->isFile()) <span style="font-size:11px;font-weight:800;color:#8B8AA3">· {{ __('Fail') }}</span>@endif</span>
+                                    <span style="font-size:11.5px;color:#8B8AA3">{{ $quiz->teacher?->name }}</span>
+                                </div>
+                                <span style="font-size:13px;font-weight:700;color:#4276AE">{{ $quiz->chapter->subject->displayName() }}</span>
+                                <span style="font-size:13px;font-weight:700;color:#6C6F87">{{ $quiz->chapter->grade->name }}</span>
+                                <span style="font-size:13px;font-weight:700;color:#6C6F87">{{ number_format($quiz->attempts_count) }}</span>
+                                <span style="font-size:13px;font-weight:800;color:{{ $hasAttempts ? '#0F7A68' : '#8B8AA3' }}">{{ $hasAttempts ? number_format($quiz->pass_count) : '—' }}</span>
+                                <span style="font-size:13px;font-weight:800;color:{{ $hasAttempts ? '#C24936' : '#8B8AA3' }}">{{ $hasAttempts ? number_format($quiz->attempts_count - $quiz->pass_count) : '—' }}</span>
+                                <span style="font-size:13px;font-weight:700;color:#6C6F87">{{ $quiz->created_at->translatedFormat('j M Y') }}</span>
+                                <button type="button" class="tp-linkbtn" style="justify-self:end"
+                                        @click="open(@js([
+                                            'title' => $quiz->title,
+                                            'teacher' => $quiz->teacher?->name,
+                                            'type' => $quiz->type,
+                                            'downloadUrl' => $quiz->isFile() ? route('muat-turun.kuiz', $quiz) : null,
+                                            'questions' => $quiz->questions->map(fn ($question) => [
+                                                'text' => $question->question_text,
+                                                'multiple' => $question->isMultiple(),
+                                                'points' => $question->points,
+                                                'options' => $question->options->map(fn ($option) => [
+                                                    'letter' => $option->letter(),
+                                                    'text' => $option->option_text,
+                                                    'correct' => (bool) $option->is_correct,
                                                 ])->all(),
-                                            ]))">
-                                        <x-icon name="eye" class="h-4 w-4" />
-                                        {{ __('Lihat') }}
-                                        <span class="sr-only">{{ $quiz->title }}</span>
-                                    </button>
-                                </td>
-                            </tr>
+                                            ])->all(),
+                                        ]))">
+                                    👁 {{ __('Lihat') }}<span class="sr-only">{{ $quiz->title }}</span>
+                                </button>
+                            </div>
                         @endforeach
-                    </tbody>
-                </table>
+                    </div>
+                </div>
             </div>
 
-            <div class="mt-4">
-                {{ $quizzes->links() }}
-            </div>
+            <div>{{ $quizzes->links() }}</div>
         @endif
 
-        {{-- x-if, not x-show: closing removes the questions rather than leaving them in the DOM. --}}
+        {{-- Preview modal. Interactive quizzes list their questions + correct answers; file quizzes offer the download. --}}
         <template x-if="quiz">
             <div class="fixed inset-0 z-50 flex items-center justify-center p-4"
                  role="dialog" aria-modal="true" :aria-label="quiz.title">
@@ -174,7 +123,6 @@
                     </div>
 
                     <div class="overflow-y-auto px-4 py-4">
-                        {{-- File quiz: nothing to render, so offer the document instead of an empty box. --}}
                         <template x-if="quiz.type === 'file'">
                             <div class="px-6 py-12 text-center">
                                 <p class="font-bold text-ink">{{ __('Kuiz ini ialah fail untuk dicetak.') }}</p>
@@ -188,7 +136,6 @@
                             </div>
                         </template>
 
-                        {{-- Interactive quiz the teacher never finished. --}}
                         <template x-if="quiz.type === 'interactive' && ! quiz.questions.length">
                             <div class="px-6 py-12 text-center">
                                 <p class="font-bold text-ink">{{ __('Kuiz ini belum ada soalan.') }}</p>
@@ -232,5 +179,5 @@
                 </div>
             </div>
         </template>
-    </section>
-</x-app-layout>
+    </div>
+</x-admin-layout>

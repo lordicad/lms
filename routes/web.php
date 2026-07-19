@@ -10,6 +10,7 @@ use App\Http\Controllers\Cikgu\QuizStatsController;
 use App\Http\Controllers\Cikgu\TalentController;
 use App\Http\Controllers\Cikgu\TeacherRankingController;
 use App\Http\Controllers\Admin\AdminContentController;
+use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminStudentController;
 use App\Http\Controllers\Admin\AdminTalentController;
 use App\Http\Controllers\YoutubeConnectController;
@@ -177,6 +178,17 @@ Route::middleware(['auth', 'role:admin'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
+        // Utama — the read-only platform overview.
+        Route::get('/', AdminDashboardController::class)->name('dashboard');
+
+        // Pengguna and Tetapan are signposted in the nav but not yet built out; a faithful
+        // placeholder keeps the shell complete without pretending a feature exists.
+        Route::view('pengguna', 'admin.pengguna')->name('pengguna');
+        Route::view('tetapan', 'admin.tetapan')->name('tetapan');
+
+        // Admin's own profile, in the admin shell (the shared profile.* endpoints do the saving).
+        Route::view('profil', 'admin.profil')->name('profil');
+
         Route::get('bakat', [AdminTalentController::class, 'index'])->name('bakat');
         // 'eksport' must precede the {teacher} wildcard so it is not swallowed by model binding.
         Route::get('bakat/eksport', [AdminTalentController::class, 'export'])->name('bakat.export');
