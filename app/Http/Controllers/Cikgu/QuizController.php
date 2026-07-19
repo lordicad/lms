@@ -18,7 +18,7 @@ class QuizController extends Controller
     public function index(Request $request): View
     {
         $quizzes = $request->user()->quizzes()
-            ->with('chapter.subject', 'chapter.grade')
+            ->with('chapter.subject', 'chapter.grade', 'questions.options')
             ->withCount(['questions', 'attempts as completed_attempts_count' => fn ($q) => $q->whereNotNull('completed_at')])
             ->when($request->filled('subjek'), fn ($q) => $q->whereHas(
                 'chapter.subject',

@@ -214,6 +214,11 @@
            :style string would replace the whole style attribute and drop display:flex. */
         .tp-optrow { border:1.5px solid rgba(46,44,80,.1); border-radius:13px; padding:10px 14px; display:flex; align-items:center; gap:12px; background:#fff; transition:all .12s; }
         .tp-optrow.is-correct { border-color:#17907B; background:#E6F5F1; }
+        /* Read-only answer option in the "Lihat Soalan" preview modal. */
+        .tp-optview { display:flex; align-items:center; gap:10px; padding:8px 12px; border-radius:10px; border:1px solid rgba(46,44,80,.08); background:#F6F5F0; }
+        .tp-optview.is-correct { border-color:#17907B; background:#E6F5F1; }
+        .tp-optview-badge { width:24px; height:24px; flex-shrink:0; border-radius:50%; display:grid; place-items:center; font-family:'Geist',sans-serif; font-weight:800; font-size:11.5px; background:#EDECE4; color:#8B8AA3; }
+        .tp-optview.is-correct .tp-optview-badge { background:#17907B; color:#fff; }
         .tp-typeopt:hover { border-color:var(--tp-teal); }
         .tp-typeopt.is-on { border-color:var(--tp-teal); background:var(--tp-active-bg); }
         .tp-formwrap { display:flex; flex-direction:column; gap:20px; max-width:860px; }
