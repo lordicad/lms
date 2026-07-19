@@ -15,6 +15,10 @@
 
 @php($isDark = ($theme ?? 'light') === 'dark')
 @php($current = app()->getLocale())
+{{-- Inline the WeLearn logo as a data URI (same as the landing page): the auto-deploy serves
+     static files only from public/build/, so a plain /images/... reference 404s. Reading the
+     committed file and embedding it keeps the shell self-contained and docroot-independent. --}}
+@php($wlLogo = is_file($p = public_path('images/welearn-banner.png')) ? 'data:image/png;base64,'.base64_encode(file_get_contents($p)) : asset('images/welearn-banner.png'))
 <!DOCTYPE html>
 <html lang="{{ $current }}" @class(['theme-dark' => $isDark])>
 <head>
@@ -188,7 +192,7 @@
     {{-- Brand panel --}}
     <aside class="wla-brand">
         <a href="{{ url('/') }}" class="wla-brand-logo" title="{{ __('Kembali ke halaman utama') }}" aria-label="WeLearn">
-            <img src="{{ asset('images/welearn-banner.png') }}" alt="WeLearn">
+            <img src="{{ $wlLogo }}" alt="WeLearn">
         </a>
         <div class="wla-brand-copy">
             <h1>{{ __('Belajar di mana-mana, bila-bila masa.') }}</h1>
