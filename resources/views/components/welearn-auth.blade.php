@@ -110,8 +110,8 @@
         .wla-topbar { width: 100%; max-width: 440px; display: flex; justify-content: flex-end; align-items: center; gap: 10px; }
         .wla-pills { display: flex; background: var(--pill-track); border-radius: 999px; padding: 3px; font-family: 'Geist', sans-serif; font-size: 13px; font-weight: 700; }
         .wla-pill {
-            min-width: 44px; min-height: 22px; display: inline-flex; align-items: center; justify-content: center;
-            border: none; cursor: pointer; border-radius: 999px; padding: 5px 14px;
+            min-width: 36px; min-height: 22px; display: inline-flex; align-items: center; justify-content: center;
+            border: none; cursor: pointer; border-radius: 999px; padding: 5px 12px;
             font-family: 'Geist', sans-serif; font-size: 13px; font-weight: 800;
             background: transparent; color: var(--muted); transition: background .15s, color .15s;
         }
