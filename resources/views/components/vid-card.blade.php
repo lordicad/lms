@@ -22,8 +22,8 @@
 @endphp
 
 <a href="{{ route('video.show', $lesson) }}" class="vid-card"
-   style="display:block;text-decoration:none;background:#fff;border:1px solid rgba(46,44,80,.08);border-radius:18px;overflow:hidden;box-shadow:0 4px 16px rgba(46,44,80,.04);cursor:pointer">
-    <div style="height:{{ $thumbHeight }}px;background:{{ $grad }};display:grid;place-items:center;position:relative">
+   style="display:flex;flex-direction:column;height:100%;box-sizing:border-box;text-decoration:none;background:#fff;border:1px solid rgba(46,44,80,.08);border-radius:18px;overflow:hidden;box-shadow:0 4px 16px rgba(46,44,80,.04);cursor:pointer">
+    <div style="height:{{ $thumbHeight }}px;flex-shrink:0;background:{{ $grad }};display:grid;place-items:center;position:relative">
         @if ($thumb)
             <img src="{{ $thumb }}" alt="" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
         @endif
@@ -40,18 +40,18 @@
         @endif
     </div>
 
-    <div style="padding:{{ $showMeta ? '14px 16px' : '13px 15px' }};display:flex;flex-direction:column;gap:{{ $showMeta ? '4px' : '8px' }}">
+    <div style="padding:{{ $showMeta ? '14px 16px' : '13px 15px' }};flex:1 1 auto;display:flex;flex-direction:column;gap:{{ $showMeta ? '4px' : '8px' }}">
         <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:{{ $showMeta ? '15px' : '14.5px' }};color:#28293F">{{ $lesson->title }}</span>
 
         @if ($showMeta)
-            <span style="font-size:12.5px;color:#8B8AA3">{{ $subject->displayName() }} · Bab {{ $lesson->chapter->number }}@if ($lesson->durationLabel()) · {{ $lesson->durationLabel() }}@endif</span>
+            <span style="margin-top:auto;font-size:12.5px;color:#8B8AA3">{{ $subject->displayName() }} · Bab {{ $lesson->chapter->number }}@if ($lesson->durationLabel()) · {{ $lesson->durationLabel() }}@endif</span>
             @if ($showProgress)
                 <div style="height:6px;border-radius:999px;background:#EFEEE6;overflow:hidden;margin-top:6px">
                     <div style="height:100%;border-radius:999px;background:#17907B;width:{{ $pct }}%"></div>
                 </div>
             @endif
         @else
-            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <div style="margin-top:auto;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
                 <span style="background:{{ $tagBg }};color:{{ $tagColor }};border-radius:999px;padding:3px 10px;font-family:'Geist',sans-serif;font-size:11.5px;font-weight:800">{{ $subject->displayName() }}</span>
                 <span style="font-size:12px;font-weight:700;color:#8B8AA3">Bab {{ $lesson->chapter->number }}</span>
                 @if ($showViews)
