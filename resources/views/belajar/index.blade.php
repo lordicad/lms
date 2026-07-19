@@ -79,7 +79,7 @@
             @if ($trending->isNotEmpty())
                 <x-home-section :title="$trendingFallback ? __('Baru Ditambah') : __('Paling Popular')">
                     @foreach ($trending->take(4) as $lesson)
-                        <x-lesson-card :lesson="$lesson" grid />
+                        <x-lesson-card :lesson="$lesson" :showViews="! $trendingFallback" grid />
                     @endforeach
                 </x-home-section>
             @endif

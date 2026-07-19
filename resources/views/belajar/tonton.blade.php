@@ -22,7 +22,7 @@
                     </div>
 
                     <div class="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-ink-2">
-                        <span class="chip bg-subject-wash text-subject-ink"><x-subject-icon :subject="$subject" class="h-4 w-4" /> {{ $subject->displayName() }}</span>
+                        <span class="chip bg-subject-wash text-subject-ink"><x-subject-emoji :subject="$subject" class="text-sm" /> {{ $subject->displayName() }}</span>
                         <span>{{ $grade->name }}</span>
                         <span>{{ $lesson->teacher->name }}</span>
 

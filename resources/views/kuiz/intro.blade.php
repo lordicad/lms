@@ -13,7 +13,7 @@
         @endif
 
         <div class="card card-pad mt-4">
-            <span class="chip bg-subject-wash text-subject-ink"><x-subject-icon :subject="$subject" class="h-4 w-4" /> {{ $subject->name }}</span>
+            <span class="chip bg-subject-wash text-subject-ink"><x-subject-emoji :subject="$subject" class="text-sm" /> {{ $subject->name }}</span>
 
             <h1 class="mt-3 text-3xl font-extrabold text-ink">{{ $quiz->title }}</h1>
 

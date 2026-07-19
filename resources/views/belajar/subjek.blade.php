@@ -9,7 +9,7 @@
         <header class="mt-4 flex flex-wrap items-center justify-between gap-4">
             <div class="flex items-center gap-4">
                 <span class="flex h-16 w-16 items-center justify-center rounded-card bg-subject-wash"
-                      aria-hidden="true"><x-subject-icon :subject="$subject" class="h-8 w-8" /></span>
+                      aria-hidden="true"><x-subject-emoji :subject="$subject" class="text-3xl" /></span>
 
                 <div>
                     <h1 class="text-3xl font-extrabold text-ink">{{ $subject->name }}</h1>

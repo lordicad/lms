@@ -1,4 +1,4 @@
-@props(['lesson', 'showProgress' => true, 'grid' => false])
+@props(['lesson', 'showProgress' => true, 'grid' => false, 'showViews' => false])
 
 {{--
     Lesson card, light-native: a white card with an inset (4px-framed) thumbnail on top and the
@@ -34,6 +34,11 @@
                     <x-favourite-button :lesson="$lesson" :favourited="$favourited" reveal />
                 </div>
 
+                {{-- Centered play affordance (WeLearn prototype). --}}
+                <span class="glass-pill-light absolute left-1/2 top-1/2 z-[4] grid h-9 w-9 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full text-subject-ink">
+                    <x-icon name="play" class="h-4 w-4" />
+                </span>
+
                 {{-- Duration (or resume position when continuing), bottom-right. --}}
                 @if ($hasProgress && $progress->duration_seconds)
                     <span class="absolute bottom-2 right-2 z-[5] glass-pill rounded-full px-2 py-0.5 text-[11px] font-semibold tabular-nums text-white">
@@ -62,8 +67,11 @@
             </h3>
 
             <div class="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1">
-                <span class="inline-flex items-center rounded-md bg-subject-wash px-1.5 py-0.5 text-[11px] font-semibold text-subject-ink">{{ $subject->displayName() }}</span>
-                <span class="text-[11px] font-semibold text-ink-2">Bab {{ $lesson->chapter->number }}</span>
+                <span class="inline-flex items-center rounded-full bg-subject-wash px-2.5 py-0.5 text-[11px] font-extrabold text-subject-ink">{{ $subject->displayName() }}</span>
+                <span class="text-[11px] font-bold text-ink-2">Bab {{ $lesson->chapter->number }}</span>
+                @if ($showViews)
+                    <span class="ml-auto text-[11px] font-bold text-ink-2">👁 {{ $lesson->views_count }}</span>
+                @endif
             </div>
         </div>
     </div>

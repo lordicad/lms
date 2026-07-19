@@ -24,10 +24,10 @@
          style="background-image: linear-gradient(150deg, color-mix(in oklab, rgb(var(--sc)) 32%, rgb(var(--c-surface))), color-mix(in oklab, rgb(var(--sc)) 9%, rgb(var(--c-surface))));"></div>
 
     <div class="absolute inset-0 flex flex-col justify-between p-4">
-        <x-subject-icon :subject="$subject" class="h-7 w-7" />
+        <x-subject-emoji :subject="$subject" class="text-2xl" />
 
         <div>
-            <p class="text-[14px] font-semibold leading-tight text-ink" style="overflow-wrap: anywhere;">{{ $subject->displayName() }}</p>
+            <p class="text-[15px] font-extrabold leading-tight text-ink" style="overflow-wrap: anywhere;">{{ $subject->displayName() }}</p>
             <p class="mt-1 micro text-ink-2">{{ __(':count video', ['count' => $count]) }}</p>
         </div>
     </div>

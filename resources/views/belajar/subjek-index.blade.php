@@ -1,8 +1,8 @@
 <x-student-layout :title="__('Subjek')">
-    <header class="mb-6">
-        <h1 class="text-2xl font-extrabold text-ink">{{ __('Subjek') }}</h1>
-        <p class="mt-1 text-ink-2">
-            {{ $grade ? __('Subjek untuk :grade dalam Kurikulum 2027.', ['grade' => $grade->name]) : __('Tahun anda belum ditetapkan.') }}
+    <header class="mb-6 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+        <h1 class="text-[22px] font-extrabold text-ink">{{ $grade ? __('Subjek — :grade', ['grade' => $grade->name]) : __('Subjek') }}</h1>
+        <p class="text-sm text-ink-2">
+            {{ $grade ? __('Pilih subjek untuk melihat bab dan video') : __('Tahun anda belum ditetapkan.') }}
         </p>
     </header>
 

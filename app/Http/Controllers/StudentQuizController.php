@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Quiz;
 use App\Models\QuizAttempt;
+use App\Services\LeaderboardService;
 use App\Support\ActiveGrade;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -35,10 +36,18 @@ class StudentQuizController extends Controller
             ->get()
             ->keyBy('quiz_id');
 
+        // Headline stats for the WeLearn stats strip.
+        $doneCount = $rankedAttempts->count();
+        $avgScore = $doneCount > 0 ? (int) round($rankedAttempts->avg->percentage()) : null;
+        $myRow = app(LeaderboardService::class)->rowFor($user);
+
         return view('belajar.kuiz-saya', [
             'grade' => $grade,
             'quizzes' => $quizzes,
             'rankedAttempts' => $rankedAttempts,
+            'doneCount' => $doneCount,
+            'avgScore' => $avgScore,
+            'rank' => $myRow?->rank,
         ]);
     }
 }

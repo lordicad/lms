@@ -7,7 +7,7 @@
         </a>
 
         <header class="mt-4 rounded-card border border-line bg-subject/8 p-6">
-            <p class="flex items-center gap-1.5 font-semibold text-subject-ink"><x-subject-icon :subject="$subject" class="h-5 w-5" /> {{ $subject->name }}. {{ $grade->name }}</p>
+            <p class="flex items-center gap-1.5 font-semibold text-subject-ink"><x-subject-emoji :subject="$subject" class="text-lg" /> {{ $subject->name }}. {{ $grade->name }}</p>
             <h1 class="mt-1 text-3xl font-extrabold text-ink">Bab {{ $chapter->number }}: {{ $chapter->title }}</h1>
 
             @if ($chapter->description)

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Grade;
+use App\Models\QuizAttempt;
+use App\Services\LeaderboardService;
 use App\Support\Uploads;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -15,9 +17,33 @@ class ProfileController extends Controller
 {
     public function edit(Request $request): View
     {
+        $user = $request->user();
+        $stats = null;
+
+        // Real gamification stats for the student profile header. Badges are derived from these
+        // same numbers, so nothing is fabricated — a badge is earned only when its metric is met.
+        if ($user->isStudent()) {
+            $row = app(LeaderboardService::class)->rowFor($user);
+            $quizzesDone = QuizAttempt::where('student_id', $user->id)->completed()->count();
+            $videosWatched = $user->lessonViews()->count();
+            $hasPerfect = QuizAttempt::where('student_id', $user->id)
+                ->where('max_score', '>', 0)
+                ->whereColumn('score', 'max_score')
+                ->exists();
+
+            $stats = [
+                'points' => $row?->points ?? 0,
+                'rank' => $row?->rank,
+                'quizzes' => $quizzesDone,
+                'videos' => $videosWatched,
+                'perfect' => $hasPerfect,
+            ];
+        }
+
         return view('profil.edit', [
-            'user' => $request->user(),
+            'user' => $user,
             'grades' => Grade::orderBy('level')->get(),
+            'stats' => $stats,
         ]);
     }
 
