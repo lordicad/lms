@@ -31,7 +31,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
-        *, *::before, *::after { box-sizing: border-box; }
+        /* The WeLearn Auth design was authored with the default content-box model (its
+           stylesheet has no box-sizing reset). Matching it keeps the card 514px and the
+           input boxes 440px wide, exactly as the mockup — a border-box reset here shrinks
+           every box by its padding+border and makes the fields look narrower. */
+        *, *::before, *::after { box-sizing: content-box; }
 
         :root {
             --bg: #FDFDFB; --surface: #FFFFFF;
@@ -144,7 +148,7 @@
         html.theme-dark .wla-label { color: var(--muted); }
         .wla-label-row { display: flex; justify-content: space-between; align-items: center; }
         .wla-input, .wla-select {
-            min-height: 48px; width: 100%; border: 1px solid var(--line-strong); border-radius: 12px;
+            min-height: 48px; border: 1px solid var(--line-strong); border-radius: 12px;
             padding: 0 16px; font-family: 'Nunito', sans-serif; font-size: 15px; color: var(--ink-2);
             background: var(--field-bg);
         }
@@ -163,7 +167,7 @@
         .wla-role.is-active { border: 2px solid var(--brand); background: var(--brand-soft); color: var(--ink); }
 
         .wla-btn {
-            min-height: 52px; width: 100%; border: none; cursor: pointer; border-radius: 14px;
+            min-height: 52px; border: none; cursor: pointer; border-radius: 14px;
             background: var(--brand); color: #fff; font-family: 'Geist', sans-serif; font-weight: 800;
             font-size: 16px; box-shadow: var(--btn-shadow); transition: background .15s, transform .1s;
         }
