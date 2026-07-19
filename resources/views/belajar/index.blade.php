@@ -46,19 +46,15 @@
                 </div>
             @endif
 
-            {{-- ── CONTINUE WATCHING ── --}}
+            {{-- ── CONTINUE WATCHING (horizontal rail — swipe / arrow-scroll) ── --}}
             @if ($continue->isNotEmpty())
-                <div style="display:flex;flex-direction:column;gap:16px">
-                    <div style="display:flex;justify-content:space-between;align-items:baseline">
-                        <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:21px;font-weight:800;color:#28293F">{{ __('Sambung menonton') }}</h2>
-                        <a href="{{ route('sambung.index') }}" style="font-size:13.5px;font-weight:700">{{ __('Lihat semua') }}</a>
-                    </div>
-                    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
-                        @foreach ($continue->take(3) as $lesson)
+                <x-rail :title="__('Sambung menonton')" :seeAll="route('sambung.index')">
+                    @foreach ($continue as $lesson)
+                        <div style="flex:0 0 280px;max-width:85%">
                             <x-vid-card :lesson="$lesson" :thumbHeight="110" showMeta showProgress />
-                        @endforeach
-                    </div>
-                </div>
+                        </div>
+                    @endforeach
+                </x-rail>
             @endif
 
             {{-- ── PALING POPULAR (falls back to newest) ── --}}
