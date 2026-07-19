@@ -9,8 +9,10 @@ use App\Support\Uploads;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Password;
 use Illuminate\View\View;
 
 class ProfileController extends Controller
@@ -38,6 +40,11 @@ class ProfileController extends Controller
                 'videos' => $videosWatched,
                 'perfect' => $hasPerfect,
             ];
+        }
+
+        // Teachers get the WeLearn Teacher profile in their own portal shell.
+        if ($user->isTeacher()) {
+            return view('cikgu.profil', ['user' => $user]);
         }
 
         return view('profil.edit', [
@@ -105,6 +112,23 @@ class ProfileController extends Controller
         // back(), not a fixed route: each role edits its profile on its own surface (the admin has a
         // dedicated page), so returning to where the form was submitted keeps everyone in their shell.
         return back()->with('status', __('Profil berjaya dikemas kini.'));
+    }
+
+    public function updatePassword(Request $request): RedirectResponse
+    {
+        $validated = $request->validateWithBag('updatePassword', [
+            'current_password' => ['required', 'current_password'],
+            'password' => ['required', Password::defaults(), 'confirmed'],
+        ], [
+            'current_password.required' => __('Sila masukkan kata laluan semasa.'),
+            'current_password.current_password' => __('Kata laluan semasa tidak betul.'),
+            'password.required' => __('Sila masukkan kata laluan baharu.'),
+            'password.confirmed' => __('Pengesahan kata laluan baharu tidak sepadan.'),
+        ]);
+
+        $request->user()->update(['password' => Hash::make($validated['password'])]);
+
+        return back()->with('status', __('Kata laluan berjaya dikemas kini.'));
     }
 
     public function destroy(Request $request): RedirectResponse
