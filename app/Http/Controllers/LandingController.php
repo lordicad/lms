@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Lesson;
+use App\Models\Material;
 use App\Models\Quiz;
 use App\Models\Subject;
 use Illuminate\Http\RedirectResponse;
@@ -25,6 +26,7 @@ class LandingController extends Controller
             'terasSubjects' => $teras,
             'moreSubjectCount' => Subject::count() - $teras->count(),
             'lessonCount' => Lesson::published()->count(),
+            'materialCount' => Material::count(),
             'quizCount' => Quiz::published()->count(),
         ]);
     }
