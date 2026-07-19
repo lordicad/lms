@@ -2,7 +2,7 @@
     <div class="wla-stack">
         <div class="wla-head">
             <h2>{{ __('Selamat kembali!') }}</h2>
-            <p>{{ __('Murid boleh guna nama pengguna sahaja.') }}</p>
+            <p>{{ __('Murid boleh log masuk dengan nama pengguna sahaja.') }}</p>
         </div>
 
         @if (session('status'))
@@ -41,10 +41,5 @@
 
             <button type="submit" class="wla-btn">{{ __('Log Masuk') }}</button>
         </form>
-
-        <p style="margin:0;text-align:center;font-size:14.5px;color:var(--muted)">
-            {{ __('Belum ada akaun?') }}
-            <a href="{{ route('register') }}" style="font-weight:700">{{ __('Daftar di sini') }}</a>
-        </p>
     </div>
 </x-welearn-auth>
