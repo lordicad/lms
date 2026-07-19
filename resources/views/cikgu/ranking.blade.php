@@ -1,146 +1,96 @@
-<x-app-layout :title="__('Ranking Murid')">
-    <div class="mx-auto max-w-5xl">
-        <header>
-            <h1 class="text-3xl font-extrabold text-ink">{{ __('Ranking Murid') }}</h1>
+<x-cikgu-layout
+    :title="__('Ranking Murid')"
+    :heading="__('Ranking Murid')"
+    :sub="__('Ranking penuh semua murid. Mata hanya daripada percubaan pertama setiap kuiz, jadi latihan ulangan tidak menaikkan ranking.')">
 
-            <p class="mt-2 max-w-prose text-ink-2">
-                {{ __('Kedudukan penuh semua murid. Mata dikira daripada percubaan pertama setiap kuiz sahaja, jadi latihan semula tidak menaikkan kedudukan.') }}
-            </p>
-        </header>
+    @php
+        $palette = [['#DCF2EE','#0F7A68'],['#E4EEF9','#2E6CA8'],['#FBE4ED','#B84A75'],['#FEF0CE','#8A6A12'],['#FDE7E0','#C24936']];
+        $cols = '56px minmax(0,2fr) 1fr 1fr 1fr 1fr 1fr';
+    @endphp
 
-        <form method="GET" action="{{ route('cikgu.ranking') }}" class="mt-6 flex flex-wrap items-end gap-3">
-            <div>
-                <label for="tahun" class="label mb-1">{{ __('Tahun') }}</label>
+    <form method="GET" action="{{ route('cikgu.ranking') }}" class="tp-toolbar">
+        <div class="tp-field">
+            <label for="tahun" class="tp-label">{{ __('Tahun') }}</label>
+            <select id="tahun" name="tahun" class="tp-filter-select" style="min-width:130px" onchange="this.form.submit()">
+                <option value="">{{ __('Semua tahun') }}</option>
+                @foreach ($grades as $option)
+                    <option value="{{ $option->level }}" @selected($grade?->id === $option->id)>{{ $option->name }}</option>
+                @endforeach
+            </select>
+        </div>
 
-                <select id="tahun" name="tahun" class="input min-h-[44px] py-2" onchange="this.form.submit()">
-                    <option value="">{{ __('Semua tahun') }}</option>
-                    @foreach ($grades as $option)
-                        <option value="{{ $option->level }}" @selected($grade?->id === $option->id)>
-                            {{ $option->name }}
-                        </option>
+        <div class="tp-field">
+            <label for="subjek" class="tp-label">{{ __('Subjek') }}</label>
+            <select id="subjek" name="subjek" class="tp-filter-select" style="min-width:200px" onchange="this.form.submit()">
+                <option value="">{{ __('Semua subjek') }}</option>
+                @foreach ($subjects->groupBy('category') as $category => $group)
+                    <optgroup label="{{ \App\Models\Subject::categoryLabel($category) }}">
+                        @foreach ($group as $option)
+                            <option value="{{ $option->slug }}" @selected($subject?->id === $option->id)>{{ $option->displayName() }}</option>
+                        @endforeach
+                    </optgroup>
+                @endforeach
+            </select>
+        </div>
+
+        <div class="tp-field">
+            <label for="kuiz" class="tp-label">{{ __('Kuiz') }}</label>
+            <select id="kuiz" name="kuiz" class="tp-filter-select" style="min-width:180px" onchange="this.form.submit()">
+                <option value="">{{ __('Semua kuiz') }}</option>
+                @foreach ($quizzes as $option)
+                    <option value="{{ $option->id }}" @selected($quiz?->id === $option->id)>{{ $option->title }}</option>
+                @endforeach
+            </select>
+        </div>
+
+        @if (request()->hasAny(['tahun', 'subjek', 'kuiz']))
+            <a href="{{ route('cikgu.ranking') }}" style="min-height:46px;display:inline-flex;align-items:center;font-family:'Geist',sans-serif;font-weight:800;font-size:13.5px;color:#6C6F87">{{ __('Kosongkan') }}</a>
+        @endif
+    </form>
+
+    @if ($rows->isEmpty())
+        <div class="tp-empty">
+            <span style="font-size:30px">🏁</span>
+            <h3 class="tp-g" style="font-size:19px;font-weight:800;color:#28293F">{{ __('Belum ada data ranking') }}</h3>
+            <p style="margin:0;font-size:14.5px;color:#8B8AA3;max-width:420px">{{ __('Ranking akan muncul setelah murid menyelesaikan kuiz interaktif yang diterbitkan.') }}</p>
+        </div>
+    @else
+        <div class="tp-card" style="overflow:hidden">
+            <div style="overflow-x:auto">
+                <div style="min-width:820px">
+                    <div style="display:grid;grid-template-columns:{{ $cols }};gap:12px;align-items:center;padding:14px 20px;border-bottom:1px solid rgba(46,44,80,.08)">
+                        <span class="tp-g" style="font-size:12px;font-weight:800;color:#8B8AA3">#</span>
+                        <span class="tp-g" style="font-size:12px;font-weight:800;color:#8B8AA3">{{ __('Murid') }}</span>
+                        <span class="tp-g" style="font-size:12px;font-weight:800;color:#8B8AA3">{{ __('Tahun') }}</span>
+                        <span class="tp-g" style="font-size:12px;font-weight:800;color:#8B8AA3">{{ __('Mata') }}</span>
+                        <span class="tp-g" style="font-size:12px;font-weight:800;color:#8B8AA3">{{ __('Betul') }}</span>
+                        <span class="tp-g" style="font-size:12px;font-weight:800;color:#8B8AA3">{{ __('Ketepatan') }}</span>
+                        <span class="tp-g" style="font-size:12px;font-weight:800;color:#8B8AA3">{{ __('Kuiz') }}</span>
+                    </div>
+
+                    @foreach ($rows as $row)
+                        @php($p = $palette[$loop->index % count($palette)])
+                        @php($accBg = $row->accuracy >= 70 ? '#DCF2EE' : ($row->accuracy >= 50 ? '#FEF0CE' : '#FDE7E0'))
+                        @php($accFg = $row->accuracy >= 70 ? '#0F7A68' : ($row->accuracy >= 50 ? '#8A6A12' : '#C24936'))
+                        <div class="tp-row" style="display:grid;grid-template-columns:{{ $cols }};gap:12px;align-items:center;padding:13px 20px">
+                            <span style="font-size:15px">
+                                @if ($row->rank === 1) 🥇 @elseif ($row->rank === 2) 🥈 @elseif ($row->rank === 3) 🥉 @else {{ $row->rank }} @endif
+                            </span>
+                            <div style="display:flex;align-items:center;gap:12px;min-width:0">
+                                <span style="width:36px;height:36px;border-radius:10px;background:{{ $p[0] }};color:{{ $p[1] }};display:grid;place-items:center;font-family:'Geist',sans-serif;font-weight:800;font-size:12px;flex-shrink:0">{{ $row->student->initials() }}</span>
+                                <span class="tp-g" style="font-weight:800;font-size:14.5px;color:#28293F;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $row->student->name }}</span>
+                            </div>
+                            <span style="font-size:13.5px;font-weight:700;color:#6C6F87">{{ $row->student->grade?->name ?? '-' }}</span>
+                            <span class="tp-g" style="font-weight:800;font-size:15px;color:#28293F">{{ $row->points }}</span>
+                            <span style="font-size:13.5px;font-weight:700;color:#6C6F87">{{ $row->correct }}/{{ $row->questions }}</span>
+                            <span style="justify-self:start;background:{{ $accBg }};color:{{ $accFg }};border-radius:999px;padding:4px 12px;font-family:'Geist',sans-serif;font-size:12px;font-weight:800">{{ $row->accuracy }}%</span>
+                            <span style="font-size:13.5px;font-weight:700;color:#6C6F87">{{ $row->quizzes }}</span>
+                        </div>
                     @endforeach
-                </select>
-            </div>
-
-            <div>
-                <label for="subjek" class="label mb-1">{{ __('Subjek') }}</label>
-
-                <select id="subjek" name="subjek" class="input min-h-[44px] py-2" onchange="this.form.submit()">
-                    <option value="">{{ __('Semua subjek') }}</option>
-                    @foreach ($subjects->groupBy('category') as $category => $group)
-                        <optgroup label="{{ \App\Models\Subject::categoryLabel($category) }}">
-                            @foreach ($group as $option)
-                                <option value="{{ $option->slug }}" @selected($subject?->id === $option->id)>
-                                    {{ $option->displayName() }}
-                                </option>
-                            @endforeach
-                        </optgroup>
-                    @endforeach
-                </select>
-            </div>
-
-            <div>
-                <label for="kuiz" class="label mb-1">{{ __('Kuiz') }}</label>
-
-                <select id="kuiz" name="kuiz" class="input min-h-[44px] py-2" onchange="this.form.submit()">
-                    <option value="">{{ __('Semua kuiz') }}</option>
-                    @foreach ($quizzes as $option)
-                        <option value="{{ $option->id }}" @selected($quiz?->id === $option->id)>
-                            {{ $option->title }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
-
-            <noscript>
-                <button type="submit" class="btn-secondary btn-sm">{{ __('Tapis') }}</button>
-            </noscript>
-
-            @if (request()->hasAny(['tahun', 'subjek', 'kuiz']))
-                <a href="{{ route('cikgu.ranking') }}" class="btn-ghost btn-sm">{{ __('Kosongkan') }}</a>
-            @endif
-        </form>
-
-        <section class="mt-6">
-            <h2 class="sr-only">{{ __('Jadual ranking') }}</h2>
-
-            @if ($rows->isEmpty())
-                <x-empty emoji="🏁" :title="__('Belum ada data ranking')"
-                         :text="__('Ranking akan muncul setelah murid menyelesaikan kuiz interaktif yang diterbitkan.')" />
-            @else
-                <div class="card overflow-x-auto">
-                    <table class="w-full text-left">
-                        <caption class="sr-only">
-                            {{ __('Ranking murid') }}
-                            {{ $grade ? __('bagi').' '.$grade->name : __('bagi semua tahun') }}
-                            {{ $subject ? ', '.__('subjek').' '.$subject->name : '' }}
-                            {{ $quiz ? ', '.__('kuiz').' '.$quiz->title : '' }}
-                        </caption>
-
-                        <thead class="border-b border-line">
-                            <tr>
-                                <th scope="col" class="p-4 text-sm font-bold text-ink-2">#</th>
-                                <th scope="col" class="p-4 text-sm font-bold text-ink-2">{{ __('Murid') }}</th>
-                                <th scope="col" class="p-4 text-sm font-bold text-ink-2">{{ __('Tahun') }}</th>
-                                <th scope="col" class="p-4 text-sm font-bold text-ink-2">{{ __('Mata') }}</th>
-                                <th scope="col" class="p-4 text-sm font-bold text-ink-2">{{ __('Betul') }}</th>
-                                <th scope="col" class="p-4 text-sm font-bold text-ink-2">{{ __('Ketepatan') }}</th>
-                                <th scope="col" class="p-4 text-sm font-bold text-ink-2">{{ __('Kuiz') }}</th>
-                            </tr>
-                        </thead>
-
-                        <tbody class="divide-y divide-line">
-                            @foreach ($rows as $row)
-                                <tr>
-                                    <td class="p-4">
-                                        <span class="font-extrabold text-ink">
-                                            @if ($row->rank === 1)
-                                                <span aria-hidden="true">🥇</span>
-                                            @elseif ($row->rank === 2)
-                                                <span aria-hidden="true">🥈</span>
-                                            @elseif ($row->rank === 3)
-                                                <span aria-hidden="true">🥉</span>
-                                            @else
-                                                {{ $row->rank }}
-                                            @endif
-
-                                            <span class="sr-only">{{ __('Kedudukan :rank', ['rank' => $row->rank]) }}</span>
-                                        </span>
-                                    </td>
-
-                                    <td class="p-4">
-                                        <span class="flex items-center gap-3">
-                                            <x-avatar :user="$row->student" size="sm" />
-                                            <span class="font-bold text-ink">{{ $row->student->name }}</span>
-                                        </span>
-                                    </td>
-
-                                    <td class="p-4 text-ink-2">{{ $row->student->grade?->name ?? '-' }}</td>
-
-                                    <td class="p-4 text-lg font-extrabold text-ink">{{ $row->points }}</td>
-
-                                    <td class="p-4 text-ink-2">{{ $row->correct }}/{{ $row->questions }}</td>
-
-                                    <td class="p-4">
-                                        <span class="chip
-                                            @if ($row->accuracy >= 80) bg-success-soft text-success
-                                            @elseif ($row->accuracy >= 50) bg-warn-soft text-warn
-                                            @else bg-danger-soft text-danger @endif">
-                                            {{ $row->accuracy }}%
-                                        </span>
-                                    </td>
-
-                                    <td class="p-4 text-ink-2">{{ $row->quizzes }}</td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
                 </div>
+            </div>
+        </div>
 
-                <p class="mt-4 text-sm text-ink-2">
-                    {{ __(':count murid dalam senarai ini.', ['count' => $rows->count()]) }}
-                </p>
-            @endif
-        </section>
-    </div>
-</x-app-layout>
+        <span style="font-size:13px;color:#8B8AA3">{{ __(':count murid dalam senarai ini.', ['count' => $rows->count()]) }}</span>
+    @endif
+</x-cikgu-layout>

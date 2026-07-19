@@ -1,32 +1,27 @@
-<x-app-layout :title="__('Pengurusan Bab')">
+<x-cikgu-layout
+    :title="__('Pengurusan Bab')"
+    :heading="__('Bab')"
+    :sub="__('Bab dikongsi oleh semua guru. Namakan semula bab mengikut sukatan KSSR sekolah anda, atau tambah bab baru. Bab yang mengandungi kandungan tidak boleh dipadam.')">
+
     @php
         $slugLevels = $subjects->mapWithKeys(fn ($option) => [
             $option->slug => array_values($availability[$option->id] ?? []),
         ]);
     @endphp
 
-    <div class="mx-auto max-w-4xl">
-        <header>
-            <h1 class="text-3xl font-extrabold text-ink">{{ __('Pengurusan Bab') }}</h1>
-
-            <p class="mt-2 max-w-prose text-ink-2">
-                {{ __('Bab dikongsi oleh semua guru. Namakan semula bab supaya sepadan dengan sukatan KSSR sekolah anda, atau tambah bab baharu. Bab yang mengandungi kandungan tidak boleh dipadam.') }}
-            </p>
-        </header>
-
-        {{-- Pick a Subject and Tahun. Choosing a Subject narrows the Tahun to the ones it is
-             offered in under Kurikulum 2027; an unavailable Tahun is disabled. --}}
-        <form method="GET" action="{{ route('cikgu.bab.index') }}" class="mt-6 flex flex-wrap items-end gap-3"
+    <div style="display:flex;flex-direction:column;gap:18px;max-width:860px">
+        {{-- Pick a Subject and Tahun. --}}
+        <form method="GET" action="{{ route('cikgu.bab.index') }}"
+              class="tp-toolbar"
               x-ref="form"
               x-data="babFilter({
                   subject: @js($subject?->slug),
                   grade: {{ $grade?->level ?? 'null' }},
                   availability: @js($slugLevels),
               })">
-            <div>
-                <label for="subjek" class="label mb-1">{{ __('Subjek') }}</label>
-
-                <select id="subjek" name="subjek" class="input min-h-[44px] py-2"
+            <div class="tp-field">
+                <label for="subjek" class="tp-label">{{ __('Subjek') }}</label>
+                <select id="subjek" name="subjek" class="tp-filter-select" style="min-width:220px"
                         x-model="subject" @change="onSubjectChange()">
                     @foreach ($subjects as $option)
                         <option value="{{ $option->slug }}" @selected($subject?->id === $option->id)>
@@ -36,10 +31,9 @@
                 </select>
             </div>
 
-            <div>
-                <label for="tahun" class="label mb-1">{{ __('Tahun') }}</label>
-
-                <select id="tahun" name="tahun" class="input min-h-[44px] py-2"
+            <div class="tp-field">
+                <label for="tahun" class="tp-label">{{ __('Tahun') }}</label>
+                <select id="tahun" name="tahun" class="tp-filter-select" style="min-width:150px"
                         x-model.number="grade" @change="$refs.form.submit()">
                     @foreach ($grades as $option)
                         <option value="{{ $option->level }}" @selected($grade?->id === $option->id)
@@ -51,122 +45,101 @@
             </div>
 
             <noscript>
-                <button type="submit" class="btn-secondary btn-sm">{{ __('Papar') }}</button>
+                <button type="submit" class="tp-btn-ghost">{{ __('Papar') }}</button>
             </noscript>
         </form>
 
         @if ($subject && $grade)
-            <section class="mt-8" style="--sc: {{ $subject->rgb }}">
-                <h2 class="mb-4 text-xl font-extrabold text-ink">
-                    {{ $subject->name }}. {{ $grade->name }}
-                </h2>
+            <h2 class="tp-g" style="font-size:17px;font-weight:800;color:#28293F">{{ $subject->name }}. {{ $grade->name }}</h2>
 
-                @unless ($isOffered)
-                    <div class="alert-warn mb-4">
-                        <x-icon name="info" class="mt-0.5 h-5 w-5 shrink-0" />
-                        <div>
-                            {{ __(':subject tidak ditawarkan untuk :grade dalam Kurikulum 2027. Anda tidak boleh menambah bab baharu di sini. Bab lama yang masih mengandungi kandungan ditandakan tidak aktif — sila pindahkan kandungannya ke Tahun yang betul.', ['subject' => $subject->name, 'grade' => $grade->name]) }}
-                        </div>
-                    </div>
-                @endunless
+            @unless ($isOffered)
+                <div style="display:flex;gap:10px;background:#FEF0CE;border:1px solid rgba(138,106,18,.25);border-radius:14px;padding:14px 18px;font-size:13.5px;color:#8A6A12">
+                    <span>ℹ️</span>
+                    <div>{{ __(':subject tidak ditawarkan untuk :grade dalam Kurikulum 2027. Anda tidak boleh menambah bab baharu di sini. Bab lama yang masih mengandungi kandungan ditandakan tidak aktif — sila pindahkan kandungannya ke Tahun yang betul.', ['subject' => $subject->name, 'grade' => $grade->name]) }}</div>
+                </div>
+            @endunless
 
-                @if ($chapters->isEmpty())
-                    @if ($isOffered)
-                        <x-empty emoji="📚" :title="__('Belum ada bab')"
-                                 :text="__('Tambah bab pertama untuk :subject :grade menggunakan borang di bawah.', ['subject' => $subject->name, 'grade' => $grade->name])" />
-                    @endif
-                @else
-                    <ul class="space-y-2">
-                        @foreach ($chapters as $chapter)
-                            @php($used = $chapter->lessons_count + $chapter->materials_count + $chapter->quizzes_count)
-
-                            <li class="card flex flex-wrap items-center gap-4 p-4 {{ $chapter->is_active ? '' : 'opacity-70' }}">
-                                <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-control bg-subject-wash font-extrabold text-subject-ink">
-                                    {{ $chapter->number }}
-                                </span>
-
-                                <span class="min-w-0 flex-1">
-                                    <span class="flex flex-wrap items-center gap-2 font-extrabold text-ink">
-                                        {{ $chapter->title }}
-
-                                        @unless ($chapter->is_active)
-                                            <span class="chip bg-warn-soft text-warn">{{ __('Tidak aktif') }}</span>
-                                        @endunless
-                                    </span>
-
-                                    <span class="mt-0.5 flex flex-wrap gap-x-3 text-sm text-ink-2">
-                                        <span>🎬 {{ $chapter->lessons_count }}</span>
-                                        <span>📄 {{ $chapter->materials_count }}</span>
-                                        <span>📝 {{ $chapter->quizzes_count }}</span>
-                                    </span>
-                                </span>
-
-                                <span class="flex shrink-0 items-center gap-2">
-                                    <a href="{{ route('cikgu.bab.edit', $chapter) }}" class="btn-secondary btn-sm">
-                                        <x-icon name="pencil" class="h-4 w-4" />
-                                        {{ __('Namakan Semula') }}
-                                    </a>
-
-                                    @if ($used === 0)
-                                        <form method="POST" action="{{ route('cikgu.bab.destroy', $chapter) }}"
-                                              onsubmit='return confirm(@js(__("Padam Bab :number: :title?", ["number" => $chapter->number, "title" => $chapter->title])))'>
-                                            @csrf
-                                            @method('DELETE')
-
-                                            <button type="submit" class="btn-ghost btn-sm text-danger hover:bg-danger-soft">
-                                                <x-icon name="trash" class="h-4 w-4" />
-                                                <span class="sr-only">{{ __('Padam') }} Bab {{ $chapter->number }}</span>
-                                            </button>
-                                        </form>
-                                    @else
-                                        <span class="chip bg-surface-2 text-ink-2" title="{{ __('Bab ini mengandungi kandungan') }}">
-                                            {{ __(':count kandungan', ['count' => $used]) }}
-                                        </span>
-                                    @endif
-                                </span>
-                            </li>
-                        @endforeach
-                    </ul>
-                @endif
-
-                {{-- Add a Bab, only where the pair is offered. The number is the next in sequence. --}}
+            @if ($chapters->isEmpty())
                 @if ($isOffered)
-                    <div class="card card-pad mt-6">
-                        <h3 class="text-lg font-extrabold text-ink">{{ __('Tambah') }} Bab {{ $nextNumber }}</h3>
-
-                        <form method="POST" action="{{ route('cikgu.bab.store') }}" class="mt-4 space-y-4">
-                            @csrf
-
-                            <input type="hidden" name="subject_id" value="{{ $subject->id }}">
-                            <input type="hidden" name="grade_id" value="{{ $grade->id }}">
-
-                            <div>
-                                <label for="new-title" class="label">{{ __('Tajuk bab') }}</label>
-
-                                <input id="new-title" name="title" type="text" value="{{ old('title') }}"
-                                       required class="input" placeholder="{{ __('Contoh: Nombor Bulat Hingga 1000') }}"
-                                       @error('title') aria-invalid="true" @enderror>
-
-                                @error('title')
-                                    <p class="field-error">{{ $message }}</p>
-                                @enderror
-                            </div>
-
-                            <div>
-                                <label for="new-description" class="label">{{ __('Penerangan (pilihan)') }}</label>
-
-                                <textarea id="new-description" name="description" rows="2"
-                                          class="input py-3">{{ old('description') }}</textarea>
-                            </div>
-
-                            <button type="submit" class="btn-primary">
-                                <x-icon name="plus" class="h-5 w-5" />
-                                {{ __('Tambah Bab') }}
-                            </button>
-                        </form>
+                    <div class="tp-empty">
+                        <span style="font-size:30px">📚</span>
+                        <h3 class="tp-g" style="font-size:19px;font-weight:800;color:#28293F">{{ __('Belum ada bab') }}</h3>
+                        <p style="margin:0;font-size:14.5px;color:#8B8AA3;max-width:420px">{{ __('Tambah bab pertama untuk :subject :grade menggunakan borang di bawah.', ['subject' => $subject->name, 'grade' => $grade->name]) }}</p>
                     </div>
                 @endif
-            </section>
+            @else
+                <div class="tp-list">
+                    @foreach ($chapters as $chapter)
+                        @php($used = $chapter->lessons_count + $chapter->materials_count + $chapter->quizzes_count)
+                        <div class="tp-listcard" style="{{ $chapter->is_active ? '' : 'opacity:.7' }}">
+                            <span style="width:40px;height:40px;border-radius:12px;background:#E4EEF9;color:#2E6CA8;display:grid;place-items:center;font-family:'Geist',sans-serif;font-weight:800;font-size:15px;flex-shrink:0">{{ $chapter->number }}</span>
+
+                            <div style="display:flex;flex-direction:column;gap:4px;min-width:0;flex:1">
+                                <span class="tp-g" style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-weight:800;font-size:15px;color:#28293F">
+                                    {{ $chapter->title }}
+                                    @unless ($chapter->is_active)
+                                        <span class="tp-tag" style="background:#FEF0CE;color:#8A6A12">{{ __('Tidak aktif') }}</span>
+                                    @endunless
+                                </span>
+                                <div style="display:flex;align-items:center;gap:12px">
+                                    <span class="tp-meta">🎬 {{ $chapter->lessons_count }}</span>
+                                    <span class="tp-meta">📄 {{ $chapter->materials_count }}</span>
+                                    <span class="tp-meta">📝 {{ $chapter->quizzes_count }}</span>
+                                </div>
+                            </div>
+
+                            <a href="{{ route('cikgu.bab.edit', $chapter) }}" class="tp-btn-ghost" style="flex-shrink:0">✏️ {{ __('Sunting') }}</a>
+
+                            @if ($used === 0)
+                                <form method="POST" action="{{ route('cikgu.bab.destroy', $chapter) }}" style="flex-shrink:0"
+                                      onsubmit='return confirm(@js(__("Padam Bab :number: :title?", ["number" => $chapter->number, "title" => $chapter->title])))'>
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="tp-icon-action tp-icon-danger" title="{{ __('Padam') }}">
+                                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                                        <span class="sr-only">{{ __('Padam') }} Bab {{ $chapter->number }}</span>
+                                    </button>
+                                </form>
+                            @else
+                                <span class="tp-tag-neutral" style="flex-shrink:0;padding:5px 13px;font-size:12px" title="{{ __('Bab ini mengandungi kandungan') }}">{{ __(':count kandungan', ['count' => $used]) }}</span>
+                            @endif
+                        </div>
+                    @endforeach
+                </div>
+            @endif
+
+            {{-- Add a Bab, only where the pair is offered. --}}
+            @if ($isOffered)
+                <div class="tp-panelform">
+                    <h2 class="tp-g" style="font-size:17px;font-weight:800;color:#28293F">{{ __('Tambah') }} Bab {{ $nextNumber }}</h2>
+
+                    <form method="POST" action="{{ route('cikgu.bab.store') }}" style="display:flex;flex-direction:column;gap:16px">
+                        @csrf
+                        <input type="hidden" name="subject_id" value="{{ $subject->id }}">
+                        <input type="hidden" name="grade_id" value="{{ $grade->id }}">
+
+                        <div class="tp-field">
+                            <label for="new-title" class="tp-label">{{ __('Tajuk bab') }}</label>
+                            <input id="new-title" name="title" type="text" value="{{ old('title') }}" required
+                                   class="tp-input" placeholder="{{ __('Contoh: Nombor Bulat Hingga 1000') }}"
+                                   @error('title') aria-invalid="true" @enderror>
+                            @error('title')
+                                <span style="font-size:13px;font-weight:700;color:#C24936">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <div class="tp-field">
+                            <label for="new-description" class="tp-label">{{ __('Penerangan (pilihan)') }}</label>
+                            <textarea id="new-description" name="description" rows="3" class="tp-textarea">{{ old('description') }}</textarea>
+                        </div>
+
+                        <button type="submit" class="tp-btn" style="align-self:flex-start">
+                            <x-icon name="plus" class="h-4 w-4" />
+                            {{ __('Tambah Bab') }}
+                        </button>
+                    </form>
+                </div>
+            @endif
         @endif
     </div>
 
@@ -174,18 +147,12 @@
         <script>
             function babFilter({ subject, grade, availability }) {
                 return {
-                    subject,
-                    grade,
-                    availability,
-
+                    subject, grade, availability,
                     levelAvailable(level) {
                         return (this.availability[this.subject] ?? []).includes(level);
                     },
-
                     onSubjectChange() {
                         const levels = this.availability[this.subject] ?? [];
-
-                        // Jump to the first Tahun this subject is offered in, if the current one is not.
                         if (! levels.includes(this.grade)) {
                             this.grade = levels[0] ?? null;
                             this.$nextTick(() => this.$refs.form.submit());
@@ -197,4 +164,4 @@
             }
         </script>
     @endpush
-</x-app-layout>
+</x-cikgu-layout>

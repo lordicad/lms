@@ -43,12 +43,12 @@
         labels: { loading: @js(__('Memuatkan bab...')), placeholder: @js(__('Pilih bab')) },
      })"
      x-init="init()"
-     class="grid gap-5 sm:grid-cols-3">
+     style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px">
 
-    <div>
-        <label for="subject_id" class="label">{{ __('Subjek') }}</label>
+    <div class="tp-field">
+        <label for="subject_id" class="tp-label">{{ __('Subjek') }}</label>
 
-        <select id="subject_id" name="subject_id" class="input" x-model.number="subject" @change="onSubjectChange()" required>
+        <select id="subject_id" name="subject_id" class="tp-select" x-model.number="subject" @change="onSubjectChange()" required>
             <option value="">{{ __('Pilih subjek') }}</option>
             <template x-for="option in availableSubjects" :key="option.id">
                 <option :value="option.id" x-text="`${option.icon} ${option.name}`"></option>
@@ -56,10 +56,10 @@
         </select>
     </div>
 
-    <div>
-        <label for="grade_id" class="label">{{ __('Tahun') }}</label>
+    <div class="tp-field">
+        <label for="grade_id" class="tp-label">{{ __('Tahun') }}</label>
 
-        <select id="grade_id" name="grade_id" class="input" x-model.number="grade" @change="onGradeChange()" required>
+        <select id="grade_id" name="grade_id" class="tp-select" x-model.number="grade" @change="onGradeChange()" required>
             <option value="">{{ __('Pilih tahun') }}</option>
             <template x-for="option in availableGrades" :key="option.id">
                 <option :value="option.id" x-text="option.name"></option>
@@ -67,10 +67,10 @@
         </select>
     </div>
 
-    <div>
-        <label for="{{ $name }}" class="label">{{ __('Bab') }}</label>
+    <div class="tp-field">
+        <label for="{{ $name }}" class="tp-label">{{ __('Bab') }}</label>
 
-        <select id="{{ $name }}" name="{{ $name }}" class="input" x-model.number="chapter"
+        <select id="{{ $name }}" name="{{ $name }}" class="tp-select" x-model.number="chapter"
                 :disabled="loading || ! subject || ! grade" required
                 @error($name) aria-invalid="true" @enderror>
             <option value="" x-text="loading ? labels.loading : labels.placeholder">{{ __('Pilih bab') }}</option>
@@ -80,14 +80,14 @@
             </template>
         </select>
 
-        <p class="help" x-show="! subject || ! grade" x-cloak>{{ __('Pilih subjek dan tahun dahulu.') }}</p>
+        <p class="tp-hint" x-show="! subject || ! grade" x-cloak>{{ __('Pilih subjek dan tahun dahulu.') }}</p>
 
-        <p class="help" x-show="subject && grade && ! loading && chapters.length === 0" x-cloak>
+        <p class="tp-hint" x-show="subject && grade && ! loading && chapters.length === 0" x-cloak>
             {{ __('Tiada bab untuk kombinasi ini. Tambah bab di halaman Bab dahulu.') }}
         </p>
 
         @error($name)
-            <p class="field-error">{{ $message }}</p>
+            <p style="font-size:13px;font-weight:700;color:#C24936">{{ $message }}</p>
         @enderror
     </div>
 </div>

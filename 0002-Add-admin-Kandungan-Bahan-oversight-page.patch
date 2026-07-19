@@ -1,0 +1,442 @@
+From 4b18d3e7c0809b15e017623881f4c8734c450327 Mon Sep 17 00:00:00 2001
+From: Shadatul Sofia <133907990+ShadatulSofia@users.noreply.github.com>
+Date: Fri, 17 Jul 2026 14:58:23 +0800
+Subject: [PATCH 2/2] Add admin Kandungan > Bahan oversight page
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Lists every teacher's material behind the same Subjek/Tahun filter as the video
+list, with totals for all / PDF / DOCX / PPTX that follow the filter. Bahan is no
+longer greyed out in the Kandungan menu.
+
+Preview opens in a dialog, like the video list. PDFs and images show in place;
+Word, PowerPoint and Excel cannot be rendered by a browser, so the dialog says so
+and offers the download rather than faking a preview or handing the file to a
+third-party viewer. Download is also its own action on every row.
+
+DownloadController no longer counts a download when an admin opens the file. The
+list shows download_count, so without this an audit would inflate the very number
+it is auditing — the same reasoning that stops a teacher's own play counting as a
+view (WatchController::markViewed).
+
+Type counts match on original_name, since the extension is derived rather than
+stored; the column collation is case-insensitive, so NOTA.PDF counts with the
+rest. The Subjek/Tahun filter is now one shared helper across both lists.
+---
+ .../Admin/AdminContentController.php          |  65 ++++--
+ app/Http/Controllers/DownloadController.php   |   7 +-
+ app/Models/Material.php                       |  24 +++
+ lang/en.json                                  |   9 +
+ .../views/admin/kandungan/bahan.blade.php     | 193 ++++++++++++++++++
+ resources/views/layouts/app.blade.php         |   3 +-
+ routes/web.php                                |   1 +
+ 7 files changed, 287 insertions(+), 15 deletions(-)
+ create mode 100644 resources/views/admin/kandungan/bahan.blade.php
+
+diff --git a/app/Http/Controllers/Admin/AdminContentController.php b/app/Http/Controllers/Admin/AdminContentController.php
+index cc0b03d..d243040 100644
+--- a/app/Http/Controllers/Admin/AdminContentController.php
++++ b/app/Http/Controllers/Admin/AdminContentController.php
+@@ -5,8 +5,9 @@
+ use App\Http\Controllers\Controller;
+ use App\Models\Grade;
+ use App\Models\Lesson;
++use App\Models\Material;
+ use App\Models\Subject;
+-use Illuminate\Contracts\Database\Eloquent\Builder;
++use Illuminate\Database\Eloquent\Builder;
+ use Illuminate\Http\Request;
+ use Illuminate\View\View;
+ 
+@@ -18,18 +19,9 @@ class AdminContentController extends Controller
+ {
+     public function video(Request $request): View
+     {
+-        // Both filters are independent `when()`s, so subject alone, Tahun alone, or the two
+-        // together all narrow the same query. The summary counts reuse it, so the cards always
+-        // describe the rows actually on screen rather than the whole library.
+-        $filtered = fn (): Builder => Lesson::query()
+-            ->when($request->filled('subjek'), fn (Builder $q) => $q->whereHas(
+-                'chapter.subject',
+-                fn (Builder $s) => $s->where('slug', $request->string('subjek')),
+-            ))
+-            ->when($request->filled('tahun'), fn (Builder $q) => $q->whereHas(
+-                'chapter.grade',
+-                fn (Builder $g) => $g->where('level', $request->integer('tahun')),
+-            ));
++        // Rebuilt per call: the summary counts each need their own query, and reusing one
++        // builder would stack their wheres on top of each other.
++        $filtered = fn (): Builder => $this->filterByChapter(Lesson::query(), $request);
+ 
+         $lessons = $filtered()
+             ->with('chapter.subject', 'chapter.grade', 'teacher')
+@@ -39,6 +31,7 @@ public function video(Request $request): View
+ 
+         return view('admin.kandungan.video', [
+             'lessons' => $lessons,
++            // Counts follow the filter, so the cards always describe the rows on screen.
+             'totalCount' => $filtered()->count(),
+             'youtubeCount' => $filtered()->where('source', Lesson::SOURCE_YOUTUBE)->count(),
+             'uploadCount' => $filtered()->where('source', Lesson::SOURCE_UPLOAD)->count(),
+@@ -46,4 +39,50 @@ public function video(Request $request): View
+             'grades' => Grade::orderBy('level')->get(),
+         ]);
+     }
++
++    public function material(Request $request): View
++    {
++        $filtered = fn (): Builder => $this->filterByChapter(Material::query(), $request);
++
++        $materials = $filtered()
++            ->with('chapter.subject', 'chapter.grade', 'teacher')
++            ->latest('id')
++            ->paginate(20)
++            ->withQueryString();
++
++        // Type is derived from the stored filename — there is no extension column — so the
++        // per-type counts match on that. The column's collation is case-insensitive, so a
++        // NOTA.PDF is counted with the rest.
++        $ofType = fn (string $ext): int => $filtered()->where('original_name', 'like', '%.'.$ext)->count();
++
++        return view('admin.kandungan.bahan', [
++            'materials' => $materials,
++            'totalCount' => $filtered()->count(),
++            'pdfCount' => $ofType('pdf'),
++            'docxCount' => $ofType('docx'),
++            'pptxCount' => $ofType('pptx'),
++            'subjects' => Subject::orderBy('sort_order')->get(),
++            'grades' => Grade::orderBy('level')->get(),
++        ]);
++    }
++
++    /**
++     * Subjek and Tahun narrow anything hanging off a chapter. They are separate `when()`s, so
++     * subject alone, Tahun alone, or the two together all work without a special case.
++     *
++     * @param  Builder<Lesson>|Builder<Material>  $query
++     * @return Builder<Lesson>|Builder<Material>
++     */
++    private function filterByChapter(Builder $query, Request $request): Builder
++    {
++        return $query
++            ->when($request->filled('subjek'), fn (Builder $q) => $q->whereHas(
++                'chapter.subject',
++                fn (Builder $s) => $s->where('slug', $request->string('subjek')),
++            ))
++            ->when($request->filled('tahun'), fn (Builder $q) => $q->whereHas(
++                'chapter.grade',
++                fn (Builder $g) => $g->where('level', $request->integer('tahun')),
++            ));
++    }
+ }
+diff --git a/app/Http/Controllers/DownloadController.php b/app/Http/Controllers/DownloadController.php
+index 3113a48..f6f0b6b 100644
+--- a/app/Http/Controllers/DownloadController.php
++++ b/app/Http/Controllers/DownloadController.php
+@@ -23,7 +23,12 @@ public function material(Request $request, Material $material): StreamedResponse
+ 
+         abort_unless($disk->exists($material->file_path), Response::HTTP_NOT_FOUND);
+ 
+-        $material->increment('download_count');
++        // An MOE admin opening a file from the oversight list is auditing it, not using it, so
++        // it must not move the teacher's number — the same reason a teacher's own play never
++        // counts as a view (see WatchController::markViewed).
++        if (! $request->user()->isAdmin()) {
++            $material->increment('download_count');
++        }
+ 
+         return $disk->download($material->file_path, $material->original_name);
+     }
+diff --git a/app/Models/Material.php b/app/Models/Material.php
+index 28fb152..53f6c8f 100644
+--- a/app/Models/Material.php
++++ b/app/Models/Material.php
+@@ -80,6 +80,30 @@ public function iconName(): string
+         };
+     }
+ 
++    /**
++     * Direct URL to the stored file. The download route is the one students use — it returns the
++     * original filename and counts the download — so this is only for showing a file in place,
++     * where a forced attachment would defeat the point.
++     */
++    public function fileUrl(): ?string
++    {
++        return $this->file_path ? Storage::disk('uploads')->url($this->file_path) : null;
++    }
++
++    /**
++     * What a browser can actually show inline: PDFs render natively and images are images.
++     * Word, PowerPoint and Excel cannot be displayed without shipping the file to a third-party
++     * viewer, so they report 'none' and the UI offers the download instead of faking a preview.
++     */
++    public function previewKind(): string
++    {
++        return match ($this->extension()) {
++            'pdf' => 'pdf',
++            'png', 'jpg', 'jpeg' => 'image',
++            default => 'none',
++        };
++    }
++
+     public function humanSize(): string
+     {
+         if ($this->size_kb >= 1024) {
+diff --git a/lang/en.json b/lang/en.json
+index e3927cb..a90560e 100644
+--- a/lang/en.json
++++ b/lang/en.json
+@@ -585,6 +585,15 @@
+     "Trending": "Trending",
+     "Kandungan": "Content",
+     "Kandungan Video": "Video Content",
++    "Kandungan Bahan": "Material Content",
++    "Semua bahan bantu mengajar yang dimuat naik oleh guru, merentas setiap subjek dan Tahun.": "Every teaching material uploaded by teachers, across all subjects and Years.",
++    "Tajuk Bahan": "Material Title",
++    "Ringkasan bahan": "Material summary",
++    "Jumlah bahan": "Total materials",
++    "tidak boleh dipaparkan dalam pelayar.": "cannot be shown in the browser.",
++    "Sila muat turun fail untuk membukanya.": "Download the file to open it.",
++    "Tiada bahan untuk dipaparkan": "No materials to show",
++    "Tiada bahan yang sepadan dengan tapisan ini.": "No materials match this filter.",
+     "Semua video yang dimuat naik oleh guru, merentas setiap subjek dan Tahun.": "Every video uploaded by teachers, across all subjects and Years.",
+     "Ringkasan video": "Video summary",
+     "Jumlah video": "Total videos",
+diff --git a/resources/views/admin/kandungan/bahan.blade.php b/resources/views/admin/kandungan/bahan.blade.php
+new file mode 100644
+index 0000000..13a4071
+--- /dev/null
++++ b/resources/views/admin/kandungan/bahan.blade.php
+@@ -0,0 +1,193 @@
++<x-app-layout :title="__('Kandungan Bahan')">
++    <header>
++        <h1 class="text-3xl font-extrabold text-ink">{{ __('Kandungan Bahan') }}</h1>
++        <p class="mt-1 max-w-prose text-ink-2">
++            {{ __('Semua bahan bantu mengajar yang dimuat naik oleh guru, merentas setiap subjek dan Tahun.') }}
++        </p>
++    </header>
++
++    <section class="mt-8">
++        <h2 class="sr-only">{{ __('Ringkasan bahan') }}</h2>
++
++        <dl class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
++            <div class="card p-5">
++                <dt class="flex items-center gap-2 text-sm font-bold text-ink-2">
++                    <x-icon name="file" class="h-5 w-5" />
++                    {{ __('Jumlah bahan') }}
++                </dt>
++                <dd class="mt-2 text-3xl font-extrabold tabular-nums text-ink">{{ number_format($totalCount) }}</dd>
++            </div>
++
++            <div class="card p-5">
++                <dt class="flex items-center gap-2 text-sm font-bold text-ink-2">
++                    <x-icon name="file-pdf" class="h-5 w-5" />
++                    {{ __('PDF') }}
++                </dt>
++                <dd class="mt-2 text-3xl font-extrabold tabular-nums text-ink">{{ number_format($pdfCount) }}</dd>
++            </div>
++
++            <div class="card p-5">
++                <dt class="flex items-center gap-2 text-sm font-bold text-ink-2">
++                    <x-icon name="file-text" class="h-5 w-5" />
++                    {{ __('DOCX') }}
++                </dt>
++                <dd class="mt-2 text-3xl font-extrabold tabular-nums text-ink">{{ number_format($docxCount) }}</dd>
++            </div>
++
++            <div class="card p-5">
++                <dt class="flex items-center gap-2 text-sm font-bold text-ink-2">
++                    <x-icon name="presentation" class="h-5 w-5" />
++                    {{ __('PPTX') }}
++                </dt>
++                <dd class="mt-2 text-3xl font-extrabold tabular-nums text-ink">{{ number_format($pptxCount) }}</dd>
++            </div>
++        </dl>
++    </section>
++
++    {{-- Same Subjek/Tahun filter as the video list; each side works alone or together. --}}
++    <div class="mt-8">
++        <x-cikgu-filters :subjects="$subjects" :grades="$grades" :action="route('admin.kandungan.bahan')" />
++    </div>
++
++    {{--
++        Preview keeps the admin on the list, the same way the video dialog does. PDFs and images
++        show in place; Word/PowerPoint/Excel cannot be rendered by a browser, so rather than fake
++        it (or hand the file to a third-party viewer) the dialog says so and offers the download.
++
++        x-if, not x-show: closing must remove the embedded file, not merely hide it.
++    --}}
++    <section class="mt-6"
++             x-data="{
++                 item: null,
++                 open(data) { this.item = data; document.body.classList.add('overflow-hidden'); },
++                 close() { this.item = null; document.body.classList.remove('overflow-hidden'); },
++             }"
++             @keydown.escape.window="close()">
++        @if ($materials->isEmpty())
++            <x-empty icon="file" :title="__('Tiada bahan untuk dipaparkan')"
++                     :text="__('Tiada bahan yang sepadan dengan tapisan ini.')" />
++        @else
++            <div class="card overflow-x-auto p-2">
++                <table class="w-full min-w-[64rem] text-sm">
++                    <thead>
++                        <tr class="border-b border-line text-left text-ink-2">
++                            <th class="px-3 py-2 font-semibold">{{ __('Tajuk Bahan') }}</th>
++                            <th class="px-3 py-2 font-semibold">{{ __('Subjek') }}</th>
++                            <th class="px-3 py-2 font-semibold">{{ __('Tahun') }}</th>
++                            <th class="px-3 py-2 text-right font-semibold">{{ __('Muat Turun') }}</th>
++                            <th class="px-3 py-2 font-semibold">{{ __('Jenis') }}</th>
++                            <th class="px-3 py-2 font-semibold">{{ __('Tarikh Dimuat Naik') }}</th>
++                            <th class="px-3 py-2 text-right font-semibold">{{ __('Tindakan') }}</th>
++                        </tr>
++                    </thead>
++                    <tbody>
++                        @foreach ($materials as $material)
++                            <tr class="border-b border-line/60 last:border-0 hover:bg-surface-2/60">
++                                <td class="px-3 py-2">
++                                    <span class="block font-bold text-ink">{{ $material->title }}</span>
++                                    <span class="block text-xs text-ink-2">{{ $material->teacher?->name }}</span>
++                                </td>
++                                <td class="px-3 py-2 text-ink-2">{{ $material->chapter->subject->displayName() }}</td>
++                                <td class="px-3 py-2 text-ink-2">{{ $material->chapter->grade->name }}</td>
++                                <td class="px-3 py-2 text-right tabular-nums text-ink-2">{{ number_format($material->download_count) }}</td>
++                                <td class="px-3 py-2">
++                                    <span class="inline-flex items-center gap-1.5 text-ink-2">
++                                        <x-icon :name="$material->iconName()" class="h-4 w-4" />
++                                        <span class="uppercase">{{ $material->extension() }}</span>
++                                        <span class="text-xs">{{ $material->humanSize() }}</span>
++                                    </span>
++                                </td>
++                                <td class="px-3 py-2 tabular-nums text-ink-2">{{ $material->created_at->translatedFormat('j M Y') }}</td>
++                                <td class="px-3 py-2">
++                                    <div class="flex items-center justify-end gap-1">
++                                        <button type="button" class="btn-ghost btn-sm"
++                                                @click="open(@js([
++                                                    'title' => $material->title,
++                                                    'teacher' => $material->teacher?->name,
++                                                    'kind' => $material->previewKind(),
++                                                    'src' => $material->fileUrl(),
++                                                    'name' => $material->original_name,
++                                                    'type' => strtoupper($material->extension()),
++                                                    'downloadUrl' => route('muat-turun.bahan', $material),
++                                                ]))">
++                                            <x-icon name="eye" class="h-4 w-4" />
++                                            {{ __('Lihat') }}
++                                            <span class="sr-only">{{ $material->title }}</span>
++                                        </button>
++
++                                        <a href="{{ route('muat-turun.bahan', $material) }}" class="btn-ghost btn-sm">
++                                            <x-icon name="download" class="h-4 w-4" />
++                                            {{ __('Muat Turun') }}
++                                            <span class="sr-only">{{ $material->title }}</span>
++                                        </a>
++                                    </div>
++                                </td>
++                            </tr>
++                        @endforeach
++                    </tbody>
++                </table>
++            </div>
++
++            <div class="mt-4">
++                {{ $materials->links() }}
++            </div>
++        @endif
++
++        <template x-if="item">
++            <div class="fixed inset-0 z-50 flex items-center justify-center p-4"
++                 role="dialog" aria-modal="true" :aria-label="item.title">
++                <div class="absolute inset-0 bg-black/70" @click="close()" aria-hidden="true"></div>
++
++                <div class="relative flex max-h-[90vh] w-full max-w-4xl flex-col overflow-hidden rounded-card border border-line bg-surface shadow-hero">
++                    <div class="flex items-start justify-between gap-4 border-b border-line px-4 py-3">
++                        <div class="min-w-0">
++                            <h2 class="truncate font-extrabold text-ink" x-text="item.title"></h2>
++                            <p class="truncate text-xs text-ink-2">
++                                <span x-text="item.teacher"></span> &middot; <span x-text="item.name"></span>
++                            </p>
++                        </div>
++
++                        <div class="flex shrink-0 items-center gap-1">
++                            <a :href="item.downloadUrl" class="btn-secondary btn-sm">
++                                <x-icon name="download" class="h-4 w-4" />
++                                {{ __('Muat Turun') }}
++                            </a>
++
++                            <button type="button" class="btn-ghost btn-sm" @click="close()" x-init="$el.focus()">
++                                <x-icon name="x" class="h-4 w-4" />
++                                <span class="sr-only">{{ __('Tutup') }}</span>
++                            </button>
++                        </div>
++                    </div>
++
++                    <template x-if="item.kind === 'pdf'">
++                        <iframe class="h-[70vh] w-full bg-black" :src="item.src" :title="item.title"></iframe>
++                    </template>
++
++                    <template x-if="item.kind === 'image'">
++                        <div class="flex max-h-[70vh] justify-center overflow-auto bg-surface-2 p-4">
++                            <img :src="item.src" :alt="item.title" class="max-w-full object-contain">
++                        </div>
++                    </template>
++
++                    <template x-if="item.kind === 'none'">
++                        <div class="px-6 py-12 text-center">
++                            <p class="font-bold text-ink">
++                                <span x-text="item.type"></span>
++                                {{ __('tidak boleh dipaparkan dalam pelayar.') }}
++                            </p>
++                            <p class="mx-auto mt-1 max-w-prose text-sm text-ink-2">
++                                {{ __('Sila muat turun fail untuk membukanya.') }}
++                            </p>
++
++                            <a :href="item.downloadUrl" class="btn-primary btn-sm mt-4">
++                                <x-icon name="download" class="h-4 w-4" />
++                                {{ __('Muat Turun') }}
++                            </a>
++                        </div>
++                    </template>
++                </div>
++            </div>
++        </template>
++    </section>
++</x-app-layout>
+diff --git a/resources/views/layouts/app.blade.php b/resources/views/layouts/app.blade.php
+index 43abee3..1590847 100644
+--- a/resources/views/layouts/app.blade.php
++++ b/resources/views/layouts/app.blade.php
+@@ -44,9 +44,9 @@ class="pointer-events-none absolute rounded-control bg-brand-soft transition-all
+                          tracks <a> tabs, and a menu that opens on hover needs a steady background. --}}
+                     <x-nav-dropdown :label="__('Kandungan')" :active="request()->routeIs('admin.kandungan.*')">
+                         <x-dropdown-link :href="route('admin.kandungan.video')">{{ __('Video') }}</x-dropdown-link>
++                        <x-dropdown-link :href="route('admin.kandungan.bahan')">{{ __('Bahan') }}</x-dropdown-link>
+ 
+                         {{-- Not built yet: shown so the menu reads complete, but inert rather than a dead link. --}}
+-                        <span class="block cursor-not-allowed px-4 py-2.5 text-sm font-semibold text-ink-2/50">{{ __('Bahan') }}</span>
+                         <span class="block cursor-not-allowed px-4 py-2.5 text-sm font-semibold text-ink-2/50">{{ __('Kuiz') }}</span>
+                     </x-nav-dropdown>
+ 
+@@ -125,6 +125,7 @@ class="block w-full px-4 py-2.5 text-left text-sm font-semibold text-ink transit
+                 @elseif ($user->isAdmin())
+                     {{-- Flattened on mobile: a hover menu has no meaning on touch. --}}
+                     <x-nav-link :href="route('admin.kandungan.video')" :active="request()->routeIs('admin.kandungan.video')" block>{{ __('Kandungan') }}: {{ __('Video') }}</x-nav-link>
++                    <x-nav-link :href="route('admin.kandungan.bahan')" :active="request()->routeIs('admin.kandungan.bahan')" block>{{ __('Kandungan') }}: {{ __('Bahan') }}</x-nav-link>
+                     <x-nav-link :href="route('admin.bakat')" :active="request()->routeIs('admin.bakat*')" block>{{ __('Skor Bakat') }}</x-nav-link>
+                 @else
+                     <x-nav-link :href="route('belajar.index')" :active="request()->routeIs('belajar.*')" block>{{ __('Belajar') }}</x-nav-link>
+diff --git a/routes/web.php b/routes/web.php
+index d4fdeee..0563792 100644
+--- a/routes/web.php
++++ b/routes/web.php
+@@ -183,6 +183,7 @@
+ 
+         // Kandungan: oversight of every teacher's library. Read-only.
+         Route::get('kandungan/video', [AdminContentController::class, 'video'])->name('kandungan.video');
++        Route::get('kandungan/bahan', [AdminContentController::class, 'material'])->name('kandungan.bahan');
+     });
+ 
+ /*
+-- 
+2.41.0.windows.1
+

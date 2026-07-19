@@ -1,78 +1,86 @@
-<x-app-layout :title="__('Skor Bakat Saya')">
-    @php($references = auth()->user()->lessons()->where('ownership', \App\Models\Lesson::OWNERSHIP_REFERENCE)->with('chapter.subject')->get())
+<x-cikgu-layout
+    :title="__('Bakat Kandungan')"
+    :heading="__('Bakat Kandungan')"
+    :sub="__('Perkembangan kandungan yang anda muat naik — tontonan, kegemaran, muat turun dan percubaan kuiz')">
 
-    <header>
-        <h1 class="text-3xl font-extrabold text-ink">{{ __('Skor Bakat Saya') }}</h1>
-        <p class="mt-1 max-w-prose text-ink-2">
-            {{ __('Petunjuk penglibatan murid terhadap video anda sendiri (muat naik + YouTube yang disahkan milik anda). Ia membantu MOE mengenal pasti guru berpotensi untuk semakan lanjut.') }}
-        </p>
-    </header>
+    @php
+        $medals = ['🥇', '🥈', '🥉'];
 
-    <div class="mt-6 grid gap-6 lg:grid-cols-3">
-        <div class="space-y-6 lg:col-span-2">
-            <section class="card card-pad">
-                <x-talent-scorecard :result="$result" />
-            </section>
+        $lists = [
+            [
+                'icon' => '🎬', 'title' => __('Video Paling Ditonton'), 'sub' => __('Tontonan pada video anda'),
+                'items' => $topVideos->map(fn ($l) => [
+                    'subject' => $l->chapter->subject, 'title' => $l->title,
+                    'detail' => $l->chapter->subject->name.' · Bab '.$l->chapter->number, 'value' => $l->views_count,
+                ]),
+            ],
+            [
+                'icon' => '❤️', 'title' => __('Video Paling Digemari'), 'sub' => __('Murid menandakan ♥ pada video anda'),
+                'items' => $topFavourites->map(fn ($e) => [
+                    'subject' => $e->lesson->chapter->subject, 'title' => $e->lesson->title,
+                    'detail' => $e->lesson->chapter->subject->name.' · Bab '.$e->lesson->chapter->number, 'value' => $e->favourites,
+                ]),
+            ],
+            [
+                'icon' => '📄', 'title' => __('Bahan Paling Dimuat Turun'), 'sub' => __('Muat turun pada bahan anda'),
+                'items' => $topMaterials->map(fn ($m) => [
+                    'subject' => $m->chapter->subject, 'title' => $m->title,
+                    'detail' => $m->chapter->subject->name.' · Bab '.$m->chapter->number, 'value' => $m->download_count,
+                ]),
+            ],
+            [
+                'icon' => '📝', 'title' => __('Kuiz Paling Dicuba'), 'sub' => __('Percubaan murid pada kuiz anda'),
+                'items' => $topQuizzes->map(fn ($q) => [
+                    'subject' => $q->chapter->subject, 'title' => $q->title,
+                    'detail' => $q->chapter->subject->name.' · Bab '.$q->chapter->number, 'value' => $q->completed_attempts_count,
+                ]),
+            ],
+        ];
 
-            <section>
-                <h2 class="text-xl font-extrabold text-ink">{{ __('Pecahan mengikut video') }}</h2>
+        $summary = [
+            ['icon' => '👁', 'tint' => '#E4EEF9', 'label' => __('Jumlah tontonan video'), 'value' => number_format($stats['views'])],
+            ['icon' => '❤️', 'tint' => '#FBE4ED', 'label' => __('Video digemari'), 'value' => number_format($stats['favourites'])],
+            ['icon' => '⬇️', 'tint' => '#DCF2EE', 'label' => __('Bahan dimuat turun'), 'value' => number_format($stats['downloads'])],
+            ['icon' => '📝', 'tint' => '#FEF0CE', 'label' => __('Percubaan kuiz'), 'value' => number_format($stats['attempts'])],
+        ];
+    @endphp
 
-                @if ($result->lessons->isEmpty())
-                    <x-empty icon="video" :title="__('Belum ada video dikira')"
-                             :text="__('Muat naik video, atau sambungkan channel YouTube anda supaya video YouTube anda dikira.')" />
-                @else
-                    <div class="card mt-3 overflow-x-auto p-2">
-                        <table class="w-full min-w-[36rem] text-sm">
-                            <thead>
-                                <tr class="border-b border-line text-left text-ink-2">
-                                    <th class="px-3 py-2 font-semibold">{{ __('Video') }}</th>
-                                    <th class="px-3 py-2 font-semibold">{{ __('Milik') }}</th>
-                                    <th class="px-3 py-2 text-right font-semibold">{{ __('Jangkauan') }}</th>
-                                    <th class="px-3 py-2 text-right font-semibold">{{ __('Kegemaran') }}</th>
-                                    <th class="px-3 py-2 text-right font-semibold">{{ __('Tamat tonton') }}</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($result->lessons as $entry)
-                                    <tr class="border-b border-line/60 last:border-0" style="--sc: {{ $entry->lesson->chapter->subject->rgb }}">
-                                        <td class="px-3 py-2">
-                                            <a href="{{ route('cikgu.video.edit', $entry->lesson) }}" class="font-bold text-ink hover:text-brand">{{ $entry->lesson->title }}</a>
-                                            <span class="block text-xs text-ink-2">{{ $entry->lesson->chapter->subject->name }} · Bab {{ $entry->lesson->chapter->number }}</span>
-                                        </td>
-                                        <td class="px-3 py-2"><x-ownership-badge :lesson="$entry->lesson" /></td>
-                                        <td class="px-3 py-2 text-right tabular-nums text-ink">{{ $entry->reach }}</td>
-                                        <td class="px-3 py-2 text-right tabular-nums text-ink">{{ $entry->favourites }}</td>
-                                        <td class="px-3 py-2 text-right tabular-nums text-ink">{{ $entry->completion }}</td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                @endif
-
-                @if ($references->isNotEmpty())
-                    <div class="mt-4 rounded-card border border-line bg-surface-2 p-4">
-                        <p class="text-sm font-bold text-ink">{{ __('Video rujukan (tidak dikira untuk skor)') }}</p>
-                        <ul class="mt-2 space-y-1">
-                            @foreach ($references as $reference)
-                                <li class="flex flex-wrap items-center gap-2 text-sm text-ink-2">
-                                    <x-ownership-badge :lesson="$reference" style="--sc: {{ $reference->chapter->subject->rgb }}" />
-                                    <span>{{ $reference->title }}</span>
-                                </li>
-                            @endforeach
-                        </ul>
-                        @unless (auth()->user()->youtubeChannels()->exists())
-                            <p class="mt-2 text-sm">
-                                <a href="{{ route('oauth.youtube.redirect') }}" class="link-muted">{{ __('Sambungkan akaun YouTube anda supaya video anda dikira') }}</a>
-                            </p>
-                        @endunless
-                    </div>
-                @endif
-            </section>
-        </div>
-
-        <div class="space-y-6">
-            <x-youtube-connect-card :user="auth()->user()" />
-        </div>
+    {{-- Summary --}}
+    <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px">
+        @foreach ($summary as $s)
+            <div class="tp-stat">
+                <div style="display:flex;align-items:center;gap:10px">
+                    <span class="tp-stat-ico" style="background:{{ $s['tint'] }}">{{ $s['icon'] }}</span>
+                    <span class="tp-stat-label">{{ $s['label'] }}</span>
+                </div>
+                <span class="tp-stat-value">{{ $s['value'] }}</span>
+            </div>
+        @endforeach
     </div>
-</x-app-layout>
+
+    {{-- Leaderboards --}}
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start">
+        @foreach ($lists as $list)
+            <div class="tp-card" style="overflow:hidden">
+                <div style="padding:18px 22px;border-bottom:1px solid rgba(46,44,80,.07);display:flex;flex-direction:column;gap:2px">
+                    <h2 class="tp-g" style="font-size:16px;font-weight:800;color:#28293F">{{ $list['icon'] }} {{ $list['title'] }}</h2>
+                    <span style="font-size:12.5px;color:#8B8AA3">{{ $list['sub'] }}</span>
+                </div>
+
+                @forelse ($list['items'] as $i => $item)
+                    <div style="display:flex;align-items:center;gap:14px;padding:13px 22px;border-bottom:1px solid rgba(46,44,80,.05)">
+                        <span style="font-size:14px;width:22px;text-align:center;flex-shrink:0">{{ $medals[$i] ?? $i + 1 }}</span>
+                        <span style="width:36px;height:36px;border-radius:10px;background:rgb({{ $item['subject']->rgb }} / .14);display:grid;place-items:center;font-size:14px;flex-shrink:0">{{ $item['subject']->icon ?? '🎬' }}</span>
+                        <div style="display:flex;flex-direction:column;gap:1px;min-width:0;flex:1">
+                            <span class="tp-g" style="font-weight:800;font-size:14px;color:#28293F;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $item['title'] }}</span>
+                            <span style="font-size:12px;color:#8B8AA3">{{ $item['detail'] }}</span>
+                        </div>
+                        <span class="tp-g" style="font-weight:800;font-size:14.5px;color:#28293F;flex-shrink:0">{{ $item['value'] }}</span>
+                    </div>
+                @empty
+                    <div style="padding:22px;text-align:center;color:#8B8AA3;font-size:13.5px">{{ __('Belum ada data.') }}</div>
+                @endforelse
+            </div>
+        @endforeach
+    </div>
+</x-cikgu-layout>

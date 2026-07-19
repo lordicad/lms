@@ -42,6 +42,7 @@ Thumbs.db
 /deploy/deploy.log
 # Generated dummy-account credential list. Never commit — this repo is public.
 /dummy-credentials.csv
+/dummy-credentials/
 /gencreds_tmp.php
 
 # Artisan tinker --execute temp files

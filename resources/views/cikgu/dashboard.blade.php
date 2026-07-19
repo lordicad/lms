@@ -1,116 +1,97 @@
-<x-app-layout :title="__('Papan Pemuka')">
-    @php($teacher = auth()->user())
+@php($teacher = auth()->user())
 
-    <header class="flex flex-wrap items-center justify-between gap-4">
-        <div>
-            <h1 class="text-3xl font-extrabold text-ink">{{ __('Selamat datang, :name.', ['name' => Str::before($teacher->name, ' ')]) }}</h1>
-            <p class="mt-1 text-ink-2">{{ __('Ringkasan kandungan dan aktiviti murid anda.') }}</p>
+<x-cikgu-layout
+    :title="__('Utama')"
+    :heading="__('Selamat datang, :name', ['name' => \Illuminate\Support\Str::before($teacher->name, ' ')])"
+    :sub="__('Ringkasan kelas anda pada hari ini, :date', ['date' => now()->translatedFormat('l, j F Y')])">
+
+    {{-- Stat cards --}}
+    <div class="tp-stats">
+        <a href="{{ route('cikgu.video.index') }}" class="tp-stat" style="text-decoration:none">
+            <div style="display:flex;align-items:center;gap:10px">
+                <span class="tp-stat-ico" style="background:#E4EEF9">🎬</span>
+                <span class="tp-stat-label">{{ __('Video Saya') }}</span>
+            </div>
+            <span class="tp-stat-value">{{ $lessonCount }}</span>
+            <span style="font-size:12.5px;font-weight:700;color:#8B8AA3">{{ __('Jumlah tontonan: :count', ['count' => number_format($viewCount)]) }}</span>
+        </a>
+
+        <a href="{{ route('cikgu.bahan.index') }}" class="tp-stat" style="text-decoration:none">
+            <div style="display:flex;align-items:center;gap:10px">
+                <span class="tp-stat-ico" style="background:#DCF2EE">📄</span>
+                <span class="tp-stat-label">{{ __('Bahan Saya') }}</span>
+            </div>
+            <span class="tp-stat-value">{{ $materialCount }}</span>
+            <span style="font-size:12.5px;font-weight:700;color:#8B8AA3">{{ __('Bahan pengajaran') }}</span>
+        </a>
+
+        <a href="{{ route('cikgu.kuiz.index') }}" class="tp-stat" style="text-decoration:none">
+            <div style="display:flex;align-items:center;gap:10px">
+                <span class="tp-stat-ico" style="background:#FEF0CE">📝</span>
+                <span class="tp-stat-label">{{ __('Kuiz Saya') }}</span>
+            </div>
+            <span class="tp-stat-value">{{ $quizCount }}</span>
+            <span style="font-size:12.5px;font-weight:700;color:#8B8AA3">{{ __('Fail & interaktif') }}</span>
+        </a>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:20px;min-width:0">
+        {{-- Recent videos --}}
+        <div class="tp-card" style="overflow:hidden">
+            <div style="display:flex;align-items:center;gap:12px;padding:18px 22px;border-bottom:1px solid rgba(46,44,80,.07)">
+                <h2 class="tp-g" style="font-size:17px;font-weight:800;color:#28293F;flex:1">{{ __('Video Terbaru Saya') }}</h2>
+                <a href="{{ route('cikgu.video.create') }}" class="tp-btn tp-btn-sm">
+                    <x-icon name="plus" class="h-4 w-4" />
+                    {{ __('Muat Naik Video') }}
+                </a>
+            </div>
+
+            @forelse ($recentLessons as $lesson)
+                <div class="tp-row">
+                    <span style="width:64px;height:42px;border-radius:9px;overflow:hidden;background:#E4EEF9;display:grid;place-items:center;color:rgba(66,118,174,.8);font-size:12px;flex-shrink:0">
+                        @if ($lesson->thumbnailUrl())
+                            <img src="{{ $lesson->thumbnailUrl() }}" alt="" loading="lazy" style="width:100%;height:100%;object-fit:cover">
+                        @else
+                            ▶
+                        @endif
+                    </span>
+                    <div style="display:flex;flex-direction:column;gap:2px;min-width:0;flex:1">
+                        <a href="{{ route('video.show', $lesson) }}" class="tp-g" style="font-weight:800;font-size:14.5px;color:#28293F;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $lesson->title }}</a>
+                        <span style="font-size:12.5px;color:#8B8AA3">{{ $lesson->chapter->subject->name }} · {{ $lesson->chapter->grade->name }} · Bab {{ $lesson->chapter->number }}</span>
+                    </div>
+                    <span class="tp-meta" style="flex-shrink:0">👁 {{ $lesson->views_count }}</span>
+                    <span class="tp-badge {{ $lesson->is_published ? 'tp-badge-ok' : 'tp-badge-draft' }}">{{ $lesson->is_published ? __('Diterbitkan') : __('Draf') }}</span>
+                </div>
+            @empty
+                <div style="padding:28px 22px;text-align:center;color:#8B8AA3;font-size:14px">{{ __('Belum ada video. Muat naik video pertama anda.') }}</div>
+            @endforelse
         </div>
 
-        <div class="flex flex-wrap gap-2">
-            <a href="{{ route('cikgu.video.create') }}" class="btn-primary btn-sm">
-                <x-icon name="plus" class="h-4 w-4" />
-                {{ __('Video') }}
-            </a>
+        {{-- Recent quizzes --}}
+        <div class="tp-card" style="overflow:hidden">
+            <div style="display:flex;align-items:center;gap:12px;padding:18px 22px;border-bottom:1px solid rgba(46,44,80,.07)">
+                <h2 class="tp-g" style="font-size:17px;font-weight:800;color:#28293F;flex:1">{{ __('Kuiz Saya') }}</h2>
+                <a href="{{ route('cikgu.kuiz.mod') }}" class="tp-btn-outline tp-btn-sm">+ {{ __('Cipta Kuiz') }}</a>
+            </div>
 
-            <a href="{{ route('cikgu.bahan.create') }}" class="btn-secondary btn-sm">
-                <x-icon name="plus" class="h-4 w-4" />
-                {{ __('Bahan') }}
-            </a>
-
-            <a href="{{ route('cikgu.kuiz.mod') }}" class="btn-secondary btn-sm">
-                <x-icon name="plus" class="h-4 w-4" />
-                {{ __('Kuiz') }}
-            </a>
+            @forelse ($recentQuizzes as $quiz)
+                @php($pct = $totalStudents > 0 ? min(100, round($quiz->taken_students_count / $totalStudents * 100)) : 0)
+                <div class="tp-row">
+                    <span style="width:40px;height:40px;border-radius:11px;background:{{ $quiz->isInteractive() ? '#DCF2EE' : '#E4EEF9' }};display:grid;place-items:center;font-size:16px;flex-shrink:0">📝</span>
+                    <div style="display:flex;flex-direction:column;gap:2px;min-width:0;flex:1">
+                        <span class="tp-g" style="font-weight:800;font-size:14.5px;color:#28293F">{{ $quiz->title }}</span>
+                        <span style="font-size:12.5px;color:#8B8AA3">{{ $quiz->chapter->subject->name }} · Bab {{ $quiz->chapter->number }} · {{ $quiz->isInteractive() ? __('Interaktif') : __('Bercetak') }}</span>
+                    </div>
+                    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0">
+                        <span class="tp-meta">{{ __(':taken/:total murid', ['taken' => $quiz->taken_students_count, 'total' => $totalStudents]) }}</span>
+                        <div style="width:120px;height:7px;border-radius:999px;background:rgba(46,44,80,.08);overflow:hidden">
+                            <div style="height:100%;border-radius:999px;background:#17907B;width:{{ $pct }}%"></div>
+                        </div>
+                    </div>
+                </div>
+            @empty
+                <div style="padding:28px 22px;text-align:center;color:#8B8AA3;font-size:14px">{{ __('Belum ada kuiz. Cipta kuiz pertama anda.') }}</div>
+            @endforelse
         </div>
-    </header>
-
-    <section class="mt-8">
-        <h2 class="sr-only">{{ __('Statistik kandungan anda') }}</h2>
-
-        <dl class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <a href="{{ route('cikgu.video.index') }}" class="card p-5 transition-shadow hover:shadow-lift">
-                <dt class="flex items-center gap-2 text-sm font-bold text-ink-2">
-                    <x-icon name="video" class="h-5 w-5" />
-                    {{ __('Video saya') }}
-                </dt>
-                <dd class="mt-2 text-3xl font-extrabold text-ink">{{ $lessonCount }}</dd>
-                <dd class="mt-1 text-sm text-ink-2">{{ __(':count tontonan keseluruhan', ['count' => $viewCount]) }}</dd>
-            </a>
-
-            <a href="{{ route('cikgu.bahan.index') }}" class="card p-5 transition-shadow hover:shadow-lift">
-                <dt class="flex items-center gap-2 text-sm font-bold text-ink-2">
-                    <x-icon name="file" class="h-5 w-5" />
-                    {{ __('Bahan saya') }}
-                </dt>
-                <dd class="mt-2 text-3xl font-extrabold text-ink">{{ $materialCount }}</dd>
-                <dd class="mt-1 text-sm text-ink-2">{{ __('Bahan bantu mengajar') }}</dd>
-            </a>
-
-            <a href="{{ route('cikgu.kuiz.index') }}" class="card p-5 transition-shadow hover:shadow-lift">
-                <dt class="flex items-center gap-2 text-sm font-bold text-ink-2">
-                    <x-icon name="quiz" class="h-5 w-5" />
-                    {{ __('Kuiz saya') }}
-                </dt>
-                <dd class="mt-2 text-3xl font-extrabold text-ink">{{ $quizCount }}</dd>
-                <dd class="mt-1 text-sm text-ink-2">{{ __('Fail dan interaktif') }}</dd>
-            </a>
-
-            <a href="{{ route('cikgu.ranking') }}" class="card p-5 transition-shadow hover:shadow-lift">
-                <dt class="flex items-center gap-2 text-sm font-bold text-ink-2">
-                    <x-icon name="users" class="h-5 w-5" />
-                    {{ __('Percubaan kuiz') }}
-                </dt>
-                <dd class="mt-2 text-3xl font-extrabold text-ink">{{ $attemptCount }}</dd>
-                <dd class="mt-1 text-sm text-ink-2">{{ __('Oleh murid, pada kuiz anda') }}</dd>
-            </a>
-        </dl>
-    </section>
-
-    <section class="mt-10">
-        <div class="mb-4 flex items-center justify-between gap-4">
-            <h2 class="text-xl font-extrabold text-ink">{{ __('Percubaan terkini') }}</h2>
-
-            <a href="{{ route('cikgu.ranking') }}" class="text-sm font-bold text-brand hover:underline">
-                {{ __('Lihat ranking penuh') }}
-            </a>
-        </div>
-
-        @if ($latestAttempts->isEmpty())
-            <x-empty emoji="📝" :title="__('Belum ada murid mencuba kuiz anda')"
-                     :text="__('Setelah anda menerbitkan kuiz interaktif, percubaan murid akan dipaparkan di sini.')">
-                <a href="{{ route('cikgu.kuiz.mod') }}" class="btn-primary">{{ __('Cipta Kuiz') }}</a>
-            </x-empty>
-        @else
-            <ul class="space-y-2">
-                @foreach ($latestAttempts as $attempt)
-                    <li class="card flex flex-wrap items-center gap-4 p-4"
-                        style="--sc: {{ $attempt->quiz->chapter->subject->rgb }}">
-                        <x-avatar :user="$attempt->student" size="sm" />
-
-                        <span class="min-w-0 flex-1">
-                            <span class="block truncate font-bold text-ink">{{ $attempt->student->name }}</span>
-                            <span class="block truncate text-sm text-ink-2">
-                                {{ $attempt->quiz->title }}. {{ $attempt->student->grade?->name }}
-                            </span>
-                        </span>
-
-                        <span class="chip bg-subject-wash text-subject-ink">
-                            {{ $attempt->score }}/{{ $attempt->max_score }}
-                        </span>
-
-                        <span class="w-24 shrink-0 text-right text-sm text-ink-2">
-                            {{ $attempt->completed_at->diffForHumans(short: true) }}
-                        </span>
-
-                        <a href="{{ route('cikgu.kuiz.statistik', $attempt->quiz) }}"
-                           class="btn-ghost btn-sm shrink-0">
-                            {{ __('Statistik') }}
-                            <span class="sr-only">{{ __('untuk :title', ['title' => $attempt->quiz->title]) }}</span>
-                        </a>
-                    </li>
-                @endforeach
-            </ul>
-        @endif
-    </section>
-</x-app-layout>
+    </div>
+</x-cikgu-layout>

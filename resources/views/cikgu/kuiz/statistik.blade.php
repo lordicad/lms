@@ -1,156 +1,112 @@
-<x-app-layout :title="__('Statistik:').' '.$quiz->title">
-    <div class="mx-auto max-w-4xl" style="--sc: {{ $subject->rgb }}">
-        <a href="{{ route('cikgu.kuiz.index') }}"
-           class="inline-flex items-center gap-2 text-sm font-bold text-ink-2 hover:text-ink">
-            <x-icon name="arrow-left" class="h-4 w-4" />
-            {{ __('Kuiz Saya') }}
-        </a>
+<x-cikgu-layout :title="__('Statistik:').' '.$quiz->title"
+    :heading="$quiz->title"
+    :sub="__('Prestasi murid pada kuiz ini')">
 
-        <header class="mt-4">
-            <span class="chip bg-subject-wash text-subject-ink">
-                {{ $subject->icon }} {{ $subject->name }}. {{ $chapter->grade->name }}. Bab {{ $chapter->number }}
-            </span>
+    <div style="display:flex;flex-direction:column;gap:20px;max-width:1000px">
+        <a href="{{ route('cikgu.kuiz.index') }}" class="tp-back">← {{ __('Kuiz Saya') }}</a>
 
-            <h1 class="mt-2 text-3xl font-extrabold text-ink">{{ $quiz->title }}</h1>
-        </header>
+        <span style="align-self:flex-start;background:#E4EEF9;color:#2E6CA8;border-radius:999px;padding:5px 14px;font-family:'Geist',sans-serif;font-size:12.5px;font-weight:800">{{ $subject->icon }} {{ $subject->name }}. {{ $chapter->grade->name }}. Bab {{ $chapter->number }}</span>
 
-        <dl class="mt-6 grid gap-4 sm:grid-cols-3">
-            <div class="card p-5">
-                <dt class="text-sm font-bold text-ink-2">{{ __('Percubaan selesai') }}</dt>
-                <dd class="mt-1 text-3xl font-extrabold text-ink">{{ $completedCount }}</dd>
+        {{-- Summary --}}
+        <div class="tp-stats">
+            <div class="tp-stat">
+                <span class="tp-stat-label">{{ __('Percubaan selesai') }}</span>
+                <span class="tp-stat-value">{{ $completedCount }}</span>
             </div>
-
-            <div class="card p-5">
-                <dt class="text-sm font-bold text-ink-2">{{ __('Purata markah') }}</dt>
-                <dd class="mt-1 text-3xl font-extrabold text-ink">
-                    {{ $averageScore }}<span class="text-lg text-ink-2">/{{ $quiz->maxScore() }}</span>
-                </dd>
+            <div class="tp-stat">
+                <span class="tp-stat-label">{{ __('Purata markah') }}</span>
+                <span class="tp-stat-value">{{ $averageScore }}<span style="font-size:18px;color:#8B8AA3">/{{ $quiz->maxScore() }}</span></span>
             </div>
-
-            <div class="card p-5">
-                <dt class="text-sm font-bold text-ink-2">{{ __('Purata ketepatan') }}</dt>
-                <dd class="mt-1 text-3xl font-extrabold text-ink">{{ $averagePercent }}%</dd>
+            <div class="tp-stat">
+                <span class="tp-stat-label">{{ __('Purata ketepatan') }}</span>
+                <span class="tp-stat-value">{{ $averagePercent }}%</span>
             </div>
-        </dl>
+        </div>
 
-        {{-- Which questions the class actually got wrong. --}}
-        <section class="mt-10">
-            <h2 class="mb-4 text-xl font-extrabold text-ink">{{ __('Kadar betul setiap soalan') }}</h2>
+        {{-- Per-question correctness --}}
+        <div style="display:flex;flex-direction:column;gap:12px">
+            <h2 class="tp-g" style="font-size:17px;font-weight:800;color:#28293F">{{ __('Kadar betul setiap soalan') }}</h2>
 
             @if ($completedCount === 0)
-                <x-empty emoji="📊" :title="__('Belum ada data')"
-                         :text="__('Statistik akan muncul setelah murid mula menjawab kuiz ini.')" />
+                <div class="tp-empty">
+                    <span style="font-size:30px">📊</span>
+                    <h3 class="tp-g" style="font-size:19px;font-weight:800;color:#28293F">{{ __('Belum ada data') }}</h3>
+                    <p style="margin:0;font-size:14.5px;color:#8B8AA3;max-width:420px">{{ __('Statistik akan muncul setelah murid mula menjawab kuiz ini.') }}</p>
+                </div>
             @else
-                <ul class="space-y-3">
-                    @foreach ($quiz->questions as $index => $question)
-                        @php
-                            $stat = $perQuestion[$question->id] ?? null;
-                            $answered = (int) ($stat->answered ?? 0);
-                            $correct = (int) ($stat->correct ?? 0);
-                            $rate = $answered > 0 ? (int) round($correct / $answered * 100) : 0;
-                        @endphp
-
-                        <li class="card card-pad">
-                            <div class="flex flex-wrap items-start justify-between gap-3">
-                                <div class="min-w-0 flex-1">
-                                    <p class="text-sm font-bold text-ink-2">{{ __('Soalan :number', ['number' => $index + 1]) }}</p>
-                                    <p class="mt-1 font-extrabold text-ink">{{ $question->question_text }}</p>
-                                </div>
-
-                                <span class="chip shrink-0
-                                    @if ($rate >= 70) bg-success-soft text-success
-                                    @elseif ($rate >= 40) bg-warn-soft text-warn
-                                    @else bg-danger-soft text-danger @endif">
-                                    {{ __(':rate% betul', ['rate' => $rate]) }}
-                                </span>
+                @foreach ($quiz->questions as $index => $question)
+                    @php
+                        $stat = $perQuestion[$question->id] ?? null;
+                        $answered = (int) ($stat->answered ?? 0);
+                        $correct = (int) ($stat->correct ?? 0);
+                        $rate = $answered > 0 ? (int) round($correct / $answered * 100) : 0;
+                        $barBg = $rate >= 70 ? '#DCF2EE' : ($rate >= 40 ? '#FEF0CE' : '#FDE7E0');
+                        $barFg = $rate >= 70 ? '#0F7A68' : ($rate >= 40 ? '#8A6A12' : '#C24936');
+                    @endphp
+                    <div class="tp-panelform" style="padding:20px 22px;gap:12px">
+                        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px">
+                            <div style="min-width:0;flex:1">
+                                <p style="margin:0;font-size:13px;font-weight:700;color:#8B8AA3">{{ __('Soalan :number', ['number' => $index + 1]) }}</p>
+                                <p class="tp-g" style="margin:4px 0 0;font-weight:800;font-size:15px;color:#28293F">{{ $question->question_text }}</p>
                             </div>
-
-                            <div class="mt-3 h-2.5 w-full overflow-hidden rounded-full bg-surface-2">
-                                <div class="h-full rounded-full transition-[width] duration-300
-                                    @if ($rate >= 70) bg-success
-                                    @elseif ($rate >= 40) bg-warn
-                                    @else bg-danger @endif"
-                                     style="width: {{ $rate }}%"></div>
-                            </div>
-
-                            <p class="mt-2 text-sm text-ink-2">
-                                {{ __(':correct daripada :answered murid menjawab dengan betul.', ['correct' => $correct, 'answered' => $answered]) }}
-                                @if ($rate < 40)
-                                    <span class="font-bold text-danger">{{ __('Mungkin perlu diterangkan semula.') }}</span>
-                                @endif
-                            </p>
-                        </li>
-                    @endforeach
-                </ul>
+                            <span style="flex-shrink:0;background:{{ $barBg }};color:{{ $barFg }};border-radius:999px;padding:5px 13px;font-family:'Geist',sans-serif;font-size:12px;font-weight:800">{{ __(':rate% betul', ['rate' => $rate]) }}</span>
+                        </div>
+                        <div style="height:10px;width:100%;overflow:hidden;border-radius:999px;background:rgba(46,44,80,.08)">
+                            <div style="height:100%;border-radius:999px;background:{{ $barFg }};width:{{ $rate }}%"></div>
+                        </div>
+                        <p style="margin:0;font-size:13.5px;color:#6C6F87">
+                            {{ __(':correct daripada :answered murid menjawab dengan betul.', ['correct' => $correct, 'answered' => $answered]) }}
+                            @if ($rate < 40) <span style="font-weight:800;color:#C24936">{{ __('Mungkin perlu diterangkan semula.') }}</span> @endif
+                        </p>
+                    </div>
+                @endforeach
             @endif
-        </section>
+        </div>
 
-        {{-- Attempt list --}}
-        <section class="mt-10">
-            <h2 class="mb-4 text-xl font-extrabold text-ink">{{ __('Percubaan murid') }}</h2>
+        {{-- Attempts --}}
+        <div style="display:flex;flex-direction:column;gap:12px">
+            <h2 class="tp-g" style="font-size:17px;font-weight:800;color:#28293F">{{ __('Percubaan murid') }}</h2>
 
             @if ($attempts->isEmpty())
-                <x-empty emoji="👋" :title="__('Belum ada murid mencuba kuiz ini')"
-                         :text="__('Pastikan kuiz sudah diterbitkan dan mempunyai soalan.')" />
+                <div class="tp-empty">
+                    <span style="font-size:30px">👋</span>
+                    <h3 class="tp-g" style="font-size:19px;font-weight:800;color:#28293F">{{ __('Belum ada murid mencuba kuiz ini') }}</h3>
+                    <p style="margin:0;font-size:14.5px;color:#8B8AA3;max-width:420px">{{ __('Pastikan kuiz sudah diterbitkan dan mempunyai soalan.') }}</p>
+                </div>
             @else
-                <div class="card overflow-x-auto">
-                    <table class="w-full text-left">
-                        <caption class="sr-only">{{ __('Senarai percubaan murid untuk kuiz :title', ['title' => $quiz->title]) }}</caption>
-
-                        <thead class="border-b border-line">
-                            <tr>
-                                <th scope="col" class="p-4 text-sm font-bold text-ink-2">{{ __('Murid') }}</th>
-                                <th scope="col" class="p-4 text-sm font-bold text-ink-2">{{ __('Tahun') }}</th>
-                                <th scope="col" class="p-4 text-sm font-bold text-ink-2">{{ __('Markah') }}</th>
-                                <th scope="col" class="p-4 text-sm font-bold text-ink-2">{{ __('Betul') }}</th>
-                                <th scope="col" class="p-4 text-sm font-bold text-ink-2">{{ __('Masa') }}</th>
-                                <th scope="col" class="p-4 text-sm font-bold text-ink-2">{{ __('Jenis') }}</th>
-                                <th scope="col" class="p-4 text-sm font-bold text-ink-2">{{ __('Tarikh') }}</th>
-                            </tr>
-                        </thead>
-
-                        <tbody class="divide-y divide-line">
+                <div class="tp-card" style="overflow:hidden">
+                    <div style="overflow-x:auto">
+                        <div style="min-width:760px">
+                            @php($cols = 'minmax(0,2fr) 1fr 1fr 1fr 1fr 1fr 1.4fr')
+                            <div style="display:grid;grid-template-columns:{{ $cols }};gap:12px;padding:14px 20px;border-bottom:1px solid rgba(46,44,80,.08)">
+                                @foreach ([__('Murid'), __('Tahun'), __('Markah'), __('Betul'), __('Masa'), __('Jenis'), __('Tarikh')] as $h)
+                                    <span class="tp-g" style="font-size:12px;font-weight:800;color:#8B8AA3">{{ $h }}</span>
+                                @endforeach
+                            </div>
                             @foreach ($attempts as $attempt)
-                                <tr>
-                                    <td class="p-4">
-                                        <span class="flex items-center gap-3">
-                                            <x-avatar :user="$attempt->student" size="sm" />
-                                            <span class="font-bold text-ink">{{ $attempt->student->name }}</span>
-                                        </span>
-                                    </td>
-
-                                    <td class="p-4 text-ink-2">{{ $attempt->student->grade?->name ?? '-' }}</td>
-
-                                    <td class="p-4">
-                                        <span class="font-extrabold text-ink">
-                                            {{ $attempt->score }}/{{ $attempt->max_score }}
-                                        </span>
-                                        <span class="block text-sm text-ink-2">{{ $attempt->percentage() }}%</span>
-                                    </td>
-
-                                    <td class="p-4 text-ink-2">
-                                        {{ $attempt->correct_count }}/{{ $attempt->question_count }}
-                                    </td>
-
-                                    <td class="p-4 text-ink-2">{{ $attempt->humanDuration() }}</td>
-
-                                    <td class="p-4">
+                                <div class="tp-row" style="display:grid;grid-template-columns:{{ $cols }};gap:12px;padding:13px 20px">
+                                    <div style="display:flex;align-items:center;gap:10px;min-width:0">
+                                        <span style="width:34px;height:34px;border-radius:9px;background:#DCF2EE;color:#0F7A68;display:grid;place-items:center;font-family:'Geist',sans-serif;font-weight:800;font-size:11px;flex-shrink:0">{{ $attempt->student->initials() }}</span>
+                                        <span class="tp-g" style="font-weight:800;font-size:14px;color:#28293F;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $attempt->student->name }}</span>
+                                    </div>
+                                    <span class="tp-meta">{{ $attempt->student->grade?->name ?? '-' }}</span>
+                                    <span><span class="tp-g" style="font-weight:800;color:#28293F">{{ $attempt->score }}/{{ $attempt->max_score }}</span> <span class="tp-meta">{{ $attempt->percentage() }}%</span></span>
+                                    <span class="tp-meta">{{ $attempt->correct_count }}/{{ $attempt->question_count }}</span>
+                                    <span class="tp-meta">{{ $attempt->humanDuration() }}</span>
+                                    <span>
                                         @if ($attempt->counts_for_ranking)
-                                            <span class="chip bg-brand-soft text-brand">{{ __('Dikira') }}</span>
+                                            <span class="tp-tag" style="background:#DCF2EE;color:#0F7A68">{{ __('Dikira') }}</span>
                                         @else
-                                            <span class="chip bg-surface-2 text-ink-2">{{ __('Latihan') }}</span>
+                                            <span class="tp-tag-neutral">{{ __('Latihan') }}</span>
                                         @endif
-                                    </td>
-
-                                    <td class="p-4 text-sm text-ink-2">
-                                        {{ $attempt->completed_at->format('d/m/Y, g:ia') }}
-                                    </td>
-                                </tr>
+                                    </span>
+                                    <span class="tp-meta">{{ $attempt->completed_at->format('d/m/Y, g:ia') }}</span>
+                                </div>
                             @endforeach
-                        </tbody>
-                    </table>
+                        </div>
+                    </div>
                 </div>
             @endif
-        </section>
+        </div>
     </div>
-</x-app-layout>
+</x-cikgu-layout>
