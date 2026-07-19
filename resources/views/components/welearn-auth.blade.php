@@ -84,7 +84,7 @@
             align-self: flex-start; background: #F4F6F2; border-radius: 14px;
             padding: 10px 18px; display: inline-flex;
         }
-        .wla-brand-logo img { height: 48px; width: auto; }
+        .wla-brand-logo img { height: 54px; width: auto; }
         .wla-brand-copy { display: flex; flex-direction: column; gap: 18px; max-width: 420px; }
         .wla-brand h1 {
             margin: 0; font-family: 'Geist', sans-serif; font-size: 40px; line-height: 1.15;
@@ -103,7 +103,7 @@
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             padding: 48px 32px; gap: 24px;
         }
-        .wla-topbar { width: 100%; max-width: 440px; display: flex; justify-content: flex-end; align-items: center; gap: 10px; }
+        .wla-topbar { width: 100%; max-width: 800px; display: flex; justify-content: flex-end; align-items: center; gap: 10px; }
         .wla-pills { display: flex; background: var(--pill-track); border-radius: 999px; padding: 3px; font-family: 'Geist', sans-serif; font-size: 13px; font-weight: 700; }
         .wla-pill {
             min-width: 44px; min-height: 36px; display: inline-flex; align-items: center; justify-content: center;
@@ -121,31 +121,31 @@
         .wla-iconbtn:active { transform: scale(.95); }
 
         .wla-card {
-            width: 100%; max-width: 440px; background: var(--surface);
+            width: 100%; max-width: 800px; background: var(--surface);
             border: 1px solid var(--line); border-radius: 22px; box-shadow: var(--card-shadow);
-            padding: 36px; display: flex; flex-direction: column; gap: 22px;
+            padding: 44px; display: flex; flex-direction: column; gap: 26px;
         }
         .wla-tabs {
             display: grid; grid-template-columns: 1fr 1fr; background: var(--tab-track);
-            border-radius: 12px; padding: 4px; font-family: 'Geist', sans-serif; font-weight: 700; font-size: 14.5px;
+            border-radius: 14px; padding: 5px; font-family: 'Geist', sans-serif; font-weight: 700; font-size: 16px;
         }
         .wla-tab {
-            min-height: 44px; display: inline-flex; align-items: center; justify-content: center;
-            border-radius: 9px; color: var(--muted); transition: background .15s, color .15s;
+            min-height: 58px; display: inline-flex; align-items: center; justify-content: center;
+            border-radius: 10px; color: var(--muted); transition: background .15s, color .15s;
         }
         .wla-tab.is-active { background: var(--surface); color: var(--ink); box-shadow: 0 2px 6px rgba(36,49,42,.1); }
 
-        .wla-stack { display: flex; flex-direction: column; gap: 18px; }
-        .wla-head { display: flex; flex-direction: column; gap: 4px; }
-        .wla-head h2 { margin: 0; font-family: 'Geist', sans-serif; font-size: 24px; font-weight: 800; color: var(--ink); }
-        .wla-head p { margin: 0; font-size: 14.5px; color: var(--muted); }
+        .wla-stack { display: flex; flex-direction: column; gap: 22px; }
+        .wla-head { display: flex; flex-direction: column; gap: 6px; }
+        .wla-head h2 { margin: 0; font-family: 'Geist', sans-serif; font-size: 28px; font-weight: 800; color: var(--ink); }
+        .wla-head p { margin: 0; font-size: 15px; color: var(--muted); }
 
-        .wla-label { display: flex; flex-direction: column; gap: 6px; font-weight: 700; font-size: 14px; color: #4A5A4E; }
+        .wla-label { display: flex; flex-direction: column; gap: 8px; font-weight: 700; font-size: 14.5px; color: #4A5A4E; }
         html.theme-dark .wla-label { color: var(--muted); }
         .wla-label-row { display: flex; justify-content: space-between; align-items: center; }
         .wla-input, .wla-select {
-            min-height: 48px; width: 100%; border: 1px solid var(--line-strong); border-radius: 12px;
-            padding: 0 16px; font-family: 'Nunito', sans-serif; font-size: 15px; color: var(--ink-2);
+            min-height: 58px; width: 100%; border: 1px solid var(--line-strong); border-radius: 14px;
+            padding: 0 20px; font-family: 'Nunito', sans-serif; font-size: 16px; color: var(--ink-2);
             background: var(--field-bg);
         }
         .wla-input:focus, .wla-select:focus { outline: none; border-color: var(--brand); box-shadow: 0 0 0 3px rgba(62,107,69,.15); }
@@ -163,9 +163,9 @@
         .wla-role.is-active { border: 2px solid var(--brand); background: var(--brand-soft); color: var(--ink); }
 
         .wla-btn {
-            min-height: 52px; width: 100%; border: none; cursor: pointer; border-radius: 14px;
+            min-height: 64px; width: 100%; border: none; cursor: pointer; border-radius: 16px;
             background: var(--brand); color: #fff; font-family: 'Geist', sans-serif; font-weight: 800;
-            font-size: 16px; box-shadow: var(--btn-shadow); transition: background .15s, transform .1s;
+            font-size: 17px; box-shadow: var(--btn-shadow); transition: background .15s, transform .1s;
         }
         .wla-btn:hover { background: var(--brand-hover); }
         .wla-btn:active { transform: scale(.98); }
