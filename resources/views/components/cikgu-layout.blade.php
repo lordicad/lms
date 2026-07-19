@@ -208,7 +208,8 @@
         .tp-checkrow { background:#fff; border:1px solid var(--tp-line); border-radius:18px; padding:20px 24px; display:flex; align-items:flex-start; gap:14px; box-shadow:var(--tp-shadow); cursor:pointer; }
         .tp-typecard { background:#fff; border:1px solid var(--tp-line); border-radius:18px; padding:26px; display:flex; flex-direction:column; gap:14px; box-shadow:var(--tp-shadow); cursor:pointer; text-decoration:none; }
         .tp-typecard:hover { box-shadow:var(--tp-shadow-lift); transform:translateY(-2px); }
-        .tp-typeopt { border:1.5px solid var(--tp-line-2); background:#fff; border-radius:14px; padding:16px 18px; display:flex; gap:12px; align-items:center; justify-content:center; text-align:center; cursor:pointer; text-decoration:none; }
+        .tp-typeopt { border:1.5px solid var(--tp-line-2); background:#fff; border-radius:14px; padding:16px 18px; display:flex; flex-direction:column; gap:6px; align-items:flex-start; text-align:left; cursor:pointer; text-decoration:none; }
+        .tp-typeopt-head { display:flex; align-items:center; gap:10px; }
         .tp-typeopt:hover { border-color:var(--tp-teal); }
         .tp-typeopt.is-on { border-color:var(--tp-teal); background:var(--tp-active-bg); }
         .tp-formwrap { display:flex; flex-direction:column; gap:20px; max-width:860px; }

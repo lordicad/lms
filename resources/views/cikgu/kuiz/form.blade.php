@@ -29,18 +29,18 @@
             <h2 class="tp-g" style="font-size:17px;font-weight:800;color:#28293F">{{ __('Jenis kuiz') }}</h2>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
                 <button type="button" @click="type = 'interactive'" class="tp-typeopt" :class="{ 'is-on': type === 'interactive' }" :aria-pressed="type === 'interactive'">
-                    <span style="font-size:16px;flex-shrink:0">📝</span>
-                    <span style="display:flex;flex-direction:column;gap:3px">
+                    <span class="tp-typeopt-head">
+                        <span style="font-size:16px;flex-shrink:0">📝</span>
                         <span class="tp-g" style="font-weight:800;font-size:14px;color:#28293F">{{ __('Kuiz Interaktif') }}</span>
-                        <span style="font-size:12.5px;color:#6C6F87;line-height:1.45">{{ __('Ditanda secara automatik. Memberi mata ranking.') }}</span>
                     </span>
+                    <span style="font-size:12.5px;color:#6C6F87;line-height:1.45">{{ __('Ditanda secara automatik. Memberi mata ranking.') }}</span>
                 </button>
                 <button type="button" @click="type = 'file'" class="tp-typeopt" :class="{ 'is-on': type === 'file' }" :aria-pressed="type === 'file'">
-                    <span style="font-size:16px;flex-shrink:0">📄</span>
-                    <span style="display:flex;flex-direction:column;gap:3px">
+                    <span class="tp-typeopt-head">
+                        <span style="font-size:16px;flex-shrink:0">📄</span>
                         <span class="tp-g" style="font-weight:800;font-size:14px;color:#28293F">{{ __('Kuiz Bercetak') }}</span>
-                        <span style="font-size:12.5px;color:#6C6F87;line-height:1.45">{{ __('Fail untuk dimuat turun. Tiada mata.') }}</span>
                     </span>
+                    <span style="font-size:12.5px;color:#6C6F87;line-height:1.45">{{ __('Fail untuk dimuat turun. Tiada mata.') }}</span>
                 </button>
             </div>
             @error('type') <span class="tp-error">{{ $message }}</span> @enderror
