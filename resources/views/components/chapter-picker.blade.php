@@ -97,9 +97,12 @@
         <script>
             function chapterPicker({ subject, grade, chapter, endpoint, subjects, grades, labels }) {
                 return {
-                    subject,
-                    grade,
-                    chapter,
+                    // Start empty so the full <option> lists render first; the saved values are
+                    // applied in init() once those options exist (see below).
+                    subject: null,
+                    grade: null,
+                    chapter: null,
+                    saved: { subject, grade, chapter },
                     endpoint,
                     subjects,
                     grades,
@@ -112,7 +115,16 @@
                         // chosen Bab. Harmless where nothing listens (video/quiz forms).
                         this.$watch('chapter', (value) => this.$dispatch('chapter-changed', { chapter: value }));
 
-                        if (this.subject && this.grade) this.reload(true);
+                        // Apply the saved Subject/Tahun/Bab after Alpine has rendered the x-for
+                        // <option>s. A native <select> silently drops a value whose <option> does
+                        // not exist yet, which is why editing a video showed empty pickers.
+                        this.$nextTick(() => {
+                            this.subject = this.saved.subject;
+                            this.grade = this.saved.grade;
+                            this.chapter = this.saved.chapter;
+
+                            if (this.subject && this.grade) this.reload(true);
+                        });
                     },
 
                     subjectLevels(id) {
