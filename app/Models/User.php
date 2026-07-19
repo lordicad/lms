@@ -149,7 +149,7 @@ class User extends Authenticatable
     public function homeRoute(): string
     {
         return match ($this->role) {
-            self::ROLE_ADMIN => route('admin.bakat'),
+            self::ROLE_ADMIN => route('admin.dashboard'),
             self::ROLE_TEACHER => route('cikgu.dashboard'),
             default => route('belajar.index'),
         };
