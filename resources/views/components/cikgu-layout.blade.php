@@ -168,6 +168,13 @@
             min-height:46px; border:1.5px solid var(--tp-line-2); border-radius:12px; padding:0 14px;
             background:#fff; font-family:'Geist',sans-serif; font-weight:800; font-size:14px; color:var(--tp-ink); cursor:pointer;
         }
+        /* Custom down-chevron on every select (the forms reset strips the native arrow). */
+        .tp-select, .tp-filter-select {
+            appearance:none; -webkit-appearance:none; -moz-appearance:none;
+            background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236C6F87' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+            background-repeat:no-repeat; background-position:right 14px center; background-size:16px;
+            padding-right:40px;
+        }
 
         /* Tags / badges / chips */
         .tp-tag { border-radius:999px; padding:4px 12px; font-family:'Geist',sans-serif; font-size:11.5px; font-weight:800; }
