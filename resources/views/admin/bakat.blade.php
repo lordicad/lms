@@ -182,7 +182,7 @@
         </div>
 
         {{-- ======================= Top-performing content ======================= --}}
-        <div style="display:flex;flex-direction:column;gap:14px">
+        <div style="display:flex;flex-direction:column;gap:14px;margin-top:24px">
             <div style="display:flex;flex-direction:column;gap:2px">
                 <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:17px;font-weight:800;color:#28293F">⭐ {{ __('Kandungan Paling Berjaya') }}</h2>
                 <span style="font-size:13px;color:#8B8AA3">{{ __('Merentas seluruh platform, tanpa tapisan') }}</span>
