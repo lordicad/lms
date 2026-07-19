@@ -8,15 +8,12 @@
 
 <section x-data="rail()" {{ $attributes }}>
     @if ($title)
-        <div class="mb-5 flex items-end justify-between gap-3">
-            <h2 class="text-[22px] font-bold tracking-[-0.02em] text-ink">{{ $title }}</h2>
+        <div class="mb-4 flex items-center justify-between gap-3">
+            <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:21px;font-weight:800;color:#28293F">{{ $title }}</h2>
 
             <div class="flex items-center gap-3">
                 @if ($seeAll)
-                    <a href="{{ $seeAll }}" class="link-muted">
-                        {{ $seeAllLabel ?? __('Lihat semua') }}
-                        <x-icon name="chevron-right" class="h-4 w-4" />
-                    </a>
+                    <a href="{{ $seeAll }}" style="font-size:13.5px;font-weight:700">{{ $seeAllLabel ?? __('Lihat semua') }}</a>
                 @endif
 
                 <div class="hidden items-center gap-1.5 sm:flex">
