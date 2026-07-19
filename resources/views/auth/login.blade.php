@@ -16,10 +16,8 @@
                 {{ __('Nama pengguna atau emel') }}
                 <input id="login" name="login" type="text" value="{{ old('login') }}"
                        required autofocus autocomplete="username" class="wla-input"
-                       placeholder="cth: aiman123"
-                       aria-describedby="login-help" @error('login') aria-invalid="true" @enderror>
+                       placeholder="cth: aiman123" @error('login') aria-invalid="true" @enderror>
             </label>
-            <p id="login-help" class="wla-hint">{{ __('Murid boleh guna nama pengguna sahaja.') }}</p>
             @error('login')
                 <p class="wla-field-error">{{ $message }}</p>
             @enderror
