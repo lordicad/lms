@@ -1,58 +1,52 @@
-<x-guest-layout :title="__('Log Masuk')">
-    <div class="card card-pad">
-        <h1 class="text-2xl font-extrabold text-ink">{{ __('Log Masuk') }}</h1>
-        <p class="mt-2 text-ink-2">{{ __('Selamat kembali. Sila masukkan butiran akaun anda.') }}</p>
+<x-welearn-auth active="login" :title="__('Log Masuk')">
+    <div class="wla-stack">
+        <div class="wla-head">
+            <h2>{{ __('Selamat kembali!') }}</h2>
+            <p>{{ __('Murid boleh guna nama pengguna sahaja.') }}</p>
+        </div>
 
         @if (session('status'))
-            <x-alert type="success" class="mt-6">{{ session('status') }}</x-alert>
+            <div class="wla-alert info">{{ session('status') }}</div>
         @endif
 
-        <form method="POST" action="{{ route('login') }}" class="mt-6 space-y-5">
+        <form method="POST" action="{{ route('login') }}" class="wla-stack">
             @csrf
 
-            <div>
-                <label for="login" class="label">{{ __('Nama pengguna atau emel') }}</label>
-
+            <label for="login" class="wla-label">
+                {{ __('Nama pengguna atau emel') }}
                 <input id="login" name="login" type="text" value="{{ old('login') }}"
-                       required autofocus autocomplete="username" class="input"
+                       required autofocus autocomplete="username" class="wla-input"
+                       placeholder="cth: aiman123"
                        aria-describedby="login-help" @error('login') aria-invalid="true" @enderror>
+            </label>
+            <p id="login-help" class="wla-hint">{{ __('Murid boleh guna nama pengguna sahaja.') }}</p>
+            @error('login')
+                <p class="wla-field-error">{{ $message }}</p>
+            @enderror
 
-                <p id="login-help" class="help">{{ __('Murid boleh guna nama pengguna sahaja.') }}</p>
-
-                @error('login')
-                    <p class="field-error">{{ $message }}</p>
-                @enderror
-            </div>
-
-            <div>
-                <label for="password" class="label">{{ __('Kata laluan') }}</label>
-
+            <label for="password" class="wla-label">
+                <span class="wla-label-row">
+                    {{ __('Kata laluan') }}
+                    <a href="{{ route('password.request') }}" style="font-size:13px;font-weight:700">{{ __('Lupa kata laluan?') }}</a>
+                </span>
                 <input id="password" name="password" type="password" required autocomplete="current-password"
-                       class="input" @error('password') aria-invalid="true" @enderror>
+                       class="wla-input" placeholder="••••••••" @error('password') aria-invalid="true" @enderror>
+            </label>
+            @error('password')
+                <p class="wla-field-error">{{ $message }}</p>
+            @enderror
 
-                @error('password')
-                    <p class="field-error">{{ $message }}</p>
-                @enderror
-            </div>
+            <label for="remember" style="display:flex;align-items:center;gap:10px;font-weight:700;font-size:14px;color:var(--muted);cursor:pointer">
+                <input id="remember" name="remember" type="checkbox" style="width:18px;height:18px;accent-color:var(--brand)">
+                {{ __('Ingat saya') }}
+            </label>
 
-            <div class="flex flex-wrap items-center justify-between gap-3">
-                <label for="remember" class="flex items-center gap-2 text-sm font-semibold text-ink">
-                    <input id="remember" name="remember" type="checkbox"
-                           class="h-5 w-5 rounded border-line text-brand focus:ring-brand">
-                    {{ __('Ingat saya') }}
-                </label>
-
-                <a href="{{ route('password.request') }}" class="text-sm font-bold text-brand hover:underline">
-                    {{ __('Lupa kata laluan?') }}
-                </a>
-            </div>
-
-            <button type="submit" class="btn-primary w-full">{{ __('Log Masuk') }}</button>
+            <button type="submit" class="wla-btn">{{ __('Log Masuk') }}</button>
         </form>
-    </div>
 
-    <p class="mt-6 text-center text-ink-2">
-        {{ __('Belum ada akaun?') }}
-        <a href="{{ route('register') }}" class="font-bold text-brand hover:underline">{{ __('Daftar di sini') }}</a>
-    </p>
-</x-guest-layout>
+        <p style="margin:0;text-align:center;font-size:14.5px;color:var(--muted)">
+            {{ __('Belum ada akaun?') }}
+            <a href="{{ route('register') }}" style="font-weight:700">{{ __('Daftar di sini') }}</a>
+        </p>
+    </div>
+</x-welearn-auth>

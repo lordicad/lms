@@ -1,126 +1,130 @@
-<x-guest-layout :title="__('Daftar Akaun')">
-    {{-- One form, two roles. Ticking "Saya seorang guru" reveals the teacher-only fields;
-         Alpine keeps that state client-side, and the server re-checks everything anyway. --}}
-    <div class="card card-pad" x-data="{ isTeacher: {{ old('is_teacher') ? 'true' : 'false' }} }">
-        <h1 class="text-2xl font-extrabold text-ink">{{ __('Daftar Akaun') }}</h1>
-        <p class="mt-2 text-ink-2">{{ __('Murid boleh daftar sendiri. Cikgu perlukan kod daripada sekolah.') }}</p>
+<x-welearn-auth active="register" :title="__('Daftar Akaun')">
+    {{-- One form, two roles. The Murid/Cikgu picker drives the hidden is_teacher field and reveals
+         the role-specific inputs; the server re-checks everything anyway (see RegisteredUserController). --}}
+    @php($startTeacher = (bool) old('is_teacher'))
 
-        <form method="POST" action="{{ route('register') }}" class="mt-6 space-y-5">
+    <div class="wla-stack" id="reg-root" data-teacher="{{ $startTeacher ? '1' : '0' }}">
+        <div class="wla-head">
+            <h2>{{ __('Cipta akaun baharu') }}</h2>
+            <p>{{ __('Murid boleh daftar sendiri. Cikgu perlukan kod daripada sekolah.') }}</p>
+        </div>
+
+        <form method="POST" action="{{ route('register') }}" class="wla-stack">
             @csrf
 
-            <div>
-                <label for="name" class="label">{{ __('Nama penuh') }}</label>
+            {{-- Role picker → sets is_teacher --}}
+            <input type="hidden" id="is_teacher" name="is_teacher" value="{{ $startTeacher ? '1' : '0' }}">
+            <div class="wla-roles" role="group" aria-label="{{ __('Pilih peranan') }}">
+                <button type="button" class="wla-role {{ $startTeacher ? '' : 'is-active' }}" data-role="murid" aria-pressed="{{ $startTeacher ? 'false' : 'true' }}">
+                    <span class="emoji">🎒</span>
+                    <span class="name">{{ __('Murid') }}</span>
+                </button>
+                <button type="button" class="wla-role {{ $startTeacher ? 'is-active' : '' }}" data-role="cikgu" aria-pressed="{{ $startTeacher ? 'true' : 'false' }}">
+                    <span class="emoji">🍎</span>
+                    <span class="name">{{ __('Cikgu') }}</span>
+                </button>
+            </div>
 
+            <label for="name" class="wla-label">
+                {{ __('Nama penuh') }}
                 <input id="name" name="name" type="text" value="{{ old('name') }}"
-                       required autofocus autocomplete="name" class="input"
-                       @error('name') aria-invalid="true" @enderror>
+                       required autofocus autocomplete="name" class="wla-input"
+                       placeholder="cth: Aiman Zulkifli" @error('name') aria-invalid="true" @enderror>
+            </label>
+            @error('name')<p class="wla-field-error">{{ $message }}</p>@enderror
 
-                @error('name')
-                    <p class="field-error">{{ $message }}</p>
-                @enderror
-            </div>
-
-            <div>
-                <label for="username" class="label">{{ __('Nama pengguna') }}</label>
-
+            <label for="username" class="wla-label">
+                {{ __('Nama pengguna') }}
                 <input id="username" name="username" type="text" value="{{ old('username') }}"
-                       required autocomplete="username" class="input" aria-describedby="username-help"
-                       @error('username') aria-invalid="true" @enderror>
+                       required autocomplete="username" class="wla-input" placeholder="cth: aiman123"
+                       aria-describedby="username-help" @error('username') aria-invalid="true" @enderror>
+            </label>
+            <p id="username-help" class="wla-hint">{{ __('Untuk log masuk. Contoh: aisyah.t3') }}</p>
+            @error('username')<p class="wla-field-error">{{ $message }}</p>@enderror
 
-                <p id="username-help" class="help">{{ __('Untuk log masuk. Contoh: aisyah.t3') }}</p>
-
-                @error('username')
-                    <p class="field-error">{{ $message }}</p>
-                @enderror
-            </div>
-
-            {{-- Role toggle --}}
-            <div class="rounded-card border border-line bg-surface-2 p-4">
-                <label for="is_teacher" class="flex items-start gap-3">
-                    <input id="is_teacher" name="is_teacher" type="checkbox" value="1" x-model="isTeacher"
-                           class="mt-0.5 h-5 w-5 rounded border-line text-brand focus:ring-brand">
-
-                    <span>
-                        <span class="block font-bold text-ink">{{ __('Saya seorang guru') }}</span>
-                        <span class="block text-sm text-ink-2">{{ __('Tandakan jika anda mendaftar sebagai cikgu.') }}</span>
-                    </span>
+            {{-- Student-only: Tahun --}}
+            <div data-role-block="murid" @if($startTeacher) style="display:none" @endif>
+                <label for="grade_level" class="wla-label">
+                    {{ __('Tahun anda') }}
+                    <select id="grade_level" name="grade_level" class="wla-select" @error('grade_level') aria-invalid="true" @enderror>
+                        <option value="">{{ __('Sila pilih Tahun') }}</option>
+                        @foreach ($grades as $grade)
+                            <option value="{{ $grade->level }}" @selected(old('grade_level') == $grade->level)>{{ $grade->name }}</option>
+                        @endforeach
+                    </select>
                 </label>
+                @error('grade_level')<p class="wla-field-error">{{ $message }}</p>@enderror
             </div>
 
-            {{-- Student-only --}}
-            <div x-show="! isTeacher" x-cloak>
-                <label for="grade_level" class="label">{{ __('Tahun anda') }}</label>
-
-                <select id="grade_level" name="grade_level" class="input"
-                        @error('grade_level') aria-invalid="true" @enderror>
-                    <option value="">{{ __('Sila pilih Tahun') }}</option>
-                    @foreach ($grades as $grade)
-                        <option value="{{ $grade->level }}" @selected(old('grade_level') == $grade->level)>
-                            {{ $grade->name }}
-                        </option>
-                    @endforeach
-                </select>
-
-                @error('grade_level')
-                    <p class="field-error">{{ $message }}</p>
-                @enderror
-            </div>
-
-            {{-- Teacher-only --}}
-            <div x-show="isTeacher" x-cloak class="space-y-5">
+            {{-- Teacher-only: Emel + Kod Pendaftaran Guru --}}
+            <div data-role-block="cikgu" class="wla-stack" @if(! $startTeacher) style="display:none" @endif>
                 <div>
-                    <label for="email" class="label">{{ __('Emel') }}</label>
-
-                    <input id="email" name="email" type="email" value="{{ old('email') }}"
-                           autocomplete="email" class="input" @error('email') aria-invalid="true" @enderror>
-
-                    @error('email')
-                        <p class="field-error">{{ $message }}</p>
-                    @enderror
+                    <label for="email" class="wla-label">
+                        {{ __('Emel') }}
+                        <input id="email" name="email" type="email" value="{{ old('email') }}"
+                               autocomplete="email" class="wla-input" @error('email') aria-invalid="true" @enderror>
+                    </label>
+                    @error('email')<p class="wla-field-error">{{ $message }}</p>@enderror
                 </div>
-
                 <div>
-                    <label for="teacher_code" class="label">{{ __('Kod Pendaftaran Guru') }}</label>
-
-                    <input id="teacher_code" name="teacher_code" type="text" value="{{ old('teacher_code') }}"
-                           class="input" aria-describedby="teacher-code-help"
-                           @error('teacher_code') aria-invalid="true" @enderror>
-
-                    <p id="teacher-code-help" class="help">{{ __('Dapatkan kod ini daripada pentadbir sekolah anda.') }}</p>
-
-                    @error('teacher_code')
-                        <p class="field-error">{{ $message }}</p>
-                    @enderror
+                    <label for="teacher_code" class="wla-label">
+                        {{ __('Kod Pendaftaran Guru') }}
+                        <input id="teacher_code" name="teacher_code" type="text" value="{{ old('teacher_code') }}"
+                               class="wla-input" style="background:var(--field-warn)"
+                               placeholder="cth: WBK-2026" aria-describedby="teacher-code-help"
+                               @error('teacher_code') aria-invalid="true" @enderror>
+                    </label>
+                    <p id="teacher-code-help" class="wla-hint">{{ __('Dapatkan kod ini daripada pentadbir sekolah anda.') }}</p>
+                    @error('teacher_code')<p class="wla-field-error">{{ $message }}</p>@enderror
                 </div>
             </div>
 
-            <div>
-                <label for="password" class="label">{{ __('Kata laluan') }}</label>
-
+            <label for="password" class="wla-label">
+                {{ __('Kata laluan') }}
                 <input id="password" name="password" type="password" required autocomplete="new-password"
-                       class="input" aria-describedby="password-help"
+                       class="wla-input" placeholder="••••••••" aria-describedby="password-help"
                        @error('password') aria-invalid="true" @enderror>
+            </label>
+            <p id="password-help" class="wla-hint">{{ __('Sekurang-kurangnya 6 aksara.') }}</p>
+            @error('password')<p class="wla-field-error">{{ $message }}</p>@enderror
 
-                <p id="password-help" class="help">{{ __('Sekurang-kurangnya 6 aksara.') }}</p>
-
-                @error('password')
-                    <p class="field-error">{{ $message }}</p>
-                @enderror
-            </div>
-
-            <div>
-                <label for="password_confirmation" class="label">{{ __('Ulang kata laluan') }}</label>
-
+            <label for="password_confirmation" class="wla-label">
+                {{ __('Ulang kata laluan') }}
                 <input id="password_confirmation" name="password_confirmation" type="password"
-                       required autocomplete="new-password" class="input">
-            </div>
+                       required autocomplete="new-password" class="wla-input" placeholder="••••••••">
+            </label>
 
-            <button type="submit" class="btn-primary w-full">{{ __('Daftar') }}</button>
+            <button type="submit" class="wla-btn">{{ __('Daftar Sekarang') }}</button>
         </form>
+
+        <p style="margin:0;text-align:center;font-size:14.5px;color:var(--muted)">
+            {{ __('Sudah ada akaun?') }}
+            <a href="{{ route('login') }}" style="font-weight:700">{{ __('Log masuk di sini') }}</a>
+        </p>
     </div>
 
-    <p class="mt-6 text-center text-ink-2">
-        {{ __('Sudah ada akaun?') }}
-        <a href="{{ route('login') }}" class="font-bold text-brand hover:underline">{{ __('Log masuk di sini') }}</a>
-    </p>
-</x-guest-layout>
+    <script>
+        (function () {
+            var root = document.getElementById('reg-root');
+            if (!root) return;
+            var hidden = document.getElementById('is_teacher');
+            var roles = root.querySelectorAll('.wla-role');
+            var blocks = root.querySelectorAll('[data-role-block]');
+            function apply(role) {
+                var teacher = role === 'cikgu';
+                hidden.value = teacher ? '1' : '0';
+                roles.forEach(function (b) {
+                    var on = b.getAttribute('data-role') === role;
+                    b.classList.toggle('is-active', on);
+                    b.setAttribute('aria-pressed', on ? 'true' : 'false');
+                });
+                blocks.forEach(function (bl) {
+                    bl.style.display = bl.getAttribute('data-role-block') === role ? '' : 'none';
+                });
+            }
+            roles.forEach(function (b) {
+                b.addEventListener('click', function () { apply(b.getAttribute('data-role')); });
+            });
+        })();
+    </script>
+</x-welearn-auth>
