@@ -1,127 +1,67 @@
 <x-dynamic-component :component="auth()->user()->isTeacher() ? 'app-layout' : 'student-layout'" :title="$quiz->title">
-    <div class="mx-auto max-w-3xl" style="--sc: {{ $subject->rgb }}">
-        <a href="{{ route('bab.show', $chapter) }}"
-           class="inline-flex items-center gap-2 text-sm font-bold text-ink-2 hover:text-ink">
-            <x-icon name="arrow-left" class="h-4 w-4" />
-            Bab {{ $chapter->number }}: {{ $chapter->title }}
-        </a>
+    @php($col = $subject->color ?: '#17907B')
+    @php($tagBg = "color-mix(in oklab, {$col} 15%, #fff)")
+    @php($tagColor = "color-mix(in oklab, {$col} 82%, #000)")
+
+    <div style="display:flex;flex-direction:column;gap:16px;max-width:760px;margin:0 auto;width:100%">
+        <a href="{{ route('bab.show', $chapter) }}" class="wl-back"
+           style="align-self:flex-start;display:flex;align-items:center;gap:8px;font-family:'Geist',sans-serif;font-size:14px;font-weight:800;color:#6C6F87;text-decoration:none;padding:6px 0">← {{ __('Kembali') }}</a>
 
         @if ($isPreview)
-            <x-alert type="warn" class="mt-4">
-                {{ __('Anda melihat kuiz ini sebagai cikgu. Guru tidak boleh mencuba kuiz, hanya menyemak.') }}
-            </x-alert>
+            <div style="background:#FEF0CE;border-radius:14px;padding:14px 18px;font-weight:700;font-size:14px;color:#8A6A12">{{ __('Anda melihat kuiz ini sebagai cikgu. Guru tidak boleh mencuba kuiz, hanya menyemak.') }}</div>
         @endif
 
-        <div class="card card-pad mt-4">
-            <span class="chip bg-subject-wash text-subject-ink"><x-subject-emoji :subject="$subject" class="text-sm" /> {{ $subject->name }}</span>
+        <div style="background:#fff;border:1px solid rgba(46,44,80,.08);border-radius:22px;padding:28px;display:flex;flex-direction:column;gap:20px;box-shadow:0 8px 24px rgba(46,44,80,.06)">
+            <span style="align-self:flex-start;background:{{ $tagBg }};color:{{ $tagColor }};border-radius:999px;padding:5px 14px;font-family:'Geist',sans-serif;font-size:12.5px;font-weight:800"><x-subject-emoji :subject="$subject" class="text-sm" /> {{ $subject->name }}</span>
+            <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:26px;font-weight:800;letter-spacing:-.01em;color:#28293F">{{ $quiz->title }}</h2>
 
-            <h1 class="mt-3 text-3xl font-extrabold text-ink">{{ $quiz->title }}</h1>
-
-            @if ($quiz->description)
-                <p class="mt-3 max-w-prose text-ink-2">{{ $quiz->description }}</p>
-            @endif
-
-            <dl class="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
-                <div class="rounded-card bg-surface-2 p-4">
-                    <dt class="text-sm font-bold text-ink-2">{{ __('Soalan') }}</dt>
-                    <dd class="text-2xl font-extrabold text-ink">{{ $questionCount }}</dd>
+            <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px">
+                <div style="background:#F6F3EC;border-radius:14px;padding:14px 18px;display:flex;flex-direction:column;gap:3px">
+                    <span style="font-size:12.5px;font-weight:700;color:#8B8AA3">{{ __('Soalan') }}</span>
+                    <span style="font-family:'Geist',sans-serif;font-size:20px;font-weight:800;color:#28293F">{{ $questionCount }}</span>
                 </div>
-
-                <div class="rounded-card bg-surface-2 p-4">
-                    <dt class="text-sm font-bold text-ink-2">{{ __('Markah penuh') }}</dt>
-                    <dd class="text-2xl font-extrabold text-ink">{{ $maxScore }}</dd>
+                <div style="background:#F6F3EC;border-radius:14px;padding:14px 18px;display:flex;flex-direction:column;gap:3px">
+                    <span style="font-size:12.5px;font-weight:700;color:#8B8AA3">{{ __('Markah penuh') }}</span>
+                    <span style="font-family:'Geist',sans-serif;font-size:20px;font-weight:800;color:#28293F">{{ $maxScore }}</span>
                 </div>
-
-                <div class="rounded-card bg-surface-2 p-4">
-                    <dt class="text-sm font-bold text-ink-2">{{ __('Masa') }}</dt>
-                    <dd class="text-2xl font-extrabold text-ink">
-                        {{ $quiz->duration_minutes ? $quiz->duration_minutes.' min' : __('Bebas') }}
-                    </dd>
+                <div style="background:#F6F3EC;border-radius:14px;padding:14px 18px;display:flex;flex-direction:column;gap:3px">
+                    <span style="font-size:12.5px;font-weight:700;color:#8B8AA3">{{ __('Masa') }}</span>
+                    <span style="font-family:'Geist',sans-serif;font-size:20px;font-weight:800;color:#28293F">{{ $quiz->duration_minutes ? $quiz->duration_minutes.' minit' : __('Bebas') }}</span>
                 </div>
-            </dl>
-
-            {{-- The ranking rule, said plainly. Kids need to know retries are safe. --}}
-            <div class="mt-6 rounded-card border border-line bg-surface-2 p-5">
-                <h2 class="flex items-center gap-2 font-extrabold text-ink">
-                    <x-icon name="info" class="h-5 w-5 text-brand" />
-                    {{ __('Peraturan kuiz') }}
-                </h2>
-
-                <ul class="mt-3 space-y-2 text-ink-2">
-                    <li class="flex gap-2">
-                        <x-icon name="check" class="mt-1 h-4 w-4 shrink-0 text-success" />
-                        <span>{{ __('Soalan bulat (radio): pilih') }} <strong>{{ __('satu') }}</strong> {{ __('jawapan sahaja.') }}</span>
-                    </li>
-                    <li class="flex gap-2">
-                        <x-icon name="check" class="mt-1 h-4 w-4 shrink-0 text-success" />
-                        <span>{{ __('Soalan kotak (checkbox): pilih') }} <strong>{{ __('semua') }}</strong> {{ __('jawapan yang betul. Semua mesti betul untuk dapat markah.') }}</span>
-                    </li>
-                    <li class="flex gap-2">
-                        <x-icon name="trophy" class="mt-1 h-4 w-4 shrink-0 text-brand" />
-                        <span>
-                            <strong>{{ __('Hanya percubaan pertama') }}</strong> {{ __('dikira untuk ranking.') }}
-                            {{ __('Percubaan seterusnya adalah latihan sahaja dan tidak menjejaskan mata anda.') }}
-                        </span>
-                    </li>
-                    @if ($quiz->duration_minutes)
-                        <li class="flex gap-2">
-                            <x-icon name="clock" class="mt-1 h-4 w-4 shrink-0 text-warn" />
-                            <span>{{ __('Ada masa :minutes minit.', ['minutes' => $quiz->duration_minutes]) }} {{ __('Jawapan dihantar automatik apabila masa tamat.') }}</span>
-                        </li>
-                    @endif
-                </ul>
             </div>
 
-            @if (! $isPreview)
-                @if ($rankedAttempt)
-                    <x-alert type="success" class="mt-6">
-                        {{ __('Percubaan pertama anda sudah direkodkan:') }} {{ $rankedAttempt->score }}/{{ $rankedAttempt->max_score }} {{ __('mata.') }}
-                        {{ __('Percubaan baharu adalah latihan semula.') }}
-                    </x-alert>
+            <div style="background:#F6F3EC;border:1px solid rgba(46,44,80,.06);border-radius:16px;padding:20px 22px;display:flex;flex-direction:column;gap:12px">
+                <span style="font-family:'Geist',sans-serif;font-size:14.5px;font-weight:800;color:#28293F">ℹ️ {{ __('Peraturan kuiz') }}</span>
+                <div style="display:flex;gap:10px;align-items:flex-start">
+                    <span style="color:#17907B;font-size:13px;flex-shrink:0">✓</span>
+                    <span style="font-size:13.5px;color:#4A4B63;line-height:1.5">{{ __('Soalan pilihan: pilih') }} <b>{{ __('satu') }}</b> {{ __('jawapan sahaja.') }}</span>
+                </div>
+                <div style="display:flex;gap:10px;align-items:flex-start">
+                    <span style="color:#17907B;font-size:13px;flex-shrink:0">✓</span>
+                    <span style="font-size:13.5px;color:#4A4B63;line-height:1.5">{{ __('Soalan kotak semak: pilih') }} <b>{{ __('semua') }}</b> {{ __('jawapan yang betul. Semua mesti betul untuk mendapat markah.') }}</span>
+                </div>
+                <div style="display:flex;gap:10px;align-items:flex-start">
+                    <span style="color:#17907B;font-size:13px;flex-shrink:0">🏆</span>
+                    <span style="font-size:13.5px;color:#4A4B63;line-height:1.5"><b>{{ __('Hanya percubaan pertama') }}</b> {{ __('dikira untuk ranking. Percubaan seterusnya adalah latihan sahaja dan tidak menjejaskan mata anda.') }}</span>
+                </div>
+                @if ($quiz->duration_minutes)
+                    <div style="display:flex;gap:10px;align-items:flex-start">
+                        <span style="color:#E3A31C;font-size:13px;flex-shrink:0">⏰</span>
+                        <span style="font-size:13.5px;color:#4A4B63;line-height:1.5">{{ __('Anda ada :minutes minit. Jawapan dihantar secara automatik apabila masa tamat.', ['minutes' => $quiz->duration_minutes]) }}</span>
+                    </div>
                 @endif
+            </div>
 
-                <form method="POST" action="{{ route('kuiz.mula', $quiz) }}" class="mt-6">
-                    @csrf
-
-                    <button type="submit" class="btn-primary w-full text-lg">
-                        {{ $rankedAttempt ? __('Cuba Lagi (Latihan)') : __('Mula Kuiz') }}
-                    </button>
-                </form>
+            @if ($rankedAttempt)
+                <div style="background:#DCF2EE;border:1px solid rgba(23,144,123,.25);border-radius:14px;padding:14px 18px;font-family:'Geist',sans-serif;font-size:13.5px;font-weight:700;color:#0F7A68">✓ {{ __('Percubaan pertama anda: :score/:max mata. Percubaan baharu adalah latihan.', ['score' => $rankedAttempt->score, 'max' => $rankedAttempt->max_score]) }}</div>
             @endif
+
+            @unless ($isPreview)
+                <form method="POST" action="{{ route('kuiz.mula', $quiz) }}">
+                    @csrf
+                    <button type="submit" class="wl-btn-primary" style="width:100%;min-height:54px;border:none;cursor:pointer;border-radius:14px;background:#17907B;color:#fff;font-family:'Geist',sans-serif;font-weight:800;font-size:16px">{{ $rankedAttempt ? __('Cuba Lagi (Latihan)') : __('Mula Kuiz') }}</button>
+                </form>
+            @endunless
         </div>
-
-        {{-- Previous attempts --}}
-        @if ($myAttempts->isNotEmpty())
-            <section class="mt-8">
-                <h2 class="mb-3 text-lg font-extrabold text-ink">{{ __('Percubaan anda') }}</h2>
-
-                <ul class="space-y-2">
-                    @foreach ($myAttempts as $attempt)
-                        <li class="card flex flex-wrap items-center gap-4 p-4">
-                            <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-control text-sm font-extrabold
-                                         {{ $attempt->isCelebration() ? 'bg-success-soft text-success' : 'bg-surface-2 text-ink-2' }}">
-                                {{ $attempt->percentage() }}%
-                            </span>
-
-                            <span class="min-w-0 flex-1">
-                                <span class="block font-bold text-ink">
-                                    {{ $attempt->score }}/{{ $attempt->max_score }} {{ __('mata.') }}
-                                    {{ $attempt->correct_count }}/{{ $attempt->question_count }} {{ __('betul') }}
-                                </span>
-
-                                <span class="block text-sm text-ink-2">
-                                    {{ $attempt->completed_at->format('d/m/Y, g:ia') }}.
-                                    {{ $attempt->counts_for_ranking ? __('Dikira untuk ranking') : __('Latihan semula') }}
-                                </span>
-                            </span>
-
-                            <a href="{{ route('keputusan.show', $attempt) }}" class="btn-secondary btn-sm shrink-0">
-                                {{ __('Lihat Semakan') }}
-                            </a>
-                        </li>
-                    @endforeach
-                </ul>
-            </section>
-        @endif
     </div>
 </x-dynamic-component>

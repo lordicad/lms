@@ -1,143 +1,88 @@
 @php($me = auth()->user())
 
 <x-dynamic-component :component="$me->isTeacher() ? 'app-layout' : 'student-layout'" :title="$lesson->title">
-    <div style="--sc: {{ $subject->rgb }}" class="grid gap-8 lg:grid-cols-[1fr_20rem]">
-        <div>
-            <a href="{{ route('bab.show', $chapter) }}"
-               class="inline-flex items-center gap-2 text-sm font-bold text-ink-2 hover:text-ink">
-                <x-icon name="arrow-left" class="h-4 w-4" />
-                Bab {{ $chapter->number }}: {{ $chapter->title }}
-            </a>
+    @php($col = $subject->color ?: '#17907B')
+    @php($tagBg = "color-mix(in oklab, {$col} 15%, #fff)")
+    @php($tagColor = "color-mix(in oklab, {$col} 82%, #000)")
 
-            <div class="mt-4">
-                <x-player :lesson="$lesson" :progress="$progress" />
+    <div style="display:flex;flex-direction:column;gap:18px">
+        <a href="{{ route('bab.show', $chapter) }}" class="wl-back"
+           style="align-self:flex-start;display:flex;align-items:center;gap:8px;font-family:'Geist',sans-serif;font-size:14px;font-weight:800;color:#6C6F87;text-decoration:none;padding:6px 0">← Bab {{ $chapter->number }}: {{ $chapter->title }}</a>
 
-                <div class="mt-5">
-                    <div class="flex flex-wrap items-start justify-between gap-4">
-                        <h1 class="text-2xl font-extrabold text-ink md:text-3xl">{{ $lesson->title }}</h1>
-
-                        @if ($me->isStudent())
-                            <x-favourite-button :lesson="$lesson" :favourited="$favourited" labelled class="shrink-0" />
-                        @endif
-                    </div>
-
-                    <div class="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-ink-2">
-                        <span class="chip bg-subject-wash text-subject-ink"><x-subject-emoji :subject="$subject" class="text-sm" /> {{ $subject->displayName() }}</span>
-                        <span>{{ $grade->name }}</span>
-                        <span>{{ $lesson->teacher->name }}</span>
-
-                        @if ($lesson->durationLabel())
-                            <span class="flex items-center gap-1.5">
-                                <x-icon name="clock" class="h-4 w-4" />
-                                {{ $lesson->durationLabel() }}
-                            </span>
-                        @endif
-
-                        <span class="flex items-center gap-1.5">
-                            <x-icon name="eye" class="h-4 w-4" />
-                            {{ $lesson->views_count }} {{ __('tontonan') }}
-                        </span>
-
-                        @if ($lesson->watchedBy($me))
-                            <span class="chip bg-success-soft text-success">
-                                <x-icon name="check" class="h-4 w-4" />
-                                {{ __('Dah tonton') }}
-                            </span>
-                        @endif
-                    </div>
+        <div style="display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:24px;align-items:start">
+            {{-- LEFT: player + title/meta --}}
+            <div style="display:flex;flex-direction:column;gap:16px;min-width:0">
+                <div style="border-radius:20px;overflow:hidden;box-shadow:0 10px 30px rgba(46,44,80,.12)">
+                    <x-player :lesson="$lesson" :progress="$progress" />
                 </div>
+
+                <div style="display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap">
+                    <div style="display:flex;flex-direction:column;gap:10px;min-width:0;flex:1">
+                        <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:24px;font-weight:800;letter-spacing:-.01em;color:#28293F">{{ $lesson->title }}</h2>
+                        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                            <span style="background:{{ $tagBg }};color:{{ $tagColor }};border-radius:999px;padding:4px 12px;font-family:'Geist',sans-serif;font-size:12px;font-weight:800"><x-subject-emoji :subject="$subject" class="text-sm" /> {{ $subject->displayName() }}</span>
+                            <span style="font-size:13px;font-weight:700;color:#8B8AA3">{{ $grade->name }}</span>
+                            <span style="font-size:13px;font-weight:700;color:#8B8AA3">{{ $lesson->teacher->name }}</span>
+                            <span style="font-size:13px;font-weight:700;color:#8B8AA3">👁 {{ $lesson->views_count }} {{ __('tontonan') }}</span>
+                            @if ($me->isStudent() && $lesson->watchedBy($me))
+                                <span style="background:#DCF2EE;color:#0F7A68;border-radius:999px;padding:4px 12px;font-family:'Geist',sans-serif;font-size:12px;font-weight:800">✓ {{ __('Ditonton') }}</span>
+                            @endif
+                        </div>
+                    </div>
+                    @if ($me->isStudent())
+                        <form method="POST" action="{{ $favourited ? route('kegemaran.padam', $lesson) : route('kegemaran.simpan', $lesson) }}" style="flex-shrink:0">
+                            @csrf
+                            @if ($favourited) @method('DELETE') @endif
+                            <button type="submit" class="wl-btn-secondary" style="min-height:46px;cursor:pointer;border-radius:12px;border:1.5px solid rgba(46,44,80,.12);background:#fff;font-family:'Geist',sans-serif;font-weight:800;font-size:14px;padding:0 18px;display:flex;align-items:center;gap:8px;color:#28293F">
+                                <span style="color:{{ $favourited ? '#EB5E5A' : '#6C6F87' }};font-size:16px">{{ $favourited ? '♥' : '♡' }}</span> {{ $favourited ? __('Disimpan') : __('Simpan') }}
+                            </button>
+                        </form>
+                    @endif
+                </div>
+
+                @if ($lesson->description)
+                    <div style="background:#fff;border:1px solid rgba(46,44,80,.08);border-radius:16px;padding:18px 20px;box-shadow:0 3px 12px rgba(46,44,80,.04)">
+                        <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:15px;color:#28293F">{{ __('Tentang video ini') }}</span>
+                        <p style="margin:8px 0 0;font-size:14px;line-height:1.6;color:#4A4B63;white-space:pre-line">{{ $lesson->description }}</p>
+                    </div>
+                @endif
             </div>
 
-            @if ($lesson->description)
-                <div class="card card-pad mt-6">
-                    <h2 class="text-lg font-extrabold text-ink">{{ __('Tentang video ini') }}</h2>
-                    <p class="mt-2 max-w-prose whitespace-pre-line text-ink-2">{{ $lesson->description }}</p>
-                </div>
-            @endif
-
-            @if ($previous || $next)
-                <nav class="mt-6 flex flex-wrap gap-3" aria-label="{{ __('Video lain dalam bab ini') }}">
-                    @if ($previous)
-                        <a href="{{ route('video.show', $previous) }}" class="btn-secondary flex-1 justify-start">
-                            <x-icon name="arrow-left" class="h-5 w-5 shrink-0" />
-                            <span class="min-w-0 text-left">
-                                <span class="block text-xs font-bold text-ink-2">{{ __('Sebelum ini') }}</span>
-                                <span class="block truncate">{{ $previous->title }}</span>
-                            </span>
-                        </a>
-                    @endif
-
-                    @if ($next)
-                        <a href="{{ route('video.show', $next) }}" class="btn-secondary flex-1 justify-end">
-                            <span class="min-w-0 text-right">
-                                <span class="block text-xs font-bold text-ink-2">{{ __('Seterusnya') }}</span>
-                                <span class="block truncate">{{ $next->title }}</span>
-                            </span>
-                            <x-icon name="arrow-right" class="h-5 w-5 shrink-0" />
-                        </a>
-                    @endif
-                </nav>
-            @endif
-        </div>
-
-        <aside class="space-y-6">
-            <section>
-                <h2 class="mb-3 text-lg font-extrabold text-ink">{{ __('Bahan sokongan') }}</h2>
-
-                @if ($materials->isEmpty())
-                    <p class="rounded-card border border-dashed border-line p-4 text-sm text-ink-2">
-                        {{ __('Tiada bahan sokongan untuk video ini.') }}
-                    </p>
-                @else
-                    <ul class="space-y-2">
+            {{-- RIGHT: materials + quizzes --}}
+            <div style="display:flex;flex-direction:column;gap:20px">
+                <div style="display:flex;flex-direction:column;gap:10px">
+                    <h3 style="margin:0;font-family:'Geist',sans-serif;font-size:16px;font-weight:800;color:#28293F">{{ __('Bahan sokongan') }}</h3>
+                    @if ($materials->isEmpty())
+                        <p style="margin:0;background:#fff;border:1px dashed rgba(46,44,80,.2);border-radius:16px;padding:16px;font-size:13px;color:#8B8AA3">{{ __('Tiada bahan sokongan untuk video ini.') }}</p>
+                    @else
                         @foreach ($materials as $material)
-                            <li>
-                                <a href="{{ route('muat-turun.bahan', $material) }}"
-                                   class="card flex items-center gap-3 p-3 transition-shadow hover:shadow-lift">
-                                    <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-control bg-surface-2 text-ink-2" aria-hidden="true"><x-icon :name="$material->iconName()" class="h-5 w-5" /></span>
-
-                                    <span class="min-w-0 flex-1">
-                                        <span class="block truncate text-sm font-extrabold text-ink">{{ $material->title }}</span>
-                                        <span class="block text-xs text-ink-2">{{ $material->humanSize() }}</span>
-                                    </span>
-
-                                    <x-icon name="download" class="h-5 w-5 shrink-0 text-brand" />
-                                    <span class="sr-only">{{ __('Muat turun :title', ['title' => $material->title]) }}</span>
-                                </a>
-                            </li>
+                            <div style="background:#fff;border:1px solid rgba(46,44,80,.08);border-radius:16px;padding:14px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 3px 12px rgba(46,44,80,.04)">
+                                <span style="width:38px;height:38px;border-radius:10px;background:#FDE7E0;display:grid;place-items:center;font-size:15px;flex-shrink:0">📄</span>
+                                <div style="display:flex;flex-direction:column;gap:1px;min-width:0;flex:1">
+                                    <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:13.5px;color:#28293F;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ $material->title }}</span>
+                                    <span style="font-size:12px;color:#8B8AA3">{{ $material->humanSize() }}</span>
+                                </div>
+                                <a href="{{ route('muat-turun.bahan', $material) }}" title="{{ __('Muat turun') }}" style="width:38px;height:38px;border-radius:10px;background:#DCF2EE;color:#0F7A68;font-size:15px;display:grid;place-items:center;text-decoration:none;flex-shrink:0">⬇</a>
+                            </div>
                         @endforeach
-                    </ul>
-                @endif
-            </section>
+                    @endif
+                </div>
 
-            <section>
-                <h2 class="mb-3 text-lg font-extrabold text-ink">{{ __('Kuiz bab ini') }}</h2>
-
-                @if ($quizzes->isEmpty())
-                    <p class="rounded-card border border-dashed border-line p-4 text-sm text-ink-2">
-                        {{ __('Tiada kuiz untuk bab ini lagi.') }}
-                    </p>
-                @else
-                    <ul class="space-y-2">
+                <div style="display:flex;flex-direction:column;gap:10px">
+                    <h3 style="margin:0;font-family:'Geist',sans-serif;font-size:16px;font-weight:800;color:#28293F">{{ __('Kuiz dalam bab ini') }}</h3>
+                    @if ($quizzes->isEmpty())
+                        <p style="margin:0;background:#fff;border:1px dashed rgba(46,44,80,.2);border-radius:16px;padding:16px;font-size:13px;color:#8B8AA3">{{ __('Tiada kuiz untuk bab ini lagi.') }}</p>
+                    @else
                         @foreach ($quizzes as $quiz)
-                            <li>
-                                <a href="{{ route('kuiz.intro', $quiz) }}"
-                                   class="card block p-4 transition-shadow hover:shadow-lift">
-                                    <span class="block font-extrabold text-ink">{{ $quiz->title }}</span>
-
-                                    <span class="mt-1 block text-sm text-ink-2">
-                                        {{ $quiz->isFile() ? __('Kuiz bercetak') : __('Kuiz interaktif') }}
-                                    </span>
-
-                                    <span class="mt-2 block text-sm font-bold text-brand">
-                                        {{ $quiz->isFile() ? __('Lihat') : __('Cuba Kuiz') }}
-                                    </span>
-                                </a>
-                            </li>
+                            <div style="background:#fff;border:1px solid rgba(46,44,80,.08);border-radius:16px;padding:16px 18px;display:flex;flex-direction:column;gap:6px;box-shadow:0 3px 12px rgba(46,44,80,.04)">
+                                <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:14.5px;color:#28293F">{{ $quiz->title }}</span>
+                                <span style="font-size:12.5px;color:#8B8AA3">{{ $quiz->isFile() ? __('Kuiz bercetak') : __('Kuiz interaktif') }}</span>
+                                <a href="{{ route('kuiz.intro', $quiz) }}" class="wl-btn-primary" style="align-self:flex-start;margin-top:6px;min-height:42px;display:inline-flex;align-items:center;border-radius:12px;background:#17907B;color:#fff;font-family:'Geist',sans-serif;font-weight:800;font-size:13.5px;padding:0 18px;text-decoration:none">{{ $quiz->isFile() ? __('Lihat') : __('Cuba Kuiz') }}</a>
+                            </div>
                         @endforeach
-                    </ul>
-                @endif
-            </section>
-        </aside>
+                    @endif
+                </div>
+            </div>
+        </div>
     </div>
 </x-dynamic-component>

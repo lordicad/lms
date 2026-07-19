@@ -1,162 +1,88 @@
 <x-student-layout :title="$quiz->title">
-    {{--
-        One question per screen with a progress bar. Chosen over a single long form because a
-        9 year old on a phone loses their place in a 20-question scroll.
+    <style>
+        .qopt { position:relative; display:flex; align-items:center; gap:14px; border-radius:14px; padding:16px 18px; cursor:pointer; transition:all .12s; border:1.5px solid rgba(46,44,80,.1); background:#fff; }
+        .qopt:has(input:checked) { border-color:#17907B; background:#DCF2EE; }
+        .qopt input { position:absolute; opacity:0; width:0; height:0; }
+        .qdot { width:22px; height:22px; flex-shrink:0; display:grid; place-items:center; color:#fff; font-size:12px; background:#fff; border:2px solid rgba(46,44,80,.2); }
+        .qopt.radio .qdot { border-radius:50%; }
+        .qopt.check .qdot { border-radius:6px; }
+        .qopt:has(input:checked) .qdot { background:#17907B; border-color:#17907B; }
+        .qopt:has(input:checked) .qdot::after { content:'✓'; }
+        .qletter { width:30px; height:30px; border-radius:50%; flex-shrink:0; display:grid; place-items:center; font-family:'Geist',sans-serif; font-weight:800; font-size:13px; background:#F1F0E8; color:#6C6F87; }
+        .qopt:has(input:checked) .qletter { background:#17907B; color:#fff; }
+        .qjump { width:46px; height:46px; border-radius:12px; cursor:pointer; font-family:'Geist',sans-serif; font-weight:800; font-size:14px; transition:all .12s; border:1.5px solid rgba(46,44,80,.12); background:#fff; color:#4A4B63; }
+        .qjump.answered { border:1.5px solid #17907B; background:#DCF2EE; color:#0F7A68; }
+        .qjump.active { border:none; background:#17907B; color:#fff; }
+    </style>
 
-        Every question stays in the DOM inside one <form>, so nothing is lost when stepping
-        back and forth, and a submit posts the whole set at once. Alpine only shows and hides.
-        Grading happens entirely on the server: no answer key is ever sent to the browser.
-    --}}
-    <div class="mx-auto max-w-2xl" style="--sc: {{ $subject->rgb }}"
-         x-data="quizRunner({
-             total: {{ $questions->count() }},
-             secondsLeft: {{ $secondsLeft === null ? 'null' : $secondsLeft }},
-             labels: { answered: @js(__('dijawab')) },
-         })"
+    <div style="display:flex;flex-direction:column;gap:18px;max-width:820px;margin:0 auto;width:100%"
+         x-data="quizRunner({ total: {{ $questions->count() }}, secondsLeft: {{ $secondsLeft === null ? 'null' : $secondsLeft }}, labels: { answered: @js(__('dijawab')) } })"
          x-init="start()">
 
-        <header class="mb-6">
-            <div class="flex flex-wrap items-center justify-between gap-3">
-                <h1 class="text-xl font-extrabold text-ink">{{ $quiz->title }}</h1>
+        <div style="display:flex;align-items:center;gap:16px">
+            <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:22px;font-weight:800;letter-spacing:-.01em;color:#28293F;flex:1;min-width:0">{{ $quiz->title }}</h2>
+            @if ($secondsLeft !== null)
+                <span :style="secondsLeft < 60 ? 'background:#FDE7E0;color:#C24936' : 'background:#FEF0CE;color:#8A6A12'"
+                      style="display:flex;align-items:center;gap:6px;border-radius:999px;padding:8px 16px;font-family:'Geist',sans-serif;font-weight:800;font-size:14.5px">🕐 <span x-text="clock()">{{ gmdate('i:s', $secondsLeft) }}</span></span>
+            @endif
+        </div>
 
-                @if ($secondsLeft !== null)
-                    <span class="chip text-base"
-                          :class="secondsLeft <= 60 ? 'bg-danger-soft text-danger' : 'bg-warn-soft text-warn'"
-                          role="timer" aria-live="off">
-                        <x-icon name="clock" class="h-5 w-5" />
-                        <span x-text="clock()">{{ gmdate('i:s', $secondsLeft) }}</span>
-                    </span>
-                @endif
+        <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;align-items:center;justify-content:space-between">
+                <span style="font-family:'Geist',sans-serif;font-size:13.5px;font-weight:800;color:#4A4B63">{{ __('Soalan') }} <span x-text="current + 1">1</span> {{ __('daripada') }} {{ $questions->count() }}</span>
+                <span style="font-size:13px;font-weight:700;color:#8B8AA3" x-text="answeredCount() + ' ' + labels.answered">0 {{ __('dijawab') }}</span>
             </div>
-
-            <div class="mt-4">
-                <div class="flex items-center justify-between text-sm font-bold text-ink-2">
-                    <span>{{ __('Soalan') }} <span x-text="current + 1">1</span> {{ __('daripada') }} {{ $questions->count() }}</span>
-                    <span x-text="answeredCount() + ' ' + labels.answered">0 {{ __('dijawab') }}</span>
-                </div>
-
-                <div class="mt-2 h-3 w-full overflow-hidden rounded-full bg-subject/15"
-                     role="progressbar" aria-label="{{ __('Kemajuan kuiz') }}"
-                     :aria-valuenow="current + 1" aria-valuemin="1" aria-valuemax="{{ $questions->count() }}">
-                    <div class="h-full rounded-full bg-subject-ink transition-[width] duration-200"
-                         :style="`width: ${((current + 1) / total) * 100}%`"></div>
-                </div>
+            <div style="height:8px;border-radius:999px;background:#DCEAF8;overflow:hidden">
+                <div style="height:100%;border-radius:999px;background:#17907B;transition:width .25s ease-out" :style="`width:${((current + 1) / total) * 100}%`"></div>
             </div>
-        </header>
+        </div>
 
         <noscript>
-            <div class="alert-warn mb-6">
-                <x-icon name="alert" class="mt-0.5 h-5 w-5 shrink-0" />
-                <div>
-                    {{ __('JavaScript perlu dihidupkan untuk menjawab kuiz ini. Sila hidupkan JavaScript dalam pelayar anda, kemudian muat semula halaman ini.') }}
-                </div>
-            </div>
+            <div style="background:#FEF0CE;border-radius:14px;padding:14px 18px;font-weight:700;font-size:14px;color:#8A6A12">{{ __('JavaScript perlu dihidupkan untuk menjawab kuiz ini.') }}</div>
         </noscript>
 
-        <form method="POST" action="{{ route('kuiz.hantar', $attempt) }}" x-ref="form"
-              @submit="submitting = true">
+        <form method="POST" action="{{ route('kuiz.hantar', $attempt) }}" x-ref="form" @submit="submitting = true">
             @csrf
-
             @foreach ($questions as $index => $question)
-                {{-- The first question renders without x-cloak so it paints immediately;
-                     the rest stay hidden until Alpine takes over. --}}
                 <section x-show="current === {{ $index }}" @if ($index > 0) x-cloak @endif
-                         class="card card-pad"
-                         aria-labelledby="soalan-{{ $question->id }}">
-
-                    <div class="flex flex-wrap items-center gap-2">
-                        <span class="chip bg-subject-wash text-subject-ink">{{ $question->points }} {{ __('mata') }}</span>
-
-                        <span class="chip bg-surface-2 text-ink-2">
-                            {{ $question->isMultiple() ? __('Pilih semua yang betul') : __('Pilih satu jawapan') }}
-                        </span>
+                         style="background:#fff;border:1px solid rgba(46,44,80,.08);border-radius:22px;padding:26px;display:flex;flex-direction:column;gap:18px;box-shadow:0 8px 24px rgba(46,44,80,.06)">
+                    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                        <span style="background:#E4EEF9;color:#2E6CA8;border-radius:999px;padding:5px 13px;font-family:'Geist',sans-serif;font-size:12.5px;font-weight:800">{{ $question->points }} {{ __('mata') }}</span>
+                        <span style="background:#F1F0E8;color:#6C6F87;border-radius:999px;padding:5px 13px;font-family:'Geist',sans-serif;font-size:12.5px;font-weight:800">{{ $question->isMultiple() ? __('Pilih semua jawapan betul') : __('Pilih satu jawapan') }}</span>
                     </div>
-
-                    <h2 id="soalan-{{ $question->id }}" class="mt-4 text-xl font-extrabold leading-snug text-ink">
-                        {{ $question->question_text }}
-                    </h2>
-
-                    <fieldset class="mt-5 space-y-3">
-                        <legend class="sr-only">{{ __('Pilihan jawapan untuk soalan :n', ['n' => $index + 1]) }}</legend>
-
+                    <h3 style="margin:0;font-family:'Geist',sans-serif;font-size:20px;font-weight:800;line-height:1.4;color:#28293F">{{ $question->question_text }}</h3>
+                    <div style="display:flex;flex-direction:column;gap:10px">
                         @foreach ($question->options as $option)
-                            @php
-                                $inputId = "s{$question->id}-o{$option->id}";
-                                $inputName = $question->isMultiple()
-                                    ? "answers[{$question->id}][]"
-                                    : "answers[{$question->id}][]";
-                            @endphp
-
-                            <label for="{{ $inputId }}"
-                                   class="flex cursor-pointer items-center gap-4 rounded-card border-2 border-line p-4
-                                          transition-colors hover:border-subject has-[:checked]:border-subject
-                                          has-[:checked]:bg-subject/8">
-
-                                <input id="{{ $inputId }}"
-                                       name="{{ $inputName }}"
-                                       type="{{ $question->isMultiple() ? 'checkbox' : 'radio' }}"
-                                       value="{{ $option->id }}"
-                                       @change="touch({{ $index }})"
-                                       class="h-6 w-6 shrink-0 border-line text-subject-ink focus:ring-subject
-                                              {{ $question->isMultiple() ? 'rounded' : 'rounded-full' }}">
-
-                                <span class="flex items-center gap-3">
-                                    <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-surface-2 text-sm font-extrabold text-ink-2">
-                                        {{ $option->letter() }}
-                                    </span>
-
-                                    <span class="font-semibold text-ink">{{ $option->option_text }}</span>
-                                </span>
+                            <label class="qopt {{ $question->isMultiple() ? 'check' : 'radio' }}">
+                                <input type="{{ $question->isMultiple() ? 'checkbox' : 'radio' }}" name="answers[{{ $question->id }}][]" value="{{ $option->id }}" @change="touch({{ $index }})">
+                                <span class="qdot"></span>
+                                <span class="qletter">{{ $option->letter() }}</span>
+                                <span style="font-family:'Geist',sans-serif;font-weight:700;font-size:15px;color:#28293F">{{ $option->option_text }}</span>
                             </label>
                         @endforeach
-                    </fieldset>
+                    </div>
                 </section>
             @endforeach
 
-            {{-- Step controls --}}
-            <nav class="mt-6 flex items-center justify-between gap-3" aria-label="{{ __('Navigasi soalan') }}">
-                <button type="button" class="btn-secondary" x-show="current > 0" x-cloak @click="previous()">
-                    <x-icon name="arrow-left" class="h-5 w-5" />
-                    {{ __('Sebelum') }}
+            <div style="display:flex;align-items:center;gap:10px">
+                <button type="button" x-show="current > 0" x-cloak @click="previous()" class="wl-btn-secondary"
+                        style="min-height:48px;cursor:pointer;border-radius:13px;border:1.5px solid rgba(46,44,80,.12);background:#fff;color:#28293F;font-family:'Geist',sans-serif;font-weight:800;font-size:15px;padding:0 22px">← {{ __('Sebelum') }}</button>
+                <button type="submit" x-show="current === total - 1" x-cloak :disabled="submitting"
+                        style="margin-left:auto;min-height:48px;border:none;cursor:pointer;border-radius:13px;background:#EB5E5A;color:#fff;font-family:'Geist',sans-serif;font-weight:800;font-size:15px;padding:0 26px">
+                    <span x-show="! submitting">{{ __('Hantar Jawapan') }}</span><span x-show="submitting" x-cloak>{{ __('Menghantar...') }}</span>
                 </button>
+                <button type="button" x-show="current < total - 1" @click="next()" class="wl-btn-primary"
+                        style="margin-left:auto;min-height:48px;border:none;cursor:pointer;border-radius:13px;background:#17907B;color:#fff;font-family:'Geist',sans-serif;font-weight:800;font-size:15px;padding:0 26px">{{ __('Seterusnya') }} →</button>
+            </div>
 
-                <span x-show="current === 0" aria-hidden="true"></span>
-
-                <button type="button" class="btn-primary" x-show="current < total - 1" @click="next()">
-                    {{ __('Seterusnya') }}
-                    <x-icon name="arrow-right" class="h-5 w-5" />
-                </button>
-
-                <button type="submit" class="btn-primary" x-show="current === total - 1"
-                        x-cloak :disabled="submitting">
-                    <span x-show="! submitting">{{ __('Hantar Jawapan') }}</span>
-                    <span x-show="submitting" x-cloak>{{ __('Menghantar...') }}</span>
-                </button>
-            </nav>
-
-            {{-- Question map, so a student can jump back to one they skipped. --}}
-            <div class="mt-8">
-                <p class="mb-2 text-sm font-bold text-ink-2">{{ __('Lompat ke soalan') }}</p>
-
-                <ul class="flex flex-wrap gap-2">
+            <div style="display:flex;flex-direction:column;gap:10px">
+                <span style="font-family:'Geist',sans-serif;font-size:13.5px;font-weight:800;color:#4A4B63">{{ __('Lompat ke soalan') }}</span>
+                <div style="display:flex;gap:8px;flex-wrap:wrap">
                     @foreach ($questions as $index => $question)
-                        <li>
-                            <button type="button" @click="go({{ $index }})"
-                                    class="flex h-11 w-11 items-center justify-center rounded-control border-2 text-sm font-extrabold transition-colors"
-                                    :class="current === {{ $index }}
-                                        ? 'border-subject bg-subject-ink text-white'
-                                        : (answered[{{ $index }}]
-                                            ? 'border-success bg-success-soft text-success'
-                                            : 'border-line bg-surface text-ink-2 hover:border-subject')"
-                                    :aria-current="current === {{ $index }} ? 'true' : 'false'">
-                                {{ $index + 1 }}
-                                <span class="sr-only">
-                                    {{ __('Soalan') }} {{ $index + 1 }}<span x-show="answered[{{ $index }}]">{{ __(', sudah dijawab') }}</span>
-                                </span>
-                            </button>
-                        </li>
+                        <button type="button" class="qjump" @click="go({{ $index }})"
+                                :class="{ 'active': current === {{ $index }}, 'answered': current !== {{ $index }} && answered[{{ $index }}] }">{{ $index + 1 }}</button>
                     @endforeach
-                </ul>
+                </div>
             </div>
         </form>
     </div>
@@ -165,72 +91,31 @@
         <script>
             function quizRunner({ total, secondsLeft, labels }) {
                 return {
-                    total,
-                    current: 0,
-                    secondsLeft,
-                    labels,
-                    submitting: false,
-                    answered: Array(total).fill(false),
-                    timer: null,
-
+                    total, current: 0, secondsLeft, labels, submitting: false,
+                    answered: Array(total).fill(false), timer: null,
                     start() {
-                        // Restores the "answered" ticks when the browser refills a reloaded form.
                         this.syncAnswered();
-
                         if (this.secondsLeft === null) return;
-
                         this.timer = setInterval(() => {
                             this.secondsLeft -= 1;
-
-                            if (this.secondsLeft <= 0) {
-                                clearInterval(this.timer);
-                                this.autoSubmit();
-                            }
+                            if (this.secondsLeft <= 0) { clearInterval(this.timer); this.autoSubmit(); }
                         }, 1000);
                     },
-
-                    /* Time is up: hand in whatever has been answered so far. */
-                    autoSubmit() {
-                        if (this.submitting) return;
-
-                        this.submitting = true;
-                        this.$refs.form.submit();
-                    },
-
+                    autoSubmit() { if (this.submitting) return; this.submitting = true; this.$refs.form.submit(); },
                     clock() {
                         const left = Math.max(0, this.secondsLeft ?? 0);
-                        const minutes = String(Math.floor(left / 60)).padStart(2, '0');
-                        const seconds = String(left % 60).padStart(2, '0');
-
-                        return `${minutes}:${seconds}`;
+                        return String(Math.floor(left / 60)).padStart(2, '0') + ':' + String(left % 60).padStart(2, '0');
                     },
-
                     syncAnswered() {
                         this.$refs.form.querySelectorAll('section').forEach((section, index) => {
                             this.answered[index] = section.querySelectorAll('input:checked').length > 0;
                         });
                     },
-
-                    touch(index) {
-                        this.$nextTick(() => this.syncAnswered());
-                    },
-
-                    answeredCount() {
-                        return this.answered.filter(Boolean).length;
-                    },
-
-                    go(index) {
-                        this.current = Math.min(Math.max(index, 0), this.total - 1);
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                    },
-
-                    next() {
-                        this.go(this.current + 1);
-                    },
-
-                    previous() {
-                        this.go(this.current - 1);
-                    },
+                    touch(index) { this.$nextTick(() => this.syncAnswered()); },
+                    answeredCount() { return this.answered.filter(Boolean).length; },
+                    go(index) { this.current = Math.min(Math.max(index, 0), this.total - 1); window.scrollTo({ top: 0, behavior: 'smooth' }); },
+                    next() { this.go(this.current + 1); },
+                    previous() { this.go(this.current - 1); },
                 };
             }
         </script>

@@ -1,26 +1,24 @@
-<x-student-layout :title="__('Papan Ranking')">
+<x-student-layout :title="__('Ranking Kuiz')">
     @php($me = auth()->user())
-    @php($podiumRows = $top->take(3)->values())
-    @php($listRows = $top->slice(3)->values())
-    {{-- Podium order on screen: 2nd · 1st · 3rd, with 1st raised. --}}
-    @php($podium = collect([
-        ['row' => $podiumRows[1] ?? null, 'medal' => '🥈', 'ring' => 'ring-ink-2/30',  'tall' => false],
-        ['row' => $podiumRows[0] ?? null, 'medal' => '🥇', 'ring' => 'ring-warn/50',    'tall' => true],
-        ['row' => $podiumRows[2] ?? null, 'medal' => '🥉', 'ring' => 'ring-danger/40',  'tall' => false],
-    ])->filter(fn ($p) => $p['row']))
+    @php($palette = [
+        ['#DCF2EE', '#0F7A68', '#2BB39B'],
+        ['#E4EEF9', '#2E6CA8', '#82B3E1'],
+        ['#FBE4ED', '#B84A75', '#F5B5CC'],
+        ['#FEF0CE', '#8A6A12', '#FBB92A'],
+        ['#FDE7E0', '#C24936', '#EB5E5A'],
+    ])
+    @php($initial = fn ($name) => mb_strtoupper(mb_substr($name, 0, 1)))
 
-    <div class="mx-auto max-w-3xl space-y-6">
-        <header class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-            <h1 class="text-[22px] font-extrabold text-ink">{{ __('Papan Ranking') }}</h1>
-            <span class="text-sm text-ink-2">{{ $grade?->name ?? __('tahun anda') }}</span>
-        </header>
+    <div style="display:flex;flex-direction:column;gap:20px">
+        <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap">
+            <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:22px;font-weight:800;color:#28293F">{{ __('Ranking Kuiz') }}</h2>
+            <span style="font-size:14px;color:#8B8AA3">{{ $grade?->name ?? __('tahun anda') }}</span>
+        </div>
 
-        {{-- Subject filter. A grouped <select>, not tabs: 27 subjects across 5 categories. --}}
-        <form method="GET" action="{{ route('ranking.index') }}" class="flex items-center gap-2.5">
-            <label for="subjek" class="shrink-0 text-[13.5px] font-bold text-ink-2">{{ __('Subjek:') }}</label>
-            <select id="subjek" name="subjek"
-                    class="min-h-[44px] rounded-full border border-line bg-surface px-4 text-[14px] font-bold text-ink focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/25"
-                    onchange="this.form.submit()">
+        <form method="GET" action="{{ route('ranking.index') }}" style="display:flex;align-items:center;gap:10px">
+            <span style="font-family:'Geist',sans-serif;font-size:13.5px;font-weight:700;color:#6C6F87">{{ __('Subjek:') }}</span>
+            <select name="subjek" onchange="this.form.submit()"
+                    style="min-height:44px;border:1.5px solid rgba(46,44,80,.12);border-radius:12px;padding:0 14px;background:#fff;font-family:'Geist',sans-serif;font-weight:800;font-size:14px;color:#28293F;cursor:pointer">
                 <option value="">{{ __('Keseluruhan') }}</option>
                 @foreach ($subjects->groupBy('category') as $category => $group)
                     <optgroup label="{{ \App\Models\Subject::categoryLabel($category) }}">
@@ -30,75 +28,70 @@
                     </optgroup>
                 @endforeach
             </select>
-            <noscript><button type="submit" class="btn-secondary btn-sm">{{ __('Tapis') }}</button></noscript>
+            <noscript><button type="submit" style="min-height:44px;border-radius:12px;border:1.5px solid rgba(46,44,80,.15);background:#fff;padding:0 16px;cursor:pointer">{{ __('Tapis') }}</button></noscript>
         </form>
 
         @if ($top->isEmpty())
-            <x-empty emoji="🏆" :title="__('Belum ada ranking')"
-                     :text="__('Belum ada murid yang menyelesaikan kuiz :subject dalam :grade. Jadilah yang pertama!', ['subject' => $subject ? $subject->name : '', 'grade' => $grade?->name ?? __('tahun anda')])">
-                <a href="{{ route('belajar.index') }}" class="btn-primary">{{ __('Cari Kuiz') }}</a>
-            </x-empty>
+            <div style="background:#fff;border:1px dashed rgba(46,44,80,.2);border-radius:22px;padding:56px;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center">
+                <span style="font-size:32px">🏆</span>
+                <h3 style="margin:0;font-family:'Geist',sans-serif;font-size:19px;font-weight:800;color:#28293F">{{ __('Belum ada ranking') }}</h3>
+                <p style="margin:0;font-size:14.5px;color:#8B8AA3;max-width:360px">{{ __('Belum ada murid yang menyelesaikan kuiz dalam :grade. Jadilah yang pertama!', ['grade' => $grade?->name ?? __('tahun anda')]) }}</p>
+            </div>
         @else
-            {{-- Podium — top 3 --}}
-            <div class="grid grid-cols-3 items-end gap-3 sm:gap-4">
-                @foreach ($podium as $p)
+            @php($podiumRows = $top->take(3)->values())
+            @php($arrange = collect([
+                ['row' => $podiumRows[1] ?? null, 'idx' => 1, 'medal' => '🥈', 'pad' => '10px'],
+                ['row' => $podiumRows[0] ?? null, 'idx' => 0, 'medal' => '🥇', 'pad' => '30px'],
+                ['row' => $podiumRows[2] ?? null, 'idx' => 2, 'medal' => '🥉', 'pad' => '10px'],
+            ])->filter(fn ($p) => $p['row']))
+
+            {{-- Podium --}}
+            <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;align-items:end">
+                @foreach ($arrange as $p)
                     @php($row = $p['row'])
-                    @php($isMe = $row->student->id === $me->id)
-                    <div class="relative flex flex-col items-center gap-2 rounded-panel border border-line bg-surface px-2 pb-5 text-center shadow-card {{ $p['tall'] ? 'pt-10' : 'pt-6' }} {{ $isMe ? 'ring-2 ring-brand' : '' }}">
-                        <span class="absolute -top-3.5 text-[26px]" aria-hidden="true">{{ $p['medal'] }}</span>
-                        <span class="ring-4 {{ $p['ring'] }} rounded-full">
-                            <x-avatar :user="$row->student" size="lg" />
-                        </span>
-                        <span class="line-clamp-1 text-[15px] font-extrabold text-ink">{{ \Illuminate\Support\Str::before($row->student->name, ' ') }}</span>
-                        <span class="text-[12.5px] text-ink-2">{{ __(':count kuiz', ['count' => $row->quizzes]) }}</span>
-                        <span class="chip bg-brand-soft text-[13px] font-extrabold text-brand">{{ $row->points }} {{ __('mata') }}</span>
+                    @php($pal = $palette[$p['idx'] % count($palette)])
+                    <div style="background:#fff;border:1px solid rgba(46,44,80,.08);border-radius:20px;padding:20px 16px {{ $p['pad'] }};display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;box-shadow:0 6px 20px rgba(46,44,80,.05);position:relative">
+                        <span style="position:absolute;top:-14px;font-size:26px">{{ $p['medal'] }}</span>
+                        <span style="width:56px;height:56px;border-radius:50%;background:{{ $pal[0] }};display:grid;place-items:center;font-family:'Geist',sans-serif;font-size:20px;font-weight:800;color:{{ $pal[1] }};border:3px solid {{ $pal[2] }}">{{ $initial($row->student->name) }}</span>
+                        <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:15px;color:#28293F">{{ \Illuminate\Support\Str::before($row->student->name, ' ') }}</span>
+                        <span style="font-size:12.5px;color:#8B8AA3">{{ $row->quizzes }} kuiz</span>
+                        <span style="background:{{ $pal[0] }};color:{{ $pal[1] }};border-radius:999px;padding:4px 14px;font-family:'Geist',sans-serif;font-size:13px;font-weight:800">{{ number_format($row->points) }} mata</span>
                     </div>
                 @endforeach
             </div>
 
             {{-- Ranks 4–10 --}}
+            @php($listRows = $top->slice(3)->values())
             @if ($listRows->isNotEmpty())
-                <div class="overflow-hidden rounded-panel border border-line bg-surface shadow-card">
-                    @foreach ($listRows as $row)
+                <div style="background:#fff;border:1px solid rgba(46,44,80,.08);border-radius:18px;overflow:hidden;box-shadow:0 4px 16px rgba(46,44,80,.04)">
+                    @foreach ($listRows as $i => $row)
+                        @php($pal = $palette[($i + 3) % count($palette)])
                         @php($isMe = $row->student->id === $me->id)
-                        <div class="flex items-center gap-3.5 border-b border-line px-5 py-3 last:border-b-0 {{ $isMe ? 'bg-brand-soft' : '' }}">
-                            <span class="w-8 shrink-0 text-center text-[14px] font-extrabold tabular-nums text-ink-2">{{ $row->rank }}</span>
-                            <x-avatar :user="$row->student" size="sm" />
-                            <span class="min-w-0 flex-1">
-                                <span class="block truncate text-[14.5px] font-extrabold text-ink">
-                                    {{ $row->student->name }}
-                                    @if ($isMe)<span class="text-brand">{{ __('(Anda)') }}</span>@endif
-                                </span>
-                                <span class="block text-[12px] text-ink-2">{{ __(':quizzes kuiz · :accuracy% purata', ['quizzes' => $row->quizzes, 'accuracy' => $row->accuracy]) }}</span>
-                            </span>
-                            <span class="shrink-0 text-[14.5px] font-extrabold text-brand">{{ $row->points }} {{ __('mata') }}</span>
+                        <div style="display:flex;align-items:center;gap:14px;padding:13px 20px;border-bottom:1px solid rgba(46,44,80,.06);{{ $isMe ? 'background:#DCF2EE' : 'background:#fff' }}">
+                            <span style="width:32px;font-family:'Geist',sans-serif;font-weight:800;font-size:14px;color:#8B8AA3;text-align:center">{{ $row->rank }}</span>
+                            <span style="width:38px;height:38px;border-radius:50%;background:{{ $pal[0] }};display:grid;place-items:center;font-family:'Geist',sans-serif;font-size:14px;font-weight:800;color:{{ $pal[1] }};flex-shrink:0">{{ $initial($row->student->name) }}</span>
+                            <div style="display:flex;flex-direction:column;gap:1px;min-width:0;flex:1">
+                                <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:14.5px;color:#28293F">{{ $row->student->name }} @if ($isMe)<span style="color:#0F7A68">{{ __('(Anda)') }}</span>@endif</span>
+                                <span style="font-size:12px;color:#8B8AA3">{{ $row->quizzes }} kuiz · {{ $row->accuracy }}% purata</span>
+                            </div>
+                            <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:14.5px;color:#17907B">{{ number_format($row->points) }} mata</span>
                         </div>
                     @endforeach
                 </div>
             @endif
 
-            {{-- The student's own row, pinned, when they sit outside the top 10. --}}
+            {{-- Sticky your-rank bar --}}
             @if ($showMyRow && $myRow)
-                <div class="sticky bottom-4 flex items-center gap-3.5 rounded-panel bg-brand px-5 py-3.5 text-on-brand shadow-hero">
-                    <span class="w-8 shrink-0 text-center text-[14px] font-extrabold tabular-nums text-on-brand/75">{{ $myRow->rank }}</span>
-                    <span class="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-on-brand text-[13px] font-extrabold text-brand">{{ $me->initials() }}</span>
-                    <span class="min-w-0 flex-1">
-                        <span class="block truncate text-[14.5px] font-extrabold">{{ $me->name }} {{ __('(Anda)') }}</span>
-                        <span class="block text-[12px] text-on-brand/80">{{ __(':quizzes kuiz · :accuracy% purata', ['quizzes' => $myRow->quizzes, 'accuracy' => $myRow->accuracy]) }}</span>
-                    </span>
-                    <span class="shrink-0 text-[14.5px] font-extrabold">{{ $myRow->points }} {{ __('mata') }}</span>
-                </div>
-            @elseif (! $myRow)
-                <div class="rounded-panel border border-line bg-surface p-5 text-center shadow-card">
-                    <p class="font-bold text-ink">{{ __('Anda belum ada mata :subject.', ['subject' => $subject ? 'untuk '.$subject->name : '']) }}</p>
-                    <p class="mt-1 text-ink-2">{{ __('Selesaikan satu kuiz untuk masuk ke dalam ranking.') }}</p>
-                    <a href="{{ route('belajar.index') }}" class="btn-primary mt-4">{{ __('Cari Kuiz') }}</a>
+                <div style="position:sticky;bottom:16px;background:#17907B;border-radius:16px;padding:14px 20px;display:flex;align-items:center;gap:14px;box-shadow:0 10px 30px rgba(23,144,123,.35)">
+                    <span style="width:32px;font-family:'Geist',sans-serif;font-weight:800;font-size:14px;color:rgba(255,255,255,.75);text-align:center">{{ $myRow->rank }}</span>
+                    <span style="width:38px;height:38px;border-radius:50%;background:#fff;display:grid;place-items:center;font-family:'Geist',sans-serif;font-size:14px;font-weight:800;color:#17907B;flex-shrink:0">{{ $initial($me->name) }}</span>
+                    <div style="display:flex;flex-direction:column;gap:1px;min-width:0;flex:1">
+                        <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:14.5px;color:#fff">{{ $me->name }} {{ __('(Anda)') }}</span>
+                        <span style="font-size:12px;color:rgba(255,255,255,.8)">{{ $myRow->quizzes }} kuiz · {{ $myRow->accuracy }}% purata</span>
+                    </div>
+                    <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:14.5px;color:#fff">{{ number_format($myRow->points) }} mata</span>
                 </div>
             @endif
         @endif
-
-        <p class="text-center text-[13px] text-ink-2">
-            {{ __('Hanya percubaan pertama setiap kuiz dikira. Latihan semula tidak menambah mata.') }}
-        </p>
     </div>
 </x-student-layout>

@@ -1,120 +1,113 @@
-<x-student-layout :title="__('Belajar')">
+<x-student-layout :title="__('Utama')">
     @if (! $grade)
-        <div class="mx-auto max-w-lg">
-            <x-empty icon="book" :title="__('Tahun anda belum ditetapkan')"
-                     :text="__('Sila kemas kini profil anda dan pilih Tahun supaya kami boleh tunjukkan kandungan yang betul.')">
-                <a href="{{ route('profile.edit') }}" class="btn-primary">{{ __('Kemas Kini Profil') }}</a>
-            </x-empty>
+        <div style="background:#fff;border:1px dashed rgba(46,44,80,.2);border-radius:22px;padding:56px;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;max-width:520px;margin:0 auto">
+            <span style="font-size:32px">📚</span>
+            <h3 style="margin:0;font-family:'Geist',sans-serif;font-size:19px;font-weight:800;color:#28293F">{{ __('Tahun anda belum ditetapkan') }}</h3>
+            <p style="margin:0;font-size:14.5px;color:#8B8AA3;max-width:360px">{{ __('Sila kemas kini profil anda dan pilih Tahun supaya kami boleh tunjukkan kandungan yang betul.') }}</p>
+            <a href="{{ route('profile.edit') }}" class="wl-btn-primary" style="margin-top:6px;min-height:46px;display:inline-flex;align-items:center;border-radius:12px;background:#17907B;color:#fff;font-family:'Geist',sans-serif;font-weight:800;font-size:14.5px;padding:0 22px;text-decoration:none">{{ __('Kemas Kini Profil') }}</a>
         </div>
     @else
-        <div class="space-y-8">
-            {{--
-                Trending / resume hero. The cover bleeds in from the right and feathers into a
-                subject-wash panel — no text sits on the photo. A play affordance + duration chip
-                sit on the cover; the actions live on the panel.
-            --}}
+        <div style="display:flex;flex-direction:column;gap:28px">
+
+            {{-- ── TRENDING / RESUME HERO ── --}}
             @if ($hero)
                 @php($hs = $hero->chapter->subject)
-                <section class="relative" style="--sc: {{ $hs->rgb }}">
-                    <div class="grid overflow-hidden rounded-hero bg-surface shadow-hero md:min-h-[320px] md:grid-cols-[minmax(0,1fr)_42%]">
-                        {{-- LEFT: content on the subject-wash panel --}}
-                        <div class="order-2 flex flex-col justify-center gap-3.5 bg-subject-wash p-7 sm:p-12 md:order-1">
-                            <div class="flex flex-wrap items-center gap-2">
-                                <span class="chip border border-line bg-surface text-subject-ink"><x-subject-icon :subject="$hs" class="h-4 w-4" /> {{ $hs->displayName() }}</span>
-                                <span class="chip border border-line bg-surface text-ink-2">Bab {{ $hero->chapter->number }}</span>
+                @php($heroFav = $hero->isFavouritedBy($user))
+                <div style="display:grid;grid-template-columns:minmax(0,1fr);gap:20px;align-items:stretch">
+                    <div style="border-radius:22px;overflow:hidden;display:grid;grid-template-columns:minmax(0,1fr) minmax(160px,42%);background:#E3F0FA;box-shadow:0 10px 30px rgba(66,118,174,.18)">
+                        <div style="padding:50px;display:flex;flex-direction:column;justify-content:center;gap:14px;min-width:0">
+                            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                                <span style="background:#fff;color:#2E6CA8;border-radius:999px;padding:5px 13px;font-family:'Geist',sans-serif;font-size:12px;font-weight:800"><x-subject-emoji :subject="$hs" class="text-sm" /> {{ $hs->displayName() }}</span>
+                                <span style="background:#fff;color:#4A5A6B;border-radius:999px;padding:5px 13px;font-family:'Geist',sans-serif;font-size:12px;font-weight:800">Bab {{ $hero->chapter->number }}</span>
                                 @unless ($heroResuming)
-                                    <span class="chip bg-brand micro text-on-brand">{{ __('Trending') }}</span>
+                                    <span style="background:#17907B;color:#fff;border-radius:999px;padding:5px 13px;font-family:'Geist',sans-serif;font-size:11.5px;font-weight:800;letter-spacing:.08em">TRENDING</span>
                                 @endunless
                             </div>
-
-                            <h2 class="line-clamp-2 text-[26px] font-extrabold leading-[1.1] tracking-[-0.01em] text-ink sm:text-[30px]">{{ $hero->title }}</h2>
-
-                            @if ($hero->description)
-                                <p class="line-clamp-2 max-w-[46ch] text-[15px] text-ink-2 font-reading">{{ $hero->description }}</p>
-                            @endif
-
-                            <div class="mt-2 flex flex-wrap items-center gap-3">
-                                <a href="{{ route('video.show', $hero) }}" class="btn-primary">
-                                    <x-icon name="play" class="h-5 w-5" />
-                                    {{ $heroResuming ? __('Sambung Menonton') : __('Tonton') }}
-                                </a>
-
-                                <x-favourite-button :lesson="$hero" :favourited="$hero->isFavouritedBy($user)" labelled />
+                            <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:26px;font-weight:800;color:#1A2433;letter-spacing:-.01em;text-wrap:balance">{{ $hero->title }}</h2>
+                            <div style="display:flex;gap:10px;flex-wrap:wrap">
+                                <a href="{{ route('video.show', $hero) }}" class="wl-btn-primary" style="min-height:46px;display:inline-flex;align-items:center;border-radius:12px;background:#17907B;color:#fff;font-family:'Geist',sans-serif;font-weight:800;font-size:14.5px;padding:0 22px;text-decoration:none">▶&nbsp; {{ $heroResuming ? __('Sambung Menonton') : __('Tonton') }}</a>
+                                <form method="POST" action="{{ $heroFav ? route('kegemaran.padam', $hero) : route('kegemaran.simpan', $hero) }}">
+                                    @csrf
+                                    @if ($heroFav) @method('DELETE') @endif
+                                    <button type="submit" class="wl-btn-secondary" style="min-height:46px;cursor:pointer;border-radius:12px;border:1.5px solid rgba(46,44,80,.15);background:#fff;color:#28293F;font-family:'Geist',sans-serif;font-weight:700;font-size:14.5px;padding:0 18px">{{ $heroFav ? '♥' : '♡' }}&nbsp; {{ $heroFav ? __('Disimpan') : __('Simpan ke Kegemaran') }}</button>
+                                </form>
                             </div>
                         </div>
-
-                        {{-- RIGHT: the cover, bleeding to the card edges --}}
-                        <a href="{{ route('video.show', $hero) }}"
-                           class="group relative order-1 block aspect-video md:order-2 md:aspect-auto"
-                           aria-label="{{ $heroResuming ? __('Sambung Menonton') : __('Tonton') }}: {{ $hero->title }}">
+                        <a href="{{ route('video.show', $hero) }}" style="background:linear-gradient(135deg,#C4DCF2,#A5C9EA);display:grid;place-items:center;position:relative;min-height:200px;text-decoration:none">
                             @if ($hero->thumbnailUrl())
-                                <img src="{{ $hero->thumbnailUrl() }}" alt="" class="hero-feather absolute inset-0 h-full w-full object-cover">
-                            @else
-                                <div class="absolute inset-0"
-                                     style="background-image: linear-gradient(120deg, color-mix(in oklab, rgb(var(--sc)) 42%, rgb(var(--c-surface))), color-mix(in oklab, rgb(var(--sc)) 14%, rgb(var(--c-surface))));"></div>
+                                <img src="{{ $hero->thumbnailUrl() }}" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
                             @endif
-
-                            <span class="glass-pill-light absolute left-1/2 top-1/2 grid h-14 w-14 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full text-subject-ink transition-transform duration-150 ease-smooth group-hover:scale-105">
-                                <x-icon name="play" class="h-6 w-6" />
-                            </span>
-
+                            <span style="width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,.92);display:grid;place-items:center;color:#4276AE;font-size:17px;z-index:1">▶</span>
                             @if ($hero->durationLabel())
-                                <span class="glass-pill absolute bottom-3 right-3 rounded-full px-2.5 py-1 text-[11px] font-semibold tabular-nums text-white">{{ $hero->durationLabel() }}</span>
+                                <span style="position:absolute;right:12px;bottom:10px;background:rgba(66,118,174,.85);color:#fff;font-size:11px;font-weight:700;border-radius:999px;padding:3px 9px">{{ $hero->durationLabel() }}</span>
                             @endif
                         </a>
                     </div>
-                </section>
+                </div>
             @endif
 
-            {{-- Sambung Menonton — hidden entirely when empty. --}}
+            {{-- ── CONTINUE WATCHING ── --}}
             @if ($continue->isNotEmpty())
-                <x-home-section :title="__('Sambung Menonton')" :seeAll="route('sambung.index')">
-                    @foreach ($continue->take(4) as $lesson)
-                        <x-lesson-card :lesson="$lesson" grid />
-                    @endforeach
-                </x-home-section>
+                <div style="display:flex;flex-direction:column;gap:16px">
+                    <div style="display:flex;justify-content:space-between;align-items:baseline">
+                        <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:21px;font-weight:800;color:#28293F">{{ __('Sambung menonton') }}</h2>
+                        <a href="{{ route('sambung.index') }}" style="font-size:13.5px;font-weight:700">{{ __('Lihat semua') }}</a>
+                    </div>
+                    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
+                        @foreach ($continue->take(3) as $lesson)
+                            <x-vid-card :lesson="$lesson" :thumbHeight="110" showMeta showProgress />
+                        @endforeach
+                    </div>
+                </div>
             @endif
 
-            {{-- Paling Popular (falls back to newest, relabelled). --}}
+            {{-- ── PALING POPULAR (falls back to newest) ── --}}
             @if ($trending->isNotEmpty())
-                <x-home-section :title="$trendingFallback ? __('Baru Ditambah') : __('Paling Popular')">
-                    @foreach ($trending->take(4) as $lesson)
-                        <x-lesson-card :lesson="$lesson" :showViews="! $trendingFallback" grid />
-                    @endforeach
-                </x-home-section>
+                <div style="display:flex;flex-direction:column;gap:16px">
+                    <div style="display:flex;justify-content:space-between;align-items:baseline">
+                        <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:21px;font-weight:800;color:#28293F">{{ $trendingFallback ? __('Baru ditambah') : __('Paling popular') }}</h2>
+                        <a href="{{ route('subjek.index') }}" style="font-size:13.5px;font-weight:700">{{ __('Lihat semua') }}</a>
+                    </div>
+                    <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px">
+                        @foreach ($trending->take(4) as $lesson)
+                            <x-vid-card :lesson="$lesson" :thumbHeight="104" :showViews="! $trendingFallback" />
+                        @endforeach
+                    </div>
+                </div>
             @endif
 
-            {{-- Kegemaran Saya --}}
-            @if ($favourites->isNotEmpty())
-                <x-home-section :title="__('Kegemaran Saya')" :seeAll="route('kegemaran.index')">
-                    @foreach ($favourites->take(4) as $lesson)
-                        <x-lesson-card :lesson="$lesson" grid />
-                    @endforeach
-                </x-home-section>
-            @endif
-
-            {{-- Baru Ditambah — skipped when Trending already fell back to newest. --}}
+            {{-- ── BARU DITAMBAH (skipped when trending already fell back) ── --}}
             @if ($newest->isNotEmpty() && ! $trendingFallback)
-                <x-home-section :title="__('Baru Ditambah')">
-                    @foreach ($newest->take(4) as $lesson)
-                        <x-lesson-card :lesson="$lesson" grid />
-                    @endforeach
-                </x-home-section>
+                <div style="display:flex;flex-direction:column;gap:16px">
+                    <div style="display:flex;justify-content:space-between;align-items:baseline">
+                        <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:21px;font-weight:800;color:#28293F">{{ __('Baru ditambah') }}</h2>
+                        <a href="{{ route('subjek.index') }}" style="font-size:13.5px;font-weight:700">{{ __('Lihat semua') }}</a>
+                    </div>
+                    <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px">
+                        @foreach ($newest->take(4) as $lesson)
+                            <x-vid-card :lesson="$lesson" :thumbHeight="104" />
+                        @endforeach
+                    </div>
+                </div>
             @endif
 
-            {{-- Mungkin Anda Suka --}}
+            {{-- ── ANDA MUNGKIN SUKA ── --}}
             @if ($suggested->isNotEmpty())
-                <x-home-section :title="__('Mungkin Anda Suka')" :cols="3">
-                    @foreach ($suggested->take(3) as $lesson)
-                        <x-lesson-card :lesson="$lesson" grid />
-                    @endforeach
-                </x-home-section>
+                <div style="display:flex;flex-direction:column;gap:16px">
+                    <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:21px;font-weight:800;color:#28293F">{{ __('Anda mungkin suka') }}</h2>
+                    <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px">
+                        @foreach ($suggested->take(3) as $lesson)
+                            <x-vid-card :lesson="$lesson" :thumbHeight="116" />
+                        @endforeach
+                    </div>
+                </div>
             @endif
         </div>
 
-        @if (! $hero && $continue->isEmpty() && $trending->isEmpty() && $favourites->isEmpty() && $newest->isEmpty() && $suggested->isEmpty())
-            <x-empty icon="inbox" :title="__('Belum ada video')"
-                     :text="__('Belum ada video untuk :grade. Sila semak semula kemudian.', ['grade' => $grade->name])" />
+        @if (! $hero && $continue->isEmpty() && $trending->isEmpty() && $newest->isEmpty() && $suggested->isEmpty())
+            <div style="background:#fff;border:1px dashed rgba(46,44,80,.2);border-radius:18px;padding:44px;text-align:center;color:#8B8AA3;font-weight:600">
+                {{ __('Belum ada video untuk :grade. Sila semak semula kemudian.', ['grade' => $grade->name]) }}
+            </div>
         @endif
     @endif
 </x-student-layout>

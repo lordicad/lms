@@ -1,97 +1,100 @@
 <x-student-layout :title="__('Kuiz')">
-    <header class="mb-6 flex flex-wrap items-baseline gap-x-3 gap-y-1">
-        <h1 class="text-[22px] font-extrabold text-ink">{{ __('Kuiz') }}</h1>
-        <span class="text-sm text-ink-2">{{ $grade?->name ?? __('Tahun anda belum ditetapkan') }}</span>
-    </header>
-
-    @if ($quizzes->isEmpty())
-        <x-empty emoji="📝" :title="__('Belum ada kuiz')"
-                 :text="__('Belum ada kuiz untuk Tahun anda. Sila semak semula kemudian.')" />
-    @else
-        @php($done = $quizzes->filter(fn ($q) => $rankedAttempts->has($q->id)))
-        @php($recommended = $quizzes->reject(fn ($q) => $rankedAttempts->has($q->id)))
-
-        {{-- Stats strip --}}
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
-            <div class="flex items-center gap-3.5 rounded-panel bg-success-soft p-5">
-                <span class="grid h-11 w-11 place-items-center rounded-[14px] bg-surface text-xl">✅</span>
-                <div>
-                    <p class="text-[22px] font-extrabold text-success">{{ $doneCount }}</p>
-                    <p class="text-[12.5px] font-bold text-success">{{ __('Kuiz selesai') }}</p>
-                </div>
-            </div>
-            <div class="flex items-center gap-3.5 rounded-panel bg-warn-soft p-5">
-                <span class="grid h-11 w-11 place-items-center rounded-[14px] bg-surface text-xl">⭐</span>
-                <div>
-                    <p class="text-[22px] font-extrabold text-warn">{{ $avgScore !== null ? $avgScore.'%' : '—' }}</p>
-                    <p class="text-[12.5px] font-bold text-warn">{{ __('Purata markah') }}</p>
-                </div>
-            </div>
-            <div class="flex items-center gap-3.5 rounded-panel p-5" style="background:rgb(var(--c-brand-soft))">
-                <span class="grid h-11 w-11 place-items-center rounded-[14px] bg-surface text-xl">🏆</span>
-                <div>
-                    <p class="text-[22px] font-extrabold text-brand">{{ $rank ? '#'.$rank : '—' }}</p>
-                    <p class="text-[12.5px] font-bold text-brand">{{ __('Ranking') }}</p>
-                </div>
-            </div>
+    <div style="display:flex;flex-direction:column;gap:22px">
+        <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap">
+            <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:22px;font-weight:800;color:#28293F">{{ __('Kuiz') }}</h2>
+            <span style="font-size:14px;color:#8B8AA3">{{ $grade?->name ?? __('Tahun anda belum ditetapkan') }}</span>
         </div>
 
-        {{-- Completed --}}
-        @if ($done->isNotEmpty())
-            <section class="mt-8">
-                <h2 class="mb-3 text-[17px] font-extrabold text-ink">{{ __('Telah Selesai') }}</h2>
-                <div class="overflow-hidden rounded-panel border border-line bg-surface shadow-card">
-                    @foreach ($done as $quiz)
-                        @php($attempt = $rankedAttempts[$quiz->id])
-                        @php($pct = $attempt->percentage())
-                        @php($scoreColor = $pct >= 80 ? 'text-success' : ($pct >= 50 ? 'text-warn' : 'text-danger'))
-                        @php($barColor = $pct >= 80 ? 'bg-success' : ($pct >= 50 ? 'bg-warn' : 'bg-danger'))
-                        <div class="flex flex-wrap items-center gap-3.5 border-b border-line px-5 py-3.5 last:border-b-0" style="--sc: {{ $quiz->chapter->subject->rgb }}">
-                            <span class="grid h-10 w-10 shrink-0 place-items-center rounded-[12px] bg-subject-wash text-lg"><x-subject-emoji :subject="$quiz->chapter->subject" class="text-base" /></span>
-                            <div class="min-w-0 flex-1">
-                                <p class="truncate text-[14.5px] font-extrabold text-ink">{{ $quiz->title }}</p>
-                                <p class="text-[12px] text-ink-2">{{ $quiz->chapter->subject->displayName() }} · Bab {{ $quiz->chapter->number }} · {{ $attempt->completed_at?->translatedFormat('d M') }}</p>
-                            </div>
-                            <div class="flex flex-col items-end gap-1">
-                                <span class="text-[15px] font-extrabold {{ $scoreColor }}">{{ $pct }}%</span>
-                                <span class="h-1.5 w-[110px] overflow-hidden rounded-full bg-surface-2">
-                                    <span class="block h-full rounded-full {{ $barColor }}" style="width: {{ $pct }}%"></span>
-                                </span>
-                            </div>
-                            <a href="{{ route('kuiz.intro', $quiz) }}" class="btn-secondary btn-sm shrink-0">{{ __('Semak') }}</a>
-                        </div>
-                    @endforeach
-                </div>
-            </section>
-        @endif
+        @if ($quizzes->isEmpty())
+            <div style="background:#fff;border:1px dashed rgba(46,44,80,.2);border-radius:22px;padding:56px;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center">
+                <span style="font-size:32px">📝</span>
+                <h3 style="margin:0;font-family:'Geist',sans-serif;font-size:19px;font-weight:800;color:#28293F">{{ __('Belum ada kuiz') }}</h3>
+                <p style="margin:0;font-size:14.5px;color:#8B8AA3;max-width:360px">{{ __('Belum ada kuiz untuk Tahun anda. Sila semak semula kemudian.') }}</p>
+            </div>
+        @else
+            @php($done = $quizzes->filter(fn ($q) => $rankedAttempts->has($q->id)))
+            @php($recommended = $quizzes->reject(fn ($q) => $rankedAttempts->has($q->id)))
 
-        {{-- Recommended (not yet attempted) --}}
-        @if ($recommended->isNotEmpty())
-            <section class="mt-8">
-                <h2 class="mb-3 text-[17px] font-extrabold text-ink">{{ __('Kuiz Dicadangkan') }}</h2>
-                <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                    @foreach ($recommended as $quiz)
-                        <div class="flex flex-col gap-3 rounded-panel border border-line bg-surface p-5 shadow-card transition duration-200 ease-smooth hover:-translate-y-0.5 hover:shadow-lift"
-                             style="--sc: {{ $quiz->chapter->subject->rgb }}">
-                            <div class="flex flex-wrap items-center gap-2">
-                                <span class="inline-flex items-center gap-1 rounded-full bg-subject-wash px-2.5 py-1 text-[11.5px] font-extrabold text-subject-ink"><x-subject-emoji :subject="$quiz->chapter->subject" class="text-sm" /> {{ $quiz->chapter->subject->displayName() }}</span>
-                                <span class="text-[12px] font-bold text-ink-2">Bab {{ $quiz->chapter->number }}</span>
-                            </div>
-                            <p class="text-[15.5px] font-extrabold text-ink">{{ $quiz->title }}</p>
-                            <div class="mt-auto flex items-center gap-3">
-                                <span class="text-[12.5px] font-bold text-ink-2">
-                                    @if ($quiz->isInteractive())
-                                        {{ __(':count soalan', ['count' => $quiz->questions_count]) }}@if ($quiz->duration_minutes) · {{ $quiz->duration_minutes }} {{ __('minit') }}@endif
-                                    @else
-                                        {{ __('Kuiz Bercetak') }}
-                                    @endif
-                                </span>
-                                <a href="{{ route('kuiz.intro', $quiz) }}" class="btn-primary btn-sm ml-auto shrink-0">{{ $quiz->isFile() ? __('Lihat') : __('Mula Kuiz') }}</a>
-                            </div>
-                        </div>
-                    @endforeach
+            {{-- Stats strip --}}
+            <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px">
+                <div style="background:#DCF2EE;border-radius:18px;padding:18px 20px;display:flex;align-items:center;gap:14px">
+                    <span style="width:44px;height:44px;border-radius:14px;background:#fff;display:grid;place-items:center;font-size:19px">✅</span>
+                    <div style="display:flex;flex-direction:column">
+                        <span style="font-family:'Geist',sans-serif;font-size:22px;font-weight:800;color:#0F7A68">{{ $doneCount }}</span>
+                        <span style="font-size:12.5px;font-weight:700;color:#0F7A68">{{ __('Kuiz selesai') }}</span>
+                    </div>
                 </div>
-            </section>
+                <div style="background:#FEF0CE;border-radius:18px;padding:18px 20px;display:flex;align-items:center;gap:14px">
+                    <span style="width:44px;height:44px;border-radius:14px;background:#fff;display:grid;place-items:center;font-size:19px">⭐</span>
+                    <div style="display:flex;flex-direction:column">
+                        <span style="font-family:'Geist',sans-serif;font-size:22px;font-weight:800;color:#8A6A12">{{ $avgScore !== null ? $avgScore.'%' : '—' }}</span>
+                        <span style="font-size:12.5px;font-weight:700;color:#8A6A12">{{ __('Purata markah') }}</span>
+                    </div>
+                </div>
+                <div style="background:#E4EEF9;border-radius:18px;padding:18px 20px;display:flex;align-items:center;gap:14px">
+                    <span style="width:44px;height:44px;border-radius:14px;background:#fff;display:grid;place-items:center;font-size:19px">🏆</span>
+                    <div style="display:flex;flex-direction:column">
+                        <span style="font-family:'Geist',sans-serif;font-size:22px;font-weight:800;color:#2E6CA8">{{ $rank ? '#'.$rank : '—' }}</span>
+                        <span style="font-size:12.5px;font-weight:700;color:#2E6CA8">{{ __('Ranking') }}</span>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Telah Selesai --}}
+            @if ($done->isNotEmpty())
+                <div style="display:flex;flex-direction:column;gap:12px">
+                    <h3 style="margin:0;font-family:'Geist',sans-serif;font-size:17px;font-weight:800;color:#28293F">{{ __('Telah Selesai') }}</h3>
+                    <div style="background:#fff;border:1px solid rgba(46,44,80,.08);border-radius:18px;overflow:hidden;box-shadow:0 4px 16px rgba(46,44,80,.04)">
+                        @foreach ($done as $quiz)
+                            @php($attempt = $rankedAttempts[$quiz->id])
+                            @php($pct = $attempt->percentage())
+                            @php($sc = $pct >= 80 ? '#17907B' : ($pct >= 50 ? '#E3A31C' : '#EB5E5A'))
+                            @php($sub = $quiz->chapter->subject)
+                            @php($tagBg = 'color-mix(in oklab, '.($sub->color ?: '#17907B').' 15%, #fff)')
+                            <div style="display:flex;align-items:center;gap:14px;padding:14px 20px;border-bottom:1px solid rgba(46,44,80,.06)">
+                                <span style="width:40px;height:40px;border-radius:12px;background:{{ $tagBg }};display:grid;place-items:center;font-size:16px;flex-shrink:0"><x-subject-emoji :subject="$sub" class="text-base" /></span>
+                                <div style="display:flex;flex-direction:column;gap:1px;min-width:0;flex:1">
+                                    <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:14.5px;color:#28293F">{{ $quiz->title }}</span>
+                                    <span style="font-size:12px;color:#8B8AA3">{{ $sub->displayName() }} · Bab {{ $quiz->chapter->number }} · {{ $attempt->completed_at?->translatedFormat('d M') }}</span>
+                                </div>
+                                <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+                                    <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:15px;color:{{ $sc }}">{{ $pct }}%</span>
+                                    <div style="width:110px;height:6px;border-radius:999px;background:rgba(46,44,80,.08);overflow:hidden">
+                                        <div style="height:100%;border-radius:999px;background:{{ $sc }};width:{{ $pct }}%"></div>
+                                    </div>
+                                </div>
+                                <a href="{{ route('keputusan.show', $attempt) }}" class="wl-btn-secondary" style="min-height:38px;display:inline-flex;align-items:center;border-radius:10px;border:1.5px solid rgba(46,44,80,.12);background:#fff;color:#28293F;font-family:'Geist',sans-serif;font-weight:700;font-size:12.5px;padding:0 14px;text-decoration:none">{{ __('Semak') }}</a>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+
+            {{-- Kuiz Dicadangkan --}}
+            @if ($recommended->isNotEmpty())
+                <div style="display:flex;flex-direction:column;gap:12px">
+                    <h3 style="margin:0;font-family:'Geist',sans-serif;font-size:17px;font-weight:800;color:#28293F">{{ __('Kuiz Dicadangkan') }}</h3>
+                    <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px">
+                        @foreach ($recommended as $quiz)
+                            @php($sub = $quiz->chapter->subject)
+                            @php($col = $sub->color ?: '#17907B')
+                            @php($tagBg = "color-mix(in oklab, {$col} 15%, #fff)")
+                            @php($tagColor = "color-mix(in oklab, {$col} 82%, #000)")
+                            <div class="wl-lift" style="background:#fff;border:1px solid rgba(46,44,80,.08);border-radius:18px;padding:18px 20px;display:flex;flex-direction:column;gap:12px;box-shadow:0 4px 16px rgba(46,44,80,.04)">
+                                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                                    <span style="background:{{ $tagBg }};color:{{ $tagColor }};border-radius:999px;padding:4px 12px;font-family:'Geist',sans-serif;font-size:11.5px;font-weight:800"><x-subject-emoji :subject="$sub" class="text-sm" /> {{ $sub->displayName() }}</span>
+                                    <span style="font-size:12px;font-weight:700;color:#8B8AA3">Bab {{ $quiz->chapter->number }}</span>
+                                </div>
+                                <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:15.5px;color:#28293F">{{ $quiz->title }}</span>
+                                <div style="display:flex;align-items:center;gap:12px;margin-top:auto">
+                                    <span style="font-size:12.5px;font-weight:700;color:#8B8AA3">@if ($quiz->isInteractive()){{ $quiz->questions_count }} {{ __('soalan') }}@if ($quiz->duration_minutes) · {{ $quiz->duration_minutes }} minit @endif @else {{ __('Kuiz Bercetak') }} @endif</span>
+                                    <a href="{{ route('kuiz.intro', $quiz) }}" class="wl-btn-primary" style="margin-left:auto;min-height:42px;display:inline-flex;align-items:center;border-radius:12px;background:#17907B;color:#fff;font-family:'Geist',sans-serif;font-weight:800;font-size:13.5px;padding:0 18px;text-decoration:none">{{ $quiz->isFile() ? __('Lihat') : __('Mula Kuiz') }}</a>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
         @endif
-    @endif
+    </div>
 </x-student-layout>
