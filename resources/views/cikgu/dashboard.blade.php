@@ -2,7 +2,7 @@
 
 <x-cikgu-layout
     :title="__('Utama')"
-    :heading="__('Selamat datang, :name', ['name' => \Illuminate\Support\Str::before($teacher->name, ' ')])"
+    :heading="__('Selamat datang, :name', ['name' => 'Cikgu '.\Illuminate\Support\Str::before($teacher->name, ' ')])"
     :sub="__('Ringkasan kelas anda pada hari ini, :date', ['date' => now()->translatedFormat('l, j F Y')])">
 
     {{-- Stat cards --}}

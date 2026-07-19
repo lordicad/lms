@@ -251,7 +251,7 @@
         <div class="tp-userbar">
             <a href="{{ route('profile.edit') }}" class="tp-ava" title="{{ __('Profil') }}">{{ $user->initials() }}</a>
             <a href="{{ route('profile.edit') }}" style="display:flex;flex-direction:column;min-width:0;flex:1">
-                <span class="tp-userbar-name">{{ $user->name }}</span>
+                <span class="tp-userbar-name">Cikgu {{ $user->name }}</span>
                 <span class="tp-userbar-sub">{{ __('Guru') }}</span>
             </a>
             <form method="POST" action="{{ route('logout') }}">
