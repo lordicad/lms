@@ -30,13 +30,31 @@
                         </div>
                     </div>
                     @if ($me->isStudent())
-                        <form method="POST" action="{{ $favourited ? route('kegemaran.padam', $lesson) : route('kegemaran.simpan', $lesson) }}" style="flex-shrink:0">
-                            @csrf
-                            @if ($favourited) @method('DELETE') @endif
-                            <button type="submit" class="wl-btn-secondary" style="min-height:46px;cursor:pointer;border-radius:12px;border:1.5px solid rgba(46,44,80,.12);background:#fff;font-family:'Geist',sans-serif;font-weight:800;font-size:14px;padding:0 18px;display:flex;align-items:center;gap:8px;color:#28293F">
-                                <span style="color:{{ $favourited ? '#EB5E5A' : '#6C6F87' }};font-size:16px">{{ $favourited ? '♥' : '♡' }}</span> {{ $favourited ? __('Disimpan') : __('Simpan') }}
-                            </button>
-                        </form>
+                        {{-- AJAX favourite toggle: adds/removes without navigating (the endpoint
+                             returns JSON), and updates the heart + label live. --}}
+                        <button type="button" x-data="{
+                                    fav: {{ $favourited ? 'true' : 'false' }},
+                                    busy: false,
+                                    toggle() {
+                                        if (this.busy) return;
+                                        const was = this.fav;
+                                        this.fav = ! was;
+                                        this.busy = true;
+                                        const token = document.querySelector('meta[name=csrf-token]')?.content;
+                                        fetch(was ? '{{ route('kegemaran.padam', $lesson) }}' : '{{ route('kegemaran.simpan', $lesson) }}', {
+                                            method: was ? 'DELETE' : 'POST',
+                                            headers: { 'X-CSRF-TOKEN': token, 'Accept': 'application/json' },
+                                        }).then(r => { if (! r.ok) throw new Error('failed'); })
+                                          .catch(() => { this.fav = was; })
+                                          .finally(() => { this.busy = false; });
+                                    }
+                                }"
+                                @click="toggle()"
+                                :aria-pressed="fav ? 'true' : 'false'"
+                                style="flex-shrink:0;min-height:46px;cursor:pointer;border-radius:12px;border:1.5px solid rgba(46,44,80,.12);background:#fff;font-family:'Geist',sans-serif;font-weight:800;font-size:14px;padding:0 18px;display:flex;align-items:center;gap:8px;color:#28293F">
+                            <span x-text="fav ? '♥' : '♡'" :style="fav ? 'color:#EB5E5A;font-size:16px' : 'color:#6C6F87;font-size:16px'"></span>
+                            <span x-text="fav ? @js(__('Kegemaran')) : @js(__('Simpan'))"></span>
+                        </button>
                     @endif
                 </div>
 

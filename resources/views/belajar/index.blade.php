@@ -26,11 +26,31 @@
                             <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:26px;font-weight:800;color:#1A2433;letter-spacing:-.01em;text-wrap:balance">{{ $hero->title }}</h2>
                             <div style="display:flex;gap:10px;flex-wrap:wrap">
                                 <a href="{{ route('video.show', $hero) }}" class="wl-btn-primary" style="min-height:46px;display:inline-flex;align-items:center;border-radius:12px;background:#17907B;color:#fff;font-family:'Geist',sans-serif;font-weight:800;font-size:14.5px;padding:0 22px;text-decoration:none">▶&nbsp; {{ $heroResuming ? __('Sambung Menonton') : __('Tonton') }}</a>
-                                <form method="POST" action="{{ $heroFav ? route('kegemaran.padam', $hero) : route('kegemaran.simpan', $hero) }}">
-                                    @csrf
-                                    @if ($heroFav) @method('DELETE') @endif
-                                    <button type="submit" class="wl-btn-secondary" style="min-height:46px;cursor:pointer;border-radius:12px;border:1.5px solid rgba(46,44,80,.15);background:#fff;color:#28293F;font-family:'Geist',sans-serif;font-weight:700;font-size:14.5px;padding:0 18px">{{ $heroFav ? '♥' : '♡' }}&nbsp; {{ $heroFav ? __('Disimpan') : __('Simpan ke Kegemaran') }}</button>
-                                </form>
+                                {{-- AJAX favourite toggle (endpoint returns JSON; no navigation). --}}
+                                <button type="button" x-data="{
+                                            fav: {{ $heroFav ? 'true' : 'false' }},
+                                            busy: false,
+                                            toggle() {
+                                                if (this.busy) return;
+                                                const was = this.fav;
+                                                this.fav = ! was;
+                                                this.busy = true;
+                                                const token = document.querySelector('meta[name=csrf-token]')?.content;
+                                                fetch(was ? '{{ route('kegemaran.padam', $hero) }}' : '{{ route('kegemaran.simpan', $hero) }}', {
+                                                    method: was ? 'DELETE' : 'POST',
+                                                    headers: { 'X-CSRF-TOKEN': token, 'Accept': 'application/json' },
+                                                }).then(r => { if (! r.ok) throw new Error('failed'); })
+                                                  .catch(() => { this.fav = was; })
+                                                  .finally(() => { this.busy = false; });
+                                            }
+                                        }"
+                                        @click="toggle()"
+                                        :aria-pressed="fav ? 'true' : 'false'"
+                                        class="wl-btn-secondary"
+                                        style="min-height:46px;cursor:pointer;border-radius:12px;border:1.5px solid rgba(46,44,80,.15);background:#fff;color:#28293F;font-family:'Geist',sans-serif;font-weight:700;font-size:14.5px;padding:0 18px;display:inline-flex;align-items:center;gap:6px">
+                                    <span x-text="fav ? '♥' : '♡'" :style="fav ? 'color:#EB5E5A' : ''"></span>
+                                    <span x-text="fav ? @js(__('Kegemaran')) : @js(__('Simpan ke Kegemaran'))"></span>
+                                </button>
                             </div>
                         </div>
                         <a href="{{ route('video.show', $hero) }}" style="background:linear-gradient(135deg,#C4DCF2,#A5C9EA);display:grid;place-items:center;position:relative;min-height:200px;text-decoration:none">
