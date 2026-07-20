@@ -67,7 +67,8 @@
                                 <button type="button" class="tp-linkbtn" style="justify-self:end"
                                         @click="open(@js([
                                             'title' => $lesson->title,
-                                            'teacher' => $lesson->teacher?->name,
+                                            'kindLabel' => $lesson->isYoutube() ? 'YouTube' : __('Video'),
+                                            'subtitle' => collect([$lesson->teacher?->name, $lesson->chapter->subject->displayName(), $lesson->chapter->grade->name])->filter()->implode(' · '),
                                             'kind' => $lesson->isYoutube() ? 'youtube' : 'upload',
                                             'src' => $lesson->isYoutube() ? $lesson->embedUrl() : $lesson->videoUrl(),
                                             'poster' => $lesson->thumbnailUrl(),
@@ -83,38 +84,42 @@
             <div>{{ $lessons->links() }}</div>
         @endif
 
-        {{-- Preview modal — a look, not a lesson: deliberately not the watch page (no view counted).
-             x-if so closing destroys the player and its audio. --}}
+        {{-- Preview modal (WeLearn Admin design): gradient header + kind pill + black video body.
+             A look, not a lesson (no view counted); x-if so closing destroys the player + its audio. --}}
         <template x-if="lesson">
-            <div class="fixed inset-0 z-50 flex items-center justify-center p-4"
-                 role="dialog" aria-modal="true" :aria-label="lesson.title">
-                <div class="absolute inset-0 bg-black/70" @click="close()" aria-hidden="true"></div>
+            <div @click="close()" role="dialog" aria-modal="true" :aria-label="lesson.title"
+                 style="position:fixed;inset:0;z-index:100;background:rgba(30,30,45,.55);backdrop-filter:blur(2px);display:flex;align-items:center;justify-content:center;padding:32px">
 
-                <div class="relative w-full max-w-3xl overflow-hidden rounded-card border border-line bg-surface shadow-hero">
-                    <div class="flex items-start justify-between gap-4 border-b border-line px-4 py-3">
-                        <div class="min-w-0">
-                            <h2 class="truncate font-extrabold text-ink" x-text="lesson.title"></h2>
-                            <p class="truncate text-xs text-ink-2" x-text="lesson.teacher"></p>
+                <div @click.stop
+                     style="width:min(920px,100%);max-height:90vh;overflow:hidden;background:#fff;border-radius:20px;box-shadow:0 24px 70px rgba(20,20,40,.4);display:flex;flex-direction:column">
+
+                    {{-- Header --}}
+                    <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding:13px 22px;background:linear-gradient(120deg,#5A9BD8,#7DB4E6)">
+                        <div style="display:flex;flex-direction:column;gap:4px;min-width:0">
+                            <div style="display:flex;align-items:center;gap:10px;min-width:0">
+                                <span style="flex-shrink:0;background:rgba(255,255,255,.28);color:#fff;border-radius:999px;padding:3px 11px;font-family:'Geist',sans-serif;font-size:11px;font-weight:800;letter-spacing:.02em" x-text="lesson.kindLabel"></span>
+                                <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:18px;font-weight:800;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 2px rgba(0,0,0,.1)" x-text="lesson.title"></h2>
+                            </div>
+                            <span style="font-size:12.5px;color:rgba(255,255,255,.92);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" x-text="lesson.subtitle"></span>
                         </div>
 
-                        <button type="button" class="btn-ghost btn-sm shrink-0" @click="close()" x-init="$el.focus()">
-                            <x-icon name="x" class="h-4 w-4" />
-                            <span class="sr-only">{{ __('Tutup') }}</span>
+                        <button type="button" @click="close()" x-init="$el.focus()" title="{{ __('Tutup') }}"
+                                style="flex-shrink:0;width:36px;height:36px;border-radius:10px;border:none;cursor:pointer;background:rgba(255,255,255,.22);color:#fff;display:grid;place-items:center">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                         </button>
                     </div>
 
-                    <div class="bg-black">
+                    {{-- Body: video --}}
+                    <div style="overflow-y:auto;background:#000;height:min(72vh,620px)">
                         <template x-if="lesson.kind === 'youtube'">
-                            <div class="aspect-video">
-                                <iframe class="h-full w-full" :src="lesson.src" :title="lesson.title"
-                                        frameborder="0" referrerpolicy="strict-origin-when-cross-origin"
-                                        allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                        allowfullscreen></iframe>
-                            </div>
+                            <iframe style="width:100%;height:100%;border:0;display:block" :src="lesson.src" :title="lesson.title"
+                                    referrerpolicy="strict-origin-when-cross-origin"
+                                    allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                    allowfullscreen></iframe>
                         </template>
 
                         <template x-if="lesson.kind === 'upload'">
-                            <video class="aspect-video w-full" controls preload="metadata"
+                            <video style="width:100%;height:100%;object-fit:contain;background:#000;display:block" controls preload="metadata"
                                    :src="lesson.src" :poster="lesson.poster"></video>
                         </template>
                     </div>
