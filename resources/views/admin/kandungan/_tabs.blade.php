@@ -11,6 +11,6 @@
     @foreach ($tabs as $t)
         @php($on = $active === $t['id'])
         <a href="{{ route($t['route']) }}"
-           style="min-height:44px;display:inline-flex;align-items:center;cursor:pointer;border-radius:999px;padding:0 20px;font-family:'Geist',sans-serif;font-weight:800;font-size:13.5px;transition:all .15s;{{ $on ? 'border:none;background:#17907B;color:#fff' : 'border:1.5px solid rgba(46,44,80,.12);background:#fff;color:#28293F' }}">{{ $t['label'] }}</a>
+           style="min-height:44px;display:inline-flex;align-items:center;cursor:pointer;border-radius:999px;padding:0 20px;font-family:'Geist',sans-serif;font-weight:800;font-size:13.5px;transition:all .15s;{{ $on ? 'border:none;background:#17907B;color:#fff' : 'border:1.5px solid var(--tp-line-2);background:var(--tp-surface);color:var(--tp-ink)' }}">{{ $t['label'] }}</a>
     @endforeach
 </div>

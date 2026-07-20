@@ -24,9 +24,9 @@
         {{-- Stats --}}
         <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px">
             @foreach ($stats as $s)
-                <div style="background:#fff;border:1px solid rgba(46,44,80,.08);border-radius:16px;padding:20px 22px;display:flex;flex-direction:column;gap:8px;box-shadow:0 2px 10px rgba(46,44,80,.04)">
-                    <span style="font-size:13.5px;font-weight:700;color:#8B8AA3">{{ $s['icon'] }} {{ $s['label'] }}</span>
-                    <span style="font-family:'Geist',sans-serif;font-size:28px;font-weight:800;color:#28293F">{{ number_format($s['value']) }}</span>
+                <div style="background:var(--tp-surface);border:1px solid var(--tp-line);border-radius:16px;padding:20px 22px;display:flex;flex-direction:column;gap:8px;box-shadow:0 2px 10px rgba(46,44,80,.04)">
+                    <span style="font-size:13.5px;font-weight:700;color:var(--tp-muted)">{{ $s['icon'] }} {{ $s['label'] }}</span>
+                    <span style="font-family:'Geist',sans-serif;font-size:28px;font-weight:800;color:var(--tp-ink)">{{ number_format($s['value']) }}</span>
                 </div>
             @endforeach
         </div>
@@ -36,34 +36,34 @@
         @if ($lessons->isEmpty())
             <div class="tp-empty">
                 <span style="font-size:30px">🎬</span>
-                <h3 style="margin:0;font-family:'Geist',sans-serif;font-size:19px;font-weight:800;color:#28293F">{{ __('Tiada video untuk dipaparkan') }}</h3>
-                <p style="margin:0;font-size:14.5px;color:#8B8AA3;max-width:380px">{{ __('Tiada video yang sepadan dengan tapisan ini.') }}</p>
+                <h3 style="margin:0;font-family:'Geist',sans-serif;font-size:19px;font-weight:800;color:var(--tp-ink)">{{ __('Tiada video untuk dipaparkan') }}</h3>
+                <p style="margin:0;font-size:14.5px;color:var(--tp-muted);max-width:380px">{{ __('Tiada video yang sepadan dengan tapisan ini.') }}</p>
             </div>
         @else
-            <div style="background:#fff;border:1px solid rgba(46,44,80,.08);border-radius:18px;overflow:hidden;box-shadow:0 2px 10px rgba(46,44,80,.04)">
+            <div style="background:var(--tp-surface);border:1px solid var(--tp-line);border-radius:18px;overflow:hidden;box-shadow:0 2px 10px rgba(46,44,80,.04)">
                 <div style="overflow-x:auto">
                     <div style="min-width:860px">
                         {{-- Header --}}
-                        <div style="display:grid;{{ $cols }};padding:14px 20px;border-bottom:1px solid rgba(46,44,80,.08)">
-                            <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:#8B8AA3">{{ __('Tajuk Video') }}</span>
-                            <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:#8B8AA3">{{ __('Subjek') }}</span>
-                            <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:#8B8AA3">{{ __('Tahun') }}</span>
-                            <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:#8B8AA3">{{ __('Tontonan') }}</span>
-                            <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:#8B8AA3">{{ __('Tarikh Siar') }}</span>
-                            <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:#8B8AA3">{{ __('Kegemaran') }}</span>
-                            <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:#8B8AA3;text-align:right">{{ __('Tindakan') }}</span>
+                        <div style="display:grid;{{ $cols }};padding:14px 20px;border-bottom:1px solid var(--tp-line)">
+                            <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:var(--tp-muted)">{{ __('Tajuk Video') }}</span>
+                            <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:var(--tp-muted)">{{ __('Subjek') }}</span>
+                            <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:var(--tp-muted)">{{ __('Tahun') }}</span>
+                            <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:var(--tp-muted)">{{ __('Tontonan') }}</span>
+                            <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:var(--tp-muted)">{{ __('Tarikh Siar') }}</span>
+                            <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:var(--tp-muted)">{{ __('Kegemaran') }}</span>
+                            <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:var(--tp-muted);text-align:right">{{ __('Tindakan') }}</span>
                         </div>
                         @foreach ($lessons as $lesson)
-                            <div class="tp-tr" style="display:grid;{{ $cols }};padding:12px 20px;border-bottom:1px solid rgba(46,44,80,.05)">
+                            <div class="tp-tr" style="display:grid;{{ $cols }};padding:12px 20px;border-bottom:1px solid var(--tp-line)">
                                 <div style="display:flex;flex-direction:column;gap:1px;min-width:0">
-                                    <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:13.5px;color:#28293F;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $lesson->title }}</span>
-                                    <span style="font-size:11.5px;color:#8B8AA3">{{ $lesson->teacher?->name }}</span>
+                                    <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:13.5px;color:var(--tp-ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $lesson->title }}</span>
+                                    <span style="font-size:11.5px;color:var(--tp-muted)">{{ $lesson->teacher?->name }}</span>
                                 </div>
                                 <span style="font-size:13px;font-weight:700;color:#4276AE">{{ $lesson->chapter->subject->displayName() }}</span>
-                                <span style="font-size:13px;font-weight:700;color:#6C6F87">{{ $lesson->chapter->grade->name }}</span>
-                                <span style="font-size:13px;font-weight:700;color:#6C6F87">{{ number_format($lesson->views_count) }}</span>
-                                <span style="font-size:13px;font-weight:700;color:#6C6F87">{{ $lesson->created_at->translatedFormat('j M Y') }}</span>
-                                <span style="font-size:13px;font-weight:700;color:#6C6F87">{{ number_format($lesson->favourites_count) }}</span>
+                                <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2)">{{ $lesson->chapter->grade->name }}</span>
+                                <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2)">{{ number_format($lesson->views_count) }}</span>
+                                <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2)">{{ $lesson->created_at->translatedFormat('j M Y') }}</span>
+                                <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2)">{{ number_format($lesson->favourites_count) }}</span>
                                 <button type="button" class="tp-linkbtn" style="justify-self:end"
                                         @click="open(@js([
                                             'title' => $lesson->title,

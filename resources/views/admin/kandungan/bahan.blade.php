@@ -25,9 +25,9 @@
         {{-- Stats --}}
         <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px">
             @foreach ($stats as $s)
-                <div style="background:#fff;border:1px solid rgba(46,44,80,.08);border-radius:16px;padding:20px 22px;display:flex;flex-direction:column;gap:8px;box-shadow:0 2px 10px rgba(46,44,80,.04)">
-                    <span style="font-size:13.5px;font-weight:700;color:#8B8AA3">{{ $s['icon'] }} {{ $s['label'] }}</span>
-                    <span style="font-family:'Geist',sans-serif;font-size:28px;font-weight:800;color:#28293F">{{ number_format($s['value']) }}</span>
+                <div style="background:var(--tp-surface);border:1px solid var(--tp-line);border-radius:16px;padding:20px 22px;display:flex;flex-direction:column;gap:8px;box-shadow:0 2px 10px rgba(46,44,80,.04)">
+                    <span style="font-size:13.5px;font-weight:700;color:var(--tp-muted)">{{ $s['icon'] }} {{ $s['label'] }}</span>
+                    <span style="font-family:'Geist',sans-serif;font-size:28px;font-weight:800;color:var(--tp-ink)">{{ number_format($s['value']) }}</span>
                 </div>
             @endforeach
         </div>
@@ -37,33 +37,33 @@
         @if ($materials->isEmpty())
             <div class="tp-empty">
                 <span style="font-size:30px">📁</span>
-                <h3 style="margin:0;font-family:'Geist',sans-serif;font-size:19px;font-weight:800;color:#28293F">{{ __('Tiada bahan untuk dipaparkan') }}</h3>
-                <p style="margin:0;font-size:14.5px;color:#8B8AA3;max-width:380px">{{ __('Tiada bahan yang sepadan dengan tapisan ini.') }}</p>
+                <h3 style="margin:0;font-family:'Geist',sans-serif;font-size:19px;font-weight:800;color:var(--tp-ink)">{{ __('Tiada bahan untuk dipaparkan') }}</h3>
+                <p style="margin:0;font-size:14.5px;color:var(--tp-muted);max-width:380px">{{ __('Tiada bahan yang sepadan dengan tapisan ini.') }}</p>
             </div>
         @else
-            <div style="background:#fff;border:1px solid rgba(46,44,80,.08);border-radius:18px;overflow:hidden;box-shadow:0 2px 10px rgba(46,44,80,.04)">
+            <div style="background:var(--tp-surface);border:1px solid var(--tp-line);border-radius:18px;overflow:hidden;box-shadow:0 2px 10px rgba(46,44,80,.04)">
                 <div style="overflow-x:auto">
                     <div style="min-width:900px">
-                        <div style="display:grid;{{ $cols }};padding:14px 20px;border-bottom:1px solid rgba(46,44,80,.08)">
-                            <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:#8B8AA3">{{ __('Tajuk Bahan') }}</span>
-                            <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:#8B8AA3">{{ __('Subjek') }}</span>
-                            <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:#8B8AA3">{{ __('Tahun') }}</span>
-                            <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:#8B8AA3">{{ __('Muat Turun') }}</span>
-                            <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:#8B8AA3">{{ __('Jenis') }}</span>
-                            <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:#8B8AA3">{{ __('Tarikh Siar') }}</span>
-                            <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:#8B8AA3;text-align:right">{{ __('Tindakan') }}</span>
+                        <div style="display:grid;{{ $cols }};padding:14px 20px;border-bottom:1px solid var(--tp-line)">
+                            <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:var(--tp-muted)">{{ __('Tajuk Bahan') }}</span>
+                            <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:var(--tp-muted)">{{ __('Subjek') }}</span>
+                            <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:var(--tp-muted)">{{ __('Tahun') }}</span>
+                            <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:var(--tp-muted)">{{ __('Muat Turun') }}</span>
+                            <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:var(--tp-muted)">{{ __('Jenis') }}</span>
+                            <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:var(--tp-muted)">{{ __('Tarikh Siar') }}</span>
+                            <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:var(--tp-muted);text-align:right">{{ __('Tindakan') }}</span>
                         </div>
                         @foreach ($materials as $material)
-                            <div class="tp-tr" style="display:grid;{{ $cols }};padding:12px 20px;border-bottom:1px solid rgba(46,44,80,.05)">
+                            <div class="tp-tr" style="display:grid;{{ $cols }};padding:12px 20px;border-bottom:1px solid var(--tp-line)">
                                 <div style="display:flex;flex-direction:column;gap:1px;min-width:0">
-                                    <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:13.5px;color:#28293F;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $material->title }}</span>
-                                    <span style="font-size:11.5px;color:#8B8AA3">{{ $material->teacher?->name }}</span>
+                                    <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:13.5px;color:var(--tp-ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $material->title }}</span>
+                                    <span style="font-size:11.5px;color:var(--tp-muted)">{{ $material->teacher?->name }}</span>
                                 </div>
                                 <span style="font-size:13px;font-weight:700;color:#4276AE">{{ $material->chapter->subject->displayName() }}</span>
-                                <span style="font-size:13px;font-weight:700;color:#6C6F87">{{ $material->chapter->grade->name }}</span>
-                                <span style="font-size:13px;font-weight:700;color:#6C6F87">{{ number_format($material->download_count) }}</span>
-                                <span style="font-size:13px;font-weight:700;color:#6C6F87">📄 {{ strtoupper($material->extension()) }} <span style="font-size:11.5px;color:#8B8AA3">{{ $material->humanSize() }}</span></span>
-                                <span style="font-size:13px;font-weight:700;color:#6C6F87">{{ $material->created_at->translatedFormat('j M Y') }}</span>
+                                <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2)">{{ $material->chapter->grade->name }}</span>
+                                <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2)">{{ number_format($material->download_count) }}</span>
+                                <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2)">📄 {{ strtoupper($material->extension()) }} <span style="font-size:11.5px;color:var(--tp-muted)">{{ $material->humanSize() }}</span></span>
+                                <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2)">{{ $material->created_at->translatedFormat('j M Y') }}</span>
                                 <div style="display:flex;justify-content:flex-end;gap:4px">
                                     <button type="button" class="tp-linkbtn"
                                             @click="open(@js([

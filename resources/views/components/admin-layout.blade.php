@@ -31,7 +31,7 @@
 @endphp
 
 <!DOCTYPE html>
-<html lang="{{ app()->getLocale() }}">
+<html lang="{{ app()->getLocale() }}" @class(['theme-dark' => ($theme ?? 'light') === 'dark'])>
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -52,7 +52,20 @@
             --tp-shadow:0 2px 10px rgba(46,44,80,.04);
             --tp-shadow-lift:0 6px 18px rgba(46,44,80,.08);
             --tp-input:#F6F5F0; --tp-active-bg:#E6F5F1; --tp-active-fg:#0F7A68;
+            --tp-page:#F7F6F2; --tp-surface:#fff; --tp-surface-2:#FAF9F5; --tp-hover:#F1F0E8; --tp-chip:#EFEDE6; --tp-icon:#4A5A52;
             font-family:'Nunito',sans-serif; color:var(--tp-body);
+        }
+        /* Night mode: same token NAMES, dark values — every .tp element and every page colour
+           converted to a var(--tp-*) recolours for free. */
+        html.theme-dark .tp {
+            --tp-teal:#2DD4BF; --tp-teal-hover:#5EEAD4;
+            --tp-ink:#EDF2F8; --tp-body:#C9D2DC;
+            --tp-muted:#8A94A3; --tp-muted-2:#A6AFBC;
+            --tp-line:rgba(255,255,255,.09); --tp-line-2:rgba(255,255,255,.14); --tp-line-3:rgba(255,255,255,.11);
+            --tp-shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -8px rgba(0,0,0,.55);
+            --tp-shadow-lift:0 2px 6px rgba(0,0,0,.45), 0 18px 44px -14px rgba(0,0,0,.6);
+            --tp-input:#1E2731; --tp-active-bg:#123029; --tp-active-fg:#5EEAD4;
+            --tp-page:#0E1116; --tp-surface:#171E27; --tp-surface-2:#1E2731; --tp-hover:#232D38; --tp-chip:#232D38; --tp-icon:#AEB6C2;
         }
         .tp *,.tp *::before,.tp *::after { box-sizing:border-box; }
         .tp a { text-decoration:none; }
@@ -69,7 +82,7 @@
         /* Shell */
         .tp-shell { min-height:100vh; display:grid; grid-template-columns:236px 1fr; }
         .tp-side {
-            background:#fff; border-right:1px solid var(--tp-line);
+            background:var(--tp-surface); border-right:1px solid var(--tp-line);
             display:flex; flex-direction:column; padding:20px 14px; gap:4px;
             position:sticky; top:0; height:100vh;
         }
@@ -84,7 +97,7 @@
             font-family:'Geist',sans-serif; font-weight:800; font-size:14.5px; text-align:left;
             background:transparent; color:var(--tp-muted-2); transition:all .15s;
         }
-        .tp-nav:hover { background:#F1F0E8; color:var(--tp-ink); }
+        .tp-nav:hover { background:var(--tp-hover); color:var(--tp-ink); }
         .tp-nav.is-active { background:var(--tp-active-bg); color:var(--tp-active-fg); }
         .tp-nav.is-active:hover { background:var(--tp-active-bg); }
         .tp-nav svg { width:21px; height:21px; flex-shrink:0; }
@@ -112,7 +125,7 @@
         .tp-head { display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
         .tp-h1  { font-family:'Geist',sans-serif; font-size:24px; font-weight:800; letter-spacing:-.01em; color:var(--tp-ink); }
         .tp-hsub{ font-size:14px; color:var(--tp-muted); }
-        .tp-langbar { display:flex; align-items:center; background:#EFEDE6; border-radius:999px; padding:4px; }
+        .tp-langbar { display:flex; align-items:center; background:var(--tp-chip); border-radius:999px; padding:4px; }
         .tp-pill {
             min-height:38px; display:inline-flex; align-items:center; border:none; cursor:pointer;
             border-radius:999px; padding:0 16px; font-family:'Geist',sans-serif; font-weight:800;
@@ -121,14 +134,14 @@
         .tp-pill.is-on { background:var(--tp-teal); color:#fff; }
         .tp-iconbtn {
             width:46px; height:46px; border-radius:12px; border:1px solid var(--tp-line-3);
-            background:#fff; cursor:pointer; display:grid; place-items:center; color:#4A5A52; position:relative;
+            background:var(--tp-surface); cursor:pointer; display:grid; place-items:center; color:var(--tp-icon); position:relative;
         }
-        .tp-iconbtn:hover { background:#EFEDE6; }
+        .tp-iconbtn:hover { background:var(--tp-chip); }
         .tp-iconbtn svg { width:19px; height:19px; }
         .tp-dot { position:absolute; top:9px; right:10px; width:8px; height:8px; border-radius:50%; background:#EB5E5A; border:2px solid #fff; }
 
         /* Cards */
-        .tp-card { background:#fff; border:1px solid var(--tp-line); border-radius:18px; box-shadow:var(--tp-shadow); }
+        .tp-card { background:var(--tp-surface); border:1px solid var(--tp-line); border-radius:18px; box-shadow:var(--tp-shadow); }
         .tp-card-16 { border-radius:16px; }
 
         /* Buttons */
@@ -142,13 +155,13 @@
         .tp-btn-sm { min-height:44px; border-radius:11px; font-size:13.5px; padding:0 18px; }
         .tp-btn-outline {
             min-height:46px; cursor:pointer; border-radius:12px; border:1.5px solid var(--tp-teal);
-            background:#fff; color:var(--tp-teal); font-family:'Geist',sans-serif; font-weight:800;
+            background:var(--tp-surface); color:var(--tp-teal); font-family:'Geist',sans-serif; font-weight:800;
             font-size:14px; padding:0 18px; display:inline-flex; align-items:center; justify-content:center; gap:8px;
         }
         .tp-btn-outline:hover { background:var(--tp-active-bg); color:var(--tp-teal); }
         .tp-btn-ghost {
             min-height:42px; cursor:pointer; border-radius:11px; border:1.5px solid var(--tp-line-2);
-            background:#fff; color:var(--tp-ink); font-family:'Geist',sans-serif; font-weight:800;
+            background:var(--tp-surface); color:var(--tp-ink); font-family:'Geist',sans-serif; font-weight:800;
             font-size:13px; padding:0 16px; display:inline-flex; align-items:center; gap:7px;
         }
         .tp-btn-ghost:hover { background:#F4F8FC; }
@@ -175,7 +188,7 @@
         .tp-file::file-selector-button:hover { background:#2BB39B; }
         .tp-filter-select {
             min-height:46px; border:1.5px solid var(--tp-line-2); border-radius:12px; padding:0 14px;
-            background:#fff; font-family:'Geist',sans-serif; font-weight:800; font-size:14px; color:var(--tp-ink); cursor:pointer;
+            background:var(--tp-surface); font-family:'Geist',sans-serif; font-weight:800; font-size:14px; color:var(--tp-ink); cursor:pointer;
         }
         .tp-filter-select {
             appearance:none; -webkit-appearance:none; -moz-appearance:none;
@@ -186,10 +199,10 @@
         .tp-hint { font-size:12.5px; color:var(--tp-muted); }
 
         /* Empty state + placeholder */
-        .tp-empty { background:#fff; border:1px dashed rgba(46,44,80,.2); border-radius:20px; padding:64px; display:flex; flex-direction:column; align-items:center; gap:10px; text-align:center; }
+        .tp-empty { background:var(--tp-surface); border:1px dashed rgba(46,44,80,.2); border-radius:20px; padding:64px; display:flex; flex-direction:column; align-items:center; gap:10px; text-align:center; }
 
         /* Table rows */
-        .tp-tr:hover { background:#FAF9F5; }
+        .tp-tr:hover { background:var(--tp-surface-2); }
 
         @media (max-width:900px) {
             .tp-shell { grid-template-columns:1fr; }
@@ -200,7 +213,7 @@
     </style>
 </head>
 
-<body class="tp" style="margin:0; background:#F7F6F2;">
+<body class="tp" style="margin:0; background:var(--tp-page);">
 <div class="tp-shell">
     {{-- SIDEBAR --}}
     <aside class="tp-side">

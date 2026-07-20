@@ -7,8 +7,8 @@
     <div style="display:flex;flex-direction:column;gap:20px;max-width:720px">
 
         {{-- Account details --}}
-        <div style="background:#fff;border:1px solid rgba(46,44,80,.08);border-radius:18px;padding:24px;box-shadow:0 2px 10px rgba(46,44,80,.04)">
-            <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:17px;font-weight:800;color:#28293F">{{ __('Butiran akaun') }}</h2>
+        <div style="background:var(--tp-surface);border:1px solid var(--tp-line);border-radius:18px;padding:24px;box-shadow:0 2px 10px rgba(46,44,80,.04)">
+            <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:17px;font-weight:800;color:var(--tp-ink)">{{ __('Butiran akaun') }}</h2>
 
             <form method="POST" action="{{ route('profile.update') }}" enctype="multipart/form-data" style="display:flex;flex-direction:column;gap:16px;margin-top:16px">
                 @csrf
@@ -48,8 +48,8 @@
         </div>
 
         {{-- Change password --}}
-        <div style="background:#fff;border:1px solid rgba(46,44,80,.08);border-radius:18px;padding:24px;box-shadow:0 2px 10px rgba(46,44,80,.04)">
-            <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:17px;font-weight:800;color:#28293F">{{ __('Tukar kata laluan') }}</h2>
+        <div style="background:var(--tp-surface);border:1px solid var(--tp-line);border-radius:18px;padding:24px;box-shadow:0 2px 10px rgba(46,44,80,.04)">
+            <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:17px;font-weight:800;color:var(--tp-ink)">{{ __('Tukar kata laluan') }}</h2>
 
             <form method="POST" action="{{ route('password.update') }}" style="display:flex;flex-direction:column;gap:16px;margin-top:16px">
                 @csrf

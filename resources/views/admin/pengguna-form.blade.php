@@ -6,16 +6,16 @@
 
     <style>
         .pg-form [x-cloak] { display:none !important; }
-        .role-opt { display:flex;align-items:center;justify-content:center;gap:8px;min-height:50px;border:1.5px solid rgba(46,44,80,.12);border-radius:12px;background:#fff;cursor:pointer;font-family:'Geist',sans-serif;font-weight:800;font-size:14px;color:#28293F; }
+        .role-opt { display:flex;align-items:center;justify-content:center;gap:8px;min-height:50px;border:1.5px solid var(--tp-line-2);border-radius:12px;background:var(--tp-surface);cursor:pointer;font-family:'Geist',sans-serif;font-weight:800;font-size:14px;color:var(--tp-ink); }
         .role-opt.is-on { border-color:#17907B;background:#E6F5F1;color:#0F7A68; }
         .pg-err { margin:0;font-size:12.5px;font-weight:700;color:#C24936; }
     </style>
 
     <div class="pg-form" x-data="{ role: '{{ old('role', $user->role ?: 'teacher') }}' }" style="max-width:640px">
-        <a href="{{ route('admin.pengguna') }}" style="display:inline-flex;align-items:center;gap:6px;font-family:'Geist',sans-serif;font-size:13.5px;font-weight:800;color:#6C6F87;text-decoration:none;margin-bottom:16px">← {{ __('Semua pengguna') }}</a>
+        <a href="{{ route('admin.pengguna') }}" style="display:inline-flex;align-items:center;gap:6px;font-family:'Geist',sans-serif;font-size:13.5px;font-weight:800;color:var(--tp-muted-2);text-decoration:none;margin-bottom:16px">← {{ __('Semua pengguna') }}</a>
 
         <form method="POST" action="{{ $editing ? route('admin.pengguna.update', $user) : route('admin.pengguna.store') }}"
-              style="background:#fff;border:1px solid rgba(46,44,80,.08);border-radius:18px;padding:24px;display:flex;flex-direction:column;gap:16px;box-shadow:0 2px 10px rgba(46,44,80,.04)">
+              style="background:var(--tp-surface);border:1px solid var(--tp-line);border-radius:18px;padding:24px;display:flex;flex-direction:column;gap:16px;box-shadow:0 2px 10px rgba(46,44,80,.04)">
             @csrf
             @if ($editing) @method('PUT') @endif
 
@@ -49,8 +49,8 @@
             <div class="tp-field">
                 <label for="email" class="tp-label">
                     {{ __('Emel') }}
-                    <span x-show="role === 'teacher'" style="font-weight:600;color:#8B8AA3">({{ __('diperlukan') }})</span>
-                    <span x-show="role === 'student'" x-cloak style="font-weight:600;color:#8B8AA3">({{ __('pilihan') }})</span>
+                    <span x-show="role === 'teacher'" style="font-weight:600;color:var(--tp-muted)">({{ __('diperlukan') }})</span>
+                    <span x-show="role === 'student'" x-cloak style="font-weight:600;color:var(--tp-muted)">({{ __('pilihan') }})</span>
                 </label>
                 <input id="email" name="email" type="email" value="{{ old('email', $user->email) }}" class="tp-input">
                 @error('email')<p class="pg-err">{{ $message }}</p>@enderror
@@ -68,7 +68,7 @@
                 @error('grade_level')<p class="pg-err">{{ $message }}</p>@enderror
             </div>
 
-            <div style="height:1px;background:rgba(46,44,80,.08);margin:2px 0"></div>
+            <div style="height:1px;background:var(--tp-line);margin:2px 0"></div>
 
             <div class="tp-field">
                 <label for="password" class="tp-label">{{ __('Kata laluan') }}</label>
@@ -84,7 +84,7 @@
 
             <label style="display:flex;align-items:center;gap:10px;cursor:pointer">
                 <input type="checkbox" name="is_active" value="1" @checked(old('is_active', $user->is_active ?? true)) style="width:20px;height:20px;accent-color:#17907B">
-                <span style="font-family:'Geist',sans-serif;font-size:13.5px;font-weight:700;color:#28293F">{{ __('Akaun aktif (boleh log masuk)') }}</span>
+                <span style="font-family:'Geist',sans-serif;font-size:13.5px;font-weight:700;color:var(--tp-ink)">{{ __('Akaun aktif (boleh log masuk)') }}</span>
             </label>
 
             <div style="display:flex;gap:12px;margin-top:4px">
