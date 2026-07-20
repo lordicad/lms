@@ -1,5 +1,6 @@
 import '../api/api_client.dart' show ApiException;
 import '../auth/token_store.dart';
+import '../platform/native_download.dart';
 import 'content_api.dart';
 import 'content_models.dart';
 
@@ -27,8 +28,8 @@ class ContentRepository {
   Future<SubjectsData> subjects({int? grade}) async =>
       _api.subjects(await _token(), grade: grade);
 
-  Future<List<SearchResult>> search(String query) async =>
-      _api.search(await _token(), query);
+  Future<List<SearchResult>> search(String query, {int? grade}) async =>
+      _api.search(await _token(), query, grade: grade);
 
   Future<SubjectChaptersData> subjectChapters(
     String slug, {
@@ -58,10 +59,23 @@ class ContentRepository {
   Future<List<LessonCard>> favourites() async =>
       _api.favourites(await _token());
 
+  Future<OfflineData> offline({int? grade}) async =>
+      _api.offline(await _token(), grade: grade);
+
+  Future<void> downloadOfflineFile({
+    required String url,
+    required String fileName,
+  }) async => NativeDownload.enqueue(
+    url: url,
+    token: await _token(),
+    fileName: fileName,
+  );
+
   Future<bool> toggleFavourite(int lessonId) async =>
       _api.toggleFavourite(await _token(), lessonId);
 
-  Future<List<QuizListItem>> quizzes() async => _api.quizzes(await _token());
+  Future<List<QuizListItem>> quizzes({int? grade}) async =>
+      _api.quizzes(await _token(), grade: grade);
 
   Future<QuizIntro> quizIntro(int quizId) async =>
       _api.quizIntro(await _token(), quizId);

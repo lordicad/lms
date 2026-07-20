@@ -1,11 +1,15 @@
 package com.weststar.lms_moe_mobile
 
 import android.app.Activity
+import android.app.DownloadManager
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Environment
 import android.provider.OpenableColumns
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
+import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import java.io.File
 import java.util.UUID
@@ -17,6 +21,11 @@ class MainActivity : FlutterActivity() {
         super.configureFlutterEngine(flutterEngine)
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, FILES_CHANNEL)
             .setMethodCallHandler { call, result ->
+                if (call.method == "downloadFile") {
+                    enqueueDownload(call, result)
+                    return@setMethodCallHandler
+                }
+
                 if (pendingResult != null) {
                     result.error("picker_in_progress", "Pemilih fail sedang dibuka.", null)
                     return@setMethodCallHandler
@@ -88,6 +97,34 @@ class MainActivity : FlutterActivity() {
             )
         } catch (error: Exception) {
             result.error("file_picker_failed", error.message, null)
+        }
+    }
+
+    private fun enqueueDownload(call: MethodCall, result: MethodChannel.Result) {
+        val url = call.argument<String>("url")?.takeIf { it.isNotBlank() }
+        val token = call.argument<String>("token")?.takeIf { it.isNotBlank() }
+        val rawName = call.argument<String>("file_name")?.takeIf { it.isNotBlank() }
+        if (url == null || token == null || rawName == null) {
+            result.error("invalid_download", "Maklumat muat turun tidak lengkap.", null)
+            return
+        }
+
+        try {
+            val fileName = rawName.replace(Regex("[\\\\/:*?\"<>|]"), "_")
+            val request = DownloadManager.Request(Uri.parse(url))
+                .setTitle(fileName)
+                .setDescription("Muat turun LMS MOE")
+                .setNotificationVisibility(
+                    DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED,
+                )
+                .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName)
+            request.addRequestHeader("Authorization", "Bearer $token")
+            request.addRequestHeader("Accept", "application/octet-stream")
+
+            val manager = getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+            result.success(manager.enqueue(request))
+        } catch (error: Exception) {
+            result.error("download_failed", error.message, null)
         }
     }
 

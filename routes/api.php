@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\Student\FavouriteController;
 use App\Http\Controllers\Api\Student\LearnController;
 use App\Http\Controllers\Api\Student\LessonController;
+use App\Http\Controllers\Api\Student\OfflineController;
 use App\Http\Controllers\Api\Student\QuizController;
 use App\Http\Controllers\Api\Student\RankingController;
 use App\Http\Controllers\Api\Student\SearchController;
@@ -49,6 +50,9 @@ Route::middleware('auth:sanctum')->prefix('student')->group(function () {
     Route::get('subjects/{subject:slug}/chapters', [LearnController::class, 'subjectChapters']);
     Route::get('chapters/{chapter}', [LearnController::class, 'chapter']);
     Route::get('search', SearchController::class);
+    Route::get('offline', [OfflineController::class, 'index']);
+    Route::get('offline/lessons/{lesson}', [OfflineController::class, 'downloadLesson']);
+    Route::get('offline/materials/{material}', [OfflineController::class, 'downloadMaterial']);
 
     Route::get('lessons/{lesson}', [LessonController::class, 'show']);
     Route::post('lessons/{lesson}/viewed', [LessonController::class, 'markViewed']);

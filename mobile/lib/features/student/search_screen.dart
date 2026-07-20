@@ -9,9 +9,10 @@ import 'widgets/content_widgets.dart';
 
 /// Search the content a student can access in their own Tahun.
 class SearchScreen extends StatefulWidget {
-  const SearchScreen({super.key, required this.repository});
+  const SearchScreen({super.key, required this.repository, this.grade});
 
   final ContentRepository repository;
+  final int? grade;
 
   @override
   State<SearchScreen> createState() => _SearchScreenState();
@@ -40,7 +41,7 @@ class _SearchScreenState extends State<SearchScreen> {
     FocusScope.of(context).unfocus();
     setState(() {
       _query = query;
-      _future = widget.repository.search(query);
+      _future = widget.repository.search(query, grade: widget.grade);
     });
   }
 
@@ -97,10 +98,12 @@ class _SearchScreenState extends State<SearchScreen> {
               ),
             ),
             const SizedBox(height: 10),
-            const Align(
+            Align(
               alignment: Alignment.centerLeft,
               child: Text(
-                'Cari dalam kandungan untuk Tahun anda.',
+                widget.grade == null
+                    ? 'Cari dalam kandungan untuk Tahun anda.'
+                    : 'Cari dalam kandungan Tahun ${widget.grade}.',
                 style: TextStyle(fontSize: 12, color: LmsColors.inkMuted),
               ),
             ),

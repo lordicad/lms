@@ -8,9 +8,10 @@ import 'widgets/content_widgets.dart';
 
 /// Every quiz offered in the student's Tahun. Backed by GET /student/quizzes.
 class QuizzesTab extends StatefulWidget {
-  const QuizzesTab({super.key, required this.repository});
+  const QuizzesTab({super.key, required this.repository, this.grade});
 
   final ContentRepository repository;
+  final int? grade;
 
   @override
   State<QuizzesTab> createState() => _QuizzesTabState();
@@ -22,12 +23,21 @@ class _QuizzesTabState extends State<QuizzesTab> {
   @override
   void initState() {
     super.initState();
-    _future = widget.repository.quizzes();
+    _future = _load();
   }
+
+  @override
+  void didUpdateWidget(covariant QuizzesTab oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.grade != widget.grade) _future = _load();
+  }
+
+  Future<List<QuizListItem>> _load() =>
+      widget.repository.quizzes(grade: widget.grade);
 
   Future<void> _reload() async {
     setState(() {
-      _future = widget.repository.quizzes();
+      _future = _load();
     });
     await _future.catchError((_) => throw Exception());
   }

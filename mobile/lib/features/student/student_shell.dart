@@ -5,8 +5,10 @@ import '../../core/content/content_repository.dart';
 import '../../core/platform/native_file_picker.dart';
 import '../../shared/widgets/app_header.dart';
 import 'dashboard_tab.dart';
+import 'offline_tab.dart';
 import 'profile_tab.dart';
 import 'quizzes_tab.dart';
+import 'ranking_screen.dart';
 import 'saved_tab.dart';
 import 'search_screen.dart';
 import 'subjects_tab.dart';
@@ -39,26 +41,31 @@ class StudentShell extends StatefulWidget {
 class _StudentShellState extends State<StudentShell> {
   final ContentRepository _repository = ContentRepository();
   int _index = 0;
+  late int? _activeGrade;
+
+  @override
+  void initState() {
+    super.initState();
+    _activeGrade = widget.user.grade?.level;
+  }
 
   @override
   Widget build(BuildContext context) {
-    final gradeName = widget.user.grade?.name ?? 'Tahun anda';
+    final gradeName = _activeGrade == null
+        ? (widget.user.grade?.name ?? 'Tahun anda')
+        : 'Tahun $_activeGrade';
 
     final tabs = [
       DashboardTab(
         repository: _repository,
-        user: widget.user,
+        grade: _activeGrade,
         onSeeAllSubjects: () => setState(() => _index = 1),
       ),
-      SubjectsTab(repository: _repository),
+      SubjectsTab(repository: _repository, grade: _activeGrade),
       SavedTab(repository: _repository),
-      QuizzesTab(repository: _repository),
-      ProfileTab(
-        user: widget.user,
-        onSignOut: widget.onSignOut,
-        onUpdateProfile: widget.onUpdateProfile,
-        onUpdateAvatar: widget.onUpdateAvatar,
-      ),
+      OfflineTab(repository: _repository, grade: _activeGrade),
+      RankingScreen(repository: _repository),
+      QuizzesTab(repository: _repository, grade: _activeGrade),
     ];
 
     return Scaffold(
@@ -68,9 +75,9 @@ class _StudentShellState extends State<StudentShell> {
           children: [
             AppHeader(
               user: widget.user,
-              title: 'Belajar',
-              subtitle: gradeName,
-              onSignOut: widget.onSignOut,
+              gradeLabel: gradeName,
+              onSelectGrade: _pickGrade,
+              onProfile: _openProfile,
               onSearch: _openSearch,
             ),
             Expanded(
@@ -86,7 +93,7 @@ class _StudentShellState extends State<StudentShell> {
           NavigationDestination(
             icon: Icon(Icons.home_outlined),
             selectedIcon: Icon(Icons.home),
-            label: 'Belajar',
+            label: 'Utama',
           ),
           NavigationDestination(
             icon: Icon(Icons.menu_book_outlined),
@@ -96,17 +103,22 @@ class _StudentShellState extends State<StudentShell> {
           NavigationDestination(
             icon: Icon(Icons.bookmark_border),
             selectedIcon: Icon(Icons.bookmark),
-            label: 'Simpan',
+            label: 'Kegemaran',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.download_for_offline_outlined),
+            selectedIcon: Icon(Icons.download_for_offline),
+            label: 'Offline',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.emoji_events_outlined),
+            selectedIcon: Icon(Icons.emoji_events),
+            label: 'Ranking',
           ),
           NavigationDestination(
             icon: Icon(Icons.quiz_outlined),
             selectedIcon: Icon(Icons.quiz),
             label: 'Kuiz',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.person_outline),
-            selectedIcon: Icon(Icons.person),
-            label: 'Profil',
           ),
         ],
       ),
@@ -115,7 +127,62 @@ class _StudentShellState extends State<StudentShell> {
 
   void _openSearch() {
     Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => SearchScreen(repository: _repository)),
+      MaterialPageRoute(
+        builder: (_) =>
+            SearchScreen(repository: _repository, grade: _activeGrade),
+      ),
+    );
+  }
+
+  Future<void> _pickGrade() async {
+    final selected = await showModalBottomSheet<int>(
+      context: context,
+      showDragHandle: true,
+      builder: (context) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const ListTile(
+              leading: Icon(Icons.school_outlined),
+              title: Text('Pilih Tahun'),
+              subtitle: Text('Untuk ulang kaji kandungan Tahun lain.'),
+            ),
+            for (var level = 1; level <= 6; level++)
+              ListTile(
+                leading: Icon(
+                  _activeGrade == level
+                      ? Icons.check_circle_rounded
+                      : Icons.circle_outlined,
+                ),
+                title: Text('Tahun $level'),
+                onTap: () => Navigator.pop(context, level),
+              ),
+            const SizedBox(height: 8),
+          ],
+        ),
+      ),
+    );
+
+    if (selected != null && selected != _activeGrade && mounted) {
+      setState(() => _activeGrade = selected);
+    }
+  }
+
+  Future<void> _openProfile() async {
+    await Navigator.of(context).push<void>(
+      MaterialPageRoute(
+        builder: (_) => Scaffold(
+          appBar: AppBar(title: const Text('Profil saya')),
+          body: SafeArea(
+            child: ProfileTab(
+              user: widget.user,
+              onSignOut: widget.onSignOut,
+              onUpdateProfile: widget.onUpdateProfile,
+              onUpdateAvatar: widget.onUpdateAvatar,
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

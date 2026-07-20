@@ -41,9 +41,17 @@ class ContentApi {
     return SubjectsData.fromJson(json);
   }
 
-  Future<List<SearchResult>> search(String token, String query) async {
+  Future<List<SearchResult>> search(
+    String token,
+    String query, {
+    int? grade,
+  }) async {
     final encodedQuery = Uri.encodeQueryComponent(query.trim());
-    final json = await _get(token, '/student/search?q=$encodedQuery');
+    final json = await _get(
+      token,
+      '/student/search?q=$encodedQuery',
+      grade: grade,
+    );
     final list = json['results'];
     if (list is! List) return const [];
     return list
@@ -110,6 +118,16 @@ class ContentApi {
         .toList(growable: false);
   }
 
+  Future<OfflineData> offline(String token, {int? grade}) async {
+    final json = await _get(
+      token,
+      '/student/offline',
+      grade: grade,
+      cacheResource: 'offline_${grade ?? 'own'}',
+    );
+    return OfflineData.fromJson(json);
+  }
+
   /// Toggles the favourite state of a lesson; returns the new state.
   Future<bool> toggleFavourite(String token, int lessonId) async {
     final json = await _post(
@@ -120,11 +138,12 @@ class ContentApi {
     return json['favourited'] == true;
   }
 
-  Future<List<QuizListItem>> quizzes(String token) async {
+  Future<List<QuizListItem>> quizzes(String token, {int? grade}) async {
     final json = await _get(
       token,
       '/student/quizzes',
-      cacheResource: 'quizzes',
+      grade: grade,
+      cacheResource: 'quizzes_${grade ?? 'own'}',
     );
     final list = json['quizzes'];
     if (list is! List) return const [];

@@ -72,6 +72,7 @@ class LessonCard {
     required this.durationLabel,
     required this.source,
     required this.subjectName,
+    required this.chapterLabel,
     required this.percent,
     required this.completed,
     required this.favourited,
@@ -84,6 +85,7 @@ class LessonCard {
   final String? durationLabel;
   final String source;
   final String? subjectName;
+  final String? chapterLabel;
   final int percent;
   final bool completed;
   final bool favourited;
@@ -96,6 +98,7 @@ class LessonCard {
     durationLabel: _strOrNull(j['duration_label']),
     source: _str(j['source']),
     subjectName: _strOrNull(j['subject_name']),
+    chapterLabel: _strOrNull(j['chapter_label']),
     percent: _int(j['percent']),
     completed: _bool(j['completed']),
     favourited: _bool(j['favourited']),
@@ -149,29 +152,142 @@ class SearchResult {
 class DashboardData {
   const DashboardData({
     required this.grade,
+    required this.grades,
     required this.points,
     required this.rank,
+    required this.hero,
+    required this.heroResuming,
     required this.continueWatching,
+    required this.trending,
+    required this.trendingFallback,
     required this.newest,
+    required this.suggested,
     required this.subjects,
   });
 
   final GradeInfo? grade;
+  final List<GradeInfo> grades;
   final int points;
   final int? rank;
+  final LessonCard? hero;
+  final bool heroResuming;
   final List<LessonCard> continueWatching;
+  final List<LessonCard> trending;
+  final bool trendingFallback;
   final List<LessonCard> newest;
+  final List<LessonCard> suggested;
   final List<SubjectCard> subjects;
 
   factory DashboardData.fromJson(Map<String, dynamic> j) => DashboardData(
     grade: j['grade'] == null
         ? null
         : GradeInfo.fromJson(j['grade'] as Map<String, dynamic>),
+    grades: _list(j['grades'], GradeInfo.fromJson),
     points: _int(j['points']),
     rank: _intOrNull(j['rank']),
+    hero: j['hero'] == null
+        ? null
+        : LessonCard.fromJson(j['hero'] as Map<String, dynamic>),
+    heroResuming: _bool(j['hero_resuming']),
     continueWatching: _list(j['continue_watching'], LessonCard.fromJson),
+    trending: _list(j['trending'], LessonCard.fromJson),
+    trendingFallback: _bool(j['trending_fallback']),
     newest: _list(j['newest'], LessonCard.fromJson),
+    suggested: _list(j['suggested'], LessonCard.fromJson),
     subjects: _list(j['subjects'], SubjectCard.fromJson),
+  );
+}
+
+// --- Offline downloads (mirrors the web Simpanan Offline page) ---
+
+class OfflineData {
+  const OfflineData({
+    required this.grade,
+    required this.lessons,
+    required this.materials,
+  });
+
+  final GradeInfo? grade;
+  final List<OfflineLesson> lessons;
+  final List<OfflineMaterial> materials;
+
+  factory OfflineData.fromJson(Map<String, dynamic> j) => OfflineData(
+    grade: j['grade'] == null
+        ? null
+        : GradeInfo.fromJson(j['grade'] as Map<String, dynamic>),
+    lessons: _list(j['lessons'], OfflineLesson.fromJson),
+    materials: _list(j['materials'], OfflineMaterial.fromJson),
+  );
+}
+
+class OfflineLesson {
+  const OfflineLesson({
+    required this.id,
+    required this.title,
+    required this.source,
+    required this.thumbnailUrl,
+    required this.subjectName,
+    required this.chapterLabel,
+    required this.downloadable,
+    required this.downloadUrl,
+    required this.fileName,
+  });
+
+  final int id;
+  final String title;
+  final String source;
+  final String? thumbnailUrl;
+  final String? subjectName;
+  final String? chapterLabel;
+  final bool downloadable;
+  final String? downloadUrl;
+  final String? fileName;
+
+  bool get isYoutube => source == 'youtube';
+
+  factory OfflineLesson.fromJson(Map<String, dynamic> j) => OfflineLesson(
+    id: _int(j['id']),
+    title: _str(j['title']),
+    source: _str(j['source']),
+    thumbnailUrl: _strOrNull(j['thumbnail_url']),
+    subjectName: _strOrNull(j['subject_name']),
+    chapterLabel: _strOrNull(j['chapter_label']),
+    downloadable: _bool(j['downloadable']),
+    downloadUrl: _strOrNull(j['download_url']),
+    fileName: _strOrNull(j['file_name']),
+  );
+}
+
+class OfflineMaterial {
+  const OfflineMaterial({
+    required this.id,
+    required this.title,
+    required this.extension,
+    required this.humanSize,
+    required this.subjectName,
+    required this.chapterLabel,
+    required this.downloadUrl,
+    required this.fileName,
+  });
+
+  final int id;
+  final String title;
+  final String extension;
+  final String humanSize;
+  final String? subjectName;
+  final String? chapterLabel;
+  final String downloadUrl;
+  final String fileName;
+
+  factory OfflineMaterial.fromJson(Map<String, dynamic> j) => OfflineMaterial(
+    id: _int(j['id']),
+    title: _str(j['title']),
+    extension: _str(j['extension']),
+    humanSize: _str(j['human_size']),
+    subjectName: _strOrNull(j['subject_name']),
+    chapterLabel: _strOrNull(j['chapter_label']),
+    downloadUrl: _str(j['download_url']),
+    fileName: _str(j['file_name']),
   );
 }
 

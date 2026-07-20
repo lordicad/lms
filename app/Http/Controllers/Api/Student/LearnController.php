@@ -3,12 +3,15 @@
 namespace App\Http\Controllers\Api\Student;
 
 use App\Models\Chapter;
+use App\Models\Grade;
 use App\Models\Lesson;
 use App\Models\LessonProgress;
 use App\Models\Subject;
 use App\Services\LeaderboardService;
+use App\Services\TrendingService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Student browse surface for the mobile app: dashboard, subject index, chapter lists and
@@ -17,17 +20,32 @@ use Illuminate\Http\Request;
  */
 class LearnController extends StudentApiController
 {
-    public function dashboard(Request $request, LeaderboardService $leaderboard): JsonResponse
+    public function dashboard(
+        Request $request,
+        LeaderboardService $leaderboard,
+        TrendingService $trending,
+    ): JsonResponse
     {
         $user = $request->user();
         $grade = $this->resolveGrade($request, $user);
 
         if (! $grade) {
-            return response()->json(['grade' => null, 'subjects' => [], 'continue_watching' => [], 'newest' => []]);
+            return response()->json([
+                'grade' => null,
+                'grades' => Grade::orderBy('level')->get()->map(fn ($item) => $this->gradePayload($item))->all(),
+                'subjects' => [],
+                'hero' => null,
+                'continue_watching' => [],
+                'trending' => [],
+                'trending_fallback' => false,
+                'newest' => [],
+                'suggested' => [],
+            ]);
         }
 
         $gradeId = $grade->id;
         $myRow = $leaderboard->rowFor($user);
+        $startedIds = LessonProgress::where('student_id', $user->id)->pluck('lesson_id');
 
         $continue = Lesson::published()
             ->join('lesson_progress', 'lesson_progress.lesson_id', '=', 'lessons.id')
@@ -43,8 +61,15 @@ class LearnController extends StudentApiController
             ->limit(12)
             ->get();
 
+        $trend = $trending->forGrade($gradeId, 12);
+        $trend['lessons']->load([
+            'progress' => fn ($query) => $query->where('student_id', $user->id),
+            'favourites' => fn ($query) => $query->where('student_id', $user->id),
+        ]);
+
         $newest = Lesson::published()
             ->whereHas('chapter', fn ($q) => $q->where('grade_id', $gradeId)->where('is_active', true))
+            ->where('lessons.created_at', '>=', now()->subDays(30))
             ->withStudentContext($user)
             ->latest('id')
             ->limit(12)
@@ -59,12 +84,65 @@ class LearnController extends StudentApiController
 
         return response()->json([
             'grade' => $this->gradePayload($grade),
+            'grades' => Grade::orderBy('level')->get()->map(fn ($item) => $this->gradePayload($item))->all(),
             'points' => $myRow->points ?? 0,
             'rank' => $myRow->rank ?? null,
+            'hero' => ($hero = $continue->first() ?? $trend['lessons']->first())
+                ? $this->lessonCard($hero)
+                : null,
+            'hero_resuming' => $continue->isNotEmpty(),
             'continue_watching' => $continue->map(fn ($l) => $this->lessonCard($l))->all(),
+            'trending' => $trend['lessons']->map(fn ($l) => $this->lessonCard($l))->all(),
+            'trending_fallback' => $trend['fallback'],
             'newest' => $newest->map(fn ($l) => $this->lessonCard($l))->all(),
+            'suggested' => $this->suggested($user, $gradeId, $startedIds)
+                ->map(fn ($l) => $this->lessonCard($l))
+                ->all(),
             'subjects' => $subjects->map(fn ($s) => $this->subjectCard($s))->all(),
         ]);
+    }
+
+    /**
+     * Mirrors the web dashboard's personalised rail: favour unstarted content
+     * in subjects the student has watched, then fall back to a daily-stable mix.
+     */
+    private function suggested($user, int $gradeId, $startedIds)
+    {
+        $topSubjectIds = DB::table('lesson_progress')
+            ->join('lessons', 'lessons.id', '=', 'lesson_progress.lesson_id')
+            ->join('chapters', 'chapters.id', '=', 'lessons.chapter_id')
+            ->where('lesson_progress.student_id', $user->id)
+            ->groupBy('chapters.subject_id')
+            ->orderByRaw('count(*) desc')
+            ->limit(3)
+            ->pluck('chapters.subject_id');
+
+        if ($topSubjectIds->isNotEmpty()) {
+            $suggested = Lesson::published()
+                ->whereHas('chapter', fn ($query) => $query
+                    ->where('grade_id', $gradeId)
+                    ->where('is_active', true)
+                    ->whereIn('subject_id', $topSubjectIds))
+                ->whereNotIn('id', $startedIds)
+                ->withStudentContext($user)
+                ->latest('id')
+                ->limit(12)
+                ->get();
+
+            if ($suggested->isNotEmpty()) {
+                return $suggested;
+            }
+        }
+
+        return Lesson::published()
+            ->whereHas('chapter', fn ($query) => $query
+                ->where('grade_id', $gradeId)
+                ->where('is_active', true))
+            ->whereNotIn('id', $startedIds)
+            ->withStudentContext($user)
+            ->orderByRaw('RAND(?)', [(int) now()->format('Ymd')])
+            ->limit(12)
+            ->get();
     }
 
     public function subjects(Request $request): JsonResponse

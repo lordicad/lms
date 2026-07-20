@@ -7,9 +7,10 @@ import 'widgets/content_widgets.dart';
 
 /// All subjects offered in the student's Tahun, grouped by Kurikulum 2027 category.
 class SubjectsTab extends StatefulWidget {
-  const SubjectsTab({super.key, required this.repository});
+  const SubjectsTab({super.key, required this.repository, this.grade});
 
   final ContentRepository repository;
+  final int? grade;
 
   @override
   State<SubjectsTab> createState() => _SubjectsTabState();
@@ -21,12 +22,21 @@ class _SubjectsTabState extends State<SubjectsTab> {
   @override
   void initState() {
     super.initState();
-    _future = widget.repository.subjects();
+    _future = _load();
   }
+
+  @override
+  void didUpdateWidget(covariant SubjectsTab oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.grade != widget.grade) _future = _load();
+  }
+
+  Future<SubjectsData> _load() =>
+      widget.repository.subjects(grade: widget.grade);
 
   Future<void> _reload() async {
     setState(() {
-      _future = widget.repository.subjects();
+      _future = _load();
     });
     await _future.catchError((_) => throw Exception());
   }
@@ -38,6 +48,7 @@ class _SubjectsTabState extends State<SubjectsTab> {
           repository: widget.repository,
           slug: subject.slug,
           title: subject.displayName,
+          grade: widget.grade,
         ),
       ),
     );

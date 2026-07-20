@@ -45,6 +45,7 @@ abstract class StudentApiController extends Controller
             'duration_label' => $lesson->durationLabel(),
             'source' => $lesson->source,
             'subject_name' => $lesson->chapter?->subject?->displayName(),
+            'chapter_label' => $lesson->chapter?->label(),
             'subject_color' => $lesson->chapter?->subject?->color,
             'percent' => $progress?->percent ?? 0,
             'completed' => (bool) ($progress?->completed ?? false),
