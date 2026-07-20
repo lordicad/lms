@@ -59,6 +59,24 @@ class _ContentHubTabState extends State<ContentHubTab> {
     );
   }
 
+  Future<void> _togglePublishVideo(int id) async {
+    try {
+      await widget.repository.togglePublishVideo(id);
+      if (mounted) setState(() => _videos = widget.repository.videos());
+    } catch (e) {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$e')));
+    }
+  }
+
+  Future<void> _togglePublishQuiz(int id) async {
+    try {
+      await widget.repository.togglePublishQuiz(id);
+      if (mounted) setState(() => _quizzes = widget.repository.quizzes());
+    } catch (e) {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$e')));
+    }
+  }
+
   Widget _body() {
     switch (_segment) {
       case 1:
@@ -70,11 +88,13 @@ class _ContentHubTabState extends State<ContentHubTab> {
         return _QuizzesList(
           future: _quizzes!,
           onReload: () => setState(() => _quizzes = widget.repository.quizzes()),
+          onToggle: _togglePublishQuiz,
         );
       default:
         return _VideosList(
           future: _videos!,
           onReload: () => setState(() => _videos = widget.repository.videos()),
+          onToggle: _togglePublishVideo,
         );
     }
   }
@@ -105,9 +125,10 @@ class _StatusChip extends StatelessWidget {
 }
 
 class _VideosList extends StatelessWidget {
-  const _VideosList({required this.future, required this.onReload});
+  const _VideosList({required this.future, required this.onReload, required this.onToggle});
   final Future<List<TeacherVideo>> future;
   final VoidCallback onReload;
+  final void Function(int id) onToggle;
 
   @override
   Widget build(BuildContext context) {
@@ -149,6 +170,7 @@ class _VideosList extends StatelessWidget {
                 v.ownershipLabel,
               ].join(' · '),
               published: v.published,
+              onTogglePublish: () => onToggle(v.id),
             );
           },
         );
@@ -208,9 +230,10 @@ class _MaterialsList extends StatelessWidget {
 }
 
 class _QuizzesList extends StatelessWidget {
-  const _QuizzesList({required this.future, required this.onReload});
+  const _QuizzesList({required this.future, required this.onReload, required this.onToggle});
   final Future<List<TeacherQuiz>> future;
   final VoidCallback onReload;
+  final void Function(int id) onToggle;
 
   @override
   Widget build(BuildContext context) {
@@ -252,6 +275,7 @@ class _QuizzesList extends StatelessWidget {
                 '${q.attempts} percubaan',
               ].join(' · '),
               published: q.published,
+              onTogglePublish: () => onToggle(q.id),
             );
           },
         );
@@ -266,12 +290,14 @@ class _ContentCard extends StatelessWidget {
     required this.title,
     required this.subtitle,
     this.published,
+    this.onTogglePublish,
   });
 
   final IconData icon;
   final String title;
   final String subtitle;
   final bool? published;
+  final VoidCallback? onTogglePublish;
 
   @override
   Widget build(BuildContext context) {
@@ -323,6 +349,28 @@ class _ContentCard extends StatelessWidget {
               ],
             ),
           ),
+          if (onTogglePublish != null && published != null)
+            PopupMenuButton<String>(
+              icon: const Icon(Icons.more_vert, color: LmsColors.inkFaint),
+              tooltip: 'Tindakan',
+              onSelected: (_) => onTogglePublish!(),
+              itemBuilder: (_) => [
+                PopupMenuItem(
+                  value: 'toggle',
+                  child: Row(
+                    children: [
+                      Icon(
+                        published! ? Icons.visibility_off_outlined : Icons.public,
+                        size: 18,
+                        color: LmsColors.ink,
+                      ),
+                      const SizedBox(width: 10),
+                      Text(published! ? 'Sembunyikan' : 'Terbitkan'),
+                    ],
+                  ),
+                ),
+              ],
+            ),
         ],
       ),
     );

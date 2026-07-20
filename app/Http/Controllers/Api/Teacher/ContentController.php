@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api\Teacher;
 
 use App\Http\Controllers\Controller;
+use App\Models\Lesson;
+use App\Models\Quiz;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -85,6 +87,30 @@ class ContentController extends Controller
                 'attempts' => $q->attempts_count,
             ])->all(),
         ]);
+    }
+
+    public function toggleVideo(Request $request, Lesson $lesson): JsonResponse
+    {
+        $teacher = $this->teacher($request);
+        if (! $teacher || $lesson->teacher_id !== $teacher->id) {
+            return $this->forbidden();
+        }
+
+        $lesson->update(['is_published' => ! $lesson->is_published]);
+
+        return response()->json(['published' => (bool) $lesson->is_published]);
+    }
+
+    public function toggleQuiz(Request $request, Quiz $quiz): JsonResponse
+    {
+        $teacher = $this->teacher($request);
+        if (! $teacher || $quiz->teacher_id !== $teacher->id) {
+            return $this->forbidden();
+        }
+
+        $quiz->update(['is_published' => ! $quiz->is_published]);
+
+        return response()->json(['published' => (bool) $quiz->is_published]);
     }
 
     private function teacher(Request $request): ?User

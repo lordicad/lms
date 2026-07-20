@@ -36,6 +36,16 @@ class TeacherApi {
     return _mapList(json['quizzes'], TeacherQuiz.fromJson);
   }
 
+  Future<bool> togglePublishVideo(String token, int id) async {
+    final json = await _post(token, '/teacher/content/videos/$id/publish');
+    return json['published'] == true;
+  }
+
+  Future<bool> togglePublishQuiz(String token, int id) async {
+    final json = await _post(token, '/teacher/content/quizzes/$id/publish');
+    return json['published'] == true;
+  }
+
   Future<Map<String, dynamic>> _get(String token, String path) async {
     final response = await _http.get(
       Uri.parse('$baseUrl$path'),
@@ -50,6 +60,25 @@ class TeacherApi {
         throw const ApiException('Sesi tamat. Sila log masuk semula.');
       }
       throw ApiException((map['message'] as String?) ?? 'Tidak dapat memuatkan data.');
+    }
+
+    return map;
+  }
+
+  Future<Map<String, dynamic>> _post(String token, String path) async {
+    final response = await _http.post(
+      Uri.parse('$baseUrl$path'),
+      headers: {'Accept': 'application/json', 'Authorization': 'Bearer $token'},
+    );
+
+    final decoded = response.body.isEmpty ? const <String, dynamic>{} : jsonDecode(response.body);
+    final map = decoded is Map<String, dynamic> ? decoded : const <String, dynamic>{};
+
+    if (response.statusCode >= 400) {
+      if (response.statusCode == 401) {
+        throw const ApiException('Sesi tamat. Sila log masuk semula.');
+      }
+      throw ApiException((map['message'] as String?) ?? 'Tindakan gagal.');
     }
 
     return map;

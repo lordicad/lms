@@ -65,4 +65,7 @@ Route::middleware('auth:sanctum')->prefix('teacher')->group(function () {
     Route::get('content/videos', [TeacherContentController::class, 'videos']);
     Route::get('content/materials', [TeacherContentController::class, 'materials']);
     Route::get('content/quizzes', [TeacherContentController::class, 'quizzes']);
+
+    Route::post('content/videos/{lesson}/publish', [TeacherContentController::class, 'toggleVideo']);
+    Route::post('content/quizzes/{quiz}/publish', [TeacherContentController::class, 'toggleQuiz']);
 });

@@ -27,4 +27,10 @@ class TeacherRepository {
   Future<List<TeacherMaterial>> materials() async => _api.materials(await _token());
 
   Future<List<TeacherQuiz>> quizzes() async => _api.quizzes(await _token());
+
+  Future<bool> togglePublishVideo(int id) async =>
+      _api.togglePublishVideo(await _token(), id);
+
+  Future<bool> togglePublishQuiz(int id) async =>
+      _api.togglePublishQuiz(await _token(), id);
 }
