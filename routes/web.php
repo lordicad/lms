@@ -150,6 +150,8 @@ Route::middleware(['auth', 'role:teacher'])
             ->parameters(['bab' => 'chapter'])
             ->only(['index', 'store', 'edit', 'update', 'destroy']);
 
+        Route::get('notifikasi', [\App\Http\Controllers\Cikgu\NotificationController::class, 'index'])->name('notifikasi');
+
         Route::get('ranking', TeacherRankingController::class)->name('ranking');
 
         // The teacher's own talent signal (four sub-scores + headline + per-lesson breakdown).

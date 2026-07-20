@@ -108,6 +108,15 @@ class QuizAttemptController extends Controller
 
         $this->grader->grade($attempt, $validated['answers'] ?? []);
 
+        $attempt->loadMissing('quiz');
+        \App\Models\TeacherNotification::record(
+            $attempt->quiz->teacher_id,
+            $request->user(),
+            \App\Models\TeacherNotification::TYPE_QUIZ,
+            $attempt->quiz->title,
+            route('cikgu.kuiz.statistik', $attempt->quiz),
+        );
+
         return redirect()->route('keputusan.show', $attempt);
     }
 

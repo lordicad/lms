@@ -28,6 +28,14 @@ class DownloadController extends Controller
         // counts as a view (see WatchController::markViewed).
         if (! $request->user()->isAdmin()) {
             $material->increment('download_count');
+
+            \App\Models\TeacherNotification::record(
+                $material->teacher_id,
+                $request->user(),
+                \App\Models\TeacherNotification::TYPE_DOWNLOAD,
+                $material->title,
+                route('cikgu.bahan.index'),
+            );
         }
 
         return $disk->download($material->file_path, $material->original_name);

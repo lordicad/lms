@@ -105,6 +105,12 @@ class User extends Authenticatable
         return $this->hasMany(YoutubeChannel::class, 'teacher_id');
     }
 
+    /** Activity notifications for this teacher (quiz taken / video favourited / material downloaded). */
+    public function teacherNotifications(): HasMany
+    {
+        return $this->hasMany(TeacherNotification::class, 'teacher_id');
+    }
+
     // Student activity.
 
     public function attempts(): HasMany

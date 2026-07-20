@@ -43,6 +43,14 @@ class FavouriteController extends Controller
 
         if ($favourite->wasRecentlyCreated) {
             $lesson->increment('favourites_count');
+
+            \App\Models\TeacherNotification::record(
+                $lesson->teacher_id,
+                $request->user(),
+                \App\Models\TeacherNotification::TYPE_FAVOURITE,
+                $lesson->title,
+                route('video.show', $lesson),
+            );
         }
 
         return response()->json([

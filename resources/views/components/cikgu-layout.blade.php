@@ -8,6 +8,7 @@
     $user = auth()->user();
     $current = app()->getLocale();
     $heading ??= $title;
+    $unreadNotifications = $user->teacherNotifications()->whereNull('read_at')->count();
 
     // Sidebar nav — mirrors the WeLearn Cikgu design (icon + label, active pill).
     $nav = [
@@ -293,10 +294,12 @@
                 <x-icon :name="$isDark ? 'sun' : 'moon'" class="h-[19px] w-[19px]" />
             </a>
 
-            <button type="button" class="tp-iconbtn" title="{{ __('Notifikasi') }}">
+            <a href="{{ route('cikgu.notifikasi') }}" class="tp-iconbtn" title="{{ __('Notifikasi') }}" style="position:relative">
                 <x-icon name="bell" class="h-[19px] w-[19px]" />
-                <span class="tp-dot"></span>
-            </button>
+                @if ($unreadNotifications > 0)
+                    <span style="position:absolute;top:-4px;right:-4px;min-width:17px;height:17px;padding:0 4px;border-radius:999px;background:#EB5E5A;color:#fff;font-family:'Geist',sans-serif;font-size:10.5px;font-weight:800;display:grid;place-items:center;box-sizing:border-box">{{ $unreadNotifications > 9 ? '9+' : $unreadNotifications }}</span>
+                @endif
+            </a>
         </div>
 
         <x-flash />

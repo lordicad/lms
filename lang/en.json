@@ -818,5 +818,13 @@
     "Sila isi nama penuh.": "Please enter the full name.",
     "Sila pilih Tahun untuk murid.": "Please select a Year for the student.",
     "Sila tetapkan kata laluan.": "Please set a password.",
-    "Pengesahan kata laluan tidak sepadan.": "Password confirmation does not match."
+    "Pengesahan kata laluan tidak sepadan.": "Password confirmation does not match.",
+    "Notifikasi": "Notifications",
+    "Aktiviti murid pada kandungan anda": "Student activity on your content",
+    ":actor menjawab kuiz \":title\"": ":actor answered the quiz \":title\"",
+    ":actor menggemari video \":title\"": ":actor favourited the video \":title\"",
+    ":actor memuat turun bahan \":title\"": ":actor downloaded the material \":title\"",
+    "Tiada notifikasi lagi": "No notifications yet",
+    "Apabila murid menjawab kuiz, menggemari video atau memuat turun bahan anda, ia akan muncul di sini.": "When students answer your quizzes, favourite your videos or download your materials, it will appear here.",
+    "Baharu": "New"
 }
