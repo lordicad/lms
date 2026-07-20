@@ -5,7 +5,9 @@ namespace App\Models;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Storage;
@@ -31,6 +33,13 @@ class User extends Authenticatable
         'role',
         'is_active',
         'grade_id',
+        'school_id',
+        'school_class_id',
+        'phone',
+        'position',
+        'guardian_name',
+        'guardian_phone',
+        'guardian_email',
         'avatar',
         'locale',
         'theme',
@@ -47,6 +56,8 @@ class User extends Authenticatable
     {
         return [
             'grade_id' => 'integer',
+            'school_id' => 'integer',
+            'school_class_id' => 'integer',
             'is_active' => 'boolean',
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
@@ -80,6 +91,44 @@ class User extends Authenticatable
     public function grade(): BelongsTo
     {
         return $this->belongsTo(Grade::class);
+    }
+
+    // School / class / homeroom.
+
+    public function school(): BelongsTo
+    {
+        return $this->belongsTo(School::class);
+    }
+
+    /** The student's class. */
+    public function schoolClass(): BelongsTo
+    {
+        return $this->belongsTo(SchoolClass::class, 'school_class_id');
+    }
+
+    /**
+     * The class this teacher is homeroom teacher of, if any. This is the writable side of the
+     * homeroom relationship — homeroom_teacher_id lives on school_classes, so a teacher owns at
+     * most one homeroom class (enforced by a unique index).
+     */
+    public function homeroomClass(): HasOne
+    {
+        return $this->hasOne(SchoolClass::class, 'homeroom_teacher_id');
+    }
+
+    /** Subjects this teacher teaches (many-to-many). */
+    public function subjects(): BelongsToMany
+    {
+        return $this->belongsToMany(Subject::class, 'subject_teacher', 'user_id', 'subject_id');
+    }
+
+    /**
+     * A student's homeroom teacher, derived read-only from their class. Returns null when the
+     * student has no class or the class has no homeroom teacher assigned.
+     */
+    public function homeroomTeacher(): ?User
+    {
+        return $this->schoolClass?->homeroomTeacher;
     }
 
     // Teacher-owned content.

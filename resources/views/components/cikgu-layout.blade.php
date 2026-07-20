@@ -24,7 +24,7 @@
         ['label' => __('Kuiz'),    'icon' => 'quiz',     'route' => 'cikgu.kuiz.index', 'active' => request()->routeIs('cikgu.kuiz.*')],
         ['label' => __('Bab'),     'icon' => 'book',     'route' => 'cikgu.bab.index', 'active' => request()->routeIs('cikgu.bab.*')],
         ['label' => __('Ranking'), 'icon' => 'trophy',   'route' => 'cikgu.ranking', 'active' => request()->routeIs('cikgu.ranking')],
-        ['label' => __('Bakat'),   'icon' => 'star',     'route' => 'cikgu.bakat', 'active' => request()->routeIs('cikgu.bakat')],
+        // Bakat (Talent) has been merged into Home (brief §2.4) — no separate nav item.
     ];
 @endphp
 

@@ -7,6 +7,12 @@
             </p>
         </header>
 
+        {{-- Dependent Year -> Subject filter (brief §3.1). Defaults to the student's active Tahun. --}}
+        <div class="mb-6">
+            <x-year-subject-filter variant="student" :all-years="false"
+                :action="route('simpanan.index')" :grades="$grades" :subjects="$subjects" :filter="$filter" />
+        </div>
+
         {{-- Uploaded videos are downloadable; YouTube ones are honestly marked online-only. --}}
         <section class="mb-10">
             <h2 class="mb-4 text-lg font-extrabold text-ink">{{ __('Video Pelajaran') }}</h2>
@@ -24,7 +30,10 @@
 
                             <span class="min-w-0 flex-1">
                                 <a href="{{ route('video.show', $lesson) }}" class="block truncate font-extrabold text-ink hover:text-brand">{{ $lesson->title }}</a>
-                                <span class="text-sm text-ink-2">{{ $lesson->chapter->subject->displayName() }} · Bab {{ $lesson->chapter->number }}</span>
+                                <span class="block text-sm text-ink-2">{{ $lesson->chapter->subject->displayName() }} · Bab {{ $lesson->chapter->number }}</span>
+                                @if ($lesson->teacher)
+                                    <span class="block text-xs text-ink-2">{{ __('Guru: :name', ['name' => $lesson->teacher->name]) }}</span>
+                                @endif
                             </span>
 
                             @if ($lesson->isUpload())
@@ -76,7 +85,7 @@
                                             <span class="text-ink-2" aria-hidden="true"><x-icon :name="$material->iconName()" class="h-5 w-5" /></span>
                                             <span class="min-w-0 flex-1">
                                                 <span class="block truncate text-sm font-bold text-ink">{{ $material->title }}</span>
-                                                <span class="text-xs text-ink-2">{{ $material->humanSize() }}</span>
+                                                <span class="block text-xs text-ink-2">{{ $material->humanSize() }}@if ($material->teacher) · {{ __('Guru: :name', ['name' => $material->teacher->name]) }}@endif</span>
                                             </span>
                                             <x-icon name="download" class="h-5 w-5 shrink-0 text-brand" />
                                         </a>

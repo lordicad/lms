@@ -2,12 +2,17 @@
 
 namespace App\Models;
 
+use Database\Factories\MaterialFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Storage;
 
 class Material extends Model
 {
+    /** @use HasFactory<MaterialFactory> */
+    use HasFactory;
+
     protected $fillable = [
         'chapter_id',
         'lesson_id',

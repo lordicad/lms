@@ -15,6 +15,13 @@ return new class extends Migration
 {
     public function up(): void
     {
+        // The demo cohort is never wanted in the test database — it would add 789 rows to every
+        // RefreshDatabase run and pollute assertions. Production/local already ran this migration,
+        // so guarding the testing environment changes nothing there.
+        if (app()->environment('testing')) {
+            return;
+        }
+
         (new DummyUsersSeeder)->run();
     }
 

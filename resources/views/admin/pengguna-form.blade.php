@@ -11,7 +11,18 @@
         .pg-err { margin:0;font-size:12.5px;font-weight:700;color:#C24936; }
     </style>
 
-    <div class="pg-form" x-data="{ role: '{{ old('role', $user->role ?: 'teacher') }}' }" style="max-width:640px">
+    <div class="pg-form" style="max-width:640px"
+         x-data="{
+             role: '{{ old('role', $user->role ?: 'teacher') }}',
+             schoolId: '{{ old('school_id', $user->school_id) }}',
+             gradeLevel: '{{ old('grade_level', $user->grade?->level) }}',
+             schoolClass: '{{ old('school_class_id', $user->school_class_id) }}',
+             classes: {{ \Illuminate\Support\Js::from($allClasses) }},
+             gradeMap: {{ \Illuminate\Support\Js::from($grades->pluck('id', 'level')) }},
+             get gradeId() { return this.gradeMap[this.gradeLevel] ?? null; },
+             get availableClasses() { return this.classes.filter(c => String(c.school_id) === String(this.schoolId) && String(c.grade_id) === String(this.gradeId)); },
+             onContextChange() { if (this.schoolClass && ! this.availableClasses.some(c => String(c.id) === String(this.schoolClass))) this.schoolClass = ''; },
+         }">
         <a href="{{ route('admin.pengguna') }}" style="display:inline-flex;align-items:center;gap:6px;font-family:'Geist',sans-serif;font-size:13.5px;font-weight:800;color:var(--tp-muted-2);text-decoration:none;margin-bottom:16px">← {{ __('Semua pengguna') }}</a>
 
         <form method="POST" action="{{ $editing ? route('admin.pengguna.update', $user) : route('admin.pengguna.store') }}"
@@ -56,10 +67,50 @@
                 @error('email')<p class="pg-err">{{ $message }}</p>@enderror
             </div>
 
+            {{-- School — both roles --}}
+            <div class="tp-field">
+                <label for="school_id" class="tp-label">{{ __('Sekolah') }}</label>
+                <select id="school_id" name="school_id" class="tp-filter-select" style="width:100%" x-model="schoolId" @change="onContextChange()">
+                    <option value="">{{ __('Tiada / Belum ditetapkan') }}</option>
+                    @foreach ($schools as $school)
+                        <option value="{{ $school->id }}" @selected((int) old('school_id', $user->school_id) === $school->id)>{{ $school->name }}</option>
+                    @endforeach
+                </select>
+                @error('school_id')<p class="pg-err">{{ $message }}</p>@enderror
+            </div>
+
+            {{-- Teacher: phone, position, subjects --}}
+            <template x-if="role === 'teacher'">
+                <div style="display:flex;flex-direction:column;gap:16px">
+                    <div class="tp-field">
+                        <label for="phone" class="tp-label">{{ __('Nombor telefon') }}</label>
+                        <input id="phone" name="phone" type="tel" value="{{ old('phone', $user->phone) }}" class="tp-input">
+                        @error('phone')<p class="pg-err">{{ $message }}</p>@enderror
+                    </div>
+                    <div class="tp-field">
+                        <label for="position" class="tp-label">{{ __('Jawatan') }}</label>
+                        <input id="position" name="position" type="text" value="{{ old('position', $user->position) }}" class="tp-input">
+                        @error('position')<p class="pg-err">{{ $message }}</p>@enderror
+                    </div>
+                    <fieldset class="tp-field" style="border:1.5px solid var(--tp-line-2);border-radius:12px;padding:12px 14px">
+                        <legend class="tp-label" style="padding:0 6px">{{ __('Subjek diajar') }}</legend>
+                        <div style="display:flex;flex-wrap:wrap;gap:8px 16px;margin-top:6px">
+                            @php($chosen = old('subjects', $user->exists ? $user->subjects->pluck('id')->all() : []))
+                            @foreach ($subjects as $subject)
+                                <label style="display:flex;align-items:center;gap:7px;font-size:13.5px;color:var(--tp-ink);cursor:pointer">
+                                    <input type="checkbox" name="subjects[]" value="{{ $subject->id }}" @checked(in_array($subject->id, $chosen)) style="width:17px;height:17px;accent-color:#17907B">
+                                    {{ $subject->displayName() }}
+                                </label>
+                            @endforeach
+                        </div>
+                    </fieldset>
+                </div>
+            </template>
+
             {{-- Tahun — students only --}}
             <div class="tp-field" x-show="role === 'student'" x-cloak>
                 <label for="grade_level" class="tp-label">{{ __('Tahun') }}</label>
-                <select id="grade_level" name="grade_level" class="tp-filter-select" style="width:100%">
+                <select id="grade_level" name="grade_level" class="tp-filter-select" style="width:100%" x-model="gradeLevel" @change="onContextChange()">
                     <option value="">{{ __('Pilih Tahun') }}</option>
                     @foreach ($grades as $grade)
                         <option value="{{ $grade->level }}" @selected(old('grade_level', $user->grade?->level) == $grade->level)>{{ $grade->name }}</option>
@@ -67,6 +118,37 @@
                 </select>
                 @error('grade_level')<p class="pg-err">{{ $message }}</p>@enderror
             </div>
+
+            {{-- Student: class + guardian --}}
+            <template x-if="role === 'student'">
+                <div style="display:flex;flex-direction:column;gap:16px">
+                    <div class="tp-field">
+                        <label for="school_class_id" class="tp-label">{{ __('Kelas') }}</label>
+                        <select id="school_class_id" name="school_class_id" class="tp-filter-select" style="width:100%" x-model="schoolClass" x-bind:disabled="! schoolId || ! gradeLevel">
+                            <option value="">{{ __('Tiada / Belum ditetapkan') }}</option>
+                            <template x-for="c in availableClasses" :key="c.id">
+                                <option :value="c.id" x-text="c.label"></option>
+                            </template>
+                        </select>
+                        @error('school_class_id')<p class="pg-err">{{ $message }}</p>@enderror
+                    </div>
+                    <div class="tp-field">
+                        <label for="guardian_name" class="tp-label">{{ __('Nama penjaga') }}</label>
+                        <input id="guardian_name" name="guardian_name" type="text" value="{{ old('guardian_name', $user->guardian_name) }}" class="tp-input">
+                        @error('guardian_name')<p class="pg-err">{{ $message }}</p>@enderror
+                    </div>
+                    <div class="tp-field">
+                        <label for="guardian_phone" class="tp-label">{{ __('Telefon penjaga') }}</label>
+                        <input id="guardian_phone" name="guardian_phone" type="tel" value="{{ old('guardian_phone', $user->guardian_phone) }}" class="tp-input">
+                        @error('guardian_phone')<p class="pg-err">{{ $message }}</p>@enderror
+                    </div>
+                    <div class="tp-field">
+                        <label for="guardian_email" class="tp-label">{{ __('E-mel penjaga') }}</label>
+                        <input id="guardian_email" name="guardian_email" type="email" value="{{ old('guardian_email', $user->guardian_email) }}" class="tp-input">
+                        @error('guardian_email')<p class="pg-err">{{ $message }}</p>@enderror
+                    </div>
+                </div>
+            </template>
 
             <div style="height:1px;background:var(--tp-line);margin:2px 0"></div>
 

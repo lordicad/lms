@@ -2,11 +2,16 @@
 
 namespace App\Models;
 
+use Database\Factories\QuestionOptionFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class QuestionOption extends Model
 {
+    /** @use HasFactory<QuestionOptionFactory> */
+    use HasFactory;
+
     protected $fillable = ['question_id', 'option_text', 'is_correct', 'sort_order'];
 
     protected function casts(): array

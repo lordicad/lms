@@ -7,6 +7,7 @@ use App\Http\Requests\QuizRequest;
 use App\Models\Grade;
 use App\Models\Quiz;
 use App\Models\Subject;
+use App\Support\ContentFilter;
 use App\Support\Uploads;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -17,17 +18,17 @@ class QuizController extends Controller
 {
     public function index(Request $request): View
     {
-        $quizzes = $request->user()->quizzes()
-            ->with('chapter.subject', 'chapter.grade', 'questions.options')
-            ->withCount(['questions', 'attempts as completed_attempts_count' => fn ($q) => $q->whereNotNull('completed_at')])
-            ->when($request->filled('subjek'), fn ($q) => $q->whereHas(
-                'chapter.subject',
-                fn ($s) => $s->where('slug', $request->string('subjek')),
-            ))
-            ->when($request->filled('tahun'), fn ($q) => $q->whereHas(
-                'chapter.grade',
-                fn ($g) => $g->where('level', $request->integer('tahun')),
-            ))
+        $teacher = $request->user();
+
+        // Shared Year -> Subject -> Chapter filter. An invalid combination is dropped server-side,
+        // so a Chapter filter never leaks another Subject's quizzes.
+        $filter = ContentFilter::fromRequest($request);
+
+        $quizzes = $filter->apply(
+            $teacher->quizzes()
+                ->with('chapter.subject', 'chapter.grade', 'questions.options')
+                ->withCount(['questions', 'attempts as completed_attempts_count' => fn ($q) => $q->whereNotNull('completed_at')])
+        )
             ->latest('id')
             ->paginate(12)
             ->withQueryString();
@@ -36,6 +37,9 @@ class QuizController extends Controller
             'quizzes' => $quizzes,
             'subjects' => Subject::orderBy('sort_order')->get(),
             'grades' => Grade::orderBy('level')->get(),
+            'filter' => $filter,
+            'totalQuizzes' => $teacher->quizzes()->count(),
+            'filteredCount' => $quizzes->total(),
         ]);
     }
 

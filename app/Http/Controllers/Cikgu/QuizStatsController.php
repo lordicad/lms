@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Cikgu;
 
 use App\Http\Controllers\Controller;
 use App\Models\Quiz;
+use App\Models\QuizAttempt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,11 +23,26 @@ class QuizStatsController extends Controller
 
         $quiz->load('chapter.subject', 'chapter.grade', 'questions');
 
+        // Summaries are computed over EVERY completed attempt, never just the current page, via a
+        // single aggregate query — so pagination below can never skew the average or pass/fail totals.
+        $aggregate = $quiz->attempts()->completed()
+            ->selectRaw('COUNT(*) as total')
+            ->selectRaw('AVG(score) as avg_score')
+            ->selectRaw('AVG(CASE WHEN max_score > 0 THEN (score / max_score) * 100 ELSE 0 END) as avg_percent')
+            ->selectRaw('SUM(CASE WHEN max_score > 0 AND (score / max_score) * 100 >= ? THEN 1 ELSE 0 END) as passed', [QuizAttempt::PASS_AT])
+            ->first();
+
+        $completed = (int) ($aggregate->total ?? 0);
+        $passed = (int) ($aggregate->passed ?? 0);
+
+        // The attempt list itself paginates at 10; each completed attempt stays a separate numbered
+        // row (retries are not deduplicated). Newest completed first.
         $attempts = $quiz->attempts()
             ->completed()
             ->with('student.grade')
             ->orderByDesc('completed_at')
-            ->get();
+            ->paginate(10)
+            ->withQueryString();
 
         // Correct-rate per question, counted across every completed attempt.
         $perQuestion = DB::table('attempt_answers')
@@ -42,16 +58,16 @@ class QuizStatsController extends Controller
             ->get()
             ->keyBy('question_id');
 
-        $completed = $attempts->count();
-
         return view('cikgu.kuiz.statistik', [
             'quiz' => $quiz,
             'chapter' => $quiz->chapter,
             'subject' => $quiz->chapter->subject,
             'attempts' => $attempts,
             'completedCount' => $completed,
-            'averageScore' => $completed > 0 ? round($attempts->avg('score'), 1) : 0,
-            'averagePercent' => $completed > 0 ? (int) round($attempts->avg(fn ($a) => $a->percentage())) : 0,
+            'averageScore' => $completed > 0 ? round((float) $aggregate->avg_score, 1) : 0,
+            'averagePercent' => $completed > 0 ? (int) round((float) $aggregate->avg_percent) : 0,
+            'passedCount' => $passed,
+            'failedCount' => max(0, $completed - $passed),
             'perQuestion' => $perQuestion,
         ]);
     }

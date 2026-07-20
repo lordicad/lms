@@ -31,7 +31,7 @@
             @endforeach
         </div>
 
-        @include('admin.kandungan._filters', ['subjects' => $subjects, 'grades' => $grades, 'action' => route('admin.kandungan.video')])
+        <x-year-subject-filter :action="route('admin.kandungan.video')" :grades="$grades" :subjects="$subjects" />
 
         @if ($lessons->isEmpty())
             <div class="tp-empty">

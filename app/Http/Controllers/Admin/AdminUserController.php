@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Grade;
+use App\Models\School;
+use App\Models\SchoolClass;
+use App\Models\Subject;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -57,10 +60,9 @@ class AdminUserController extends Controller
 
     public function create(): View
     {
-        return view('admin.pengguna-form', [
+        return view('admin.pengguna-form', array_merge([
             'user' => new User(['role' => User::ROLE_TEACHER, 'is_active' => true]),
-            'grades' => Grade::orderBy('level')->get(),
-        ]);
+        ], $this->formLists()));
     }
 
     public function store(Request $request): RedirectResponse
@@ -72,6 +74,7 @@ class AdminUserController extends Controller
         $this->fill($user, $data);
         $user->password = Hash::make($data['password']);
         $user->save();
+        $this->syncSubjects($user, $data);
 
         return redirect()->route('admin.pengguna')
             ->with('status', __('Akaun :name berjaya dicipta.', ['name' => $user->name]));
@@ -80,11 +83,33 @@ class AdminUserController extends Controller
     public function edit(User $user): View
     {
         $this->ensureManaged($user);
+        $user->load('subjects');
 
-        return view('admin.pengguna-form', [
+        return view('admin.pengguna-form', array_merge([
             'user' => $user,
+        ], $this->formLists()));
+    }
+
+    /**
+     * Shared reference lists for the create/edit form.
+     *
+     * @return array<string, mixed>
+     */
+    private function formLists(): array
+    {
+        return [
             'grades' => Grade::orderBy('level')->get(),
-        ]);
+            'schools' => School::orderBy('name')->get(),
+            'subjects' => Subject::orderBy('sort_order')->get(),
+            'allClasses' => SchoolClass::active()->with('grade')->orderBy('grade_id')->orderBy('name')
+                ->get()
+                ->map(fn (SchoolClass $c) => [
+                    'id' => $c->id,
+                    'school_id' => $c->school_id,
+                    'grade_id' => $c->grade_id,
+                    'label' => $c->label(),
+                ])->values(),
+        ];
     }
 
     public function update(Request $request, User $user): RedirectResponse
@@ -99,6 +124,7 @@ class AdminUserController extends Controller
         }
 
         $user->save();
+        $this->syncSubjects($user, $data);
 
         return redirect()->route('admin.pengguna')
             ->with('status', __('Akaun :name berjaya dikemas kini.', ['name' => $user->name]));
@@ -164,6 +190,38 @@ class AdminUserController extends Controller
             ],
             'password' => [$creating ? 'required' : 'nullable', 'confirmed', Password::min(6)],
             'is_active' => ['nullable', 'boolean'],
+
+            // Shared + role-specific profile fields, so the admin form stays coherent with the schema.
+            'school_id' => ['nullable', 'integer', Rule::exists('schools', 'id')],
+            'phone' => ['nullable', 'string', 'max:30', 'regex:/^\+?[0-9\s\-()]{6,20}$/'],
+            'position' => ['nullable', 'string', 'max:100'],
+            'subjects' => ['nullable', 'array'],
+            'subjects.*' => ['integer', Rule::exists('subjects', 'id')],
+            'school_class_id' => [
+                'nullable', 'integer',
+                function (string $attr, mixed $value, \Closure $fail) use ($request, $isTeacher) {
+                    $class = SchoolClass::find($value);
+                    if (! $class) {
+                        $fail(__('Kelas tidak sah.'));
+
+                        return;
+                    }
+                    if ((int) $class->school_id !== (int) $request->input('school_id')) {
+                        $fail(__('Kelas ini bukan di sekolah yang dipilih.'));
+
+                        return;
+                    }
+                    if (! $isTeacher) {
+                        $gradeId = Grade::where('level', $request->integer('grade_level'))->value('id');
+                        if ((int) $class->grade_id !== (int) $gradeId) {
+                            $fail(__('Kelas ini tidak sepadan dengan tahun murid.'));
+                        }
+                    }
+                },
+            ],
+            'guardian_name' => ['nullable', 'string', 'max:255'],
+            'guardian_phone' => ['nullable', 'string', 'max:30', 'regex:/^\+?[0-9\s\-()]{6,20}$/'],
+            'guardian_email' => ['nullable', 'string', 'email', 'max:255'],
         ], [
             'name.required' => __('Sila isi nama penuh.'),
             'username.required' => __('Sila pilih nama pengguna.'),
@@ -188,5 +246,30 @@ class AdminUserController extends Controller
         $user->email = $isTeacher ? $data['email'] : ($data['email'] ?? null);
         $user->grade_id = $isTeacher ? null : Grade::where('level', $data['grade_level'])->value('id');
         $user->is_active = (bool) ($data['is_active'] ?? false);
+        $user->school_id = $data['school_id'] ?? null;
+
+        if ($isTeacher) {
+            $user->phone = $data['phone'] ?? null;
+            $user->position = $data['position'] ?? null;
+            $user->school_class_id = null;
+            $user->guardian_name = null;
+            $user->guardian_phone = null;
+            $user->guardian_email = null;
+        } else {
+            $user->school_class_id = $data['school_class_id'] ?? null;
+            $user->guardian_name = $data['guardian_name'] ?? null;
+            $user->guardian_phone = $data['guardian_phone'] ?? null;
+            $user->guardian_email = $data['guardian_email'] ?? null;
+            $user->phone = null;
+            $user->position = null;
+        }
+    }
+
+    /** Sync the teacher-subjects pivot after the row is saved. */
+    private function syncSubjects(User $user, array $data): void
+    {
+        if ($user->role === User::ROLE_TEACHER) {
+            $user->subjects()->sync($data['subjects'] ?? []);
+        }
     }
 }

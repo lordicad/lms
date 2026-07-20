@@ -21,10 +21,12 @@ class RankingController extends Controller
             ? Subject::where('slug', $request->string('subjek'))->first()
             : null;
 
+        // Top 100 within the student's own Tahun (brief §3.2). Ranks stay continuous and absolute
+        // because LeaderboardService ranks the full set before applying the limit.
         $top = $leaderboard->ranking(
             gradeId: $user->grade_id,
             subjectId: $subject?->id,
-            limit: 10,
+            limit: 100,
         );
 
         $myRow = $leaderboard->rowFor($user, $subject?->id);
@@ -32,7 +34,7 @@ class RankingController extends Controller
         return view('ranking.index', [
             'top' => $top,
             'myRow' => $myRow,
-            // Pin the student's own row below the table when they are outside the top 10.
+            // Pin the student's own row below the table when they are outside the top 100.
             'showMyRow' => $myRow && ! $top->contains(fn ($row) => $row->student->id === $user->id),
             'subjects' => Subject::orderBy('sort_order')->get(),
             'subject' => $subject,

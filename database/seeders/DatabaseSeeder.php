@@ -11,6 +11,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             GradeSeeder::class,
             Kurikulum2027Seeder::class,
+            SchoolSeeder::class,
         ]);
 
         // Demo accounts and sample content are for local work only. A production database

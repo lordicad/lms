@@ -308,6 +308,16 @@
         @apply mt-2 text-sm font-semibold text-danger;
     }
 
+    /* Shared Year -> Subject -> Chapter filter, student surface variant. */
+    .ysf-label {
+        @apply text-sm font-semibold text-ink-2;
+    }
+
+    .ysf-select {
+        @apply min-h-[44px] rounded-control border-line bg-surface-2 text-ink
+               focus:border-brand focus:ring-brand;
+    }
+
     .chip {
         @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-semibold;
     }

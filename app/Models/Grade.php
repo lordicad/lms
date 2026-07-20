@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Database\Factories\GradeFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -9,6 +11,9 @@ use Illuminate\Support\Collection;
 
 class Grade extends Model
 {
+    /** @use HasFactory<GradeFactory> */
+    use HasFactory;
+
     protected $fillable = ['name', 'level'];
 
     protected function casts(): array

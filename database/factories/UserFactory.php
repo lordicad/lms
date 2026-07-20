@@ -3,6 +3,9 @@
 namespace Database\Factories;
 
 use App\Models\Grade;
+use App\Models\School;
+use App\Models\SchoolClass;
+use App\Models\Subject;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
@@ -62,5 +65,35 @@ class UserFactory extends Factory
     public function unverified(): static
     {
         return $this->state(fn () => ['email_verified_at' => null]);
+    }
+
+    public function admin(): static
+    {
+        return $this->state(fn () => [
+            'role' => User::ROLE_ADMIN,
+            'grade_id' => null,
+        ]);
+    }
+
+    public function atSchool(School $school): static
+    {
+        return $this->state(fn () => ['school_id' => $school->id]);
+    }
+
+    public function inClass(SchoolClass $class): static
+    {
+        return $this->state(fn () => [
+            'school_id' => $class->school_id,
+            'school_class_id' => $class->id,
+            'grade_id' => $class->grade_id,
+        ]);
+    }
+
+    /** Attach the given subjects to this teacher via the subject_teacher pivot. */
+    public function teaches(Subject ...$subjects): static
+    {
+        return $this->afterCreating(fn (User $user) => $user->subjects()->syncWithoutDetaching(
+            collect($subjects)->pluck('id')->all()
+        ));
     }
 }

@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use Database\Factories\SubjectFactory;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -11,6 +13,9 @@ use Illuminate\Support\Facades\DB;
 
 class Subject extends Model
 {
+    /** @use HasFactory<SubjectFactory> */
+    use HasFactory;
+
     protected $fillable = ['name', 'short_name', 'slug', 'category', 'color', 'icon', 'sort_order'];
 
     /**
@@ -36,6 +41,12 @@ class Subject extends Model
     public function grades(): BelongsToMany
     {
         return $this->belongsToMany(Grade::class);
+    }
+
+    /** Teachers who teach this subject (many-to-many). */
+    public function teachers(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'subject_teacher', 'subject_id', 'user_id');
     }
 
     /**

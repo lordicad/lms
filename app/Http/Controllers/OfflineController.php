@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Grade;
 use App\Models\Lesson;
 use App\Models\Material;
+use App\Models\Subject;
 use App\Support\ActiveGrade;
+use App\Support\ContentFilter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -21,20 +24,32 @@ class OfflineController extends Controller
     public function index(Request $request): View
     {
         $user = $request->user();
-        $grade = ActiveGrade::for($user);
+
+        // Year defaults to the student's active browsing Tahun, but a valid ?tahun overrides it.
+        $grade = $request->filled('tahun')
+            ? Grade::where('level', $request->integer('tahun'))->first()
+            : ActiveGrade::for($user);
+
+        // Subject depends on the Year; an invalid pair is dropped server-side.
+        $filter = ContentFilter::forGrade($request, $grade);
 
         $lessons = $grade
-            ? Lesson::published()
-                ->whereHas('chapter', fn ($q) => $q->where('grade_id', $grade->id)->where('is_active', true))
-                ->withStudentContext($user)
+            ? $filter->apply(
+                Lesson::published()
+                    ->whereHas('chapter', fn ($q) => $q->where('is_active', true))
+                    ->withStudentContext($user)
+                    ->with('teacher:id,name')
+            )
                 ->orderByDesc('id')
                 ->get()
             : collect();
 
         $materials = $grade
-            ? Material::query()
-                ->whereHas('chapter', fn ($q) => $q->where('grade_id', $grade->id)->where('is_active', true))
-                ->with('chapter.subject')
+            ? $filter->apply(
+                Material::query()
+                    ->whereHas('chapter', fn ($q) => $q->where('is_active', true))
+                    ->with('chapter.subject', 'teacher:id,name')
+            )
                 ->orderBy('chapter_id')
                 ->get()
                 ->groupBy('chapter_id')
@@ -42,8 +57,11 @@ class OfflineController extends Controller
 
         return view('belajar.simpanan', [
             'grade' => $grade,
+            'filter' => $filter,
             'lessons' => $lessons,
             'materialsByChapter' => $materials,
+            'subjects' => Subject::orderBy('sort_order')->get(),
+            'grades' => Grade::orderBy('level')->get(),
         ]);
     }
 

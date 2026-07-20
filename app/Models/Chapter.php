@@ -2,13 +2,18 @@
 
 namespace App\Models;
 
+use Database\Factories\ChapterFactory;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Chapter extends Model
 {
+    /** @use HasFactory<ChapterFactory> */
+    use HasFactory;
+
     protected $fillable = ['subject_id', 'grade_id', 'number', 'title', 'description', 'is_active', 'created_by'];
 
     protected function casts(): array

@@ -45,17 +45,8 @@
      x-init="init()"
      style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px">
 
-    <div class="tp-field">
-        <label for="subject_id" class="tp-label">{{ __('Subjek') }}</label>
-
-        <select id="subject_id" name="subject_id" class="tp-select" x-model.number="subject" @change="onSubjectChange()" required>
-            <option value="">{{ __('Pilih subjek') }}</option>
-            <template x-for="option in availableSubjects" :key="option.id">
-                <option :value="option.id" x-text="`${option.icon} ${option.name}`"></option>
-            </template>
-        </select>
-    </div>
-
+    {{-- Order: Tahun -> Subjek -> Bab (brief §1). The Alpine dependency logic is symmetric, so
+         Tahun leads visually while Subject and Tahun still filter each other. --}}
     <div class="tp-field">
         <label for="grade_id" class="tp-label">{{ __('Tahun') }}</label>
 
@@ -63,6 +54,17 @@
             <option value="">{{ __('Pilih tahun') }}</option>
             <template x-for="option in availableGrades" :key="option.id">
                 <option :value="option.id" x-text="option.name"></option>
+            </template>
+        </select>
+    </div>
+
+    <div class="tp-field">
+        <label for="subject_id" class="tp-label">{{ __('Subjek') }}</label>
+
+        <select id="subject_id" name="subject_id" class="tp-select" x-model.number="subject" @change="onSubjectChange()" required>
+            <option value="">{{ __('Pilih subjek') }}</option>
+            <template x-for="option in availableSubjects" :key="option.id">
+                <option :value="option.id" x-text="`${option.icon} ${option.name}`"></option>
             </template>
         </select>
     </div>

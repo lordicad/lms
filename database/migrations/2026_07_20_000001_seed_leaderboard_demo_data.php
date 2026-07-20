@@ -12,6 +12,11 @@ return new class extends Migration
 {
     public function up(): void
     {
+        // Skip demo leaderboard data in tests; it is only for the deployed demo environment.
+        if (app()->environment('testing')) {
+            return;
+        }
+
         (new LeaderboardDemoSeeder)->run();
     }
 

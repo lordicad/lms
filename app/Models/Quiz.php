@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use Database\Factories\QuizFactory;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -10,6 +12,9 @@ use Illuminate\Support\Facades\Storage;
 
 class Quiz extends Model
 {
+    /** @use HasFactory<QuizFactory> */
+    use HasFactory;
+
     public const TYPE_FILE = 'file';
 
     public const TYPE_INTERACTIVE = 'interactive';
