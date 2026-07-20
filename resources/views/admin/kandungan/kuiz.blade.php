@@ -73,7 +73,7 @@
                                 <button type="button" class="tp-linkbtn" style="justify-self:end"
                                         @click="open(@js([
                                             'title' => $quiz->title,
-                                            'teacher' => $quiz->teacher?->name,
+                                            'subtitle' => collect([$quiz->teacher?->name, $quiz->chapter->subject->displayName(), $quiz->chapter->grade->name])->filter()->implode(' · '),
                                             'type' => $quiz->type,
                                             'downloadUrl' => $quiz->isFile() ? route('muat-turun.kuiz', $quiz) : null,
                                             'questions' => $quiz->questions->map(fn ($question) => [
@@ -98,86 +98,54 @@
             <div>{{ $quizzes->links() }}</div>
         @endif
 
-        {{-- Preview modal. Interactive quizzes list their questions + correct answers; file quizzes offer the download. --}}
+        {{-- Preview modal (WeLearn Admin design): gradient header + green question body. --}}
         <template x-if="quiz">
-            <div class="fixed inset-0 z-50 flex items-center justify-center p-4"
-                 role="dialog" aria-modal="true" :aria-label="quiz.title">
-                <div class="absolute inset-0 bg-black/70" @click="close()" aria-hidden="true"></div>
-
-                <div class="relative flex max-h-[90vh] w-full max-w-3xl flex-col overflow-hidden rounded-card border border-line bg-surface shadow-hero">
-                    <div class="flex items-start justify-between gap-4 border-b border-line px-4 py-3">
-                        <div class="min-w-0">
-                            <h2 class="truncate font-extrabold text-ink" x-text="quiz.title"></h2>
-                            <p class="truncate text-xs text-ink-2">
-                                <span x-text="quiz.teacher"></span>
-                                <span x-show="quiz.questions.length">
-                                    &middot; <span x-text="quiz.questions.length"></span> {{ __('soalan') }}
-                                </span>
-                            </p>
+            <x-content-preview obj="quiz" :pill="'📝 '.__('Kuiz')">
+                <div style="overflow-y:auto;background:linear-gradient(180deg,#E9F7F2,#FAF9F5)">
+                    <template x-if="quiz.type === 'file'">
+                        <div style="padding:48px 28px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px">
+                            <p style="margin:0;font-family:'Geist',sans-serif;font-weight:800;font-size:15px;color:#28293F">{{ __('Kuiz ini ialah fail untuk dicetak.') }}</p>
+                            <p style="margin:0;font-size:13.5px;color:#6C6F87;max-width:360px">{{ __('Ia tiada soalan dalam sistem. Muat turun fail untuk melihatnya.') }}</p>
+                            <a :href="quiz.downloadUrl" style="margin-top:12px;display:inline-flex;align-items:center;gap:8px;min-height:44px;border-radius:12px;background:#17907B;color:#fff;font-family:'Geist',sans-serif;font-weight:800;font-size:14px;padding:0 20px;text-decoration:none">⬇ {{ __('Muat Turun') }}</a>
                         </div>
+                    </template>
 
-                        <button type="button" class="btn-ghost btn-sm shrink-0" @click="close()" x-init="$el.focus()">
-                            <x-icon name="x" class="h-4 w-4" />
-                            <span class="sr-only">{{ __('Tutup') }}</span>
-                        </button>
-                    </div>
+                    <template x-if="quiz.type === 'interactive' && ! quiz.questions.length">
+                        <div style="padding:48px 28px;text-align:center">
+                            <p style="margin:0;font-family:'Geist',sans-serif;font-weight:800;font-size:15px;color:#28293F">{{ __('Kuiz ini belum ada soalan.') }}</p>
+                        </div>
+                    </template>
 
-                    <div class="overflow-y-auto px-4 py-4">
-                        <template x-if="quiz.type === 'file'">
-                            <div class="px-6 py-12 text-center">
-                                <p class="font-bold text-ink">{{ __('Kuiz ini ialah fail untuk dicetak.') }}</p>
-                                <p class="mx-auto mt-1 max-w-prose text-sm text-ink-2">
-                                    {{ __('Ia tiada soalan dalam sistem. Muat turun fail untuk melihatnya.') }}
-                                </p>
-                                <a :href="quiz.downloadUrl" class="btn-primary btn-sm mt-4">
-                                    <x-icon name="download" class="h-4 w-4" />
-                                    {{ __('Muat Turun') }}
-                                </a>
+                    <template x-if="quiz.questions.length">
+                        <div style="padding:24px;display:flex;flex-direction:column;gap:16px">
+                            <div style="display:flex;align-items:center;gap:8px;background:#fff;border:1px solid #B7E3D8;border-radius:12px;padding:10px 16px;align-self:flex-start">
+                                <span style="width:16px;height:16px;border-radius:5px;background:#E9F7F2;border:1.5px solid #0F7A68;display:inline-block;flex-shrink:0"></span>
+                                <span style="font-size:12.5px;font-weight:800;color:#0F7A68;font-family:'Geist',sans-serif">{{ __('Jawapan betul ditanda hijau') }}</span>
                             </div>
-                        </template>
 
-                        <template x-if="quiz.type === 'interactive' && ! quiz.questions.length">
-                            <div class="px-6 py-12 text-center">
-                                <p class="font-bold text-ink">{{ __('Kuiz ini belum ada soalan.') }}</p>
-                            </div>
-                        </template>
-
-                        <template x-if="quiz.questions.length">
-                            <ol class="space-y-4">
-                                <template x-for="(question, index) in quiz.questions" :key="index">
-                                    <li class="rounded-control border border-line p-3">
-                                        <div class="flex items-start justify-between gap-3">
-                                            <p class="font-bold text-ink">
-                                                <span x-text="(index + 1) + '.'"></span>
-                                                <span x-text="question.text"></span>
-                                            </p>
-                                            <span class="chip shrink-0 bg-surface-2 text-ink-2">
-                                                <span x-text="question.points"></span> {{ __('mata') }}
-                                            </span>
-                                        </div>
-
-                                        <p class="mt-1 text-xs text-ink-2"
-                                           x-text="question.multiple ? '{{ __('Pilih semua yang betul') }}' : '{{ __('Pilih satu jawapan') }}'"></p>
-
-                                        <ul class="mt-2 space-y-1">
-                                            <template x-for="option in question.options" :key="option.letter">
-                                                <li class="flex items-start gap-2 text-sm"
-                                                    :class="option.correct ? 'font-bold text-success' : 'text-ink-2'">
-                                                    <span class="w-5 shrink-0 tabular-nums" x-text="option.letter + '.'"></span>
-                                                    <span x-text="option.text"></span>
-                                                    <template x-if="option.correct">
-                                                        <x-icon name="check" class="mt-0.5 h-4 w-4 shrink-0" />
-                                                    </template>
-                                                </li>
-                                            </template>
-                                        </ul>
-                                    </li>
-                                </template>
-                            </ol>
-                        </template>
-                    </div>
+                            <template x-for="(question, index) in quiz.questions" :key="index">
+                                <div style="background:#fff;border:1px solid rgba(46,44,80,.08);border-radius:14px;padding:18px 20px;display:flex;flex-direction:column;gap:12px;box-shadow:0 2px 8px rgba(46,44,80,.04)">
+                                    <div style="display:flex;gap:10px;align-items:flex-start">
+                                        <span style="flex-shrink:0;width:26px;height:26px;border-radius:8px;background:#E6F5F1;color:#0F7A68;display:grid;place-items:center;font-family:'Geist',sans-serif;font-weight:800;font-size:13px" x-text="index + 1"></span>
+                                        <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:15px;color:#28293F;line-height:1.4" x-text="question.text"></span>
+                                    </div>
+                                    <div style="display:flex;flex-direction:column;gap:8px;padding-left:36px">
+                                        <template x-for="option in question.options" :key="option.letter">
+                                            <div :style="(option.correct ? 'border:1px solid #17907B;background:#E6F5F1' : 'border:1px solid rgba(46,44,80,.08);background:#F6F5F0') + ';display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px'">
+                                                <span :style="(option.correct ? 'background:#17907B;color:#fff' : 'background:#EDECE4;color:#8B8AA3') + ';width:24px;height:24px;flex-shrink:0;border-radius:50%;display:grid;place-items:center;font-family:\'Geist\',sans-serif;font-weight:800;font-size:11.5px'" x-text="option.letter"></span>
+                                                <span style="font-size:13.5px;font-weight:700;color:#4A4B63" x-text="option.text"></span>
+                                                <template x-if="option.correct">
+                                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0F7A68" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-left:auto;flex-shrink:0"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                                </template>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
                 </div>
-            </div>
+            </x-content-preview>
         </template>
     </div>
 </x-admin-layout>

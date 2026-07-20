@@ -68,11 +68,12 @@
                                     <button type="button" class="tp-linkbtn"
                                             @click="open(@js([
                                                 'title' => $material->title,
-                                                'teacher' => $material->teacher?->name,
+                                                'subtitle' => collect([$material->teacher?->name, $material->chapter->subject->displayName(), $material->chapter->grade->name])->filter()->implode(' · '),
                                                 'kind' => $material->previewKind(),
                                                 'src' => $material->fileUrl(),
                                                 'name' => $material->original_name,
                                                 'type' => strtoupper($material->extension()),
+                                                'size' => $material->humanSize(),
                                                 'downloadUrl' => route('muat-turun.bahan', $material),
                                             ]))">
                                         👁 {{ __('Lihat') }}<span class="sr-only">{{ $material->title }}</span>
@@ -90,62 +91,34 @@
             <div>{{ $materials->links() }}</div>
         @endif
 
-        {{-- Preview modal. PDFs/images render in place; Office files offer the download rather than a fake render. --}}
+        {{-- Preview modal (WeLearn Admin design): gradient header + document body.
+             PDFs/images render in place; other files show a document card with a download. --}}
         <template x-if="item">
-            <div class="fixed inset-0 z-50 flex items-center justify-center p-4"
-                 role="dialog" aria-modal="true" :aria-label="item.title">
-                <div class="absolute inset-0 bg-black/70" @click="close()" aria-hidden="true"></div>
+            <x-content-preview obj="item" :pill="'📄 '.__('Bahan')">
+                <template x-if="item.kind === 'pdf'">
+                    <iframe style="width:100%;height:min(72vh,620px);border:0;display:block;background:#000" :src="item.src" :title="item.title"></iframe>
+                </template>
 
-                <div class="relative flex max-h-[90vh] w-full max-w-4xl flex-col overflow-hidden rounded-card border border-line bg-surface shadow-hero">
-                    <div class="flex items-start justify-between gap-4 border-b border-line px-4 py-3">
-                        <div class="min-w-0">
-                            <h2 class="truncate font-extrabold text-ink" x-text="item.title"></h2>
-                            <p class="truncate text-xs text-ink-2">
-                                <span x-text="item.teacher"></span> &middot; <span x-text="item.name"></span>
-                            </p>
-                        </div>
-
-                        <div class="flex shrink-0 items-center gap-1">
-                            <a :href="item.downloadUrl" class="btn-secondary btn-sm">
-                                <x-icon name="download" class="h-4 w-4" />
-                                {{ __('Muat Turun') }}
-                            </a>
-
-                            <button type="button" class="btn-ghost btn-sm" @click="close()" x-init="$el.focus()">
-                                <x-icon name="x" class="h-4 w-4" />
-                                <span class="sr-only">{{ __('Tutup') }}</span>
-                            </button>
-                        </div>
+                <template x-if="item.kind === 'image'">
+                    <div style="overflow:auto;height:min(72vh,620px);display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#EDF3FA,#F6F5F0);padding:20px">
+                        <img :src="item.src" :alt="item.title" style="max-width:100%;max-height:100%;object-fit:contain;border-radius:8px;box-shadow:0 8px 28px rgba(46,44,80,.14)">
                     </div>
+                </template>
 
-                    <template x-if="item.kind === 'pdf'">
-                        <iframe class="h-[70vh] w-full bg-black" :src="item.src" :title="item.title"></iframe>
-                    </template>
-
-                    <template x-if="item.kind === 'image'">
-                        <div class="flex max-h-[70vh] justify-center overflow-auto bg-surface-2 p-4">
-                            <img :src="item.src" :alt="item.title" class="max-w-full object-contain">
+                <template x-if="item.kind === 'none'">
+                    <div style="overflow-y:auto;padding:28px;background:linear-gradient(180deg,#EDF3FA,#F6F5F0);display:flex;flex-direction:column;align-items:center;gap:18px">
+                        {{-- Document card --}}
+                        <div style="width:min(440px,100%);aspect-ratio:1/1.28;background:#fff;border:1px solid rgba(46,44,80,.1);border-radius:10px;box-shadow:0 8px 28px rgba(46,44,80,.14);padding:32px 28px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;position:relative">
+                            <span style="position:absolute;top:18px;right:18px;background:#3E86C9;color:#fff;border-radius:8px;padding:5px 11px;font-family:'Geist',sans-serif;font-size:11.5px;font-weight:800" x-text="item.type"></span>
+                            <div style="font-size:52px">📄</div>
+                            <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:15px;color:#28293F;text-align:center;word-break:break-word" x-text="item.name"></span>
+                            <span style="font-size:12.5px;color:#6C6F87;font-weight:700"><span x-text="item.type"></span> · <span x-text="item.size"></span></span>
+                            <a :href="item.downloadUrl" style="margin-top:6px;display:inline-flex;align-items:center;gap:8px;min-height:42px;border-radius:12px;background:#17907B;color:#fff;font-family:'Geist',sans-serif;font-weight:800;font-size:13.5px;padding:0 18px;text-decoration:none">⬇ {{ __('Muat Turun') }}</a>
                         </div>
-                    </template>
-
-                    <template x-if="item.kind === 'none'">
-                        <div class="px-6 py-12 text-center">
-                            <p class="font-bold text-ink">
-                                <span x-text="item.type"></span>
-                                {{ __('tidak boleh dipaparkan dalam pelayar.') }}
-                            </p>
-                            <p class="mx-auto mt-1 max-w-prose text-sm text-ink-2">
-                                {{ __('Sila muat turun fail untuk membukanya.') }}
-                            </p>
-
-                            <a :href="item.downloadUrl" class="btn-primary btn-sm mt-4">
-                                <x-icon name="download" class="h-4 w-4" />
-                                {{ __('Muat Turun') }}
-                            </a>
-                        </div>
-                    </template>
-                </div>
-            </div>
+                        <span style="font-size:12.5px;color:#6C6F87;font-weight:700">{{ __('Fail ini tidak boleh dipaparkan dalam pelayar. Muat turun untuk membukanya.') }}</span>
+                    </div>
+                </template>
+            </x-content-preview>
         </template>
     </div>
 </x-admin-layout>
