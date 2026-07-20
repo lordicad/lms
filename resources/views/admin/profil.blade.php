@@ -15,7 +15,7 @@
                 @method('PATCH')
 
                 <div style="display:flex;align-items:flex-end;gap:16px">
-                    <span style="width:64px;height:64px;border-radius:50%;background:#28293F;color:#fff;display:grid;place-items:center;font-family:'Geist',sans-serif;font-weight:800;font-size:20px;flex-shrink:0;overflow:hidden">
+                    <span style="width:64px;height:64px;border-radius:50%;background:#17907B;color:#fff;display:grid;place-items:center;font-family:'Geist',sans-serif;font-weight:800;font-size:20px;flex-shrink:0;overflow:hidden">
                         @if ($user->avatarUrl())<img src="{{ $user->avatarUrl() }}" alt="" style="width:100%;height:100%;object-fit:cover">@else{{ $user->initials() }}@endif
                     </span>
                     <div class="tp-field" style="flex:1">

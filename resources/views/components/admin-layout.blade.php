@@ -170,7 +170,9 @@
             background:var(--tp-input); font-family:'Nunito',sans-serif; font-size:14.5px; color:var(--tp-ink);
             width:100%;
         }
-        .tp-file { min-height:46px; border:1.5px solid var(--tp-line-2); border-radius:12px; padding:10px 14px; background:var(--tp-input); font-family:'Nunito',sans-serif; font-size:13.5px; color:var(--tp-ink); width:100%; }
+        .tp-file { min-height:46px; border:1.5px solid var(--tp-line-2); border-radius:12px; padding:9px 14px; background:var(--tp-input); font-family:'Nunito',sans-serif; font-size:13.5px; color:var(--tp-ink); width:100%; box-sizing:border-box; }
+        .tp-file::file-selector-button { min-height:36px; border:none; cursor:pointer; border-radius:9px; background:#17907B; color:#fff; font-family:'Geist',sans-serif; font-weight:800; font-size:12.5px; padding:0 16px; margin-right:14px; transition:background .15s; }
+        .tp-file::file-selector-button:hover { background:#2BB39B; }
         .tp-filter-select {
             min-height:46px; border:1.5px solid var(--tp-line-2); border-radius:12px; padding:0 14px;
             background:#fff; font-family:'Geist',sans-serif; font-weight:800; font-size:14px; color:var(--tp-ink); cursor:pointer;
