@@ -53,7 +53,7 @@
                                 :aria-pressed="fav ? 'true' : 'false'"
                                 style="flex-shrink:0;min-height:46px;cursor:pointer;border-radius:12px;border:1.5px solid rgba(46,44,80,.12);background:#fff;font-family:'Geist',sans-serif;font-weight:800;font-size:14px;padding:0 18px;display:flex;align-items:center;gap:8px;color:#28293F">
                             <span x-text="fav ? '♥' : '♡'" :style="fav ? 'color:#EB5E5A;font-size:16px' : 'color:#6C6F87;font-size:16px'"></span>
-                            <span x-text="fav ? @js(__('Kegemaran')) : @js(__('Simpan'))"></span>
+                            <span>{{ __('Favourite') }}</span>
                         </button>
                     @endif
                 </div>

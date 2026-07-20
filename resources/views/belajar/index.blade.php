@@ -49,7 +49,7 @@
                                         class="wl-btn-secondary"
                                         style="min-height:46px;cursor:pointer;border-radius:12px;border:1.5px solid rgba(46,44,80,.15);background:#fff;color:#28293F;font-family:'Geist',sans-serif;font-weight:700;font-size:14.5px;padding:0 18px;display:inline-flex;align-items:center;gap:6px">
                                     <span x-text="fav ? '♥' : '♡'" :style="fav ? 'color:#EB5E5A' : ''"></span>
-                                    <span x-text="fav ? @js(__('Kegemaran')) : @js(__('Simpan ke Kegemaran'))"></span>
+                                    <span>{{ __('Favourite') }}</span>
                                 </button>
                             </div>
                         </div>
