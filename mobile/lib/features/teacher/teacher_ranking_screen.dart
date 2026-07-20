@@ -39,16 +39,25 @@ class _TeacherRankingScreenState extends State<TeacherRankingScreen> {
     await _future;
   }
 
-  void _apply({
-    int? gradeId,
-    int? subjectId,
-    int? quizId,
-    bool resetQuiz = false,
-  }) {
+  void _setGrade(int? gradeId) {
     setState(() {
-      _gradeId = gradeId ?? _gradeId;
-      _subjectId = subjectId ?? _subjectId;
-      _quizId = resetQuiz ? null : (quizId ?? _quizId);
+      _gradeId = gradeId;
+      _quizId = null;
+      _future = _load();
+    });
+  }
+
+  void _setSubject(int? subjectId) {
+    setState(() {
+      _subjectId = subjectId;
+      _quizId = null;
+      _future = _load();
+    });
+  }
+
+  void _setQuiz(int? quizId) {
+    setState(() {
+      _quizId = quizId;
       _future = _load();
     });
   }
@@ -119,10 +128,9 @@ class _TeacherRankingScreenState extends State<TeacherRankingScreen> {
                   gradeId: _gradeId,
                   subjectId: _subjectId,
                   quizId: _quizId,
-                  onGradeChanged: (id) => _apply(gradeId: id, resetQuiz: true),
-                  onSubjectChanged: (id) =>
-                      _apply(subjectId: id, resetQuiz: true),
-                  onQuizChanged: (id) => _apply(quizId: id),
+                  onGradeChanged: _setGrade,
+                  onSubjectChanged: _setSubject,
+                  onQuizChanged: _setQuiz,
                   onClear: hasFilters ? _clearFilters : null,
                 ),
                 const SizedBox(height: 18),
