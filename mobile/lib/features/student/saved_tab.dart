@@ -25,15 +25,20 @@ class _SavedTabState extends State<SavedTab> {
   }
 
   Future<void> _reload() async {
-    setState(() => _future = widget.repository.favourites());
+    setState(() {
+      _future = widget.repository.favourites();
+    });
     await _future.catchError((_) => throw Exception());
   }
 
   void _open(LessonCard lesson) {
     Navigator.of(context)
-        .push(MaterialPageRoute(
-          builder: (_) => WatchScreen(repository: widget.repository, lessonId: lesson.id),
-        ))
+        .push(
+          MaterialPageRoute(
+            builder: (_) =>
+                WatchScreen(repository: widget.repository, lessonId: lesson.id),
+          ),
+        )
         .then((_) => _reload());
   }
 
@@ -59,7 +64,8 @@ class _SavedTabState extends State<SavedTab> {
           return const StateMessage(
             icon: Icons.bookmark_border,
             title: 'Belum ada kegemaran',
-            subtitle: 'Tandakan video dengan ikon hati untuk menyimpannya di sini.',
+            subtitle:
+                'Tandakan video dengan ikon hati untuk menyimpannya di sini.',
           );
         }
 

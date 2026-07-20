@@ -25,7 +25,9 @@ class _RankingScreenState extends State<RankingScreen> {
     _future = widget.repository.ranking();
   }
 
-  void _reload() => setState(() => _future = widget.repository.ranking());
+  void _reload() => setState(() {
+    _future = widget.repository.ranking();
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -64,14 +66,17 @@ class _RankingScreenState extends State<RankingScreen> {
                     if (data.gradeName != null)
                       Padding(
                         padding: const EdgeInsets.only(bottom: 12),
-                        child: Text('Kedudukan • ${data.gradeName}',
-                            style: Theme.of(context).textTheme.bodyMedium),
+                        child: Text(
+                          'Kedudukan • ${data.gradeName}',
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
                       ),
                     ...data.top.map((r) => _RankTile(row: r)),
                   ],
                 ),
               ),
-              if (data.showMyRow && data.myRow != null) _MyRowFooter(row: data.myRow!),
+              if (data.showMyRow && data.myRow != null)
+                _MyRowFooter(row: data.myRow!),
             ],
           );
         },
@@ -131,15 +136,27 @@ class _RankTile extends StatelessWidget {
                 const SizedBox(height: 2),
                 Text(
                   '${row.accuracy.toStringAsFixed(0)}% tepat · ${row.quizzes} kuiz',
-                  style: const TextStyle(fontSize: 11, color: LmsColors.inkMuted),
+                  style: const TextStyle(
+                    fontSize: 11,
+                    color: LmsColors.inkMuted,
+                  ),
                 ),
               ],
             ),
           ),
           const SizedBox(width: 10),
-          Text('${row.points}',
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: LmsColors.brandStrong)),
-          const Text(' mata', style: TextStyle(fontSize: 11, color: LmsColors.inkMuted)),
+          Text(
+            '${row.points}',
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w800,
+              color: LmsColors.brandStrong,
+            ),
+          ),
+          const Text(
+            ' mata',
+            style: TextStyle(fontSize: 11, color: LmsColors.inkMuted),
+          ),
         ],
       ),
     );
@@ -171,26 +188,50 @@ class _MyRowFooter extends StatelessWidget {
               Container(
                 width: 34,
                 height: 34,
-                decoration: const BoxDecoration(color: LmsColors.brand, shape: BoxShape.circle),
+                decoration: const BoxDecoration(
+                  color: LmsColors.brand,
+                  shape: BoxShape.circle,
+                ),
                 alignment: Alignment.center,
-                child: Text('${row.rank}',
-                    style: const TextStyle(fontWeight: FontWeight.w800, color: Colors.white)),
+                child: Text(
+                  '${row.rank}',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w800,
+                    color: Colors.white,
+                  ),
+                ),
               ),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('Kedudukan anda',
-                        style: TextStyle(
-                            fontSize: 11, fontWeight: FontWeight.w700, color: LmsColors.brandStrong)),
-                    Text('${row.accuracy.toStringAsFixed(0)}% tepat · ${row.quizzes} kuiz',
-                        style: const TextStyle(fontSize: 11, color: LmsColors.inkMuted)),
+                    const Text(
+                      'Kedudukan anda',
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                        color: LmsColors.brandStrong,
+                      ),
+                    ),
+                    Text(
+                      '${row.accuracy.toStringAsFixed(0)}% tepat · ${row.quizzes} kuiz',
+                      style: const TextStyle(
+                        fontSize: 11,
+                        color: LmsColors.inkMuted,
+                      ),
+                    ),
                   ],
                 ),
               ),
-              Text('${row.points} mata',
-                  style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w800, color: LmsColors.brandStrong)),
+              Text(
+                '${row.points} mata',
+                style: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w800,
+                  color: LmsColors.brandStrong,
+                ),
+              ),
             ],
           ),
         ),

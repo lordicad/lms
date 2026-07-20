@@ -15,7 +15,9 @@ class SectionTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Expanded(child: Text(text, style: Theme.of(context).textTheme.titleLarge)),
+        Expanded(
+          child: Text(text, style: Theme.of(context).textTheme.titleLarge),
+        ),
         if (trailing != null) trailing!,
       ],
     );
@@ -24,7 +26,12 @@ class SectionTitle extends StatelessWidget {
 
 /// A thumbnail with a play glyph, rounded corners, and an optional progress bar.
 class LessonThumbnail extends StatelessWidget {
-  const LessonThumbnail({super.key, required this.url, this.percent = 0, this.completed = false});
+  const LessonThumbnail({
+    super.key,
+    required this.url,
+    this.percent = 0,
+    this.completed = false,
+  });
 
   final String? url;
   final int percent;
@@ -44,8 +51,9 @@ class LessonThumbnail extends StatelessWidget {
                 url!,
                 fit: BoxFit.cover,
                 errorBuilder: (_, _, _) => const _ThumbFallback(),
-                loadingBuilder: (context, child, progress) =>
-                    progress == null ? child : const _ThumbFallback(loading: true),
+                loadingBuilder: (context, child, progress) => progress == null
+                    ? child
+                    : const _ThumbFallback(loading: true),
               )
             else
               const _ThumbFallback(),
@@ -62,7 +70,11 @@ class LessonThumbnail extends StatelessWidget {
               child: CircleAvatar(
                 radius: 20,
                 backgroundColor: Color(0xCCFFFFFF),
-                child: Icon(Icons.play_arrow_rounded, color: LmsColors.brand, size: 26),
+                child: Icon(
+                  Icons.play_arrow_rounded,
+                  color: LmsColors.brand,
+                  size: 26,
+                ),
               ),
             ),
             if (completed)
@@ -104,8 +116,15 @@ class _ThumbFallback extends StatelessWidget {
       color: LmsColors.surfaceMuted,
       child: Center(
         child: loading
-            ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
-            : const Icon(Icons.ondemand_video_outlined, color: LmsColors.inkMuted),
+            ? const SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              )
+            : const Icon(
+                Icons.ondemand_video_outlined,
+                color: LmsColors.inkMuted,
+              ),
       ),
     );
   }
@@ -128,7 +147,11 @@ class LessonRailCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            LessonThumbnail(url: lesson.thumbnailUrl, percent: lesson.percent, completed: lesson.completed),
+            LessonThumbnail(
+              url: lesson.thumbnailUrl,
+              percent: lesson.percent,
+              completed: lesson.completed,
+            ),
             const SizedBox(height: 8),
             Text(
               lesson.title,
@@ -155,7 +178,11 @@ class LessonRailCard extends StatelessWidget {
 
 /// A horizontal scrolling rail of lesson cards.
 class LessonRail extends StatelessWidget {
-  const LessonRail({super.key, required this.lessons, required this.onTapLesson});
+  const LessonRail({
+    super.key,
+    required this.lessons,
+    required this.onTapLesson,
+  });
 
   final List<LessonCard> lessons;
   final void Function(LessonCard) onTapLesson;
@@ -169,7 +196,10 @@ class LessonRail extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 20),
         itemCount: lessons.length,
         separatorBuilder: (_, _) => const SizedBox(width: 14),
-        itemBuilder: (context, i) => LessonRailCard(lesson: lessons[i], onTap: () => onTapLesson(lessons[i])),
+        itemBuilder: (context, i) => LessonRailCard(
+          lesson: lessons[i],
+          onTap: () => onTapLesson(lessons[i]),
+        ),
       ),
     );
   }
@@ -193,7 +223,11 @@ class LessonRow extends StatelessWidget {
           children: [
             SizedBox(
               width: 130,
-              child: LessonThumbnail(url: lesson.thumbnailUrl, percent: lesson.percent, completed: lesson.completed),
+              child: LessonThumbnail(
+                url: lesson.thumbnailUrl,
+                percent: lesson.percent,
+                completed: lesson.completed,
+              ),
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -210,13 +244,19 @@ class LessonRow extends StatelessWidget {
                   Row(
                     children: [
                       Icon(
-                        lesson.watched ? Icons.check_circle : Icons.play_circle_outline,
+                        lesson.watched
+                            ? Icons.check_circle
+                            : Icons.play_circle_outline,
                         size: 15,
-                        color: lesson.watched ? LmsColors.success : LmsColors.inkMuted,
+                        color: lesson.watched
+                            ? LmsColors.success
+                            : LmsColors.inkMuted,
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        lesson.watched ? 'Dah tonton' : (lesson.durationLabel ?? 'Video'),
+                        lesson.watched
+                            ? 'Dah tonton'
+                            : (lesson.durationLabel ?? 'Video'),
                         style: Theme.of(context).textTheme.bodyMedium,
                       ),
                     ],
@@ -243,8 +283,10 @@ IconData subjectIcon(SubjectCard subject) {
   if (has('islam') || has('agama')) return Icons.mosque_rounded;
   if (has('sejarah')) return Icons.history_edu_rounded;
   if (has('seni') || has('lukis')) return Icons.palette_rounded;
-  if (has('jasmani') || has('kesihatan') || has('pj')) return Icons.fitness_center_rounded;
-  if (has('reka bentuk') || has('teknologi') || has('rbt')) return Icons.build_rounded;
+  if (has('jasmani') || has('kesihatan') || has('pj'))
+    return Icons.fitness_center_rounded;
+  if (has('reka bentuk') || has('teknologi') || has('rbt'))
+    return Icons.build_rounded;
   if (has('muzik')) return Icons.music_note_rounded;
   if (has('moral')) return Icons.volunteer_activism_rounded;
   return Icons.menu_book_rounded; // Bahasa Melayu and default
@@ -291,7 +333,10 @@ class SubjectTile extends StatelessWidget {
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
                   const SizedBox(height: 2),
-                  Text('${subject.lessonsCount} video', style: Theme.of(context).textTheme.bodyMedium),
+                  Text(
+                    '${subject.lessonsCount} video',
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
                 ],
               ),
             ),
@@ -305,7 +350,13 @@ class SubjectTile extends StatelessWidget {
 
 /// Loading / error / empty state placeholders shared across screens.
 class StateMessage extends StatelessWidget {
-  const StateMessage({super.key, required this.icon, required this.title, this.subtitle, this.onRetry});
+  const StateMessage({
+    super.key,
+    required this.icon,
+    required this.title,
+    this.subtitle,
+    this.onRetry,
+  });
 
   final IconData icon;
   final String title;
@@ -322,7 +373,11 @@ class StateMessage extends StatelessWidget {
           children: [
             Icon(icon, size: 44, color: LmsColors.inkMuted),
             const SizedBox(height: 14),
-            Text(title, textAlign: TextAlign.center, style: Theme.of(context).textTheme.titleMedium),
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
             if (subtitle != null) ...[
               const SizedBox(height: 6),
               Text(subtitle!, textAlign: TextAlign.center),

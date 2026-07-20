@@ -47,7 +47,9 @@ class _ChaptersManageTabState extends State<ChaptersManageTab> {
 
   void _reloadChapters() {
     if (_subject == null || _grade == null) return;
-    setState(() => _chapters = widget.repository.chapters(_subject!.id, _grade!.id));
+    setState(() {
+      _chapters = widget.repository.chapters(_subject!.id, _grade!.id);
+    });
   }
 
   Future<void> _showChapterDialog({TeacherChapter? existing}) async {
@@ -57,7 +59,11 @@ class _ChaptersManageTabState extends State<ChaptersManageTab> {
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text(existing == null ? 'Tambah Bab' : 'Namakan semula Bab ${existing.number}'),
+        title: Text(
+          existing == null
+              ? 'Tambah Bab'
+              : 'Namakan semula Bab ${existing.number}',
+        ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -70,13 +76,21 @@ class _ChaptersManageTabState extends State<ChaptersManageTab> {
             TextField(
               controller: descCtrl,
               maxLines: 2,
-              decoration: const InputDecoration(labelText: 'Penerangan (pilihan)'),
+              decoration: const InputDecoration(
+                labelText: 'Penerangan (pilihan)',
+              ),
             ),
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Batal')),
-          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Simpan')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Batal'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Simpan'),
+          ),
         ],
       ),
     );
@@ -94,11 +108,18 @@ class _ChaptersManageTabState extends State<ChaptersManageTab> {
           description: descCtrl.text.trim(),
         );
       } else {
-        await widget.repository.updateChapter(existing.id, title: title, description: descCtrl.text.trim());
+        await widget.repository.updateChapter(
+          existing.id,
+          title: title,
+          description: descCtrl.text.trim(),
+        );
       }
       _reloadChapters();
     } catch (e) {
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$e')));
+      if (mounted)
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('$e')));
     }
   }
 
@@ -109,7 +130,10 @@ class _ChaptersManageTabState extends State<ChaptersManageTab> {
         title: const Text('Padam Bab?'),
         content: Text('Padam Bab ${chapter.number}: ${chapter.title}?'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Batal')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Batal'),
+          ),
           FilledButton(
             style: FilledButton.styleFrom(backgroundColor: LmsColors.danger),
             onPressed: () => Navigator.pop(ctx, true),
@@ -124,7 +148,10 @@ class _ChaptersManageTabState extends State<ChaptersManageTab> {
       await widget.repository.deleteChapter(chapter.id);
       _reloadChapters();
     } catch (e) {
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$e')));
+      if (mounted)
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('$e')));
     }
   }
 
@@ -140,7 +167,8 @@ class _ChaptersManageTabState extends State<ChaptersManageTab> {
     }
 
     final options = _options;
-    if (options == null) return const Center(child: CircularProgressIndicator());
+    if (options == null)
+      return const Center(child: CircularProgressIndicator());
 
     return Column(
       children: [
@@ -195,13 +223,22 @@ class _ChaptersManageTabState extends State<ChaptersManageTab> {
                                       : 'Subjek ini tidak ditawarkan untuk Tahun ini.',
                                 )
                               : ListView.separated(
-                                  padding: const EdgeInsets.fromLTRB(20, 4, 20, 12),
+                                  padding: const EdgeInsets.fromLTRB(
+                                    20,
+                                    4,
+                                    20,
+                                    12,
+                                  ),
                                   itemCount: data.chapters.length,
-                                  separatorBuilder: (_, _) => const SizedBox(height: 8),
+                                  separatorBuilder: (_, _) =>
+                                      const SizedBox(height: 8),
                                   itemBuilder: (context, i) => _ChapterTile(
                                     chapter: data.chapters[i],
-                                    onRename: () => _showChapterDialog(existing: data.chapters[i]),
-                                    onDelete: () => _deleteChapter(data.chapters[i]),
+                                    onRename: () => _showChapterDialog(
+                                      existing: data.chapters[i],
+                                    ),
+                                    onDelete: () =>
+                                        _deleteChapter(data.chapters[i]),
                                   ),
                                 ),
                         ),
@@ -237,10 +274,18 @@ class _ChaptersManageTabState extends State<ChaptersManageTab> {
       isExpanded: true,
       decoration: InputDecoration(
         labelText: label,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 12,
+          vertical: 10,
+        ),
       ),
       items: items
-          .map((o) => DropdownMenuItem(value: o, child: Text(o.name, overflow: TextOverflow.ellipsis)))
+          .map(
+            (o) => DropdownMenuItem(
+              value: o,
+              child: Text(o.name, overflow: TextOverflow.ellipsis),
+            ),
+          )
           .toList(),
       onChanged: onChanged,
     );
@@ -248,7 +293,11 @@ class _ChaptersManageTabState extends State<ChaptersManageTab> {
 }
 
 class _ChapterTile extends StatelessWidget {
-  const _ChapterTile({required this.chapter, required this.onRename, required this.onDelete});
+  const _ChapterTile({
+    required this.chapter,
+    required this.onRename,
+    required this.onDelete,
+  });
 
   final TeacherChapter chapter;
   final VoidCallback onRename;
@@ -269,7 +318,10 @@ class _ChapterTile extends StatelessWidget {
             radius: 17,
             backgroundColor: LmsColors.brandSoft,
             foregroundColor: LmsColors.brand,
-            child: Text('${chapter.number}', style: const TextStyle(fontWeight: FontWeight.w800)),
+            child: Text(
+              '${chapter.number}',
+              style: const TextStyle(fontWeight: FontWeight.w800),
+            ),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -311,7 +363,11 @@ class _ChapterTile extends StatelessWidget {
                 value: 'delete',
                 child: Row(
                   children: [
-                    Icon(Icons.delete_outline, size: 18, color: LmsColors.danger),
+                    Icon(
+                      Icons.delete_outline,
+                      size: 18,
+                      color: LmsColors.danger,
+                    ),
                     SizedBox(width: 10),
                     Text('Padam', style: TextStyle(color: LmsColors.danger)),
                   ],

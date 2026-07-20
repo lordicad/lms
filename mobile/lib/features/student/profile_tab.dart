@@ -29,15 +29,23 @@ class ProfileTab extends StatelessWidget {
               foregroundColor: LmsColors.brand,
               child: Text(
                 _initials(user.name),
-                style: const TextStyle(fontSize: 26, fontWeight: FontWeight.w800),
+                style: const TextStyle(
+                  fontSize: 26,
+                  fontWeight: FontWeight.w800,
+                ),
               ),
             ),
             const SizedBox(height: 14),
-            Text(user.name,
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.headlineMedium),
+            Text(
+              user.name,
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.headlineMedium,
+            ),
             const SizedBox(height: 4),
-            Text('@${user.username}', style: const TextStyle(color: LmsColors.inkMuted)),
+            Text(
+              '@${user.username}',
+              style: const TextStyle(color: LmsColors.inkMuted),
+            ),
           ],
         ),
         const SizedBox(height: 24),
@@ -49,13 +57,25 @@ class ProfileTab extends StatelessWidget {
           ),
           child: Column(
             children: [
-              _InfoRow(icon: Icons.school_rounded, label: 'Tahun', value: user.grade?.name ?? '—'),
+              _InfoRow(
+                icon: Icons.school_rounded,
+                label: 'Tahun',
+                value: user.grade?.name ?? '—',
+              ),
               if (user.email != null) ...[
                 const Divider(height: 1),
-                _InfoRow(icon: Icons.mail_outline_rounded, label: 'Emel', value: user.email!),
+                _InfoRow(
+                  icon: Icons.mail_outline_rounded,
+                  label: 'Emel',
+                  value: user.email!,
+                ),
               ],
               const Divider(height: 1),
-              _InfoRow(icon: Icons.badge_outlined, label: 'Peranan', value: roleLabel),
+              _InfoRow(
+                icon: Icons.badge_outlined,
+                label: 'Peranan',
+                value: roleLabel,
+              ),
             ],
           ),
         ),
@@ -79,10 +99,18 @@ class ProfileTab extends StatelessWidget {
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('Log keluar?'),
-        content: const Text('Anda perlu log masuk semula untuk menggunakan aplikasi.'),
+        content: const Text(
+          'Anda perlu log masuk semula untuk menggunakan aplikasi.',
+        ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Batal')),
-          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Log keluar')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Batal'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Log keluar'),
+          ),
         ],
       ),
     );
@@ -96,7 +124,11 @@ class ProfileTab extends StatelessWidget {
 }
 
 class _InfoRow extends StatelessWidget {
-  const _InfoRow({required this.icon, required this.label, required this.value});
+  const _InfoRow({
+    required this.icon,
+    required this.label,
+    required this.value,
+  });
   final IconData icon;
   final String label;
   final String value;
@@ -115,7 +147,10 @@ class _InfoRow extends StatelessWidget {
             child: Text(
               value,
               textAlign: TextAlign.right,
-              style: const TextStyle(fontWeight: FontWeight.w700, color: LmsColors.ink),
+              style: const TextStyle(
+                fontWeight: FontWeight.w700,
+                color: LmsColors.ink,
+              ),
             ),
           ),
         ],

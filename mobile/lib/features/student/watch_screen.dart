@@ -13,7 +13,11 @@ import 'widgets/content_widgets.dart';
 /// (via video_player + chewie), records the first-play view, and throttles progress saves
 /// every ~10 seconds and on the way out. Mirrors the web tonton page.
 class WatchScreen extends StatefulWidget {
-  const WatchScreen({super.key, required this.repository, required this.lessonId});
+  const WatchScreen({
+    super.key,
+    required this.repository,
+    required this.lessonId,
+  });
 
   final ContentRepository repository;
   final int lessonId;
@@ -70,7 +74,9 @@ class _WatchScreenState extends State<WatchScreen> {
         ),
       )..addListener(_onYoutubeTick);
     } else if (lesson.videoUrl != null) {
-      final controller = VideoPlayerController.networkUrl(Uri.parse(lesson.videoUrl!));
+      final controller = VideoPlayerController.networkUrl(
+        Uri.parse(lesson.videoUrl!),
+      );
       _video = controller;
       controller.initialize().then((_) {
         if (!mounted) return;
@@ -79,8 +85,12 @@ class _WatchScreenState extends State<WatchScreen> {
           _chewie = ChewieController(
             videoPlayerController: controller,
             autoPlay: true,
-            aspectRatio: controller.value.aspectRatio == 0 ? 16 / 9 : controller.value.aspectRatio,
-            materialProgressColors: ChewieProgressColors(playedColor: LmsColors.brand),
+            aspectRatio: controller.value.aspectRatio == 0
+                ? 16 / 9
+                : controller.value.aspectRatio,
+            materialProgressColors: ChewieProgressColors(
+              playedColor: LmsColors.brand,
+            ),
           );
         });
         controller.addListener(_onVideoTick);
@@ -103,7 +113,10 @@ class _WatchScreenState extends State<WatchScreen> {
     final video = _video;
     if (video == null || !video.value.isInitialized) return;
     if (video.value.isPlaying) {
-      _maybeSaveProgress(video.value.position.inSeconds, video.value.duration.inSeconds);
+      _maybeSaveProgress(
+        video.value.position.inSeconds,
+        video.value.duration.inSeconds,
+      );
     }
   }
 
@@ -142,16 +155,22 @@ class _WatchScreenState extends State<WatchScreen> {
 
     _lastSavedAt = position;
     _lastSaveTime = now;
-    widget.repository.saveProgress(
-      widget.lessonId,
-      positionSeconds: position,
-      durationSeconds: duration > 0 ? duration : null,
-    ).catchError((_) {});
+    widget.repository
+        .saveProgress(
+          widget.lessonId,
+          positionSeconds: position,
+          durationSeconds: duration > 0 ? duration : null,
+        )
+        .catchError((_) {});
   }
 
   Future<void> _flushProgress() async {
-    final position = _yt?.value.position.inSeconds ?? _video?.value.position.inSeconds ?? 0;
-    final duration = _yt?.metadata.duration.inSeconds ?? _video?.value.duration.inSeconds ?? 0;
+    final position =
+        _yt?.value.position.inSeconds ?? _video?.value.position.inSeconds ?? 0;
+    final duration =
+        _yt?.metadata.duration.inSeconds ??
+        _video?.value.duration.inSeconds ??
+        0;
     if (position <= 0) return;
     try {
       await widget.repository.saveProgress(
@@ -166,7 +185,8 @@ class _WatchScreenState extends State<WatchScreen> {
     _flushProgress();
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
-        builder: (_) => WatchScreen(repository: widget.repository, lessonId: lessonId),
+        builder: (_) =>
+            WatchScreen(repository: widget.repository, lessonId: lessonId),
       ),
     );
   }
@@ -206,13 +226,19 @@ class _WatchScreenState extends State<WatchScreen> {
 
     if (lesson.isYoutube && _yt != null) {
       return YoutubePlayerBuilder(
-        player: YoutubePlayer(controller: _yt!, progressIndicatorColor: LmsColors.brand),
+        player: YoutubePlayer(
+          controller: _yt!,
+          progressIndicatorColor: LmsColors.brand,
+        ),
         builder: (context, player) => _scaffold(lesson, player),
       );
     }
 
     final playerWidget = _chewie != null
-        ? AspectRatio(aspectRatio: _chewie!.aspectRatio ?? 16 / 9, child: Chewie(controller: _chewie!))
+        ? AspectRatio(
+            aspectRatio: _chewie!.aspectRatio ?? 16 / 9,
+            child: Chewie(controller: _chewie!),
+          )
         : Container(
             color: Colors.black,
             child: const AspectRatio(
@@ -230,7 +256,10 @@ class _WatchScreenState extends State<WatchScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(lesson.subject.displayName, overflow: TextOverflow.ellipsis),
+        title: Text(
+          lesson.subject.displayName,
+          overflow: TextOverflow.ellipsis,
+        ),
         actions: [
           IconButton(
             tooltip: 'Kegemaran',
@@ -249,14 +278,21 @@ class _WatchScreenState extends State<WatchScreen> {
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 11,
+                ),
                 decoration: BoxDecoration(
                   color: LmsColors.brandSoft,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.history_rounded, size: 18, color: LmsColors.brandStrong),
+                    const Icon(
+                      Icons.history_rounded,
+                      size: 18,
+                      color: LmsColors.brandStrong,
+                    ),
                     const SizedBox(width: 8),
                     Text(
                       'Disambung dari ${_fmt(resumeAt)}',
@@ -274,15 +310,25 @@ class _WatchScreenState extends State<WatchScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(lesson.title, style: Theme.of(context).textTheme.headlineMedium),
+                Text(
+                  lesson.title,
+                  style: Theme.of(context).textTheme.headlineMedium,
+                ),
                 const SizedBox(height: 6),
                 Text(
-                  [lesson.chapterLabel, if (lesson.teacherName != null) lesson.teacherName!].join(' · '),
+                  [
+                    lesson.chapterLabel,
+                    if (lesson.teacherName != null) lesson.teacherName!,
+                  ].join(' · '),
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
-                if (lesson.description != null && lesson.description!.isNotEmpty) ...[
+                if (lesson.description != null &&
+                    lesson.description!.isNotEmpty) ...[
                   const SizedBox(height: 16),
-                  Text(lesson.description!, style: Theme.of(context).textTheme.bodyLarge),
+                  Text(
+                    lesson.description!,
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
                 ],
                 if (lesson.materials.isNotEmpty) ...[
                   const SizedBox(height: 24),
@@ -301,7 +347,8 @@ class _WatchScreenState extends State<WatchScreen> {
                           label: const Text('Sebelum'),
                         ),
                       ),
-                    if (lesson.previous != null && lesson.next != null) const SizedBox(width: 12),
+                    if (lesson.previous != null && lesson.next != null)
+                      const SizedBox(width: 12),
                     if (lesson.next != null)
                       Expanded(
                         child: FilledButton.icon(
@@ -380,7 +427,11 @@ class _MaterialRow extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 8),
-              const Icon(Icons.download_rounded, color: LmsColors.inkFaint, size: 20),
+              const Icon(
+                Icons.download_rounded,
+                color: LmsColors.inkFaint,
+                size: 20,
+              ),
             ],
           ),
         ),

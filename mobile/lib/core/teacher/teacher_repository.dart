@@ -20,11 +20,13 @@ class TeacherRepository {
     return token;
   }
 
-  Future<TeacherDashboardData> dashboard() async => _api.dashboard(await _token());
+  Future<TeacherDashboardData> dashboard() async =>
+      _api.dashboard(await _token());
 
   Future<List<TeacherVideo>> videos() async => _api.videos(await _token());
 
-  Future<List<TeacherMaterial>> materials() async => _api.materials(await _token());
+  Future<List<TeacherMaterial>> materials() async =>
+      _api.materials(await _token());
 
   Future<List<TeacherQuiz>> quizzes() async => _api.quizzes(await _token());
 
@@ -34,9 +36,11 @@ class TeacherRepository {
   Future<bool> togglePublishQuiz(int id) async =>
       _api.togglePublishQuiz(await _token(), id);
 
-  Future<void> deleteVideo(int id) async => _api.deleteVideo(await _token(), id);
+  Future<void> deleteVideo(int id) async =>
+      _api.deleteVideo(await _token(), id);
 
-  Future<void> deleteMaterial(int id) async => _api.deleteMaterial(await _token(), id);
+  Future<void> deleteMaterial(int id) async =>
+      _api.deleteMaterial(await _token(), id);
 
   Future<void> deleteQuiz(int id) async => _api.deleteQuiz(await _token(), id);
 
@@ -50,14 +54,27 @@ class TeacherRepository {
     required int gradeId,
     required String title,
     String? description,
-  }) async =>
-      _api.createChapter(await _token(),
-          subjectId: subjectId, gradeId: gradeId, title: title, description: description);
+  }) async => _api.createChapter(
+    await _token(),
+    subjectId: subjectId,
+    gradeId: gradeId,
+    title: title,
+    description: description,
+  );
 
-  Future<void> updateChapter(int id, {required String title, String? description}) async =>
-      _api.updateChapter(await _token(), id, title: title, description: description);
+  Future<void> updateChapter(
+    int id, {
+    required String title,
+    String? description,
+  }) async => _api.updateChapter(
+    await _token(),
+    id,
+    title: title,
+    description: description,
+  );
 
-  Future<void> deleteChapter(int id) async => _api.deleteChapter(await _token(), id);
+  Future<void> deleteChapter(int id) async =>
+      _api.deleteChapter(await _token(), id);
 
   Future<void> createVideo({
     required int chapterId,
@@ -65,13 +82,29 @@ class TeacherRepository {
     String? description,
     required String youtubeUrl,
     required bool isPublished,
-  }) async =>
-      _api.createVideo(
-        await _token(),
-        chapterId: chapterId,
-        title: title,
-        description: description,
-        youtubeUrl: youtubeUrl,
-        isPublished: isPublished,
-      );
+  }) async => _api.createVideo(
+    await _token(),
+    chapterId: chapterId,
+    title: title,
+    description: description,
+    youtubeUrl: youtubeUrl,
+    isPublished: isPublished,
+  );
+
+  Future<int> createInteractiveQuiz({
+    required int chapterId,
+    required String title,
+    String? description,
+    int? durationMinutes,
+    required bool isPublished,
+    required List<TeacherQuizQuestionDraft> questions,
+  }) async => _api.createInteractiveQuiz(
+    await _token(),
+    chapterId: chapterId,
+    title: title,
+    description: description,
+    durationMinutes: durationMinutes,
+    isPublished: isPublished,
+    questions: questions,
+  );
 }

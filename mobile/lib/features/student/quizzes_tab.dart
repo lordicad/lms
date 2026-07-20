@@ -26,19 +26,23 @@ class _QuizzesTabState extends State<QuizzesTab> {
   }
 
   Future<void> _reload() async {
-    setState(() => _future = widget.repository.quizzes());
+    setState(() {
+      _future = widget.repository.quizzes();
+    });
     await _future.catchError((_) => throw Exception());
   }
 
   void _open(QuizListItem quiz) {
     Navigator.of(context)
-        .push(MaterialPageRoute(
-          builder: (_) => QuizIntroScreen(
-            repository: widget.repository,
-            quizId: quiz.id,
-            title: quiz.title,
+        .push(
+          MaterialPageRoute(
+            builder: (_) => QuizIntroScreen(
+              repository: widget.repository,
+              quizId: quiz.id,
+              title: quiz.title,
+            ),
           ),
-        ))
+        )
         .then((_) => _reload());
   }
 
@@ -74,7 +78,8 @@ class _QuizzesTabState extends State<QuizzesTab> {
             padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
             itemCount: quizzes.length,
             separatorBuilder: (_, _) => const SizedBox(height: 10),
-            itemBuilder: (context, i) => _QuizCard(quiz: quizzes[i], onTap: () => _open(quizzes[i])),
+            itemBuilder: (context, i) =>
+                _QuizCard(quiz: quizzes[i], onTap: () => _open(quizzes[i])),
           ),
         );
       },
@@ -139,11 +144,22 @@ class _QuizCard extends StatelessWidget {
             ),
             const SizedBox(width: 10),
             if (quiz.attempted && quiz.percent != null)
-              Text('${quiz.percent}%',
-                  style: const TextStyle(fontWeight: FontWeight.w800, color: LmsColors.success))
+              Text(
+                '${quiz.percent}%',
+                style: const TextStyle(
+                  fontWeight: FontWeight.w800,
+                  color: LmsColors.success,
+                ),
+              )
             else
-              const Text('Belum cuba',
-                  style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: LmsColors.inkFaint)),
+              const Text(
+                'Belum cuba',
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700,
+                  color: LmsColors.inkFaint,
+                ),
+              ),
           ],
         ),
       ),

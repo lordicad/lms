@@ -10,7 +10,12 @@ import 'widgets/content_widgets.dart';
 /// Everything inside one Bab: the videos, supporting materials, and quizzes.
 /// Quiz taking arrives in a later phase; for now quizzes are listed for context.
 class ChapterScreen extends StatefulWidget {
-  const ChapterScreen({super.key, required this.repository, required this.chapterId, required this.title});
+  const ChapterScreen({
+    super.key,
+    required this.repository,
+    required this.chapterId,
+    required this.title,
+  });
 
   final ContentRepository repository;
   final int chapterId;
@@ -29,11 +34,16 @@ class _ChapterScreenState extends State<ChapterScreen> {
     _future = widget.repository.chapter(widget.chapterId);
   }
 
-  void _reload() => setState(() => _future = widget.repository.chapter(widget.chapterId));
+  void _reload() => setState(() {
+    _future = widget.repository.chapter(widget.chapterId);
+  });
 
   Future<void> _openLesson(int id) async {
     await Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => WatchScreen(repository: widget.repository, lessonId: id)),
+      MaterialPageRoute(
+        builder: (_) =>
+            WatchScreen(repository: widget.repository, lessonId: id),
+      ),
     );
     _reload(); // refresh watched/progress ticks after returning
   }
@@ -54,7 +64,9 @@ class _ChapterScreenState extends State<ChapterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.title, overflow: TextOverflow.ellipsis)),
+      appBar: AppBar(
+        title: Text(widget.title, overflow: TextOverflow.ellipsis),
+      ),
       body: FutureBuilder<ChapterDetail>(
         future: _future,
         builder: (context, snapshot) {
@@ -71,7 +83,9 @@ class _ChapterScreenState extends State<ChapterScreen> {
           }
 
           final data = snapshot.data!;
-          if (data.lessons.isEmpty && data.materials.isEmpty && data.quizzes.isEmpty) {
+          if (data.lessons.isEmpty &&
+              data.materials.isEmpty &&
+              data.quizzes.isEmpty) {
             return const StateMessage(
               icon: Icons.inbox_outlined,
               title: 'Bab ini masih kosong',
@@ -82,8 +96,14 @@ class _ChapterScreenState extends State<ChapterScreen> {
           return ListView(
             padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
             children: [
-              Text(data.subject.displayName, style: Theme.of(context).textTheme.bodyMedium),
-              Text(data.label, style: Theme.of(context).textTheme.headlineMedium),
+              Text(
+                data.subject.displayName,
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+              Text(
+                data.label,
+                style: Theme.of(context).textTheme.headlineMedium,
+              ),
               if (data.description != null && data.description!.isNotEmpty) ...[
                 const SizedBox(height: 8),
                 Text(data.description!),
@@ -92,7 +112,9 @@ class _ChapterScreenState extends State<ChapterScreen> {
               if (data.lessons.isNotEmpty) ...[
                 SectionTitle('Video (${data.lessons.length})'),
                 const SizedBox(height: 4),
-                ...data.lessons.map((l) => LessonRow(lesson: l, onTap: () => _openLesson(l.id))),
+                ...data.lessons.map(
+                  (l) => LessonRow(lesson: l, onTap: () => _openLesson(l.id)),
+                ),
                 const SizedBox(height: 20),
               ],
               if (data.materials.isNotEmpty) ...[
@@ -104,7 +126,9 @@ class _ChapterScreenState extends State<ChapterScreen> {
               if (data.quizzes.isNotEmpty) ...[
                 const SectionTitle('Kuiz'),
                 const SizedBox(height: 8),
-                ...data.quizzes.map((q) => _QuizTile(quiz: q, onTap: () => _openQuiz(q))),
+                ...data.quizzes.map(
+                  (q) => _QuizTile(quiz: q, onTap: () => _openQuiz(q)),
+                ),
               ],
             ],
           );
@@ -123,8 +147,13 @@ class _MaterialTile extends StatelessWidget {
     return ListTile(
       contentPadding: EdgeInsets.zero,
       leading: const Icon(Icons.description_outlined, color: LmsColors.brand),
-      title: Text(material.title, style: Theme.of(context).textTheme.titleMedium),
-      subtitle: Text('${material.extension.toUpperCase()} · ${material.humanSize}'),
+      title: Text(
+        material.title,
+        style: Theme.of(context).textTheme.titleMedium,
+      ),
+      subtitle: Text(
+        '${material.extension.toUpperCase()} · ${material.humanSize}',
+      ),
     );
   }
 }
@@ -139,9 +168,16 @@ class _QuizTile extends StatelessWidget {
     final isFile = quiz.type == 'file';
     return ListTile(
       contentPadding: EdgeInsets.zero,
-      leading: Icon(isFile ? Icons.description_outlined : Icons.quiz_outlined, color: LmsColors.brand),
+      leading: Icon(
+        isFile ? Icons.description_outlined : Icons.quiz_outlined,
+        color: LmsColors.brand,
+      ),
       title: Text(quiz.title, style: Theme.of(context).textTheme.titleMedium),
-      subtitle: Text(quiz.myAttemptsCount > 0 ? 'Percubaan: ${quiz.myAttemptsCount}' : 'Belum dicuba'),
+      subtitle: Text(
+        quiz.myAttemptsCount > 0
+            ? 'Percubaan: ${quiz.myAttemptsCount}'
+            : 'Belum dicuba',
+      ),
       trailing: const Icon(Icons.chevron_right, color: LmsColors.inkMuted),
       onTap: onTap,
     );

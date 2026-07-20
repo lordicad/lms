@@ -64,18 +64,32 @@ class _ContentHubTabState extends State<ContentHubTab> {
   Future<void> _togglePublishVideo(int id) async {
     try {
       await widget.repository.togglePublishVideo(id);
-      if (mounted) setState(() => _videos = widget.repository.videos());
+      if (mounted) {
+        setState(() {
+          _videos = widget.repository.videos();
+        });
+      }
     } catch (e) {
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$e')));
+      if (mounted)
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('$e')));
     }
   }
 
   Future<void> _togglePublishQuiz(int id) async {
     try {
       await widget.repository.togglePublishQuiz(id);
-      if (mounted) setState(() => _quizzes = widget.repository.quizzes());
+      if (mounted) {
+        setState(() {
+          _quizzes = widget.repository.quizzes();
+        });
+      }
     } catch (e) {
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$e')));
+      if (mounted)
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('$e')));
     }
   }
 
@@ -86,7 +100,10 @@ class _ContentHubTabState extends State<ContentHubTab> {
         title: const Text('Padam?'),
         content: Text('Padam $what? Tindakan ini tidak boleh dibatalkan.'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Batal')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Batal'),
+          ),
           FilledButton(
             style: FilledButton.styleFrom(backgroundColor: LmsColors.danger),
             onPressed: () => Navigator.pop(ctx, true),
@@ -102,9 +119,16 @@ class _ContentHubTabState extends State<ContentHubTab> {
     if (!await _confirmDelete('video ini')) return;
     try {
       await widget.repository.deleteVideo(id);
-      if (mounted) setState(() => _videos = widget.repository.videos());
+      if (mounted) {
+        setState(() {
+          _videos = widget.repository.videos();
+        });
+      }
     } catch (e) {
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$e')));
+      if (mounted)
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('$e')));
     }
   }
 
@@ -112,9 +136,16 @@ class _ContentHubTabState extends State<ContentHubTab> {
     if (!await _confirmDelete('bahan ini')) return;
     try {
       await widget.repository.deleteMaterial(id);
-      if (mounted) setState(() => _materials = widget.repository.materials());
+      if (mounted) {
+        setState(() {
+          _materials = widget.repository.materials();
+        });
+      }
     } catch (e) {
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$e')));
+      if (mounted)
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('$e')));
     }
   }
 
@@ -122,9 +153,16 @@ class _ContentHubTabState extends State<ContentHubTab> {
     if (!await _confirmDelete('kuiz ini')) return;
     try {
       await widget.repository.deleteQuiz(id);
-      if (mounted) setState(() => _quizzes = widget.repository.quizzes());
+      if (mounted) {
+        setState(() {
+          _quizzes = widget.repository.quizzes();
+        });
+      }
     } catch (e) {
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$e')));
+      if (mounted)
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('$e')));
     }
   }
 
@@ -135,20 +173,26 @@ class _ContentHubTabState extends State<ContentHubTab> {
       case 1:
         return _MaterialsList(
           future: _materials!,
-          onReload: () => setState(() => _materials = widget.repository.materials()),
+          onReload: () => setState(() {
+            _materials = widget.repository.materials();
+          }),
           onDelete: _deleteMaterial,
         );
       case 2:
         return _QuizzesList(
           future: _quizzes!,
-          onReload: () => setState(() => _quizzes = widget.repository.quizzes()),
+          onReload: () => setState(() {
+            _quizzes = widget.repository.quizzes();
+          }),
           onToggle: _togglePublishQuiz,
           onDelete: _deleteQuiz,
         );
       default:
         return _VideosList(
           future: _videos!,
-          onReload: () => setState(() => _videos = widget.repository.videos()),
+          onReload: () => setState(() {
+            _videos = widget.repository.videos();
+          }),
           onToggle: _togglePublishVideo,
           onDelete: _deleteVideo,
         );
@@ -243,7 +287,11 @@ class _VideosList extends StatelessWidget {
 }
 
 class _MaterialsList extends StatelessWidget {
-  const _MaterialsList({required this.future, required this.onReload, required this.onDelete});
+  const _MaterialsList({
+    required this.future,
+    required this.onReload,
+    required this.onDelete,
+  });
   final Future<List<TeacherMaterial>> future;
   final VoidCallback onReload;
   final void Function(int id) onDelete;
@@ -438,7 +486,9 @@ class _ContentCard extends StatelessWidget {
                     child: Row(
                       children: [
                         Icon(
-                          published! ? Icons.visibility_off_outlined : Icons.public,
+                          published!
+                              ? Icons.visibility_off_outlined
+                              : Icons.public,
                           size: 18,
                           color: LmsColors.ink,
                         ),
@@ -452,9 +502,16 @@ class _ContentCard extends StatelessWidget {
                     value: 'delete',
                     child: Row(
                       children: [
-                        Icon(Icons.delete_outline, size: 18, color: LmsColors.danger),
+                        Icon(
+                          Icons.delete_outline,
+                          size: 18,
+                          color: LmsColors.danger,
+                        ),
                         SizedBox(width: 10),
-                        Text('Padam', style: TextStyle(color: LmsColors.danger)),
+                        Text(
+                          'Padam',
+                          style: TextStyle(color: LmsColors.danger),
+                        ),
                       ],
                     ),
                   ),

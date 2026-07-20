@@ -32,16 +32,25 @@ class _SubjectChaptersScreenState extends State<SubjectChaptersScreen> {
   @override
   void initState() {
     super.initState();
-    _future = widget.repository.subjectChapters(widget.slug, grade: widget.grade);
+    _future = widget.repository.subjectChapters(
+      widget.slug,
+      grade: widget.grade,
+    );
   }
 
-  void _reload() =>
-      setState(() => _future = widget.repository.subjectChapters(widget.slug, grade: widget.grade));
+  void _reload() => setState(() {
+    _future = widget.repository.subjectChapters(
+      widget.slug,
+      grade: widget.grade,
+    );
+  });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.title, overflow: TextOverflow.ellipsis)),
+      appBar: AppBar(
+        title: Text(widget.title, overflow: TextOverflow.ellipsis),
+      ),
       body: FutureBuilder<SubjectChaptersData>(
         future: _future,
         builder: (context, snapshot) {
@@ -72,19 +81,23 @@ class _SubjectChaptersScreenState extends State<SubjectChaptersScreen> {
             separatorBuilder: (_, i) => SizedBox(height: i == 0 ? 12 : 10),
             itemBuilder: (context, i) {
               if (i == 0) {
-                return Text('${data.subject.displayName} · ${data.grade.name}',
-                    style: Theme.of(context).textTheme.bodyMedium);
+                return Text(
+                  '${data.subject.displayName} · ${data.grade.name}',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                );
               }
               final chapter = data.chapters[i - 1];
               return _ChapterCard(
                 chapter: chapter,
-                onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                  builder: (_) => ChapterScreen(
-                    repository: widget.repository,
-                    chapterId: chapter.id,
-                    title: chapter.label,
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => ChapterScreen(
+                      repository: widget.repository,
+                      chapterId: chapter.id,
+                      title: chapter.label,
+                    ),
                   ),
-                )),
+                ),
               );
             },
           );
@@ -102,7 +115,9 @@ class _ChapterCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final done = chapter.lessonsCount > 0 && chapter.watchedCount >= chapter.lessonsCount;
+    final done =
+        chapter.lessonsCount > 0 &&
+        chapter.watchedCount >= chapter.lessonsCount;
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(14),
@@ -125,7 +140,10 @@ class _ChapterCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(chapter.title, style: Theme.of(context).textTheme.titleMedium),
+                  Text(
+                    chapter.title,
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
                   const SizedBox(height: 4),
                   Text(
                     _summary(chapter),
@@ -158,7 +176,8 @@ class _ChapterCard extends StatelessWidget {
 
   String _summary(ChapterListItem c) {
     final parts = <String>[];
-    if (c.lessonsCount > 0) parts.add('${c.watchedCount}/${c.lessonsCount} video');
+    if (c.lessonsCount > 0)
+      parts.add('${c.watchedCount}/${c.lessonsCount} video');
     if (c.materialsCount > 0) parts.add('${c.materialsCount} bahan');
     if (c.quizzesCount > 0) parts.add('${c.quizzesCount} kuiz');
     return parts.isEmpty ? 'Belum ada kandungan' : parts.join(' · ');

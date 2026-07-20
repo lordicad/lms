@@ -27,8 +27,10 @@ class ContentRepository {
   Future<SubjectsData> subjects({int? grade}) async =>
       _api.subjects(await _token(), grade: grade);
 
-  Future<SubjectChaptersData> subjectChapters(String slug, {int? grade}) async =>
-      _api.subjectChapters(await _token(), slug, grade: grade);
+  Future<SubjectChaptersData> subjectChapters(
+    String slug, {
+    int? grade,
+  }) async => _api.subjectChapters(await _token(), slug, grade: grade);
 
   Future<ChapterDetail> chapter(int chapterId) async =>
       _api.chapter(await _token(), chapterId);
@@ -39,23 +41,35 @@ class ContentRepository {
   Future<void> markViewed(int lessonId) async =>
       _api.markViewed(await _token(), lessonId);
 
-  Future<void> saveProgress(int lessonId, {required int positionSeconds, int? durationSeconds}) async =>
-      _api.saveProgress(await _token(), lessonId,
-          positionSeconds: positionSeconds, durationSeconds: durationSeconds);
+  Future<void> saveProgress(
+    int lessonId, {
+    required int positionSeconds,
+    int? durationSeconds,
+  }) async => _api.saveProgress(
+    await _token(),
+    lessonId,
+    positionSeconds: positionSeconds,
+    durationSeconds: durationSeconds,
+  );
 
-  Future<List<LessonCard>> favourites() async => _api.favourites(await _token());
+  Future<List<LessonCard>> favourites() async =>
+      _api.favourites(await _token());
 
   Future<bool> toggleFavourite(int lessonId) async =>
       _api.toggleFavourite(await _token(), lessonId);
 
   Future<List<QuizListItem>> quizzes() async => _api.quizzes(await _token());
 
-  Future<QuizIntro> quizIntro(int quizId) async => _api.quizIntro(await _token(), quizId);
+  Future<QuizIntro> quizIntro(int quizId) async =>
+      _api.quizIntro(await _token(), quizId);
 
-  Future<QuizStart> startQuiz(int quizId) async => _api.startQuiz(await _token(), quizId);
+  Future<QuizStart> startQuiz(int quizId) async =>
+      _api.startQuiz(await _token(), quizId);
 
-  Future<QuizResult> submitQuiz(int attemptId, Map<int, List<int>> answers) async =>
-      _api.submitQuiz(await _token(), attemptId, answers);
+  Future<QuizResult> submitQuiz(
+    int attemptId,
+    Map<int, List<int>> answers,
+  ) async => _api.submitQuiz(await _token(), attemptId, answers);
 
   Future<QuizResult> quizResult(int attemptId) async =>
       _api.quizResult(await _token(), attemptId);

@@ -60,8 +60,15 @@ class TeacherApi {
     return TeacherOptions.fromJson(json);
   }
 
-  Future<ChaptersData> chapters(String token, int subjectId, int gradeId) async {
-    final json = await _get(token, '/teacher/chapters?subject_id=$subjectId&grade_id=$gradeId');
+  Future<ChaptersData> chapters(
+    String token,
+    int subjectId,
+    int gradeId,
+  ) async {
+    final json = await _get(
+      token,
+      '/teacher/chapters?subject_id=$subjectId&grade_id=$gradeId',
+    );
     return ChaptersData.fromJson(json);
   }
 
@@ -76,7 +83,8 @@ class TeacherApi {
       'subject_id': subjectId,
       'grade_id': gradeId,
       'title': title,
-      if (description != null && description.isNotEmpty) 'description': description,
+      if (description != null && description.isNotEmpty)
+        'description': description,
     });
   }
 
@@ -88,11 +96,13 @@ class TeacherApi {
   }) async {
     await _sendJson('PUT', token, '/teacher/chapters/$id', {
       'title': title,
-      if (description != null && description.isNotEmpty) 'description': description,
+      if (description != null && description.isNotEmpty)
+        'description': description,
     });
   }
 
-  Future<void> deleteChapter(String token, int id) => _delete(token, '/teacher/chapters/$id');
+  Future<void> deleteChapter(String token, int id) =>
+      _delete(token, '/teacher/chapters/$id');
 
   Future<void> createVideo(
     String token, {
@@ -105,10 +115,35 @@ class TeacherApi {
     await _sendJson('POST', token, '/teacher/videos', {
       'chapter_id': chapterId,
       'title': title,
-      if (description != null && description.isNotEmpty) 'description': description,
+      if (description != null && description.isNotEmpty)
+        'description': description,
       'youtube_url': youtubeUrl,
       'is_published': isPublished,
     });
+  }
+
+  Future<int> createInteractiveQuiz(
+    String token, {
+    required int chapterId,
+    required String title,
+    String? description,
+    int? durationMinutes,
+    required bool isPublished,
+    required List<TeacherQuizQuestionDraft> questions,
+  }) async {
+    final json = await _sendJson('POST', token, '/teacher/quizzes', {
+      'chapter_id': chapterId,
+      'title': title,
+      if (description != null && description.isNotEmpty)
+        'description': description,
+      if (durationMinutes != null) 'duration_minutes': durationMinutes,
+      'is_published': isPublished,
+      'questions': questions
+          .map((question) => question.toJson())
+          .toList(growable: false),
+    });
+
+    return int.tryParse('${json['id']}') ?? 0;
   }
 
   Future<Map<String, dynamic>> _get(String token, String path) async {
@@ -117,14 +152,20 @@ class TeacherApi {
       headers: {'Accept': 'application/json', 'Authorization': 'Bearer $token'},
     );
 
-    final decoded = response.body.isEmpty ? const <String, dynamic>{} : jsonDecode(response.body);
-    final map = decoded is Map<String, dynamic> ? decoded : const <String, dynamic>{};
+    final decoded = response.body.isEmpty
+        ? const <String, dynamic>{}
+        : jsonDecode(response.body);
+    final map = decoded is Map<String, dynamic>
+        ? decoded
+        : const <String, dynamic>{};
 
     if (response.statusCode >= 400) {
       if (response.statusCode == 401) {
         throw const ApiException('Sesi tamat. Sila log masuk semula.');
       }
-      throw ApiException((map['message'] as String?) ?? 'Tidak dapat memuatkan data.');
+      throw ApiException(
+        (map['message'] as String?) ?? 'Tidak dapat memuatkan data.',
+      );
     }
 
     return map;
@@ -136,8 +177,12 @@ class TeacherApi {
       headers: {'Accept': 'application/json', 'Authorization': 'Bearer $token'},
     );
 
-    final decoded = response.body.isEmpty ? const <String, dynamic>{} : jsonDecode(response.body);
-    final map = decoded is Map<String, dynamic> ? decoded : const <String, dynamic>{};
+    final decoded = response.body.isEmpty
+        ? const <String, dynamic>{}
+        : jsonDecode(response.body);
+    final map = decoded is Map<String, dynamic>
+        ? decoded
+        : const <String, dynamic>{};
 
     if (response.statusCode >= 400) {
       if (response.statusCode == 401) {
@@ -167,8 +212,12 @@ class TeacherApi {
         ? await _http.put(uri, headers: headers, body: encoded)
         : await _http.post(uri, headers: headers, body: encoded);
 
-    final decoded = response.body.isEmpty ? const <String, dynamic>{} : jsonDecode(response.body);
-    final map = decoded is Map<String, dynamic> ? decoded : const <String, dynamic>{};
+    final decoded = response.body.isEmpty
+        ? const <String, dynamic>{}
+        : jsonDecode(response.body);
+    final map = decoded is Map<String, dynamic>
+        ? decoded
+        : const <String, dynamic>{};
 
     if (response.statusCode >= 400) {
       if (response.statusCode == 401) {
@@ -177,7 +226,8 @@ class TeacherApi {
       final errors = map['errors'];
       if (errors is Map && errors.values.isNotEmpty) {
         final first = errors.values.first;
-        if (first is List && first.isNotEmpty) throw ApiException(first.first.toString());
+        if (first is List && first.isNotEmpty)
+          throw ApiException(first.first.toString());
       }
       throw ApiException((map['message'] as String?) ?? 'Tindakan gagal.');
     }
@@ -195,7 +245,9 @@ class TeacherApi {
       if (response.statusCode == 401) {
         throw const ApiException('Sesi tamat. Sila log masuk semula.');
       }
-      final decoded = response.body.isEmpty ? const {} : jsonDecode(response.body);
+      final decoded = response.body.isEmpty
+          ? const {}
+          : jsonDecode(response.body);
       final message = decoded is Map ? decoded['message'] as String? : null;
       throw ApiException(message ?? 'Tidak dapat memadam.');
     }
@@ -203,6 +255,9 @@ class TeacherApi {
 
   List<T> _mapList<T>(Object? raw, T Function(Map<String, dynamic>) fromJson) {
     if (raw is! List) return const [];
-    return raw.whereType<Map<String, dynamic>>().map(fromJson).toList(growable: false);
+    return raw
+        .whereType<Map<String, dynamic>>()
+        .map(fromJson)
+        .toList(growable: false);
   }
 }

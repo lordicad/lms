@@ -13,7 +13,9 @@ class QuizResultScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(result.quizTitle, overflow: TextOverflow.ellipsis)),
+      appBar: AppBar(
+        title: Text(result.quizTitle, overflow: TextOverflow.ellipsis),
+      ),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
         children: [
@@ -26,11 +28,14 @@ class QuizResultScreen extends StatelessWidget {
             ),
           ],
           const SizedBox(height: 20),
-          Text('Semakan jawapan', style: Theme.of(context).textTheme.titleLarge),
+          Text(
+            'Semakan jawapan',
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
           const SizedBox(height: 8),
           ...result.questions.asMap().entries.map(
-                (e) => _ReviewCard(index: e.key + 1, question: e.value),
-              ),
+            (e) => _ReviewCard(index: e.key + 1, question: e.value),
+          ),
         ],
       ),
       bottomNavigationBar: SafeArea(
@@ -57,13 +62,17 @@ class _ScoreHeader extends StatelessWidget {
       decoration: BoxDecoration(
         color: celebrate ? LmsColors.forest : LmsColors.surface,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: celebrate ? Colors.transparent : LmsColors.border),
+        border: Border.all(
+          color: celebrate ? Colors.transparent : LmsColors.border,
+        ),
       ),
       padding: const EdgeInsets.all(22),
       child: Column(
         children: [
           Icon(
-            celebrate ? Icons.emoji_events_rounded : Icons.check_circle_outline_rounded,
+            celebrate
+                ? Icons.emoji_events_rounded
+                : Icons.check_circle_outline_rounded,
             size: 42,
             color: celebrate ? LmsColors.accent : LmsColors.brand,
           ),
@@ -87,7 +96,9 @@ class _ScoreHeader extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            celebrate ? 'Hebat! Kerja yang bagus.' : 'Bagus percubaan — teruskan berlatih!',
+            celebrate
+                ? 'Hebat! Kerja yang bagus.'
+                : 'Bagus percubaan — teruskan berlatih!',
             textAlign: TextAlign.center,
             style: TextStyle(
               fontWeight: FontWeight.w700,
@@ -108,7 +119,10 @@ class _Banner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(color: LmsColors.brandSoft, borderRadius: BorderRadius.circular(12)),
+      decoration: BoxDecoration(
+        color: LmsColors.brandSoft,
+        borderRadius: BorderRadius.circular(12),
+      ),
       padding: const EdgeInsets.all(14),
       child: Row(
         children: [
@@ -117,7 +131,10 @@ class _Banner extends StatelessWidget {
           Expanded(
             child: Text(
               text,
-              style: const TextStyle(fontWeight: FontWeight.w600, color: LmsColors.brandStrong),
+              style: const TextStyle(
+                fontWeight: FontWeight.w600,
+                color: LmsColors.brandStrong,
+              ),
             ),
           ),
         ],
@@ -148,20 +165,29 @@ class _ReviewCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Icon(
-                question.isCorrect ? Icons.check_circle_rounded : Icons.cancel_rounded,
+                question.isCorrect
+                    ? Icons.check_circle_rounded
+                    : Icons.cancel_rounded,
                 size: 20,
-                color: question.isCorrect ? LmsColors.success : LmsColors.danger,
+                color: question.isCorrect
+                    ? LmsColors.success
+                    : LmsColors.danger,
               ),
               const SizedBox(width: 8),
               Expanded(
-                child: Text('$index. ${question.text}',
-                    style: Theme.of(context).textTheme.titleMedium),
+                child: Text(
+                  '$index. ${question.text}',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
               ),
             ],
           ),
           const SizedBox(height: 10),
           ...question.options.map(
-            (o) => _OptionReviewRow(option: o, chosen: question.yourOptionIds.contains(o.id)),
+            (o) => _OptionReviewRow(
+              option: o,
+              chosen: question.yourOptionIds.contains(o.id),
+            ),
           ),
         ],
       ),
@@ -204,8 +230,13 @@ class _OptionReviewRow extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       child: Row(
         children: [
-          Text('${option.letter}. ',
-              style: const TextStyle(fontWeight: FontWeight.w800, color: LmsColors.inkMuted)),
+          Text(
+            '${option.letter}. ',
+            style: const TextStyle(
+              fontWeight: FontWeight.w800,
+              color: LmsColors.inkMuted,
+            ),
+          ),
           Expanded(child: Text(option.text)),
           if (mark != null) Icon(mark, size: 18, color: markColor),
         ],

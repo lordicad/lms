@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\Student\RankingController;
 use App\Http\Controllers\Api\Teacher\ChapterController as TeacherChapterController;
 use App\Http\Controllers\Api\Teacher\ContentController as TeacherContentController;
 use App\Http\Controllers\Api\Teacher\DashboardController as TeacherDashboardController;
+use App\Http\Controllers\Api\Teacher\QuizController as TeacherQuizController;
 use App\Http\Controllers\Api\Teacher\VideoController as TeacherVideoController;
 use Illuminate\Support\Facades\Route;
 
@@ -83,4 +84,5 @@ Route::middleware('auth:sanctum')->prefix('teacher')->group(function () {
     Route::delete('chapters/{chapter}', [TeacherChapterController::class, 'destroy']);
 
     Route::post('videos', [TeacherVideoController::class, 'store']);
+    Route::post('quizzes', [TeacherQuizController::class, 'store']);
 });

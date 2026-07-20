@@ -7,7 +7,10 @@ bool _bool(Object? v) => v == true;
 
 List<T> _mapList<T>(Object? raw, T Function(Map<String, dynamic>) fromJson) {
   if (raw is! List) return const [];
-  return raw.whereType<Map<String, dynamic>>().map(fromJson).toList(growable: false);
+  return raw
+      .whereType<Map<String, dynamic>>()
+      .map(fromJson)
+      .toList(growable: false);
 }
 
 class TeacherStats {
@@ -59,15 +62,21 @@ class RecentAttempt {
 }
 
 class TeacherDashboardData {
-  const TeacherDashboardData({required this.stats, required this.recentAttempts});
+  const TeacherDashboardData({
+    required this.stats,
+    required this.recentAttempts,
+  });
 
   final TeacherStats stats;
   final List<RecentAttempt> recentAttempts;
 
-  factory TeacherDashboardData.fromJson(Map<String, dynamic> j) => TeacherDashboardData(
-    stats: TeacherStats.fromJson((j['stats'] as Map<String, dynamic>?) ?? const {}),
-    recentAttempts: _mapList(j['recent_attempts'], RecentAttempt.fromJson),
-  );
+  factory TeacherDashboardData.fromJson(Map<String, dynamic> j) =>
+      TeacherDashboardData(
+        stats: TeacherStats.fromJson(
+          (j['stats'] as Map<String, dynamic>?) ?? const {},
+        ),
+        recentAttempts: _mapList(j['recent_attempts'], RecentAttempt.fromJson),
+      );
 }
 
 // --- Content Hub ---
@@ -172,6 +181,45 @@ class TeacherQuiz {
     questionCount: _int(j['question_count']),
     attempts: _int(j['attempts']),
   );
+}
+
+/// A complete question is saved together with its quiz so the server can make the
+/// whole builder transactional. These are draft-only models; created questions
+/// are returned through [TeacherQuiz] in the Content Hub.
+class TeacherQuizQuestionDraft {
+  const TeacherQuizQuestionDraft({
+    required this.questionText,
+    required this.questionType,
+    required this.points,
+    required this.options,
+  });
+
+  final String questionText;
+  final String questionType; // 'single' | 'multiple'
+  final int points;
+  final List<TeacherQuizOptionDraft> options;
+
+  Map<String, dynamic> toJson() => {
+    'question_text': questionText,
+    'question_type': questionType,
+    'points': points,
+    'options': options.map((option) => option.toJson()).toList(growable: false),
+  };
+}
+
+class TeacherQuizOptionDraft {
+  const TeacherQuizOptionDraft({
+    required this.optionText,
+    required this.isCorrect,
+  });
+
+  final String optionText;
+  final bool isCorrect;
+
+  Map<String, dynamic> toJson() => {
+    'option_text': optionText,
+    'is_correct': isCorrect,
+  };
 }
 
 // --- Bab management + picker options ---

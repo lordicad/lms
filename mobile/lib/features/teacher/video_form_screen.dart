@@ -80,13 +80,16 @@ class _VideoFormScreenState extends State<VideoFormScreen> {
     } catch (e) {
       if (mounted) {
         setState(() => _loadingChapters = false);
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$e')));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('$e')));
       }
     }
   }
 
-  void _snack(String message) =>
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+  void _snack(String message) => ScaffoldMessenger.of(
+    context,
+  ).showSnackBar(SnackBar(content: Text(message)));
 
   Future<void> _save() async {
     final title = _titleCtrl.text.trim();
@@ -127,84 +130,101 @@ class _VideoFormScreenState extends State<VideoFormScreen> {
               onRetry: _loadOptions,
             )
           : _options == null
-              ? const Center(child: CircularProgressIndicator())
-              : ListView(
-                  padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
+          ? const Center(child: CircularProgressIndicator())
+          : ListView(
+              padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
+              children: [
+                Row(
                   children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: _optionDropdown('Subjek', _options!.subjects, _subject, (v) {
-                            setState(() => _subject = v);
-                            _loadChapters();
-                          }),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: _optionDropdown('Tahun', _options!.grades, _grade, (v) {
-                            setState(() => _grade = v);
-                            _loadChapters();
-                          }),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    if (_loadingChapters)
-                      const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 8),
-                        child: LinearProgressIndicator(),
-                      )
-                    else if (_chapters.isEmpty)
-                      const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 8),
-                        child: Text(
-                          'Tiada bab untuk pasangan ini. Cipta bab dahulu di Kandungan › Bab.',
-                          style: TextStyle(color: LmsColors.inkMuted),
-                        ),
-                      )
-                    else
-                      DropdownButtonFormField<TeacherChapter>(
-                        initialValue: _chapter,
-                        isExpanded: true,
-                        decoration: const InputDecoration(labelText: 'Bab'),
-                        items: _chapters
-                            .map((c) => DropdownMenuItem(
-                                  value: c,
-                                  child: Text('Bab ${c.number}: ${c.title}', overflow: TextOverflow.ellipsis),
-                                ))
-                            .toList(),
-                        onChanged: (v) => setState(() => _chapter = v),
-                      ),
-                    const SizedBox(height: 16),
-                    TextField(
-                      controller: _titleCtrl,
-                      decoration: const InputDecoration(labelText: 'Tajuk video'),
-                    ),
-                    const SizedBox(height: 12),
-                    TextField(
-                      controller: _descCtrl,
-                      maxLines: 3,
-                      decoration: const InputDecoration(labelText: 'Penerangan (pilihan)'),
-                    ),
-                    const SizedBox(height: 12),
-                    TextField(
-                      controller: _urlCtrl,
-                      keyboardType: TextInputType.url,
-                      decoration: const InputDecoration(
-                        labelText: 'Pautan YouTube',
-                        hintText: 'https://youtu.be/…',
+                    Expanded(
+                      child: _optionDropdown(
+                        'Subjek',
+                        _options!.subjects,
+                        _subject,
+                        (v) {
+                          setState(() => _subject = v);
+                          _loadChapters();
+                        },
                       ),
                     ),
-                    const SizedBox(height: 4),
-                    SwitchListTile(
-                      contentPadding: EdgeInsets.zero,
-                      title: const Text('Terbitkan'),
-                      subtitle: const Text('Murid boleh menonton sebaik disimpan.'),
-                      value: _published,
-                      onChanged: (v) => setState(() => _published = v),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: _optionDropdown(
+                        'Tahun',
+                        _options!.grades,
+                        _grade,
+                        (v) {
+                          setState(() => _grade = v);
+                          _loadChapters();
+                        },
+                      ),
                     ),
                   ],
                 ),
+                const SizedBox(height: 12),
+                if (_loadingChapters)
+                  const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 8),
+                    child: LinearProgressIndicator(),
+                  )
+                else if (_chapters.isEmpty)
+                  const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 8),
+                    child: Text(
+                      'Tiada bab untuk pasangan ini. Cipta bab dahulu di Kandungan › Bab.',
+                      style: TextStyle(color: LmsColors.inkMuted),
+                    ),
+                  )
+                else
+                  DropdownButtonFormField<TeacherChapter>(
+                    initialValue: _chapter,
+                    isExpanded: true,
+                    decoration: const InputDecoration(labelText: 'Bab'),
+                    items: _chapters
+                        .map(
+                          (c) => DropdownMenuItem(
+                            value: c,
+                            child: Text(
+                              'Bab ${c.number}: ${c.title}',
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        )
+                        .toList(),
+                    onChanged: (v) => setState(() => _chapter = v),
+                  ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: _titleCtrl,
+                  decoration: const InputDecoration(labelText: 'Tajuk video'),
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: _descCtrl,
+                  maxLines: 3,
+                  decoration: const InputDecoration(
+                    labelText: 'Penerangan (pilihan)',
+                  ),
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: _urlCtrl,
+                  keyboardType: TextInputType.url,
+                  decoration: const InputDecoration(
+                    labelText: 'Pautan YouTube',
+                    hintText: 'https://youtu.be/…',
+                  ),
+                ),
+                const SizedBox(height: 4),
+                SwitchListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: const Text('Terbitkan'),
+                  subtitle: const Text('Murid boleh menonton sebaik disimpan.'),
+                  value: _published,
+                  onChanged: (v) => setState(() => _published = v),
+                ),
+              ],
+            ),
       bottomNavigationBar: SafeArea(
         child: Padding(
           padding: const EdgeInsets.fromLTRB(20, 8, 20, 16),
@@ -214,7 +234,10 @@ class _VideoFormScreenState extends State<VideoFormScreen> {
                 ? const SizedBox(
                     width: 18,
                     height: 18,
-                    child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: Colors.white,
+                    ),
                   )
                 : const Icon(Icons.save_outlined),
             label: const Text('Simpan video'),
@@ -235,10 +258,18 @@ class _VideoFormScreenState extends State<VideoFormScreen> {
       isExpanded: true,
       decoration: InputDecoration(
         labelText: label,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 12,
+          vertical: 10,
+        ),
       ),
       items: items
-          .map((o) => DropdownMenuItem(value: o, child: Text(o.name, overflow: TextOverflow.ellipsis)))
+          .map(
+            (o) => DropdownMenuItem(
+              value: o,
+              child: Text(o.name, overflow: TextOverflow.ellipsis),
+            ),
+          )
           .toList(),
       onChanged: onChanged,
     );

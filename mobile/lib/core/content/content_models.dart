@@ -4,7 +4,8 @@ import 'dart:ui' show Color;
 /// `/api/student/*` endpoints. Kept plain (fromJson only) to match the existing app style.
 
 int _int(Object? v) => v is int ? v : int.tryParse('$v') ?? 0;
-int? _intOrNull(Object? v) => v == null ? null : (v is int ? v : int.tryParse('$v'));
+int? _intOrNull(Object? v) =>
+    v == null ? null : (v is int ? v : int.tryParse('$v'));
 String _str(Object? v) => v?.toString() ?? '';
 String? _strOrNull(Object? v) => v?.toString();
 bool _bool(Object? v) => v == true;
@@ -16,8 +17,11 @@ class GradeInfo {
   final int level;
   final String name;
 
-  factory GradeInfo.fromJson(Map<String, dynamic> j) =>
-      GradeInfo(id: _int(j['id']), level: _int(j['level']), name: _str(j['name']));
+  factory GradeInfo.fromJson(Map<String, dynamic> j) => GradeInfo(
+    id: _int(j['id']),
+    level: _int(j['level']),
+    name: _str(j['name']),
+  );
 }
 
 class SubjectCard {
@@ -117,7 +121,9 @@ class DashboardData {
   final List<SubjectCard> subjects;
 
   factory DashboardData.fromJson(Map<String, dynamic> j) => DashboardData(
-    grade: j['grade'] == null ? null : GradeInfo.fromJson(j['grade'] as Map<String, dynamic>),
+    grade: j['grade'] == null
+        ? null
+        : GradeInfo.fromJson(j['grade'] as Map<String, dynamic>),
     points: _int(j['points']),
     rank: _intOrNull(j['rank']),
     continueWatching: _list(j['continue_watching'], LessonCard.fromJson),
@@ -127,17 +133,22 @@ class DashboardData {
 }
 
 class SubjectCategoryGroup {
-  const SubjectCategoryGroup({required this.key, required this.label, required this.subjects});
+  const SubjectCategoryGroup({
+    required this.key,
+    required this.label,
+    required this.subjects,
+  });
 
   final String key;
   final String label;
   final List<SubjectCard> subjects;
 
-  factory SubjectCategoryGroup.fromJson(Map<String, dynamic> j) => SubjectCategoryGroup(
-    key: _str(j['key']),
-    label: _str(j['label']),
-    subjects: _list(j['subjects'], SubjectCard.fromJson),
-  );
+  factory SubjectCategoryGroup.fromJson(Map<String, dynamic> j) =>
+      SubjectCategoryGroup(
+        key: _str(j['key']),
+        label: _str(j['label']),
+        subjects: _list(j['subjects'], SubjectCard.fromJson),
+      );
 }
 
 class SubjectsData {
@@ -147,7 +158,9 @@ class SubjectsData {
   final List<SubjectCategoryGroup> categories;
 
   factory SubjectsData.fromJson(Map<String, dynamic> j) => SubjectsData(
-    grade: j['grade'] == null ? null : GradeInfo.fromJson(j['grade'] as Map<String, dynamic>),
+    grade: j['grade'] == null
+        ? null
+        : GradeInfo.fromJson(j['grade'] as Map<String, dynamic>),
     categories: _list(j['categories'], SubjectCategoryGroup.fromJson),
   );
 }
@@ -186,17 +199,22 @@ class ChapterListItem {
 }
 
 class SubjectChaptersData {
-  const SubjectChaptersData({required this.subject, required this.grade, required this.chapters});
+  const SubjectChaptersData({
+    required this.subject,
+    required this.grade,
+    required this.chapters,
+  });
 
   final SubjectCard subject;
   final GradeInfo grade;
   final List<ChapterListItem> chapters;
 
-  factory SubjectChaptersData.fromJson(Map<String, dynamic> j) => SubjectChaptersData(
-    subject: SubjectCard.fromJson(j['subject'] as Map<String, dynamic>),
-    grade: GradeInfo.fromJson(j['grade'] as Map<String, dynamic>),
-    chapters: _list(j['chapters'], ChapterListItem.fromJson),
-  );
+  factory SubjectChaptersData.fromJson(Map<String, dynamic> j) =>
+      SubjectChaptersData(
+        subject: SubjectCard.fromJson(j['subject'] as Map<String, dynamic>),
+        grade: GradeInfo.fromJson(j['grade'] as Map<String, dynamic>),
+        chapters: _list(j['chapters'], ChapterListItem.fromJson),
+      );
 }
 
 class MaterialItem {
@@ -284,17 +302,22 @@ class ChapterDetail {
 }
 
 class LessonProgressInfo {
-  const LessonProgressInfo({required this.positionSeconds, required this.percent, required this.completed});
+  const LessonProgressInfo({
+    required this.positionSeconds,
+    required this.percent,
+    required this.completed,
+  });
 
   final int positionSeconds;
   final int percent;
   final bool completed;
 
-  factory LessonProgressInfo.fromJson(Map<String, dynamic> j) => LessonProgressInfo(
-    positionSeconds: _int(j['position_seconds']),
-    percent: _int(j['percent']),
-    completed: _bool(j['completed']),
-  );
+  factory LessonProgressInfo.fromJson(Map<String, dynamic> j) =>
+      LessonProgressInfo(
+        positionSeconds: _int(j['position_seconds']),
+        percent: _int(j['percent']),
+        completed: _bool(j['completed']),
+      );
 }
 
 class LessonNeighbour {
@@ -360,10 +383,16 @@ class LessonDetail {
       teacherName: _strOrNull(lesson['teacher_name']),
       chapterLabel: _str(chapter['label']),
       subject: SubjectCard.fromJson(j['subject'] as Map<String, dynamic>),
-      progress: j['progress'] == null ? null : LessonProgressInfo.fromJson(j['progress'] as Map<String, dynamic>),
+      progress: j['progress'] == null
+          ? null
+          : LessonProgressInfo.fromJson(j['progress'] as Map<String, dynamic>),
       favourited: _bool(j['favourited']),
-      previous: j['previous'] == null ? null : LessonNeighbour.fromJson(j['previous'] as Map<String, dynamic>),
-      next: j['next'] == null ? null : LessonNeighbour.fromJson(j['next'] as Map<String, dynamic>),
+      previous: j['previous'] == null
+          ? null
+          : LessonNeighbour.fromJson(j['previous'] as Map<String, dynamic>),
+      next: j['next'] == null
+          ? null
+          : LessonNeighbour.fromJson(j['next'] as Map<String, dynamic>),
       materials: _list(j['materials'], MaterialItem.fromJson),
     );
   }
@@ -467,13 +496,14 @@ class QuizAttemptSummary {
   final int percent;
   final bool countsForRanking;
 
-  factory QuizAttemptSummary.fromJson(Map<String, dynamic> j) => QuizAttemptSummary(
-    id: _int(j['id']),
-    score: _int(j['score']),
-    maxScore: _int(j['max_score']),
-    percent: _int(j['percent']),
-    countsForRanking: _bool(j['counts_for_ranking']),
-  );
+  factory QuizAttemptSummary.fromJson(Map<String, dynamic> j) =>
+      QuizAttemptSummary(
+        id: _int(j['id']),
+        score: _int(j['score']),
+        maxScore: _int(j['max_score']),
+        percent: _int(j['percent']),
+        countsForRanking: _bool(j['counts_for_ranking']),
+      );
 }
 
 class QuizIntro {
@@ -545,14 +575,15 @@ class QuizResultQuestion {
   final List<int> yourOptionIds;
   final List<QuizOption> options;
 
-  factory QuizResultQuestion.fromJson(Map<String, dynamic> j) => QuizResultQuestion(
-    id: _int(j['id']),
-    text: _str(j['text']),
-    type: _str(j['type']),
-    isCorrect: _bool(j['is_correct']),
-    yourOptionIds: _intList(j['your_option_ids']),
-    options: _list(j['options'], QuizOption.fromJson),
-  );
+  factory QuizResultQuestion.fromJson(Map<String, dynamic> j) =>
+      QuizResultQuestion(
+        id: _int(j['id']),
+        text: _str(j['text']),
+        type: _str(j['type']),
+        isCorrect: _bool(j['is_correct']),
+        yourOptionIds: _intList(j['your_option_ids']),
+        options: _list(j['options'], QuizOption.fromJson),
+      );
 }
 
 class QuizResult {
@@ -633,7 +664,8 @@ class QuizListItem {
   );
 }
 
-double _double(Object? v) => v is num ? v.toDouble() : double.tryParse('$v') ?? 0;
+double _double(Object? v) =>
+    v is num ? v.toDouble() : double.tryParse('$v') ?? 0;
 
 // --- Ranking (leaderboard, scoped to the student's Tahun) ---
 
@@ -682,7 +714,9 @@ class RankingData {
     return RankingData(
       gradeName: grade == null ? null : _strOrNull(grade['name']),
       top: _list(j['top'], RankRow.fromJson),
-      myRow: j['my_row'] == null ? null : RankRow.fromJson(j['my_row'] as Map<String, dynamic>),
+      myRow: j['my_row'] == null
+          ? null
+          : RankRow.fromJson(j['my_row'] as Map<String, dynamic>),
       showMyRow: _bool(j['show_my_row']),
     );
   }

@@ -8,7 +8,11 @@ import 'quiz_result_screen.dart';
 /// Answer an interactive quiz: single (radio) or multiple (checkbox) questions, then submit.
 /// Grading is server-side; on success we replace this screen with the result.
 class QuizTakeScreen extends StatefulWidget {
-  const QuizTakeScreen({super.key, required this.repository, required this.start});
+  const QuizTakeScreen({
+    super.key,
+    required this.repository,
+    required this.start,
+  });
 
   final ContentRepository repository;
   final QuizStart start;
@@ -46,8 +50,14 @@ class _QuizTakeScreenState extends State<QuizTakeScreen> {
           title: const Text('Hantar kuiz?'),
           content: Text('$unanswered soalan belum dijawab. Hantar juga?'),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Batal')),
-            FilledButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Hantar')),
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: const Text('Batal'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.pop(ctx, true),
+              child: const Text('Hantar'),
+            ),
           ],
         ),
       );
@@ -57,7 +67,10 @@ class _QuizTakeScreenState extends State<QuizTakeScreen> {
     setState(() => _submitting = true);
     try {
       final payload = _answers.map((k, v) => MapEntry(k, v.toList()));
-      final result = await widget.repository.submitQuiz(widget.start.attemptId, payload);
+      final result = await widget.repository.submitQuiz(
+        widget.start.attemptId,
+        payload,
+      );
       if (!mounted) return;
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (_) => QuizResultScreen(result: result)),
@@ -65,7 +78,9 @@ class _QuizTakeScreenState extends State<QuizTakeScreen> {
     } catch (e) {
       if (mounted) {
         setState(() => _submitting = false);
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$e')));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('$e')));
       }
     }
   }
@@ -74,7 +89,9 @@ class _QuizTakeScreenState extends State<QuizTakeScreen> {
   Widget build(BuildContext context) {
     final questions = widget.start.questions;
     return Scaffold(
-      appBar: AppBar(title: Text(widget.start.quizTitle, overflow: TextOverflow.ellipsis)),
+      appBar: AppBar(
+        title: Text(widget.start.quizTitle, overflow: TextOverflow.ellipsis),
+      ),
       body: ListView.builder(
         padding: const EdgeInsets.fromLTRB(20, 12, 20, 32),
         itemCount: questions.length,
@@ -94,7 +111,10 @@ class _QuizTakeScreenState extends State<QuizTakeScreen> {
                 ? const SizedBox(
                     width: 18,
                     height: 18,
-                    child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: Colors.white,
+                    ),
                   )
                 : const Icon(Icons.send_rounded),
             label: Text('Hantar ($_answeredCount/${questions.length})'),
@@ -144,8 +164,10 @@ class _QuestionCard extends StatelessWidget {
           Text(question.text, style: Theme.of(context).textTheme.titleMedium),
           if (question.isMultiple) ...[
             const SizedBox(height: 4),
-            const Text('Pilih semua yang betul',
-                style: TextStyle(fontSize: 12, color: LmsColors.inkFaint)),
+            const Text(
+              'Pilih semua yang betul',
+              style: TextStyle(fontSize: 12, color: LmsColors.inkFaint),
+            ),
           ],
           const SizedBox(height: 12),
           ...question.options.map(
@@ -196,19 +218,31 @@ class _OptionRow extends StatelessWidget {
             children: [
               Icon(
                 multiple
-                    ? (selected ? Icons.check_box_rounded : Icons.check_box_outline_blank_rounded)
+                    ? (selected
+                          ? Icons.check_box_rounded
+                          : Icons.check_box_outline_blank_rounded)
                     : (selected
-                        ? Icons.radio_button_checked_rounded
-                        : Icons.radio_button_unchecked_rounded),
+                          ? Icons.radio_button_checked_rounded
+                          : Icons.radio_button_unchecked_rounded),
                 color: selected ? LmsColors.brand : LmsColors.inkFaint,
                 size: 22,
               ),
               const SizedBox(width: 12),
-              Text('${option.letter}. ',
-                  style: const TextStyle(fontWeight: FontWeight.w800, color: LmsColors.inkMuted)),
+              Text(
+                '${option.letter}. ',
+                style: const TextStyle(
+                  fontWeight: FontWeight.w800,
+                  color: LmsColors.inkMuted,
+                ),
+              ),
               Expanded(
-                child: Text(option.text,
-                    style: const TextStyle(fontWeight: FontWeight.w600, color: LmsColors.ink)),
+                child: Text(
+                  option.text,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w600,
+                    color: LmsColors.ink,
+                  ),
+                ),
               ),
             ],
           ),

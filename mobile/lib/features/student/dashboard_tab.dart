@@ -39,30 +39,41 @@ class _DashboardTabState extends State<DashboardTab> {
   }
 
   Future<void> _reload() async {
-    setState(() => _future = widget.repository.dashboard());
+    setState(() {
+      _future = widget.repository.dashboard();
+    });
     await _future.catchError((_) => throw Exception());
   }
 
   void _openLesson(LessonCard lesson) {
-    Navigator.of(context).push(MaterialPageRoute(
-      builder: (_) => WatchScreen(repository: widget.repository, lessonId: lesson.id),
-    )).then((_) => _reload());
+    Navigator.of(context)
+        .push(
+          MaterialPageRoute(
+            builder: (_) =>
+                WatchScreen(repository: widget.repository, lessonId: lesson.id),
+          ),
+        )
+        .then((_) => _reload());
   }
 
   void _openSubject(SubjectCard subject) {
-    Navigator.of(context).push(MaterialPageRoute(
-      builder: (_) => SubjectChaptersScreen(
-        repository: widget.repository,
-        slug: subject.slug,
-        title: subject.displayName,
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => SubjectChaptersScreen(
+          repository: widget.repository,
+          slug: subject.slug,
+          title: subject.displayName,
+        ),
       ),
-    ));
+    );
   }
 
   void _openRanking() {
-    Navigator.of(context).push(MaterialPageRoute(
-      builder: (_) => RankingScreen(repository: widget.repository),
-    ));
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => RankingScreen(repository: widget.repository),
+      ),
+    );
   }
 
   @override
@@ -95,15 +106,18 @@ class _DashboardTabState extends State<DashboardTab> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Hai, ${_firstName(widget.user.name)}!',
-                        style: Theme.of(context).textTheme.headlineLarge),
+                    Text(
+                      'Hai, ${_firstName(widget.user.name)}!',
+                      style: Theme.of(context).textTheme.headlineLarge,
+                    ),
                     const SizedBox(height: 4),
                     Text('Jom sambung belajar untuk $gradeName.'),
                     const SizedBox(height: 16),
                     if (data.continueWatching.isNotEmpty) ...[
                       _ContinueHero(
                         lesson: data.continueWatching.first,
-                        onResume: () => _openLesson(data.continueWatching.first),
+                        onResume: () =>
+                            _openLesson(data.continueWatching.first),
                       ),
                       const SizedBox(height: 12),
                     ],
@@ -171,7 +185,8 @@ class _DashboardTabState extends State<DashboardTab> {
     );
   }
 
-  static String _firstName(String name) => name.trim().split(RegExp(r'\s+')).first;
+  static String _firstName(String name) =>
+      name.trim().split(RegExp(r'\s+')).first;
 }
 
 /// The WeLearn "Sambung belajar" hero: a dark forest card carrying the lesson the
@@ -191,7 +206,11 @@ class _ContinueHero extends StatelessWidget {
         color: LmsColors.forest,
         borderRadius: BorderRadius.circular(20),
         boxShadow: const [
-          BoxShadow(color: Color(0x381B3520), blurRadius: 18, offset: Offset(0, 6)),
+          BoxShadow(
+            color: Color(0x381B3520),
+            blurRadius: 18,
+            offset: Offset(0, 6),
+          ),
         ],
       ),
       padding: const EdgeInsets.all(16),
@@ -232,7 +251,10 @@ class _ContinueHero extends StatelessWidget {
                       const SizedBox(height: 3),
                       Text(
                         lesson.subjectName!,
-                        style: const TextStyle(fontSize: 11.5, color: Color(0xFFB9CCB8)),
+                        style: const TextStyle(
+                          fontSize: 11.5,
+                          color: Color(0xFFB9CCB8),
+                        ),
                       ),
                     ],
                   ],
@@ -267,7 +289,10 @@ class _ContinueHero extends StatelessWidget {
               GestureDetector(
                 onTap: onResume,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 9),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 18,
+                    vertical: 9,
+                  ),
                   decoration: BoxDecoration(
                     color: LmsColors.accent,
                     borderRadius: BorderRadius.circular(11),
@@ -275,7 +300,11 @@ class _ContinueHero extends StatelessWidget {
                   child: const Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.play_arrow_rounded, size: 16, color: LmsColors.onAccent),
+                      Icon(
+                        Icons.play_arrow_rounded,
+                        size: 16,
+                        color: LmsColors.onAccent,
+                      ),
                       SizedBox(width: 4),
                       Text(
                         'Sambung',
@@ -329,7 +358,11 @@ class _ThumbFallback extends StatelessWidget {
     return const ColoredBox(
       color: Color(0xFF24402B),
       child: Center(
-        child: Icon(Icons.play_circle_fill_rounded, color: Colors.white70, size: 30),
+        child: Icon(
+          Icons.play_circle_fill_rounded,
+          color: Colors.white70,
+          size: 30,
+        ),
       ),
     );
   }
@@ -346,26 +379,45 @@ class _PointsCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        decoration: BoxDecoration(color: LmsColors.brand, borderRadius: BorderRadius.circular(18)),
+        decoration: BoxDecoration(
+          color: LmsColors.brand,
+          borderRadius: BorderRadius.circular(18),
+        ),
         padding: const EdgeInsets.all(18),
         child: Row(
           children: [
-            const Icon(Icons.emoji_events_rounded, color: Colors.white, size: 30),
+            const Icon(
+              Icons.emoji_events_rounded,
+              color: Colors.white,
+              size: 30,
+            ),
             const SizedBox(width: 14),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('$points mata',
-                      style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w800)),
                   Text(
-                    rank != null ? 'Kedudukan #$rank dalam Tahun anda' : 'Buat kuiz untuk kumpul mata',
-                    style: const TextStyle(color: Colors.white70, fontWeight: FontWeight.w600),
+                    '$points mata',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  Text(
+                    rank != null
+                        ? 'Kedudukan #$rank dalam Tahun anda'
+                        : 'Buat kuiz untuk kumpul mata',
+                    style: const TextStyle(
+                      color: Colors.white70,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ],
               ),
             ),
-            if (onTap != null) const Icon(Icons.chevron_right, color: Colors.white70),
+            if (onTap != null)
+              const Icon(Icons.chevron_right, color: Colors.white70),
           ],
         ),
       ),
@@ -381,7 +433,10 @@ class _SubjectsGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (subjects.isEmpty) {
-      return const StateMessage(icon: Icons.menu_book_outlined, title: 'Belum ada subjek');
+      return const StateMessage(
+        icon: Icons.menu_book_outlined,
+        title: 'Belum ada subjek',
+      );
     }
     return GridView.builder(
       shrinkWrap: true,
@@ -393,7 +448,8 @@ class _SubjectsGrid extends StatelessWidget {
         crossAxisSpacing: 12,
         childAspectRatio: 2.3,
       ),
-      itemBuilder: (context, i) => SubjectTile(subject: subjects[i], onTap: () => onTap(subjects[i])),
+      itemBuilder: (context, i) =>
+          SubjectTile(subject: subjects[i], onTap: () => onTap(subjects[i])),
     );
   }
 }

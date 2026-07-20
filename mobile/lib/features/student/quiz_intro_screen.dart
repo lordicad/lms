@@ -35,7 +35,9 @@ class _QuizIntroScreenState extends State<QuizIntroScreen> {
     _future = widget.repository.quizIntro(widget.quizId);
   }
 
-  void _reload() => setState(() => _future = widget.repository.quizIntro(widget.quizId));
+  void _reload() => setState(() {
+    _future = widget.repository.quizIntro(widget.quizId);
+  });
 
   Future<void> _start() async {
     setState(() => _starting = true);
@@ -44,13 +46,16 @@ class _QuizIntroScreenState extends State<QuizIntroScreen> {
       if (!mounted) return;
       await Navigator.of(context).push(
         MaterialPageRoute(
-          builder: (_) => QuizTakeScreen(repository: widget.repository, start: start),
+          builder: (_) =>
+              QuizTakeScreen(repository: widget.repository, start: start),
         ),
       );
       if (mounted) _reload(); // refresh attempts after returning
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$e')));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('$e')));
       }
     } finally {
       if (mounted) setState(() => _starting = false);
@@ -65,7 +70,9 @@ class _QuizIntroScreenState extends State<QuizIntroScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.title, overflow: TextOverflow.ellipsis)),
+      appBar: AppBar(
+        title: Text(widget.title, overflow: TextOverflow.ellipsis),
+      ),
       body: FutureBuilder<QuizIntro>(
         future: _future,
         builder: (context, snapshot) {
@@ -102,7 +109,10 @@ class _QuizIntroScreenState extends State<QuizIntroScreen> {
                             borderRadius: BorderRadius.circular(12),
                           ),
                           padding: const EdgeInsets.all(10),
-                          child: const Icon(Icons.quiz_rounded, color: Colors.white),
+                          child: const Icon(
+                            Icons.quiz_rounded,
+                            color: Colors.white,
+                          ),
                         ),
                         const SizedBox(width: 12),
                         Expanded(
@@ -120,8 +130,12 @@ class _QuizIntroScreenState extends State<QuizIntroScreen> {
                       ],
                     ),
                     const SizedBox(height: 12),
-                    Text(quiz.title, style: Theme.of(context).textTheme.headlineMedium),
-                    if (quiz.description != null && quiz.description!.isNotEmpty) ...[
+                    Text(
+                      quiz.title,
+                      style: Theme.of(context).textTheme.headlineMedium,
+                    ),
+                    if (quiz.description != null &&
+                        quiz.description!.isNotEmpty) ...[
                       const SizedBox(height: 6),
                       Text(quiz.description!),
                     ],
@@ -132,14 +146,26 @@ class _QuizIntroScreenState extends State<QuizIntroScreen> {
               if (!quiz.isFile) ...[
                 Row(
                   children: [
-                    Expanded(child: _StatBox(label: 'Soalan', value: '${quiz.questionCount}')),
+                    Expanded(
+                      child: _StatBox(
+                        label: 'Soalan',
+                        value: '${quiz.questionCount}',
+                      ),
+                    ),
                     const SizedBox(width: 12),
-                    Expanded(child: _StatBox(label: 'Markah', value: '${quiz.maxScore}')),
+                    Expanded(
+                      child: _StatBox(
+                        label: 'Markah',
+                        value: '${quiz.maxScore}',
+                      ),
+                    ),
                     const SizedBox(width: 12),
                     Expanded(
                       child: _StatBox(
                         label: 'Masa',
-                        value: quiz.durationMinutes != null ? '${quiz.durationMinutes} min' : 'Bebas',
+                        value: quiz.durationMinutes != null
+                            ? '${quiz.durationMinutes} min'
+                            : 'Bebas',
                       ),
                     ),
                   ],
@@ -147,7 +173,8 @@ class _QuizIntroScreenState extends State<QuizIntroScreen> {
                 if (quiz.hasRankedAttempt) ...[
                   const SizedBox(height: 16),
                   const _Note(
-                    text: 'Anda sudah membuat percubaan yang dikira. Cubaan seterusnya ialah '
+                    text:
+                        'Anda sudah membuat percubaan yang dikira. Cubaan seterusnya ialah '
                         'latihan — markah ranking anda tidak berubah.',
                   ),
                 ],
@@ -158,7 +185,10 @@ class _QuizIntroScreenState extends State<QuizIntroScreen> {
                   ...quiz.myAttempts.map((a) => _AttemptRow(attempt: a)),
                 ],
               ] else ...[
-                const _Note(text: 'Kuiz ini ialah fail untuk dimuat turun dan dijawab di luar aplikasi.'),
+                const _Note(
+                  text:
+                      'Kuiz ini ialah fail untuk dimuat turun dan dijawab di luar aplikasi.',
+                ),
               ],
             ],
           );
@@ -174,20 +204,31 @@ class _QuizIntroScreenState extends State<QuizIntroScreen> {
               padding: const EdgeInsets.fromLTRB(20, 8, 20, 16),
               child: quiz.isFile
                   ? FilledButton.icon(
-                      onPressed: quiz.fileUrl == null ? null : () => _openFile(quiz.fileUrl!),
+                      onPressed: quiz.fileUrl == null
+                          ? null
+                          : () => _openFile(quiz.fileUrl!),
                       icon: const Icon(Icons.download_rounded),
                       label: const Text('Muat turun kuiz'),
                     )
                   : FilledButton.icon(
-                      onPressed: (_starting || quiz.questionCount == 0) ? null : _start,
+                      onPressed: (_starting || quiz.questionCount == 0)
+                          ? null
+                          : _start,
                       icon: _starting
                           ? const SizedBox(
                               width: 18,
                               height: 18,
-                              child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.white,
+                              ),
                             )
                           : const Icon(Icons.play_arrow_rounded),
-                      label: Text(quiz.myAttempts.isEmpty ? 'Mula kuiz' : 'Cuba lagi (latihan)'),
+                      label: Text(
+                        quiz.myAttempts.isEmpty
+                            ? 'Mula kuiz'
+                            : 'Cuba lagi (latihan)',
+                      ),
                     ),
             ),
           );
@@ -214,10 +255,19 @@ class _StatBox extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(value,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: LmsColors.ink)),
+          Text(
+            value,
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w800,
+              color: LmsColors.ink,
+            ),
+          ),
           const SizedBox(height: 2),
-          Text(label, style: const TextStyle(fontSize: 11, color: LmsColors.inkMuted)),
+          Text(
+            label,
+            style: const TextStyle(fontSize: 11, color: LmsColors.inkMuted),
+          ),
         ],
       ),
     );
@@ -239,9 +289,18 @@ class _Note extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(Icons.info_outline_rounded, size: 18, color: LmsColors.inkMuted),
+          const Icon(
+            Icons.info_outline_rounded,
+            size: 18,
+            color: LmsColors.inkMuted,
+          ),
           const SizedBox(width: 10),
-          Expanded(child: Text(text, style: const TextStyle(color: LmsColors.inkMuted))),
+          Expanded(
+            child: Text(
+              text,
+              style: const TextStyle(color: LmsColors.inkMuted),
+            ),
+          ),
         ],
       ),
     );
@@ -264,19 +323,38 @@ class _AttemptRow extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       child: Row(
         children: [
-          Text('${attempt.percent}%',
-              style: const TextStyle(fontWeight: FontWeight.w800, color: LmsColors.brandStrong)),
+          Text(
+            '${attempt.percent}%',
+            style: const TextStyle(
+              fontWeight: FontWeight.w800,
+              color: LmsColors.brandStrong,
+            ),
+          ),
           const SizedBox(width: 12),
           Expanded(
-            child: Text('${attempt.score} / ${attempt.maxScore} markah',
-                style: const TextStyle(color: LmsColors.inkMuted)),
+            child: Text(
+              '${attempt.score} / ${attempt.maxScore} markah',
+              style: const TextStyle(color: LmsColors.inkMuted),
+            ),
           ),
           if (attempt.countsForRanking)
-            const Text('Dikira',
-                style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: LmsColors.success))
+            const Text(
+              'Dikira',
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w700,
+                color: LmsColors.success,
+              ),
+            )
           else
-            const Text('Latihan',
-                style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: LmsColors.inkFaint)),
+            const Text(
+              'Latihan',
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w700,
+                color: LmsColors.inkFaint,
+              ),
+            ),
         ],
       ),
     );

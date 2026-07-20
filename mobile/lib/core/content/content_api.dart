@@ -27,8 +27,16 @@ class ContentApi {
     return SubjectsData.fromJson(json);
   }
 
-  Future<SubjectChaptersData> subjectChapters(String token, String slug, {int? grade}) async {
-    final json = await _get(token, '/student/subjects/$slug/chapters', grade: grade);
+  Future<SubjectChaptersData> subjectChapters(
+    String token,
+    String slug, {
+    int? grade,
+  }) async {
+    final json = await _get(
+      token,
+      '/student/subjects/$slug/chapters',
+      grade: grade,
+    );
     return SubjectChaptersData.fromJson(json);
   }
 
@@ -70,7 +78,11 @@ class ContentApi {
 
   /// Toggles the favourite state of a lesson; returns the new state.
   Future<bool> toggleFavourite(String token, int lessonId) async {
-    final json = await _post(token, '/student/lessons/$lessonId/favourite', const {});
+    final json = await _post(
+      token,
+      '/student/lessons/$lessonId/favourite',
+      const {},
+    );
     return json['favourited'] == true;
   }
 
@@ -95,11 +107,21 @@ class ContentApi {
   }
 
   /// [answers] maps a question id to the selected option ids.
-  Future<QuizResult> submitQuiz(String token, int attemptId, Map<int, List<int>> answers) async {
+  Future<QuizResult> submitQuiz(
+    String token,
+    int attemptId,
+    Map<int, List<int>> answers,
+  ) async {
     final body = {
-      'answers': answers.map((questionId, optionIds) => MapEntry('$questionId', optionIds)),
+      'answers': answers.map(
+        (questionId, optionIds) => MapEntry('$questionId', optionIds),
+      ),
     };
-    final json = await _post(token, '/student/attempts/$attemptId/submit', body);
+    final json = await _post(
+      token,
+      '/student/attempts/$attemptId/submit',
+      body,
+    );
     return QuizResult.fromJson(json);
   }
 
@@ -113,7 +135,11 @@ class ContentApi {
     return RankingData.fromJson(json);
   }
 
-  Future<Map<String, dynamic>> _get(String token, String path, {int? grade}) async {
+  Future<Map<String, dynamic>> _get(
+    String token,
+    String path, {
+    int? grade,
+  }) async {
     final query = grade == null ? '' : '?grade=$grade';
     final response = await _http.get(
       Uri.parse('$baseUrl$path$query'),
@@ -122,7 +148,11 @@ class ContentApi {
     return _decode(response);
   }
 
-  Future<Map<String, dynamic>> _post(String token, String path, Map<String, dynamic> body) async {
+  Future<Map<String, dynamic>> _post(
+    String token,
+    String path,
+    Map<String, dynamic> body,
+  ) async {
     final response = await _http.post(
       Uri.parse('$baseUrl$path'),
       headers: {..._headers(token), 'Content-Type': 'application/json'},
@@ -137,7 +167,9 @@ class ContentApi {
   };
 
   Map<String, dynamic> _decode(http.Response response) {
-    final body = response.body.isEmpty ? const <String, dynamic>{} : jsonDecode(response.body);
+    final body = response.body.isEmpty
+        ? const <String, dynamic>{}
+        : jsonDecode(response.body);
     final map = body is Map<String, dynamic> ? body : const <String, dynamic>{};
 
     if (response.statusCode >= 400) {
@@ -151,7 +183,9 @@ class ContentApi {
           throw ApiException(first.first.toString());
         }
       }
-      throw ApiException((map['message'] as String?) ?? 'Tidak dapat memuatkan kandungan.');
+      throw ApiException(
+        (map['message'] as String?) ?? 'Tidak dapat memuatkan kandungan.',
+      );
     }
 
     return map;

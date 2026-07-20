@@ -25,18 +25,22 @@ class _SubjectsTabState extends State<SubjectsTab> {
   }
 
   Future<void> _reload() async {
-    setState(() => _future = widget.repository.subjects());
+    setState(() {
+      _future = widget.repository.subjects();
+    });
     await _future.catchError((_) => throw Exception());
   }
 
   void _openSubject(SubjectCard subject) {
-    Navigator.of(context).push(MaterialPageRoute(
-      builder: (_) => SubjectChaptersScreen(
-        repository: widget.repository,
-        slug: subject.slug,
-        title: subject.displayName,
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => SubjectChaptersScreen(
+          repository: widget.repository,
+          slug: subject.slug,
+          title: subject.displayName,
+        ),
       ),
-    ));
+    );
   }
 
   @override
@@ -57,7 +61,9 @@ class _SubjectsTabState extends State<SubjectsTab> {
         }
 
         final data = snapshot.data!;
-        final groups = data.categories.where((g) => g.subjects.isNotEmpty).toList();
+        final groups = data.categories
+            .where((g) => g.subjects.isNotEmpty)
+            .toList();
         if (groups.isEmpty) {
           return const StateMessage(
             icon: Icons.menu_book_outlined,
@@ -74,12 +80,18 @@ class _SubjectsTabState extends State<SubjectsTab> {
               for (final group in groups) ...[
                 Padding(
                   padding: const EdgeInsets.only(top: 8, bottom: 10),
-                  child: Text(group.label, style: Theme.of(context).textTheme.titleLarge),
+                  child: Text(
+                    group.label,
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
                 ),
                 for (final subject in group.subjects)
                   Padding(
                     padding: const EdgeInsets.only(bottom: 10),
-                    child: SubjectTile(subject: subject, onTap: () => _openSubject(subject)),
+                    child: SubjectTile(
+                      subject: subject,
+                      onTap: () => _openSubject(subject),
+                    ),
                   ),
               ],
             ],
