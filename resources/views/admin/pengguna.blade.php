@@ -49,7 +49,6 @@
                         <option value="inactive" @selected($status === 'inactive')>{{ __('Tidak aktif') }}</option>
                     </select>
                 </div>
-                <button type="submit" class="tp-btn-outline" style="min-height:46px">{{ __('Cari') }}</button>
             </form>
             <a href="{{ route('admin.pengguna.create') }}" class="tp-btn" style="min-height:46px;white-space:nowrap">+ {{ __('Tambah Pengguna') }}</a>
         </div>
