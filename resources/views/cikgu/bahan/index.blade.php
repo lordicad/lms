@@ -3,18 +3,12 @@
     :heading="__('Bahan Bantu Mengajar')"
     :sub="__('Slaid, PDF dan lembaran kerja yang menyokong video anda')">
 
-    <div style="display:flex;flex-direction:column;gap:14px;margin-bottom:18px">
-        <x-year-subject-filter :action="route('cikgu.bahan.index')" :grades="$grades"
-            :subjects="$subjects" :filter="$filter">
-            <a href="{{ route('cikgu.bahan.create') }}" class="tp-btn" style="margin-left:auto">
-                <x-icon name="plus" class="h-4 w-4" />
-                {{ __('Bahan Baru') }}
-            </a>
-        </x-year-subject-filter>
-
-        <x-content-total :total="$totalMaterials" :filtered="$filteredCount"
-            :filtered-active="$filter->isActive()" :label="__('Jumlah bahan')" />
-    </div>
+    <x-cikgu-filters :subjects="$subjects" :grades="$grades" :action="route('cikgu.bahan.index')">
+        <a href="{{ route('cikgu.bahan.create') }}" class="tp-btn" style="margin-left:auto">
+            <x-icon name="plus" class="h-4 w-4" />
+            {{ __('Bahan Baru') }}
+        </a>
+    </x-cikgu-filters>
 
     @if ($materials->isEmpty())
         <div class="tp-empty">

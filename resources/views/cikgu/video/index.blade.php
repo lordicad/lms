@@ -3,18 +3,12 @@
     :heading="__('Video')"
     :sub="__('Rakaman kelas yang anda muat naik atau pautkan dari YouTube')">
 
-    <div style="display:flex;flex-direction:column;gap:14px;margin-bottom:18px">
-        <x-year-subject-filter :action="route('cikgu.video.index')" :grades="$grades"
-            :subjects="$subjects" :filter="$filter">
-            <a href="{{ route('cikgu.video.create') }}" class="tp-btn" style="margin-left:auto">
-                <x-icon name="plus" class="h-4 w-4" />
-                {{ __('Video Baru') }}
-            </a>
-        </x-year-subject-filter>
-
-        <x-content-total :total="$totalVideos" :filtered="$filteredCount"
-            :filtered-active="$filter->isActive()" :label="__('Jumlah video')" />
-    </div>
+    <x-cikgu-filters :subjects="$subjects" :grades="$grades" :action="route('cikgu.video.index')">
+        <a href="{{ route('cikgu.video.create') }}" class="tp-btn" style="margin-left:auto">
+            <x-icon name="plus" class="h-4 w-4" />
+            {{ __('Video Baru') }}
+        </a>
+    </x-cikgu-filters>
 
     @if ($lessons->isEmpty())
         <div class="tp-empty">
