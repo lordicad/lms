@@ -1,58 +1,56 @@
 import 'package:flutter/material.dart';
 
+import '../../core/platform/native_file_picker.dart';
 import '../../core/teacher/teacher_models.dart';
 import '../../core/teacher/teacher_repository.dart';
 import '../../core/theme/lms_theme.dart';
 import '../student/widgets/content_widgets.dart';
 
-/// Add or edit a YouTube video: pick Subject -> Tahun -> Bab, then title, description and
-/// the YouTube link. Upload-from-device comes in a later phase. Pops `true` on success.
-class VideoFormScreen extends StatefulWidget {
-  const VideoFormScreen({super.key, required this.repository, this.video});
+/// Upload or edit a teacher-owned learning material.
+class MaterialFormScreen extends StatefulWidget {
+  const MaterialFormScreen({
+    super.key,
+    required this.repository,
+    this.material,
+  });
 
   final TeacherRepository repository;
-  final TeacherVideo? video;
+  final TeacherMaterial? material;
 
   @override
-  State<VideoFormScreen> createState() => _VideoFormScreenState();
+  State<MaterialFormScreen> createState() => _MaterialFormScreenState();
 }
 
-class _VideoFormScreenState extends State<VideoFormScreen> {
+class _MaterialFormScreenState extends State<MaterialFormScreen> {
   final _titleCtrl = TextEditingController();
-  final _descCtrl = TextEditingController();
-  final _urlCtrl = TextEditingController();
-  bool _published = true;
-  bool _saving = false;
-
   TeacherOptions? _options;
   Object? _optionsError;
   OptionItem? _subject;
   OptionItem? _grade;
-
   List<TeacherChapter> _chapters = [];
   TeacherChapter? _chapter;
-  bool _loadingChapters = false;
+  NativeUploadFile? _file;
   int? _pendingChapterId;
+  var _loadingChapters = false;
+  var _saving = false;
 
   @override
   void initState() {
     super.initState();
-    final video = widget.video;
-    _titleCtrl.text = video?.title ?? '';
-    _descCtrl.text = video?.description ?? '';
-    _urlCtrl.text = video?.youtubeUrl ?? '';
-    _published = video?.published ?? true;
-    _pendingChapterId = video?.chapterId;
+    _titleCtrl.text = widget.material?.title ?? '';
+    _pendingChapterId = widget.material?.chapterId;
     _loadOptions();
   }
 
   @override
   void dispose() {
     _titleCtrl.dispose();
-    _descCtrl.dispose();
-    _urlCtrl.dispose();
     super.dispose();
   }
+
+  void _snack(String message) => ScaffoldMessenger.of(
+    context,
+  ).showSnackBar(SnackBar(content: Text(message)));
 
   Future<void> _loadOptions() async {
     setState(() => _optionsError = null);
@@ -62,15 +60,15 @@ class _VideoFormScreenState extends State<VideoFormScreen> {
       setState(() {
         _options = options;
         _subject =
-            _optionById(options.subjects, widget.video?.subjectId) ??
+            _optionById(options.subjects, widget.material?.subjectId) ??
             (options.subjects.isNotEmpty ? options.subjects.first : null);
         _grade =
-            _optionById(options.grades, widget.video?.gradeId) ??
+            _optionById(options.grades, widget.material?.gradeId) ??
             (options.grades.isNotEmpty ? options.grades.first : null);
       });
       _loadChapters();
-    } catch (e) {
-      if (mounted) setState(() => _optionsError = e);
+    } catch (error) {
+      if (mounted) setState(() => _optionsError = error);
     }
   }
 
@@ -92,68 +90,67 @@ class _VideoFormScreenState extends State<VideoFormScreen> {
         _pendingChapterId = null;
         _loadingChapters = false;
       });
-    } catch (e) {
-      if (mounted) {
-        setState(() => _loadingChapters = false);
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('$e')));
-      }
+    } catch (error) {
+      if (!mounted) return;
+      setState(() => _loadingChapters = false);
+      _snack('$error');
     }
   }
 
-  void _snack(String message) => ScaffoldMessenger.of(
-    context,
-  ).showSnackBar(SnackBar(content: Text(message)));
+  Future<void> _pickFile() async {
+    try {
+      final result = await NativeFilePicker.pickMaterial();
+      if (result != null && mounted) setState(() => _file = result);
+    } catch (error) {
+      if (mounted) _snack('$error');
+    }
+  }
 
   Future<void> _save() async {
     final title = _titleCtrl.text.trim();
-    final url = _urlCtrl.text.trim();
+    final material = widget.material;
     if (_chapter == null) return _snack('Sila pilih Bab.');
-    if (title.isEmpty) return _snack('Sila isi tajuk video.');
-    if (url.isEmpty) return _snack('Sila isi pautan YouTube.');
+    if (title.isEmpty) return _snack('Sila isi tajuk bahan.');
+    if (material == null && _file == null) {
+      return _snack('Sila pilih fail untuk dimuat naik.');
+    }
 
     setState(() => _saving = true);
     try {
-      final video = widget.video;
-      if (video == null) {
-        await widget.repository.createVideo(
+      if (material == null) {
+        await widget.repository.createMaterial(
           chapterId: _chapter!.id,
           title: title,
-          description: _descCtrl.text.trim(),
-          youtubeUrl: url,
-          isPublished: _published,
+          file: _file!,
         );
       } else {
-        await widget.repository.updateVideo(
-          video.id,
+        await widget.repository.updateMaterial(
+          material.id,
           chapterId: _chapter!.id,
           title: title,
-          description: _descCtrl.text.trim(),
-          youtubeUrl: url,
-          isPublished: _published,
+          file: _file,
         );
       }
       if (!mounted) return;
       _snack(
-        video == null
-            ? 'Video berjaya disimpan.'
-            : 'Video berjaya dikemas kini.',
+        material == null
+            ? 'Bahan berjaya dimuat naik.'
+            : 'Bahan berjaya dikemas kini.',
       );
       Navigator.of(context).pop(true);
-    } catch (e) {
+    } catch (error) {
       if (mounted) {
         setState(() => _saving = false);
-        _snack('$e');
+        _snack('$error');
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final editing = widget.video != null;
+    final editing = widget.material != null;
     return Scaffold(
-      appBar: AppBar(title: Text(editing ? 'Sunting Video' : 'Tambah Video')),
+      appBar: AppBar(title: Text(editing ? 'Sunting Bahan' : 'Tambah Bahan')),
       body: _optionsError != null
           ? StateMessage(
               icon: Icons.wifi_off_outlined,
@@ -173,8 +170,8 @@ class _VideoFormScreenState extends State<VideoFormScreen> {
                         'Subjek',
                         _options!.subjects,
                         _subject,
-                        (v) {
-                          setState(() => _subject = v);
+                        (value) {
+                          setState(() => _subject = value);
                           _loadChapters();
                         },
                       ),
@@ -185,8 +182,8 @@ class _VideoFormScreenState extends State<VideoFormScreen> {
                         'Tahun',
                         _options!.grades,
                         _grade,
-                        (v) {
-                          setState(() => _grade = v);
+                        (value) {
+                          setState(() => _grade = value);
                           _loadChapters();
                         },
                       ),
@@ -214,46 +211,37 @@ class _VideoFormScreenState extends State<VideoFormScreen> {
                     decoration: const InputDecoration(labelText: 'Bab'),
                     items: _chapters
                         .map(
-                          (c) => DropdownMenuItem(
-                            value: c,
+                          (chapter) => DropdownMenuItem(
+                            value: chapter,
                             child: Text(
-                              'Bab ${c.number}: ${c.title}',
+                              'Bab ${chapter.number}: ${chapter.title}',
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         )
                         .toList(),
-                    onChanged: (v) => setState(() => _chapter = v),
+                    onChanged: (value) => setState(() => _chapter = value),
                   ),
                 const SizedBox(height: 16),
                 TextField(
                   controller: _titleCtrl,
-                  decoration: const InputDecoration(labelText: 'Tajuk video'),
+                  decoration: const InputDecoration(labelText: 'Tajuk bahan'),
                 ),
-                const SizedBox(height: 12),
-                TextField(
-                  controller: _descCtrl,
-                  maxLines: 3,
-                  decoration: const InputDecoration(
-                    labelText: 'Penerangan (pilihan)',
+                const SizedBox(height: 16),
+                OutlinedButton.icon(
+                  onPressed: _pickFile,
+                  icon: const Icon(Icons.attach_file_rounded),
+                  label: Text(_file == null ? 'Pilih fail' : 'Tukar fail'),
+                  style: OutlinedButton.styleFrom(
+                    minimumSize: const Size.fromHeight(52),
                   ),
                 ),
-                const SizedBox(height: 12),
-                TextField(
-                  controller: _urlCtrl,
-                  keyboardType: TextInputType.url,
-                  decoration: const InputDecoration(
-                    labelText: 'Pautan YouTube',
-                    hintText: 'https://youtu.be/…',
-                  ),
-                ),
-                const SizedBox(height: 4),
-                SwitchListTile(
-                  contentPadding: EdgeInsets.zero,
-                  title: const Text('Terbitkan'),
-                  subtitle: const Text('Murid boleh menonton sebaik disimpan.'),
-                  value: _published,
-                  onChanged: (v) => setState(() => _published = v),
+                const SizedBox(height: 10),
+                _FileStatus(file: _file, existing: widget.material),
+                const SizedBox(height: 10),
+                const Text(
+                  'Format: PDF, PowerPoint, Word, Excel atau imej. Had maksimum 30 MB.',
+                  style: TextStyle(fontSize: 11.5, color: LmsColors.inkMuted),
                 ),
               ],
             ),
@@ -271,8 +259,14 @@ class _VideoFormScreenState extends State<VideoFormScreen> {
                       color: Colors.white,
                     ),
                   )
-                : const Icon(Icons.save_outlined),
-            label: Text(editing ? 'Simpan perubahan' : 'Simpan video'),
+                : const Icon(Icons.cloud_upload_outlined),
+            label: Text(
+              _saving
+                  ? 'Menyimpan...'
+                  : editing
+                  ? 'Simpan perubahan'
+                  : 'Muat naik bahan',
+            ),
           ),
         ),
       ),
@@ -297,9 +291,9 @@ class _VideoFormScreenState extends State<VideoFormScreen> {
       ),
       items: items
           .map(
-            (o) => DropdownMenuItem(
-              value: o,
-              child: Text(o.name, overflow: TextOverflow.ellipsis),
+            (item) => DropdownMenuItem(
+              value: item,
+              child: Text(item.name, overflow: TextOverflow.ellipsis),
             ),
           )
           .toList(),
@@ -321,5 +315,42 @@ class _VideoFormScreenState extends State<VideoFormScreen> {
       if (chapter.id == id) return chapter;
     }
     return null;
+  }
+}
+
+class _FileStatus extends StatelessWidget {
+  const _FileStatus({required this.file, required this.existing});
+
+  final NativeUploadFile? file;
+  final TeacherMaterial? existing;
+
+  @override
+  Widget build(BuildContext context) {
+    final label =
+        file?.name ??
+        (existing == null
+            ? 'Belum ada fail dipilih'
+            : 'Fail semasa: ${existing!.extension.toUpperCase()} · ${existing!.humanSize}');
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: LmsColors.surfaceMuted,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.description_outlined, color: LmsColors.brandStrong),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              label,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(fontSize: 12, color: LmsColors.inkMuted),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'core/auth/auth_repository.dart';
 import 'core/auth/auth_user.dart';
+import 'core/platform/native_file_picker.dart';
 import 'core/theme/lms_theme.dart';
 import 'features/auth/login_screen.dart';
 import 'features/student/student_shell.dart';
@@ -55,6 +56,43 @@ class _LmsMobileAppState extends State<LmsMobileApp> {
     }
   }
 
+  Future<AuthUser> _updateProfile({
+    required String name,
+    required String username,
+    String? email,
+  }) async {
+    final user = _user;
+    if (user == null) {
+      throw StateError('Sila log masuk semula untuk mengemas kini profil.');
+    }
+
+    final updated = await _auth.updateProfile(
+      currentUser: user,
+      name: name,
+      username: username,
+      email: email,
+    );
+
+    if (mounted) {
+      setState(() => _user = updated);
+    }
+
+    return updated;
+  }
+
+  Future<AuthUser> _updateAvatar(NativeUploadFile file) async {
+    final user = _user;
+    if (user == null) {
+      throw StateError('Sila log masuk semula untuk mengemas kini profil.');
+    }
+
+    final updated = await _auth.updateAvatar(currentUser: user, file: file);
+    if (mounted) {
+      setState(() => _user = updated);
+    }
+    return updated;
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -65,24 +103,48 @@ class _LmsMobileAppState extends State<LmsMobileApp> {
           ? const _SplashScreen()
           : _user == null
           ? LoginScreen(auth: _auth, onSignedIn: _signedIn)
-          : _RoleHome(user: _user!, onSignOut: _signOut),
+          : _RoleHome(
+              user: _user!,
+              onSignOut: _signOut,
+              onUpdateProfile: _updateProfile,
+              onUpdateAvatar: _updateAvatar,
+            ),
     );
   }
 }
 
 class _RoleHome extends StatelessWidget {
-  const _RoleHome({required this.user, required this.onSignOut});
+  const _RoleHome({
+    required this.user,
+    required this.onSignOut,
+    required this.onUpdateProfile,
+    required this.onUpdateAvatar,
+  });
 
   final AuthUser user;
   final Future<void> Function() onSignOut;
+  final Future<AuthUser> Function({
+    required String name,
+    required String username,
+    String? email,
+  })
+  onUpdateProfile;
+  final Future<AuthUser> Function(NativeUploadFile file) onUpdateAvatar;
 
   @override
   Widget build(BuildContext context) {
     return switch (user.role) {
-      UserRole.student => StudentShell(user: user, onSignOut: onSignOut),
+      UserRole.student => StudentShell(
+        user: user,
+        onSignOut: onSignOut,
+        onUpdateProfile: onUpdateProfile,
+        onUpdateAvatar: onUpdateAvatar,
+      ),
       UserRole.teacher => TeacherDashboardScreen(
         user: user,
         onSignOut: onSignOut,
+        onUpdateProfile: onUpdateProfile,
+        onUpdateAvatar: onUpdateAvatar,
       ),
       UserRole.admin => _AdminWebOnlyScreen(onSignOut: onSignOut),
     };

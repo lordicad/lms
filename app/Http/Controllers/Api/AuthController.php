@@ -4,9 +4,12 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Support\Uploads;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
 /**
@@ -59,6 +62,78 @@ class AuthController extends Controller
         ]);
     }
 
+    /**
+     * Update the account fields that are editable in the mobile profile.
+     *
+     * Avatar uploads and password changes remain separate actions, so this JSON
+     * endpoint stays predictable for Flutter and matches the web validation.
+     */
+    public function updateProfile(Request $request): JsonResponse
+    {
+        /** @var User $user */
+        $user = $request->user();
+
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'username' => [
+                'required', 'string', 'min:3', 'max:30',
+                'regex:/^[a-zA-Z0-9._-]+$/',
+            ],
+            'email' => [
+                Rule::requiredIf($user->isTeacher()),
+                'nullable', 'string', 'lowercase', 'email', 'max:255',
+                Rule::unique('users', 'email')->ignore($user->id),
+            ],
+        ], [
+            'name.required' => __('Sila isi nama anda.'),
+            'username.required' => __('Sila isi nama pengguna.'),
+            'username.regex' => __('Nama pengguna hanya boleh mengandungi huruf, nombor, titik, garis bawah dan sengkang.'),
+            'email.required' => __('Guru perlu memberikan alamat emel.'),
+            'email.unique' => __('Emel ini sudah didaftarkan.'),
+        ]);
+
+        $user->update([
+            'name' => $validated['name'],
+            'username' => $validated['username'],
+            'email' => $validated['email'] ?? null,
+        ]);
+
+        return response()->json([
+            'user' => $this->userPayload($user->fresh() ?? $user),
+        ]);
+    }
+
+    /**
+     * Photo upload intentionally uses its own multipart endpoint. Keeping it separate from the
+     * JSON account form makes validation and retry behaviour reliable on Android.
+     */
+    public function updateAvatar(Request $request): JsonResponse
+    {
+        /** @var User $user */
+        $user = $request->user();
+
+        $request->validate([
+            'avatar' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+        ], [
+            'avatar.required' => __('Sila pilih gambar profil.'),
+            'avatar.image' => __('Fail yang dipilih mesti gambar.'),
+            'avatar.mimes' => __('Gunakan gambar JPG, PNG atau WEBP.'),
+            'avatar.max' => __('Gambar profil terlalu besar. Had ialah 2 MB.'),
+        ]);
+
+        $oldAvatar = $user->avatar;
+        $user->avatar = Uploads::store($request->file('avatar'), 'avatars');
+        $user->save();
+
+        if ($oldAvatar) {
+            Storage::disk('uploads')->delete($oldAvatar);
+        }
+
+        return response()->json([
+            'user' => $this->userPayload($user->fresh() ?? $user),
+        ]);
+    }
+
     public function logout(Request $request): JsonResponse
     {
         $request->user()->currentAccessToken()->delete();
@@ -80,6 +155,7 @@ class AuthController extends Controller
             'name' => $user->name,
             'username' => $user->username,
             'email' => $user->email,
+            'avatar_url' => $user->avatarUrl(),
             'role' => $user->role,
             'grade' => $user->grade === null ? null : [
                 'id' => $user->grade->id,

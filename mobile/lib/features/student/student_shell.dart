@@ -2,20 +2,35 @@ import 'package:flutter/material.dart';
 
 import '../../core/auth/auth_user.dart';
 import '../../core/content/content_repository.dart';
+import '../../core/platform/native_file_picker.dart';
 import '../../shared/widgets/app_header.dart';
 import 'dashboard_tab.dart';
 import 'profile_tab.dart';
 import 'quizzes_tab.dart';
 import 'saved_tab.dart';
+import 'search_screen.dart';
 import 'subjects_tab.dart';
 
 /// The student's shell: a branded header, a bottom nav switching between the dashboard and
 /// the subject index. Drill-down screens (chapters, watch) are pushed on top via Navigator.
 class StudentShell extends StatefulWidget {
-  const StudentShell({super.key, required this.user, required this.onSignOut});
+  const StudentShell({
+    super.key,
+    required this.user,
+    required this.onSignOut,
+    required this.onUpdateProfile,
+    required this.onUpdateAvatar,
+  });
 
   final AuthUser user;
   final Future<void> Function() onSignOut;
+  final Future<AuthUser> Function({
+    required String name,
+    required String username,
+    String? email,
+  })
+  onUpdateProfile;
+  final Future<AuthUser> Function(NativeUploadFile file) onUpdateAvatar;
 
   @override
   State<StudentShell> createState() => _StudentShellState();
@@ -38,7 +53,12 @@ class _StudentShellState extends State<StudentShell> {
       SubjectsTab(repository: _repository),
       SavedTab(repository: _repository),
       QuizzesTab(repository: _repository),
-      ProfileTab(user: widget.user, onSignOut: widget.onSignOut),
+      ProfileTab(
+        user: widget.user,
+        onSignOut: widget.onSignOut,
+        onUpdateProfile: widget.onUpdateProfile,
+        onUpdateAvatar: widget.onUpdateAvatar,
+      ),
     ];
 
     return Scaffold(
@@ -51,8 +71,11 @@ class _StudentShellState extends State<StudentShell> {
               title: 'Belajar',
               subtitle: gradeName,
               onSignOut: widget.onSignOut,
+              onSearch: _openSearch,
             ),
-            Expanded(child: IndexedStack(index: _index, children: tabs)),
+            Expanded(
+              child: IndexedStack(index: _index, children: tabs),
+            ),
           ],
         ),
       ),
@@ -87,6 +110,12 @@ class _StudentShellState extends State<StudentShell> {
           ),
         ],
       ),
+    );
+  }
+
+  void _openSearch() {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => SearchScreen(repository: _repository)),
     );
   }
 }

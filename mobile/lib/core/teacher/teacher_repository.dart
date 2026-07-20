@@ -1,5 +1,6 @@
 import '../api/api_client.dart' show ApiException;
 import '../auth/token_store.dart';
+import '../platform/native_file_picker.dart';
 import 'teacher_api.dart';
 import 'teacher_models.dart';
 
@@ -22,6 +23,14 @@ class TeacherRepository {
 
   Future<TeacherDashboardData> dashboard() async =>
       _api.dashboard(await _token());
+
+  Future<TeacherNotificationsData> notifications() async =>
+      _api.notifications(await _token());
+
+  Future<void> markNotificationsRead() async =>
+      _api.markNotificationsRead(await _token());
+
+  Future<TeacherTalentData> talent() async => _api.talent(await _token());
 
   Future<List<TeacherVideo>> videos() async => _api.videos(await _token());
 
@@ -91,6 +100,47 @@ class TeacherRepository {
     isPublished: isPublished,
   );
 
+  Future<void> updateVideo(
+    int id, {
+    required int chapterId,
+    required String title,
+    String? description,
+    required String youtubeUrl,
+    required bool isPublished,
+  }) async => _api.updateVideo(
+    await _token(),
+    id,
+    chapterId: chapterId,
+    title: title,
+    description: description,
+    youtubeUrl: youtubeUrl,
+    isPublished: isPublished,
+  );
+
+  Future<void> createMaterial({
+    required int chapterId,
+    required String title,
+    required NativeUploadFile file,
+  }) async => _api.createMaterial(
+    await _token(),
+    chapterId: chapterId,
+    title: title,
+    file: file,
+  );
+
+  Future<void> updateMaterial(
+    int id, {
+    required int chapterId,
+    required String title,
+    NativeUploadFile? file,
+  }) async => _api.updateMaterial(
+    await _token(),
+    id,
+    chapterId: chapterId,
+    title: title,
+    file: file,
+  );
+
   Future<int> createInteractiveQuiz({
     required int chapterId,
     required String title,
@@ -107,4 +157,29 @@ class TeacherRepository {
     isPublished: isPublished,
     questions: questions,
   );
+
+  Future<TeacherQuizDetail> interactiveQuiz(int id) async =>
+      _api.interactiveQuiz(await _token(), id);
+
+  Future<void> updateInteractiveQuiz(
+    int id, {
+    required int chapterId,
+    required String title,
+    String? description,
+    int? durationMinutes,
+    required bool isPublished,
+    required List<TeacherQuizQuestionDraft> questions,
+  }) async => _api.updateInteractiveQuiz(
+    await _token(),
+    id,
+    chapterId: chapterId,
+    title: title,
+    description: description,
+    durationMinutes: durationMinutes,
+    isPublished: isPublished,
+    questions: questions,
+  );
+
+  Future<TeacherQuizStats> quizStats(int id) async =>
+      _api.quizStats(await _token(), id);
 }

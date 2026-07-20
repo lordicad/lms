@@ -27,6 +27,9 @@ class ContentRepository {
   Future<SubjectsData> subjects({int? grade}) async =>
       _api.subjects(await _token(), grade: grade);
 
+  Future<List<SearchResult>> search(String query) async =>
+      _api.search(await _token(), query);
+
   Future<SubjectChaptersData> subjectChapters(
     String slug, {
     int? grade,

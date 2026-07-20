@@ -61,6 +61,48 @@ class VideoController extends Controller
         return response()->json(['id' => $lesson->id], 201);
     }
 
+    public function update(Request $request, Lesson $lesson, OwnershipService $ownership): JsonResponse
+    {
+        $teacher = $request->user();
+        if (! $teacher || ! $teacher->isTeacher() || $lesson->teacher_id !== $teacher->id) {
+            return response()->json(['message' => 'Anda tidak dibenarkan menyunting video ini.'], 403);
+        }
+
+        $data = $request->validate([
+            'chapter_id' => ['required', 'integer', Rule::exists('chapters', 'id')],
+            'title' => ['required', 'string', 'max:255'],
+            'description' => ['nullable', 'string', 'max:2000'],
+            'youtube_url' => ['required', 'string', 'max:500'],
+            'is_published' => ['boolean'],
+        ]);
+
+        $youtubeId = $this->extractYoutubeId($data['youtube_url']);
+        if ($youtubeId === null) {
+            return response()->json(['message' => 'Pautan YouTube tidak sah.'], 422);
+        }
+
+        $result = $ownership->attributeYoutube($youtubeId, $teacher);
+        if ($result['status'] === OwnershipService::STATUS_BLOCKED) {
+            return response()->json([
+                'message' => 'Video ini peribadi atau telah dipadam. Tetapkan ke Unlisted atau Public.',
+            ], 422);
+        }
+
+        $lesson->update([
+            'chapter_id' => $data['chapter_id'],
+            'title' => $data['title'],
+            'description' => $data['description'] ?? null,
+            'source' => Lesson::SOURCE_YOUTUBE,
+            'youtube_id' => $youtubeId,
+            'ownership' => $result['ownership'],
+            'counts_for_talent' => $result['counts_for_talent'],
+            'youtube_channel_id' => $result['youtube_channel_id'],
+            'is_published' => $data['is_published'] ?? true,
+        ]);
+
+        return response()->json(['id' => $lesson->id]);
+    }
+
     /**
      * Pull the 11-char video id out of a YouTube URL (watch, youtu.be, embed, shorts) or a
      * bare id.

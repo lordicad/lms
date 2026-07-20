@@ -23,6 +23,7 @@ class AuthUser {
     required this.username,
     required this.role,
     this.email,
+    this.avatarUrl,
     this.grade,
   });
 
@@ -30,8 +31,26 @@ class AuthUser {
   final String name;
   final String username;
   final String? email;
+  final String? avatarUrl;
   final UserRole role;
   final Grade? grade;
+
+  AuthUser copyWith({
+    String? name,
+    String? username,
+    String? email,
+    String? avatarUrl,
+  }) {
+    return AuthUser(
+      id: id,
+      name: name ?? this.name,
+      username: username ?? this.username,
+      email: email ?? this.email,
+      avatarUrl: avatarUrl ?? this.avatarUrl,
+      role: role,
+      grade: grade,
+    );
+  }
 
   factory AuthUser.fromJson(Map<String, dynamic> json) {
     final rawRole = json['role'] as String;
@@ -41,6 +60,7 @@ class AuthUser {
       name: json['name'] as String,
       username: json['username'] as String,
       email: json['email'] as String?,
+      avatarUrl: json['avatar_url'] as String?,
       role: switch (rawRole) {
         'student' => UserRole.student,
         'teacher' => UserRole.teacher,

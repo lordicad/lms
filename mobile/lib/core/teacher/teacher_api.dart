@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import '../api/api_client.dart' show ApiException;
+import '../platform/native_file_picker.dart';
 import 'teacher_models.dart';
 
 /// HTTP client for the teacher endpoints (`/api/teacher/*`). Token-authenticated.
@@ -19,6 +20,20 @@ class TeacherApi {
   Future<TeacherDashboardData> dashboard(String token) async {
     final json = await _get(token, '/teacher/dashboard');
     return TeacherDashboardData.fromJson(json);
+  }
+
+  Future<TeacherNotificationsData> notifications(String token) async {
+    final json = await _get(token, '/teacher/notifications');
+    return TeacherNotificationsData.fromJson(json);
+  }
+
+  Future<void> markNotificationsRead(String token) async {
+    await _post(token, '/teacher/notifications/read');
+  }
+
+  Future<TeacherTalentData> talent(String token) async {
+    final json = await _get(token, '/teacher/talent');
+    return TeacherTalentData.fromJson(json);
   }
 
   Future<List<TeacherVideo>> videos(String token) async {
@@ -83,8 +98,7 @@ class TeacherApi {
       'subject_id': subjectId,
       'grade_id': gradeId,
       'title': title,
-      if (description != null && description.isNotEmpty)
-        'description': description,
+      if (description?.isNotEmpty ?? false) 'description': description,
     });
   }
 
@@ -122,6 +136,50 @@ class TeacherApi {
     });
   }
 
+  Future<void> updateVideo(
+    String token,
+    int id, {
+    required int chapterId,
+    required String title,
+    String? description,
+    required String youtubeUrl,
+    required bool isPublished,
+  }) async {
+    await _sendJson('PUT', token, '/teacher/videos/$id', {
+      'chapter_id': chapterId,
+      'title': title,
+      if (description != null && description.isNotEmpty)
+        'description': description,
+      'youtube_url': youtubeUrl,
+      'is_published': isPublished,
+    });
+  }
+
+  Future<void> createMaterial(
+    String token, {
+    required int chapterId,
+    required String title,
+    required NativeUploadFile file,
+  }) async {
+    await _sendMultipart('POST', token, '/teacher/materials', {
+      'chapter_id': '$chapterId',
+      'title': title,
+    }, file: file);
+  }
+
+  Future<void> updateMaterial(
+    String token,
+    int id, {
+    required int chapterId,
+    required String title,
+    NativeUploadFile? file,
+  }) async {
+    await _sendMultipart('POST', token, '/teacher/materials/$id', {
+      'chapter_id': '$chapterId',
+      'title': title,
+    }, file: file);
+  }
+
   Future<int> createInteractiveQuiz(
     String token, {
     required int chapterId,
@@ -136,7 +194,7 @@ class TeacherApi {
       'title': title,
       if (description != null && description.isNotEmpty)
         'description': description,
-      if (durationMinutes != null) 'duration_minutes': durationMinutes,
+      'duration_minutes': ?durationMinutes,
       'is_published': isPublished,
       'questions': questions
           .map((question) => question.toJson())
@@ -144,6 +202,44 @@ class TeacherApi {
     });
 
     return int.tryParse('${json['id']}') ?? 0;
+  }
+
+  Future<TeacherQuizDetail> interactiveQuiz(String token, int id) async {
+    final json = await _get(token, '/teacher/quizzes/$id');
+    final quiz = json['quiz'];
+    return TeacherQuizDetail.fromJson(
+      quiz is Map<String, dynamic> ? quiz : const <String, dynamic>{},
+    );
+  }
+
+  Future<void> updateInteractiveQuiz(
+    String token,
+    int id, {
+    required int chapterId,
+    required String title,
+    String? description,
+    int? durationMinutes,
+    required bool isPublished,
+    required List<TeacherQuizQuestionDraft> questions,
+  }) async {
+    await _sendJson('PUT', token, '/teacher/quizzes/$id', {
+      'chapter_id': chapterId,
+      'title': title,
+      if (description?.isNotEmpty ?? false) 'description': description,
+      'duration_minutes': ?durationMinutes,
+      'is_published': isPublished,
+      'questions': questions
+          .map((question) => question.toJson())
+          .toList(growable: false),
+    });
+  }
+
+  Future<TeacherQuizStats> quizStats(String token, int id) async {
+    final json = await _get(token, '/teacher/quizzes/$id/stats');
+    final stats = json['stats'];
+    return TeacherQuizStats.fromJson(
+      stats is Map<String, dynamic> ? stats : const <String, dynamic>{},
+    );
   }
 
   Future<Map<String, dynamic>> _get(String token, String path) async {
@@ -230,6 +326,57 @@ class TeacherApi {
           throw ApiException(first.first.toString());
       }
       throw ApiException((map['message'] as String?) ?? 'Tindakan gagal.');
+    }
+
+    return map;
+  }
+
+  Future<Map<String, dynamic>> _sendMultipart(
+    String method,
+    String token,
+    String path,
+    Map<String, String> fields, {
+    NativeUploadFile? file,
+  }) async {
+    final request = http.MultipartRequest(method, Uri.parse('$baseUrl$path'))
+      ..headers.addAll({
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+      })
+      ..fields.addAll(fields);
+
+    if (file != null) {
+      request.files.add(
+        await http.MultipartFile.fromPath(
+          'file',
+          file.path,
+          filename: file.name,
+        ),
+      );
+    }
+
+    final response = await http.Response.fromStream(await request.send());
+    final decoded = response.body.isEmpty
+        ? const <String, dynamic>{}
+        : jsonDecode(response.body);
+    final map = decoded is Map<String, dynamic>
+        ? decoded
+        : const <String, dynamic>{};
+
+    if (response.statusCode >= 400) {
+      if (response.statusCode == 401) {
+        throw const ApiException('Sesi tamat. Sila log masuk semula.');
+      }
+      final errors = map['errors'];
+      if (errors is Map && errors.values.isNotEmpty) {
+        final first = errors.values.first;
+        if (first is List && first.isNotEmpty) {
+          throw ApiException(first.first.toString());
+        }
+      }
+      throw ApiException(
+        (map['message'] as String?) ?? 'Tidak dapat menyimpan bahan.',
+      );
     }
 
     return map;

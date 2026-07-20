@@ -11,9 +11,10 @@ import '../student/widgets/content_widgets.dart';
 /// document picker. Interactive quizzes are sent as one complete payload, which
 /// lets the API save the quiz, questions and options atomically.
 class QuizBuilderScreen extends StatefulWidget {
-  const QuizBuilderScreen({super.key, required this.repository});
+  const QuizBuilderScreen({super.key, required this.repository, this.quizId});
 
   final TeacherRepository repository;
+  final int? quizId;
 
   @override
   State<QuizBuilderScreen> createState() => _QuizBuilderScreenState();
@@ -36,6 +37,9 @@ class _QuizBuilderScreenState extends State<QuizBuilderScreen> {
   List<TeacherChapter> _chapters = const [];
   TeacherChapter? _chapter;
   bool _loadingChapters = false;
+  TeacherQuizDetail? _editingQuiz;
+
+  bool get _isEditing => widget.quizId != null;
 
   @override
   void initState() {
@@ -58,19 +62,45 @@ class _QuizBuilderScreenState extends State<QuizBuilderScreen> {
     setState(() => _optionsError = null);
     try {
       final options = await widget.repository.options();
+      final detail = _isEditing
+          ? await widget.repository.interactiveQuiz(widget.quizId!)
+          : null;
       if (!mounted) return;
       setState(() {
         _options = options;
-        _subject = options.subjects.isNotEmpty ? options.subjects.first : null;
-        _grade = options.grades.isNotEmpty ? options.grades.first : null;
+        _editingQuiz = detail;
+        _subject = detail == null
+            ? (options.subjects.isNotEmpty ? options.subjects.first : null)
+            : _optionById(options.subjects, detail.subjectId);
+        _grade = detail == null
+            ? (options.grades.isNotEmpty ? options.grades.first : null)
+            : _optionById(options.grades, detail.gradeId);
+        if (detail != null) {
+          _titleCtrl.text = detail.title;
+          _descriptionCtrl.text = detail.description ?? '';
+          _durationCtrl.text = detail.durationMinutes?.toString() ?? '';
+          _published = detail.published;
+          for (final question in _questions) {
+            question.dispose();
+          }
+          _questions
+            ..clear()
+            ..addAll(
+              detail.questions.isEmpty
+                  ? [_QuestionDraft.withDefaults()]
+                  : detail.questions
+                        .map(_QuestionDraft.fromApiDraft)
+                        .toList(growable: false),
+            );
+        }
       });
-      await _loadChapters();
+      await _loadChapters(preferredChapterId: detail?.chapterId);
     } catch (error) {
       if (mounted) setState(() => _optionsError = error);
     }
   }
 
-  Future<void> _loadChapters() async {
+  Future<void> _loadChapters({int? preferredChapterId}) async {
     if (_subject == null || _grade == null) return;
     setState(() {
       _loadingChapters = true;
@@ -82,7 +112,9 @@ class _QuizBuilderScreenState extends State<QuizBuilderScreen> {
       if (!mounted) return;
       setState(() {
         _chapters = data.chapters;
-        _chapter = data.chapters.isEmpty ? null : data.chapters.first;
+        _chapter =
+            _chapterById(data.chapters, preferredChapterId) ??
+            (data.chapters.isEmpty ? null : data.chapters.first);
         _loadingChapters = false;
       });
     } catch (error) {
@@ -90,6 +122,22 @@ class _QuizBuilderScreenState extends State<QuizBuilderScreen> {
       setState(() => _loadingChapters = false);
       _snack('$error');
     }
+  }
+
+  OptionItem? _optionById(List<OptionItem> items, int? id) {
+    if (id == null) return items.isNotEmpty ? items.first : null;
+    for (final item in items) {
+      if (item.id == id) return item;
+    }
+    return items.isNotEmpty ? items.first : null;
+  }
+
+  TeacherChapter? _chapterById(List<TeacherChapter> items, int? id) {
+    if (id == null) return null;
+    for (final item in items) {
+      if (item.id == id) return item;
+    }
+    return null;
   }
 
   void _snack(String message) => ScaffoldMessenger.of(
@@ -163,21 +211,45 @@ class _QuizBuilderScreenState extends State<QuizBuilderScreen> {
   Future<void> _save() async {
     if (!_validateDraft()) return;
 
+    if (_editingQuiz != null && _editingQuiz!.attempts > 0) {
+      final confirmed = await _confirmQuestionReplacement();
+      if (!confirmed) return;
+    }
+
     final durationText = _durationCtrl.text.trim();
     setState(() => _saving = true);
     try {
-      await widget.repository.createInteractiveQuiz(
-        chapterId: _chapter!.id,
-        title: _titleCtrl.text.trim(),
-        description: _descriptionCtrl.text.trim(),
-        durationMinutes: durationText.isEmpty ? null : int.parse(durationText),
-        isPublished: _published,
-        questions: _questions
-            .map((question) => question.toApiDraft())
-            .toList(growable: false),
-      );
+      final questions = _questions
+          .map((question) => question.toApiDraft())
+          .toList(growable: false);
+      if (_isEditing) {
+        await widget.repository.updateInteractiveQuiz(
+          widget.quizId!,
+          chapterId: _chapter!.id,
+          title: _titleCtrl.text.trim(),
+          description: _descriptionCtrl.text.trim(),
+          durationMinutes: durationText.isEmpty
+              ? null
+              : int.parse(durationText),
+          isPublished: _published,
+          questions: questions,
+        );
+      } else {
+        await widget.repository.createInteractiveQuiz(
+          chapterId: _chapter!.id,
+          title: _titleCtrl.text.trim(),
+          description: _descriptionCtrl.text.trim(),
+          durationMinutes: durationText.isEmpty
+              ? null
+              : int.parse(durationText),
+          isPublished: _published,
+          questions: questions,
+        );
+      }
       if (!mounted) return;
-      _snack('Kuiz berjaya disimpan.');
+      _snack(
+        _isEditing ? 'Kuiz berjaya dikemas kini.' : 'Kuiz berjaya disimpan.',
+      );
       Navigator.of(context).pop(true);
     } catch (error) {
       if (mounted) {
@@ -187,10 +259,37 @@ class _QuizBuilderScreenState extends State<QuizBuilderScreen> {
     }
   }
 
+  Future<bool> _confirmQuestionReplacement() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Gantikan soalan kuiz?'),
+        content: const Text(
+          'Kuiz ini sudah mempunyai percubaan murid. Soalan baharu akan menggantikan semua soalan lama dan jawapan lama tidak lagi boleh dipaparkan. Markah serta ranking murid kekal.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Batal'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Teruskan'),
+          ),
+        ],
+      ),
+    );
+    return confirmed ?? false;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Cipta Kuiz Interaktif')),
+      appBar: AppBar(
+        title: Text(
+          _isEditing ? 'Sunting Kuiz Interaktif' : 'Cipta Kuiz Interaktif',
+        ),
+      ),
       body: _optionsError != null
           ? StateMessage(
               icon: Icons.wifi_off_outlined,
@@ -253,7 +352,7 @@ class _QuizBuilderScreenState extends State<QuizBuilderScreen> {
                     ),
                   )
                 : const Icon(Icons.save_outlined),
-            label: const Text('Simpan kuiz'),
+            label: Text(_isEditing ? 'Simpan perubahan' : 'Simpan kuiz'),
           ),
         ),
       ),
@@ -267,6 +366,10 @@ class _QuizBuilderScreenState extends State<QuizBuilderScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            if (_editingQuiz != null && _editingQuiz!.attempts > 0) ...[
+              const _AttemptWarning(),
+              const SizedBox(height: 16),
+            ],
             Text(
               'Maklumat kuiz',
               style: Theme.of(context).textTheme.titleMedium,
@@ -394,6 +497,35 @@ class _QuizBuilderScreenState extends State<QuizBuilderScreen> {
   }
 }
 
+class _AttemptWarning extends StatelessWidget {
+  const _AttemptWarning();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFFF5DB),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFFE6C66B)),
+      ),
+      child: const Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(Icons.warning_amber_rounded, color: LmsColors.warning),
+          SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              'Kuiz ini sudah ada percubaan. Menyimpan perubahan akan menggantikan set soalan lama.',
+              style: TextStyle(fontSize: 12.5, color: LmsColors.ink),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 enum _QuestionType { single, multiple }
 
 class _QuestionDraft {
@@ -409,6 +541,22 @@ class _QuestionDraft {
     points: TextEditingController(text: '10'),
     type: _QuestionType.single,
     options: List.generate(4, (_) => _OptionDraft()),
+  );
+
+  factory _QuestionDraft.fromApiDraft(
+    TeacherQuizQuestionDraft draft,
+  ) => _QuestionDraft(
+    text: TextEditingController(text: draft.questionText),
+    points: TextEditingController(text: draft.points.toString()),
+    type: draft.questionType == 'multiple'
+        ? _QuestionType.multiple
+        : _QuestionType.single,
+    options: draft.options
+        .map(
+          (option) =>
+              _OptionDraft(value: option.optionText, correct: option.isCorrect),
+        )
+        .toList(growable: false),
   );
 
   final TextEditingController text;
@@ -440,10 +588,11 @@ class _QuestionDraft {
 }
 
 class _OptionDraft {
-  _OptionDraft({String? value}) : text = TextEditingController(text: value);
+  _OptionDraft({String? value, this.correct = false})
+    : text = TextEditingController(text: value);
 
   final TextEditingController text;
-  bool correct = false;
+  bool correct;
 
   void dispose() => text.dispose();
 }

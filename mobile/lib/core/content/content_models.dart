@@ -103,6 +103,49 @@ class LessonCard {
   );
 }
 
+/// A grade-scoped result from the learner catalogue search.
+class SearchResult {
+  const SearchResult({
+    required this.id,
+    required this.kind,
+    required this.title,
+    required this.subjectName,
+    required this.chapterLabel,
+    required this.thumbnailUrl,
+    required this.quizType,
+    required this.questionCount,
+    required this.percent,
+    required this.completed,
+  });
+
+  final int id;
+  final String kind; // 'lesson' | 'quiz'
+  final String title;
+  final String? subjectName;
+  final String? chapterLabel;
+  final String? thumbnailUrl;
+  final String? quizType;
+  final int? questionCount;
+  final int? percent;
+  final bool completed;
+
+  bool get isLesson => kind == 'lesson';
+  bool get isFileQuiz => quizType == 'file';
+
+  factory SearchResult.fromJson(Map<String, dynamic> j) => SearchResult(
+    id: _int(j['id']),
+    kind: _str(j['kind']),
+    title: _str(j['title']),
+    subjectName: _strOrNull(j['subject_name']),
+    chapterLabel: _strOrNull(j['chapter_label']),
+    thumbnailUrl: _strOrNull(j['thumbnail_url']),
+    quizType: _strOrNull(j['quiz_type']),
+    questionCount: _intOrNull(j['question_count']),
+    percent: _intOrNull(j['percent']),
+    completed: _bool(j['completed']),
+  );
+}
+
 class DashboardData {
   const DashboardData({
     required this.grade,

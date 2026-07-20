@@ -34,6 +34,9 @@ class LearnController extends StudentApiController
             ->where('lesson_progress.student_id', $user->id)
             ->where('lesson_progress.completed', false)
             ->whereBetween('lesson_progress.percent', [LessonProgress::RESUME_MIN, 89])
+            ->whereHas('chapter', fn ($query) => $query
+                ->where('grade_id', $gradeId)
+                ->where('is_active', true))
             ->orderByDesc('lesson_progress.last_watched_at')
             ->select('lessons.*')
             ->withStudentContext($user)

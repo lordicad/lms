@@ -6,10 +6,14 @@ use App\Http\Controllers\Api\Student\LearnController;
 use App\Http\Controllers\Api\Student\LessonController;
 use App\Http\Controllers\Api\Student\QuizController;
 use App\Http\Controllers\Api\Student\RankingController;
+use App\Http\Controllers\Api\Student\SearchController;
 use App\Http\Controllers\Api\Teacher\ChapterController as TeacherChapterController;
 use App\Http\Controllers\Api\Teacher\ContentController as TeacherContentController;
 use App\Http\Controllers\Api\Teacher\DashboardController as TeacherDashboardController;
+use App\Http\Controllers\Api\Teacher\MaterialController as TeacherMaterialController;
+use App\Http\Controllers\Api\Teacher\NotificationController as TeacherNotificationController;
 use App\Http\Controllers\Api\Teacher\QuizController as TeacherQuizController;
+use App\Http\Controllers\Api\Teacher\TalentController as TeacherTalentController;
 use App\Http\Controllers\Api\Teacher\VideoController as TeacherVideoController;
 use Illuminate\Support\Facades\Route;
 
@@ -28,6 +32,8 @@ Route::prefix('auth')->group(function () {
 
     Route::middleware('auth:sanctum')->group(function () {
         Route::get('me', [AuthController::class, 'me']);
+        Route::patch('profile', [AuthController::class, 'updateProfile']);
+        Route::post('profile/avatar', [AuthController::class, 'updateAvatar']);
         Route::post('logout', [AuthController::class, 'logout']);
     });
 });
@@ -41,6 +47,7 @@ Route::middleware('auth:sanctum')->prefix('student')->group(function () {
     Route::get('subjects', [LearnController::class, 'subjects']);
     Route::get('subjects/{subject:slug}/chapters', [LearnController::class, 'subjectChapters']);
     Route::get('chapters/{chapter}', [LearnController::class, 'chapter']);
+    Route::get('search', SearchController::class);
 
     Route::get('lessons/{lesson}', [LessonController::class, 'show']);
     Route::post('lessons/{lesson}/viewed', [LessonController::class, 'markViewed']);
@@ -64,6 +71,9 @@ Route::middleware('auth:sanctum')->prefix('student')->group(function () {
 */
 Route::middleware('auth:sanctum')->prefix('teacher')->group(function () {
     Route::get('dashboard', TeacherDashboardController::class);
+    Route::get('notifications', [TeacherNotificationController::class, 'index']);
+    Route::post('notifications/read', [TeacherNotificationController::class, 'markRead']);
+    Route::get('talent', TeacherTalentController::class);
 
     Route::get('content/videos', [TeacherContentController::class, 'videos']);
     Route::get('content/materials', [TeacherContentController::class, 'materials']);
@@ -84,5 +94,15 @@ Route::middleware('auth:sanctum')->prefix('teacher')->group(function () {
     Route::delete('chapters/{chapter}', [TeacherChapterController::class, 'destroy']);
 
     Route::post('videos', [TeacherVideoController::class, 'store']);
+    Route::put('videos/{lesson}', [TeacherVideoController::class, 'update']);
+
+    Route::post('materials', [TeacherMaterialController::class, 'store']);
+    // Multipart uploads arrive reliably as POST on PHP; the action is still an update because
+    // the material id is explicit and ownership is checked in the controller.
+    Route::post('materials/{material}', [TeacherMaterialController::class, 'update']);
+    Route::put('materials/{material}', [TeacherMaterialController::class, 'update']);
     Route::post('quizzes', [TeacherQuizController::class, 'store']);
+    Route::get('quizzes/{quiz}/stats', [TeacherQuizController::class, 'stats']);
+    Route::get('quizzes/{quiz}', [TeacherQuizController::class, 'show']);
+    Route::put('quizzes/{quiz}', [TeacherQuizController::class, 'update']);
 });

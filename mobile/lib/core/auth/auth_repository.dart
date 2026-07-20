@@ -2,6 +2,7 @@ import 'dart:io';
 
 import '../api/api_client.dart';
 import '../config/app_config.dart';
+import '../platform/native_file_picker.dart';
 import 'auth_user.dart';
 import 'token_store.dart';
 
@@ -63,6 +64,49 @@ class AuthRepository {
     } finally {
       await _tokenStore.clear();
     }
+  }
+
+  Future<AuthUser> updateProfile({
+    required AuthUser currentUser,
+    required String name,
+    required String username,
+    String? email,
+  }) async {
+    if (usePreviewAuthentication) {
+      return currentUser.copyWith(name: name, username: username, email: email);
+    }
+
+    final token = await _tokenStore.read();
+    if (token == null) {
+      throw const ApiException('Sesi anda telah tamat. Sila log masuk semula.');
+    }
+
+    return _api.updateProfile(
+      token: token,
+      name: name,
+      username: username,
+      email: email,
+    );
+  }
+
+  Future<AuthUser> updateAvatar({
+    required AuthUser currentUser,
+    required NativeUploadFile file,
+  }) async {
+    if (usePreviewAuthentication) {
+      return currentUser;
+    }
+
+    final token = await _tokenStore.read();
+    if (token == null) {
+      throw const ApiException('Sesi anda telah tamat. Sila log masuk semula.');
+    }
+
+    return _api.updateAvatar(
+      token: token,
+      path: file.path,
+      filename: file.name,
+    );
   }
 
   String get _deviceName {

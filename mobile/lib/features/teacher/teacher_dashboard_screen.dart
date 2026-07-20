@@ -3,11 +3,16 @@ import 'package:flutter/material.dart';
 import '../../core/auth/auth_user.dart';
 import '../../core/teacher/teacher_models.dart';
 import '../../core/teacher/teacher_repository.dart';
+import '../../core/platform/native_file_picker.dart';
 import '../../core/theme/lms_theme.dart';
+import '../../core/widgets/lms_logo.dart';
 import '../student/profile_tab.dart';
 import '../student/widgets/content_widgets.dart';
 import 'content_hub_tab.dart';
+import 'material_form_screen.dart';
 import 'quiz_builder_screen.dart';
+import 'teacher_notifications_screen.dart';
+import 'teacher_talent_screen.dart';
 import 'video_form_screen.dart';
 
 /// The teacher shell: a bottom nav between the (live) dashboard, the content hub and the
@@ -18,10 +23,19 @@ class TeacherDashboardScreen extends StatefulWidget {
     super.key,
     required this.user,
     required this.onSignOut,
+    required this.onUpdateProfile,
+    required this.onUpdateAvatar,
   });
 
   final AuthUser user;
   final Future<void> Function() onSignOut;
+  final Future<AuthUser> Function({
+    required String name,
+    required String username,
+    String? email,
+  })
+  onUpdateProfile;
+  final Future<AuthUser> Function(NativeUploadFile file) onUpdateAvatar;
 
   @override
   State<TeacherDashboardScreen> createState() => _TeacherDashboardScreenState();
@@ -48,6 +62,8 @@ class _TeacherDashboardScreenState extends State<TeacherDashboardScreen> {
             child: ProfileTab(
               user: widget.user,
               onSignOut: widget.onSignOut,
+              onUpdateProfile: widget.onUpdateProfile,
+              onUpdateAvatar: widget.onUpdateAvatar,
               roleLabel: 'Guru',
             ),
           ),
@@ -81,13 +97,31 @@ class _TeacherDashboardScreenState extends State<TeacherDashboardScreen> {
     child: Column(
       children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(20, 16, 20, 4),
-          child: Align(
-            alignment: Alignment.centerLeft,
-            child: Text(
-              'Kandungan saya',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
+          padding: const EdgeInsets.fromLTRB(20, 18, 20, 2),
+          child: Row(
+            children: [
+              const LmsLogo(size: 46, radius: 15),
+              const SizedBox(width: 13),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Kandungan saya',
+                      style: Theme.of(context).textTheme.headlineMedium,
+                    ),
+                    const SizedBox(height: 2),
+                    const Text(
+                      'Urus video, bahan dan kuiz anda.',
+                      style: TextStyle(
+                        fontSize: 11.5,
+                        color: LmsColors.inkMuted,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
         Expanded(
@@ -160,6 +194,35 @@ class _DashboardTabState extends State<_DashboardTab> {
     }
   }
 
+  Future<void> _openAddMaterial() async {
+    final created = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(
+        builder: (_) => MaterialFormScreen(repository: widget.repository),
+      ),
+    );
+    if (created == true) {
+      widget.onContentChanged();
+      _reload();
+    }
+  }
+
+  Future<void> _openNotifications() async {
+    await Navigator.of(context).push<void>(
+      MaterialPageRoute(
+        builder: (_) =>
+            TeacherNotificationsScreen(repository: widget.repository),
+      ),
+    );
+  }
+
+  Future<void> _openTalent() async {
+    await Navigator.of(context).push<void>(
+      MaterialPageRoute(
+        builder: (_) => TeacherTalentScreen(repository: widget.repository),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final topInset = MediaQuery.of(context).padding.top;
@@ -189,80 +252,106 @@ class _DashboardTabState extends State<_DashboardTab> {
           child: ListView(
             padding: EdgeInsets.zero,
             children: [
-              // Forest header, bleeding under the status bar.
+              // Branded header, bleeding under the status bar.
               Container(
-                color: LmsColors.forest,
-                padding: EdgeInsets.fromLTRB(20, topInset + 18, 20, 46),
-                child: Row(
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [LmsColors.forest, LmsColors.brandStrong],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                ),
+                padding: EdgeInsets.fromLTRB(20, topInset + 16, 20, 54),
+                child: Stack(
+                  clipBehavior: Clip.none,
                   children: [
-                    CircleAvatar(
-                      radius: 22,
-                      backgroundColor: LmsColors.accent,
-                      foregroundColor: LmsColors.onAccent,
-                      child: Text(
-                        _initial(widget.user.name),
-                        style: const TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w800,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            widget.user.name,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              fontSize: 17,
-                              fontWeight: FontWeight.w800,
-                              color: Colors.white,
-                            ),
-                          ),
-                          const Text(
-                            'Guru',
-                            style: TextStyle(
-                              fontSize: 11.5,
-                              color: Color(0xFFB9CCB8),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: _openAddVideo,
+                    Positioned(
+                      right: 84,
+                      top: -40,
                       child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 14,
-                          vertical: 9,
+                        width: 130,
+                        height: 130,
+                        decoration: const BoxDecoration(
+                          color: Color(0x1299C883),
+                          shape: BoxShape.circle,
                         ),
-                        decoration: BoxDecoration(
-                          color: LmsColors.accent,
-                          borderRadius: BorderRadius.circular(11),
+                      ),
+                    ),
+                    Row(
+                      children: [
+                        const LmsLogo(size: 48, radius: 16),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'Ruang Guru',
+                                style: TextStyle(
+                                  fontSize: 11.5,
+                                  fontWeight: FontWeight.w700,
+                                  color: Color(0xFFC8DDC5),
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                widget.user.name,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.w800,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                        child: const Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.add,
-                              size: 16,
-                              color: LmsColors.onAccent,
-                            ),
-                            SizedBox(width: 4),
-                            Text(
-                              'Tambah',
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w800,
-                                color: LmsColors.onAccent,
+                        IconButton(
+                          tooltip: 'Notifikasi',
+                          onPressed: _openNotifications,
+                          icon: const Icon(
+                            Icons.notifications_none_rounded,
+                            color: Colors.white,
+                          ),
+                        ),
+                        Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: _openAddVideo,
+                            borderRadius: BorderRadius.circular(13),
+                            child: Ink(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 13,
+                                vertical: 10,
+                              ),
+                              decoration: BoxDecoration(
+                                color: LmsColors.accent,
+                                borderRadius: BorderRadius.circular(13),
+                              ),
+                              child: const Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.add_rounded,
+                                    size: 17,
+                                    color: LmsColors.onAccent,
+                                  ),
+                                  SizedBox(width: 4),
+                                  Text(
+                                    'Tambah',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w800,
+                                      color: LmsColors.onAccent,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                          ],
+                          ),
                         ),
-                      ),
+                      ],
                     ),
                   ],
                 ),
@@ -281,29 +370,46 @@ class _DashboardTabState extends State<_DashboardTab> {
                         crossAxisCount: 2,
                         mainAxisSpacing: 10,
                         crossAxisSpacing: 10,
-                        childAspectRatio: 1.55,
+                        // The tablet has wide columns; a higher ratio prevents the cards from
+                        // becoming tall empty boxes when they only contain one number.
+                        childAspectRatio: 2.15,
                         children: [
                           _StatCard(
                             icon: Icons.play_circle_outline,
                             value: '${s.videos}',
                             label: 'Video',
+                            tint: const Color(0xFFE5F3E0),
                           ),
                           _StatCard(
                             icon: Icons.description_outlined,
                             value: '${s.materials}',
                             label: 'Bahan',
+                            tint: const Color(0xFFFFF0D9),
                           ),
                           _StatCard(
                             icon: Icons.quiz_outlined,
                             value: '${s.quizzes}',
                             label: 'Kuiz',
+                            tint: const Color(0xFFE7EFFD),
                           ),
                           _StatCard(
                             icon: Icons.visibility_outlined,
                             value: '${s.views}',
                             label: 'Tontonan',
+                            tint: const Color(0xFFF2E9FB),
                           ),
                         ],
+                      ),
+                      const SizedBox(height: 12),
+                      OutlinedButton.icon(
+                        onPressed: _openTalent,
+                        icon: const Icon(Icons.insights_outlined),
+                        label: const Text('Bakat Kandungan'),
+                        style: OutlinedButton.styleFrom(
+                          minimumSize: const Size.fromHeight(48),
+                          foregroundColor: LmsColors.brandStrong,
+                          side: const BorderSide(color: Color(0x334A7C3A)),
+                        ),
                       ),
                       const SizedBox(height: 22),
                       const _Heading('Aksi pantas'),
@@ -319,7 +425,7 @@ class _DashboardTabState extends State<_DashboardTab> {
                           _QuickAction(
                             icon: Icons.upload_file_outlined,
                             label: 'Bahan',
-                            onTap: _soon,
+                            onTap: _openAddMaterial,
                           ),
                           const SizedBox(width: 9),
                           _QuickAction(
@@ -361,11 +467,6 @@ class _DashboardTabState extends State<_DashboardTab> {
       },
     );
   }
-
-  static String _initial(String name) {
-    final t = name.trim();
-    return t.isEmpty ? '?' : t[0].toUpperCase();
-  }
 }
 
 class _Heading extends StatelessWidget {
@@ -387,10 +488,12 @@ class _StatCard extends StatelessWidget {
     required this.icon,
     required this.value,
     required this.label,
+    required this.tint,
   });
   final IconData icon;
   final String value;
   final String label;
+  final Color tint;
 
   @override
   Widget build(BuildContext context) {
@@ -411,7 +514,12 @@ class _StatCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, size: 20, color: LmsColors.brandStrong),
+          Container(
+            width: 35,
+            height: 35,
+            decoration: BoxDecoration(color: tint, shape: BoxShape.circle),
+            child: Icon(icon, size: 19, color: LmsColors.brandStrong),
+          ),
           const Spacer(),
           Text(
             value,
@@ -452,14 +560,22 @@ class _QuickAction extends StatelessWidget {
         onTap: onTap,
         child: Container(
           decoration: BoxDecoration(
-            color: LmsColors.surface,
+            color: const Color(0xFFFBFCFA),
             borderRadius: BorderRadius.circular(14),
             border: Border.all(color: LmsColors.border),
           ),
           padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 6),
           child: Column(
             children: [
-              Icon(icon, size: 22, color: LmsColors.brandStrong),
+              Container(
+                width: 30,
+                height: 30,
+                decoration: const BoxDecoration(
+                  color: LmsColors.brandSoft,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(icon, size: 17, color: LmsColors.brandStrong),
+              ),
               const SizedBox(height: 6),
               Text(
                 label,

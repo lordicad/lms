@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Question;
 use App\Models\QuestionOption;
 use App\Models\Quiz;
+use App\Models\QuizAttempt;
+use App\Models\User;
 use App\Rules\ValidSubjectGradeCombo;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -23,15 +25,176 @@ class QuizController extends Controller
 {
     public function store(Request $request): JsonResponse
     {
-        $teacher = $request->user();
+        $teacher = $this->teacher($request);
 
-        if (! $teacher || ! $teacher->isTeacher()) {
+        if (! $teacher) {
             return response()->json(['message' => 'Hanya guru boleh mengakses ini.'], 403);
         }
 
+        $data = $this->validatedPayload($request);
+        $this->validateCorrectAnswers($data['questions']);
+
+        $quiz = DB::transaction(function () use ($data, $teacher) {
+            $quiz = Quiz::create([
+                'chapter_id' => $data['chapter_id'],
+                'teacher_id' => $teacher->id,
+                'title' => $data['title'],
+                'description' => $data['description'] ?? null,
+                'type' => Quiz::TYPE_INTERACTIVE,
+                'duration_minutes' => $data['duration_minutes'] ?? null,
+                'is_published' => $data['is_published'] ?? true,
+            ]);
+
+            $this->replaceQuestions($quiz, $data['questions']);
+
+            return $quiz;
+        });
+
+        return response()->json(['id' => $quiz->id], 201);
+    }
+
+    /**
+     * The complete interactive quiz payload for the mobile editor.
+     */
+    public function show(Request $request, Quiz $quiz): JsonResponse
+    {
+        if (! $this->ownsInteractiveQuiz($request, $quiz)) {
+            return $this->notFoundOrForbidden($request, $quiz);
+        }
+
+        $quiz->load('chapter.subject', 'chapter.grade', 'questions.options')
+            ->loadCount(['completedAttempts as attempts_count']);
+
+        return response()->json([
+            'quiz' => [
+                'id' => $quiz->id,
+                'title' => $quiz->title,
+                'description' => $quiz->description,
+                'chapter_id' => $quiz->chapter_id,
+                'subject_id' => $quiz->chapter?->subject_id,
+                'grade_id' => $quiz->chapter?->grade_id,
+                'duration_minutes' => $quiz->duration_minutes,
+                'published' => (bool) $quiz->is_published,
+                'attempts' => (int) $quiz->attempts_count,
+                'questions' => $quiz->questions->map(fn (Question $question) => [
+                    'question_text' => $question->question_text,
+                    'question_type' => $question->question_type,
+                    'points' => $question->points,
+                    'options' => $question->options->map(fn (QuestionOption $option) => [
+                        'option_text' => $option->option_text,
+                        'is_correct' => (bool) $option->is_correct,
+                    ])->values()->all(),
+                ])->values()->all(),
+            ],
+        ]);
+    }
+
+    /**
+     * Rebuilds an interactive quiz atomically. Historical attempt scores remain, but their
+     * old answer rows follow the deleted questions, matching the warning shown in the web app.
+     */
+    public function update(Request $request, Quiz $quiz): JsonResponse
+    {
+        if (! $this->ownsInteractiveQuiz($request, $quiz)) {
+            return $this->notFoundOrForbidden($request, $quiz);
+        }
+
+        $data = $this->validatedPayload($request);
+        $this->validateCorrectAnswers($data['questions']);
+
+        DB::transaction(function () use ($quiz, $data) {
+            $quiz->update([
+                'chapter_id' => $data['chapter_id'],
+                'title' => $data['title'],
+                'description' => $data['description'] ?? null,
+                'duration_minutes' => $data['duration_minutes'] ?? null,
+                'is_published' => $data['is_published'] ?? true,
+            ]);
+
+            $quiz->questions()->delete();
+            $this->replaceQuestions($quiz, $data['questions']);
+        });
+
+        return response()->json(['id' => $quiz->id]);
+    }
+
+    /**
+     * Per-quiz performance for the teacher: summary, question accuracy and recent attempts.
+     */
+    public function stats(Request $request, Quiz $quiz): JsonResponse
+    {
+        if (! $this->ownsInteractiveQuiz($request, $quiz)) {
+            return $this->notFoundOrForbidden($request, $quiz);
+        }
+
+        $quiz->load('questions');
+        $summary = $quiz->completedAttempts()
+            ->selectRaw('COUNT(*) as completed_count, AVG(score) as average_score, AVG(CASE WHEN max_score > 0 THEN score * 100.0 / max_score ELSE 0 END) as average_percent')
+            ->first();
+        $completedCount = (int) ($summary?->completed_count ?? 0);
+
+        $perQuestion = DB::table('attempt_answers')
+            ->join('quiz_attempts', 'quiz_attempts.id', '=', 'attempt_answers.quiz_attempt_id')
+            ->where('quiz_attempts.quiz_id', $quiz->id)
+            ->whereNotNull('quiz_attempts.completed_at')
+            ->groupBy('attempt_answers.question_id')
+            ->select([
+                'attempt_answers.question_id',
+                DB::raw('COUNT(*) as answered'),
+                DB::raw('SUM(attempt_answers.is_correct) as correct'),
+            ])
+            ->get()
+            ->keyBy('question_id');
+
+        $attempts = $quiz->completedAttempts()
+            ->with('student.grade')
+            ->orderByDesc('completed_at')
+            ->limit(100)
+            ->get();
+
+        return response()->json([
+            'stats' => [
+                'completed_count' => $completedCount,
+                'max_score' => $quiz->maxScore(),
+                'average_score' => round((float) ($summary?->average_score ?? 0), 1),
+                'average_percent' => (int) round((float) ($summary?->average_percent ?? 0)),
+                'questions' => $quiz->questions->values()->map(function (Question $question, int $index) use ($perQuestion) {
+                    $stat = $perQuestion->get($question->id);
+                    $answered = (int) ($stat->answered ?? 0);
+                    $correct = (int) ($stat->correct ?? 0);
+
+                    return [
+                        'number' => $index + 1,
+                        'question_text' => $question->question_text,
+                        'answered' => $answered,
+                        'correct' => $correct,
+                        'rate' => $answered > 0 ? (int) round($correct / $answered * 100) : 0,
+                    ];
+                })->all(),
+                'attempts' => $attempts->map(fn (QuizAttempt $attempt) => [
+                    'student_name' => $attempt->student?->name,
+                    'grade_name' => $attempt->student?->grade?->name,
+                    'score' => $attempt->score,
+                    'max_score' => $attempt->max_score,
+                    'percent' => $attempt->percentage(),
+                    'correct_count' => $attempt->correct_count,
+                    'question_count' => $attempt->question_count,
+                    'duration' => $attempt->humanDuration(),
+                    'counts_for_ranking' => (bool) $attempt->counts_for_ranking,
+                    'completed_at' => $attempt->completed_at?->toIso8601String(),
+                ])->all(),
+            ],
+        ]);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function validatedPayload(Request $request): array
+    {
         $config = config('lms.quiz');
 
-        $data = $request->validate([
+        return $request->validate([
             'chapter_id' => [
                 'required',
                 'integer',
@@ -65,43 +228,56 @@ class QuizController extends Controller
             'questions.*.options.min' => 'Setiap soalan mesti ada sekurang-kurangnya dua pilihan jawapan.',
             'questions.*.options.*.option_text.required' => 'Setiap pilihan jawapan mesti diisi.',
         ]);
+    }
 
-        $this->validateCorrectAnswers($data['questions']);
-
-        $quiz = DB::transaction(function () use ($data, $teacher) {
-            $quiz = Quiz::create([
-                'chapter_id' => $data['chapter_id'],
-                'teacher_id' => $teacher->id,
-                'title' => $data['title'],
-                'description' => $data['description'] ?? null,
-                'type' => Quiz::TYPE_INTERACTIVE,
-                'duration_minutes' => $data['duration_minutes'] ?? null,
-                'is_published' => $data['is_published'] ?? true,
+    /**
+     * @param  array<int, array<string, mixed>>  $questions
+     */
+    private function replaceQuestions(Quiz $quiz, array $questions): void
+    {
+        foreach ($questions as $index => $questionData) {
+            $question = Question::create([
+                'quiz_id' => $quiz->id,
+                'question_text' => $questionData['question_text'],
+                'question_type' => $questionData['question_type'],
+                'points' => $questionData['points'],
+                'sort_order' => $index,
             ]);
 
-            foreach ($data['questions'] as $index => $questionData) {
-                $question = Question::create([
-                    'quiz_id' => $quiz->id,
-                    'question_text' => $questionData['question_text'],
-                    'question_type' => $questionData['question_type'],
-                    'points' => $questionData['points'],
-                    'sort_order' => $index,
+            foreach ($questionData['options'] as $optionIndex => $optionData) {
+                QuestionOption::create([
+                    'question_id' => $question->id,
+                    'option_text' => $optionData['option_text'],
+                    'is_correct' => (bool) $optionData['is_correct'],
+                    'sort_order' => $optionIndex,
                 ]);
-
-                foreach ($questionData['options'] as $optionIndex => $optionData) {
-                    QuestionOption::create([
-                        'question_id' => $question->id,
-                        'option_text' => $optionData['option_text'],
-                        'is_correct' => (bool) $optionData['is_correct'],
-                        'sort_order' => $optionIndex,
-                    ]);
-                }
             }
+        }
+    }
 
-            return $quiz;
-        });
+    private function teacher(Request $request): ?User
+    {
+        $user = $request->user();
 
-        return response()->json(['id' => $quiz->id], 201);
+        return $user && $user->isTeacher() ? $user : null;
+    }
+
+    private function ownsInteractiveQuiz(Request $request, Quiz $quiz): bool
+    {
+        $teacher = $this->teacher($request);
+
+        return $teacher && $quiz->teacher_id === $teacher->id && $quiz->isInteractive();
+    }
+
+    private function notFoundOrForbidden(Request $request, Quiz $quiz): JsonResponse
+    {
+        $teacher = $this->teacher($request);
+
+        if (! $teacher || $quiz->teacher_id !== $teacher->id) {
+            return response()->json(['message' => 'Hanya guru boleh mengakses ini.'], 403);
+        }
+
+        return response()->json(['message' => 'Hanya kuiz interaktif boleh dibuka di aplikasi.'], 422);
     }
 
     /**

@@ -32,6 +32,10 @@ class ContentController extends Controller
             'videos' => $lessons->map(fn ($l) => [
                 'id' => $l->id,
                 'title' => $l->title,
+                'description' => $l->description,
+                'chapter_id' => $l->chapter_id,
+                'subject_id' => $l->chapter?->subject_id,
+                'grade_id' => $l->chapter?->grade_id,
                 'chapter_label' => $l->chapter?->label(),
                 'subject_name' => $l->chapter?->subject?->displayName(),
                 'grade_name' => $l->chapter?->grade?->name,
@@ -39,6 +43,7 @@ class ContentController extends Controller
                 'views' => (int) $l->views_count,
                 'source' => $l->source,
                 'ownership' => $l->ownership,
+                'youtube_url' => $l->youtube_id ? "https://youtu.be/{$l->youtube_id}" : null,
                 'thumbnail_url' => $l->thumbnailUrl(),
             ])->all(),
         ]);
@@ -51,12 +56,20 @@ class ContentController extends Controller
             return $this->forbidden();
         }
 
-        $materials = $teacher->materials()->orderByDesc('id')->get();
+        $materials = $teacher->materials()
+            ->with('chapter.subject', 'chapter.grade')
+            ->orderByDesc('id')
+            ->get();
 
         return response()->json([
             'materials' => $materials->map(fn ($m) => [
                 'id' => $m->id,
                 'title' => $m->title,
+                'chapter_id' => $m->chapter_id,
+                'subject_id' => $m->chapter?->subject_id,
+                'grade_id' => $m->chapter?->grade_id,
+                'chapter_label' => $m->chapter?->label(),
+                'subject_name' => $m->chapter?->subject?->displayName(),
                 'extension' => $m->extension(),
                 'human_size' => $m->humanSize(),
             ])->all(),

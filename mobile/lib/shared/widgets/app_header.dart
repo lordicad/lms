@@ -10,12 +10,14 @@ class AppHeader extends StatelessWidget {
     required this.title,
     required this.subtitle,
     required this.onSignOut,
+    this.onSearch,
   });
 
   final AuthUser user;
   final String title;
   final String subtitle;
   final Future<void> Function() onSignOut;
+  final VoidCallback? onSearch;
 
   @override
   Widget build(BuildContext context) {
@@ -45,6 +47,12 @@ class AppHeader extends StatelessWidget {
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
           ),
           const Spacer(),
+          if (onSearch != null)
+            IconButton(
+              tooltip: 'Cari kandungan',
+              onPressed: onSearch,
+              icon: const Icon(Icons.search_rounded),
+            ),
           PopupMenuButton<String>(
             tooltip: 'Menu akaun',
             onSelected: (value) {

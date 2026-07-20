@@ -3,12 +3,15 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import '../api/api_client.dart' show ApiException;
+import 'content_cache.dart';
 import 'content_models.dart';
 
 /// HTTP client for the student learning endpoints (`/api/student/*`). Every call is
 /// token-authenticated; the token is supplied by [ContentRepository].
 class ContentApi {
-  ContentApi({http.Client? httpClient}) : _http = httpClient ?? http.Client();
+  ContentApi({http.Client? httpClient, ContentCache? cache})
+    : _http = httpClient ?? http.Client(),
+      _cache = cache ?? const ContentCache();
 
   static const baseUrl = String.fromEnvironment(
     'API_BASE_URL',
@@ -16,15 +19,37 @@ class ContentApi {
   );
 
   final http.Client _http;
+  final ContentCache _cache;
 
   Future<DashboardData> dashboard(String token, {int? grade}) async {
-    final json = await _get(token, '/student/dashboard', grade: grade);
+    final json = await _get(
+      token,
+      '/student/dashboard',
+      grade: grade,
+      cacheResource: 'dashboard_${grade ?? 'own'}',
+    );
     return DashboardData.fromJson(json);
   }
 
   Future<SubjectsData> subjects(String token, {int? grade}) async {
-    final json = await _get(token, '/student/subjects', grade: grade);
+    final json = await _get(
+      token,
+      '/student/subjects',
+      grade: grade,
+      cacheResource: 'subjects_${grade ?? 'own'}',
+    );
     return SubjectsData.fromJson(json);
+  }
+
+  Future<List<SearchResult>> search(String token, String query) async {
+    final encodedQuery = Uri.encodeQueryComponent(query.trim());
+    final json = await _get(token, '/student/search?q=$encodedQuery');
+    final list = json['results'];
+    if (list is! List) return const [];
+    return list
+        .whereType<Map<String, dynamic>>()
+        .map(SearchResult.fromJson)
+        .toList(growable: false);
   }
 
   Future<SubjectChaptersData> subjectChapters(
@@ -36,17 +61,26 @@ class ContentApi {
       token,
       '/student/subjects/$slug/chapters',
       grade: grade,
+      cacheResource: 'subject_${slug}_${grade ?? 'own'}',
     );
     return SubjectChaptersData.fromJson(json);
   }
 
   Future<ChapterDetail> chapter(String token, int chapterId) async {
-    final json = await _get(token, '/student/chapters/$chapterId');
+    final json = await _get(
+      token,
+      '/student/chapters/$chapterId',
+      cacheResource: 'chapter_$chapterId',
+    );
     return ChapterDetail.fromJson(json);
   }
 
   Future<LessonDetail> lesson(String token, int lessonId) async {
-    final json = await _get(token, '/student/lessons/$lessonId');
+    final json = await _get(
+      token,
+      '/student/lessons/$lessonId',
+      cacheResource: 'lesson_$lessonId',
+    );
     return LessonDetail.fromJson(json);
   }
 
@@ -87,7 +121,11 @@ class ContentApi {
   }
 
   Future<List<QuizListItem>> quizzes(String token) async {
-    final json = await _get(token, '/student/quizzes');
+    final json = await _get(
+      token,
+      '/student/quizzes',
+      cacheResource: 'quizzes',
+    );
     final list = json['quizzes'];
     if (list is! List) return const [];
     return list
@@ -139,13 +177,47 @@ class ContentApi {
     String token,
     String path, {
     int? grade,
+    String? cacheResource,
   }) async {
-    final query = grade == null ? '' : '?grade=$grade';
-    final response = await _http.get(
-      Uri.parse('$baseUrl$path$query'),
-      headers: _headers(token),
-    );
-    return _decode(response);
+    final baseUri = Uri.parse('$baseUrl$path');
+    final uri = grade == null
+        ? baseUri
+        : baseUri.replace(
+            queryParameters: {...baseUri.queryParameters, 'grade': '$grade'},
+          );
+
+    try {
+      final response = await _http.get(uri, headers: _headers(token));
+      final decoded = _decode(response);
+      if (cacheResource != null) {
+        try {
+          await _cache.write(
+            token: token,
+            resource: cacheResource,
+            payload: decoded,
+          );
+        } catch (_) {
+          // A full or unavailable preferences store must not prevent online learning.
+        }
+      }
+      return decoded;
+    } on ApiException {
+      // Authentication and server validation failures must never be hidden by stale data.
+      rethrow;
+    } catch (_) {
+      if (cacheResource != null) {
+        try {
+          final cached = await _cache.read(
+            token: token,
+            resource: cacheResource,
+          );
+          if (cached != null) return cached;
+        } catch (_) {
+          // Preserve the original network error when cache retrieval also fails.
+        }
+      }
+      rethrow;
+    }
   }
 
   Future<Map<String, dynamic>> _post(

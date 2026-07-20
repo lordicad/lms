@@ -71,6 +71,44 @@ class ApiClient {
     return AuthUser.fromJson(body['user'] as Map<String, dynamic>);
   }
 
+  Future<AuthUser> updateProfile({
+    required String token,
+    required String name,
+    required String username,
+    String? email,
+  }) async {
+    final response = await _http.patch(
+      Uri.parse('$baseUrl/auth/profile'),
+      headers: {..._authHeaders(token), 'Content-Type': 'application/json'},
+      body: jsonEncode({'name': name, 'username': username, 'email': email}),
+    );
+
+    final body = _decode(response);
+    _throwIfUnsuccessful(response, body);
+
+    return AuthUser.fromJson(body['user'] as Map<String, dynamic>);
+  }
+
+  Future<AuthUser> updateAvatar({
+    required String token,
+    required String path,
+    required String filename,
+  }) async {
+    final request = http.MultipartRequest(
+      'POST',
+      Uri.parse('$baseUrl/auth/profile/avatar'),
+    )..headers.addAll(_authHeaders(token));
+    request.files.add(
+      await http.MultipartFile.fromPath('avatar', path, filename: filename),
+    );
+
+    final response = await http.Response.fromStream(await request.send());
+    final body = _decode(response);
+    _throwIfUnsuccessful(response, body);
+
+    return AuthUser.fromJson(body['user'] as Map<String, dynamic>);
+  }
+
   Future<void> logout(String token) async {
     final response = await _http.post(
       Uri.parse('$baseUrl/auth/logout'),

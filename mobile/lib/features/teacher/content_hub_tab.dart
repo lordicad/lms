@@ -5,9 +5,13 @@ import '../../core/teacher/teacher_repository.dart';
 import '../../core/theme/lms_theme.dart';
 import '../student/widgets/content_widgets.dart';
 import 'chapters_manage_tab.dart';
+import 'material_form_screen.dart';
+import 'quiz_builder_screen.dart';
+import 'quiz_statistics_screen.dart';
+import 'video_form_screen.dart';
 
 /// The teacher's Content Hub: a segmented list of their videos, materials and quizzes
-/// with publish status. Read-only for now (edit/publish/delete arrive later).
+/// with publish status and the actions allowed on each item.
 class ContentHubTab extends StatefulWidget {
   const ContentHubTab({super.key, required this.repository});
 
@@ -61,27 +65,62 @@ class _ContentHubTabState extends State<ContentHubTab> {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(20, 12, 20, 8),
+          padding: const EdgeInsets.fromLTRB(20, 14, 20, 8),
           child: Row(
             children: [
               Expanded(
-                child: SegmentedButton<int>(
-                  segments: const [
-                    ButtonSegment(value: 0, label: Text('Video')),
-                    ButtonSegment(value: 1, label: Text('Bahan')),
-                    ButtonSegment(value: 2, label: Text('Kuiz')),
-                    ButtonSegment(value: 3, label: Text('Bab')),
-                  ],
-                  selected: {_segment},
-                  onSelectionChanged: (s) => _select(s.first),
-                  showSelectedIcon: false,
+                child: Container(
+                  padding: const EdgeInsets.all(3),
+                  decoration: BoxDecoration(
+                    color: LmsColors.surfaceMuted,
+                    borderRadius: BorderRadius.circular(13),
+                  ),
+                  child: SegmentedButton<int>(
+                    segments: const [
+                      ButtonSegment(value: 0, label: Text('Video')),
+                      ButtonSegment(value: 1, label: Text('Bahan')),
+                      ButtonSegment(value: 2, label: Text('Kuiz')),
+                      ButtonSegment(value: 3, label: Text('Bab')),
+                    ],
+                    selected: {_segment},
+                    onSelectionChanged: (s) => _select(s.first),
+                    showSelectedIcon: false,
+                    style: ButtonStyle(
+                      textStyle: const WidgetStatePropertyAll(
+                        TextStyle(fontSize: 11, fontWeight: FontWeight.w800),
+                      ),
+                      foregroundColor: WidgetStateProperty.resolveWith(
+                        (states) => states.contains(WidgetState.selected)
+                            ? Colors.white
+                            : LmsColors.inkMuted,
+                      ),
+                      backgroundColor: WidgetStateProperty.resolveWith(
+                        (states) => states.contains(WidgetState.selected)
+                            ? LmsColors.brand
+                            : Colors.transparent,
+                      ),
+                      side: const WidgetStatePropertyAll(BorderSide.none),
+                      shape: WidgetStatePropertyAll(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
               ),
-              const SizedBox(width: 4),
-              IconButton(
-                tooltip: 'Muat semula',
-                onPressed: _segment == 3 ? null : _reloadCurrent,
-                icon: const Icon(Icons.refresh),
+              const SizedBox(width: 8),
+              Container(
+                decoration: BoxDecoration(
+                  color: LmsColors.surface,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: LmsColors.border),
+                ),
+                child: IconButton(
+                  tooltip: 'Muat semula',
+                  onPressed: _segment == 3 ? null : _reloadCurrent,
+                  icon: const Icon(Icons.refresh_rounded),
+                ),
               ),
             ],
           ),
@@ -196,6 +235,53 @@ class _ContentHubTabState extends State<ContentHubTab> {
     }
   }
 
+  Future<void> _editVideo(TeacherVideo video) async {
+    final updated = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(
+        builder: (_) =>
+            VideoFormScreen(repository: widget.repository, video: video),
+      ),
+    );
+    if (updated == true && mounted) {
+      setState(() => _videos = widget.repository.videos());
+    }
+  }
+
+  Future<void> _editMaterial(TeacherMaterial material) async {
+    final updated = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(
+        builder: (_) => MaterialFormScreen(
+          repository: widget.repository,
+          material: material,
+        ),
+      ),
+    );
+    if (updated == true && mounted) {
+      setState(() => _materials = widget.repository.materials());
+    }
+  }
+
+  Future<void> _editQuiz(TeacherQuiz quiz) async {
+    final updated = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(
+        builder: (_) =>
+            QuizBuilderScreen(repository: widget.repository, quizId: quiz.id),
+      ),
+    );
+    if (updated == true && mounted) {
+      setState(() => _quizzes = widget.repository.quizzes());
+    }
+  }
+
+  Future<void> _viewQuizStats(TeacherQuiz quiz) async {
+    await Navigator.of(context).push<void>(
+      MaterialPageRoute(
+        builder: (_) =>
+            QuizStatisticsScreen(repository: widget.repository, quiz: quiz),
+      ),
+    );
+  }
+
   Widget _body() {
     switch (_segment) {
       case 3:
@@ -207,6 +293,7 @@ class _ContentHubTabState extends State<ContentHubTab> {
             _materials = widget.repository.materials();
           }),
           onDelete: _deleteMaterial,
+          onEdit: _editMaterial,
         );
       case 2:
         return _QuizzesList(
@@ -216,6 +303,8 @@ class _ContentHubTabState extends State<ContentHubTab> {
           }),
           onToggle: _togglePublishQuiz,
           onDelete: _deleteQuiz,
+          onEdit: _editQuiz,
+          onStats: _viewQuizStats,
         );
       default:
         return _VideosList(
@@ -225,6 +314,7 @@ class _ContentHubTabState extends State<ContentHubTab> {
           }),
           onToggle: _togglePublishVideo,
           onDelete: _deleteVideo,
+          onEdit: _editVideo,
         );
     }
   }
@@ -260,11 +350,13 @@ class _VideosList extends StatelessWidget {
     required this.onReload,
     required this.onToggle,
     required this.onDelete,
+    required this.onEdit,
   });
   final Future<List<TeacherVideo>> future;
   final VoidCallback onReload;
   final void Function(int id) onToggle;
   final void Function(int id) onDelete;
+  final void Function(TeacherVideo video) onEdit;
 
   @override
   Widget build(BuildContext context) {
@@ -306,6 +398,7 @@ class _VideosList extends StatelessWidget {
                 v.ownershipLabel,
               ].join(' · '),
               published: v.published,
+              onEdit: v.source == 'youtube' ? () => onEdit(v) : null,
               onTogglePublish: () => onToggle(v.id),
               onDelete: () => onDelete(v.id),
             );
@@ -321,10 +414,12 @@ class _MaterialsList extends StatelessWidget {
     required this.future,
     required this.onReload,
     required this.onDelete,
+    required this.onEdit,
   });
   final Future<List<TeacherMaterial>> future;
   final VoidCallback onReload;
   final void Function(int id) onDelete;
+  final void Function(TeacherMaterial material) onEdit;
 
   @override
   Widget build(BuildContext context) {
@@ -360,9 +455,12 @@ class _MaterialsList extends StatelessWidget {
               icon: Icons.insert_drive_file_outlined,
               title: m.title,
               subtitle: [
+                if (m.subjectName != null) m.subjectName!,
+                if (m.chapterLabel != null) m.chapterLabel!,
                 m.extension.toUpperCase(),
                 if (m.humanSize.isNotEmpty) m.humanSize,
               ].join(' · '),
+              onEdit: () => onEdit(m),
               onDelete: () => onDelete(m.id),
             );
           },
@@ -378,11 +476,15 @@ class _QuizzesList extends StatelessWidget {
     required this.onReload,
     required this.onToggle,
     required this.onDelete,
+    required this.onEdit,
+    required this.onStats,
   });
   final Future<List<TeacherQuiz>> future;
   final VoidCallback onReload;
   final void Function(int id) onToggle;
   final void Function(int id) onDelete;
+  final void Function(TeacherQuiz quiz) onEdit;
+  final void Function(TeacherQuiz quiz) onStats;
 
   @override
   Widget build(BuildContext context) {
@@ -424,6 +526,8 @@ class _QuizzesList extends StatelessWidget {
                 '${q.attempts} percubaan',
               ].join(' · '),
               published: q.published,
+              onEdit: q.isFile ? null : () => onEdit(q),
+              onStats: q.isFile ? null : () => onStats(q),
               onTogglePublish: () => onToggle(q.id),
               onDelete: () => onDelete(q.id),
             );
@@ -440,6 +544,8 @@ class _ContentCard extends StatelessWidget {
     required this.title,
     required this.subtitle,
     this.published,
+    this.onEdit,
+    this.onStats,
     this.onTogglePublish,
     this.onDelete,
   });
@@ -448,6 +554,8 @@ class _ContentCard extends StatelessWidget {
   final String title;
   final String subtitle;
   final bool? published;
+  final VoidCallback? onEdit;
+  final VoidCallback? onStats;
   final VoidCallback? onTogglePublish;
   final VoidCallback? onDelete;
 
@@ -458,6 +566,13 @@ class _ContentCard extends StatelessWidget {
         color: LmsColors.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: LmsColors.border),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x0D1B3520),
+            blurRadius: 10,
+            offset: Offset(0, 3),
+          ),
+        ],
       ),
       padding: const EdgeInsets.all(14),
       child: Row(
@@ -501,15 +616,42 @@ class _ContentCard extends StatelessWidget {
               ],
             ),
           ),
-          if (onTogglePublish != null || onDelete != null)
+          if (onEdit != null ||
+              onStats != null ||
+              onTogglePublish != null ||
+              onDelete != null)
             PopupMenuButton<String>(
               icon: const Icon(Icons.more_vert, color: LmsColors.inkFaint),
               tooltip: 'Tindakan',
               onSelected: (value) {
+                if (value == 'edit') onEdit?.call();
+                if (value == 'stats') onStats?.call();
                 if (value == 'toggle') onTogglePublish?.call();
                 if (value == 'delete') onDelete?.call();
               },
               itemBuilder: (_) => [
+                if (onEdit != null)
+                  const PopupMenuItem(
+                    value: 'edit',
+                    child: Row(
+                      children: [
+                        Icon(Icons.edit_outlined, size: 18),
+                        SizedBox(width: 10),
+                        Text('Sunting'),
+                      ],
+                    ),
+                  ),
+                if (onStats != null)
+                  const PopupMenuItem(
+                    value: 'stats',
+                    child: Row(
+                      children: [
+                        Icon(Icons.bar_chart_outlined, size: 18),
+                        SizedBox(width: 10),
+                        Text('Statistik'),
+                      ],
+                    ),
+                  ),
                 if (onTogglePublish != null && published != null)
                   PopupMenuItem(
                     value: 'toggle',

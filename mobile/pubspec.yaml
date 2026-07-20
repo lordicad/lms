@@ -36,10 +36,11 @@ dependencies:
   cupertino_icons: ^1.0.8
   http: ^1.6.0
   flutter_secure_storage: ^10.3.1
+  shared_preferences: ^2.5.4
   # Video playback for lessons: YouTube-hosted and uploaded mp4.
   youtube_player_flutter: ^9.1.1
   video_player: ^2.9.2
-  chewie: ^1.8.5
+  chewie: ^1.14.1
   url_launcher: ^6.3.1
 
 dev_dependencies:
@@ -52,6 +53,7 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^6.0.0
+  flutter_launcher_icons: ^0.14.4
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -63,6 +65,9 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+
+  assets:
+    - assets/images/lms_moe_logo.png
 
   # WeLearn brand typeface (matches the design). Bundled so it works offline.
   fonts:
@@ -109,3 +114,10 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+
+flutter_launcher_icons:
+  android: true
+  ios: false
+  image_path: assets/images/lms_moe_logo.png
+  adaptive_icon_background: '#F6F8F3'
+  adaptive_icon_foreground: assets/images/lms_moe_logo.png
