@@ -38,22 +38,52 @@ class _ContentHubTabState extends State<ContentHubTab> {
     });
   }
 
+  void _reloadCurrent() {
+    setState(() {
+      switch (_segment) {
+        case 0:
+          _videos = widget.repository.videos();
+          break;
+        case 1:
+          _materials = widget.repository.materials();
+          break;
+        case 2:
+          _quizzes = widget.repository.quizzes();
+          break;
+        case 3:
+          break;
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         Padding(
           padding: const EdgeInsets.fromLTRB(20, 12, 20, 8),
-          child: SegmentedButton<int>(
-            segments: const [
-              ButtonSegment(value: 0, label: Text('Video')),
-              ButtonSegment(value: 1, label: Text('Bahan')),
-              ButtonSegment(value: 2, label: Text('Kuiz')),
-              ButtonSegment(value: 3, label: Text('Bab')),
+          child: Row(
+            children: [
+              Expanded(
+                child: SegmentedButton<int>(
+                  segments: const [
+                    ButtonSegment(value: 0, label: Text('Video')),
+                    ButtonSegment(value: 1, label: Text('Bahan')),
+                    ButtonSegment(value: 2, label: Text('Kuiz')),
+                    ButtonSegment(value: 3, label: Text('Bab')),
+                  ],
+                  selected: {_segment},
+                  onSelectionChanged: (s) => _select(s.first),
+                  showSelectedIcon: false,
+                ),
+              ),
+              const SizedBox(width: 4),
+              IconButton(
+                tooltip: 'Muat semula',
+                onPressed: _segment == 3 ? null : _reloadCurrent,
+                icon: const Icon(Icons.refresh),
+              ),
             ],
-            selected: {_segment},
-            onSelectionChanged: (s) => _select(s.first),
-            showSelectedIcon: false,
           ),
         ),
         Expanded(child: _body()),
