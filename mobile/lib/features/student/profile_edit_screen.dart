@@ -35,16 +35,12 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
   late final TextEditingController _guardianName;
   late final TextEditingController _guardianPhone;
   late final TextEditingController _guardianEmail;
-  late final TextEditingController _phone;
-  late final TextEditingController _position;
 
   ProfileOptions? _options;
   Object? _optionsError;
   int? _schoolId;
   int? _gradeLevel;
   int? _schoolClassId;
-  int? _homeroomClassId;
-  late Set<int> _subjectIds;
   var _loadingOptions = true;
   var _saving = false;
   var _uploadingAvatar = false;
@@ -67,15 +63,12 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     _guardianEmail = TextEditingController(
       text: widget.user.guardianEmail ?? '',
     );
-    _phone = TextEditingController(text: widget.user.phone ?? '');
-    _position = TextEditingController(text: widget.user.position ?? '');
     _schoolId = widget.user.school?.id;
     _gradeLevel = widget.user.grade?.level;
     _schoolClassId = widget.user.schoolClass?.id;
-    _homeroomClassId = widget.user.homeroomClass?.id;
-    _subjectIds = widget.user.subjects.map((subject) => subject.id).toSet();
     _currentUser = widget.user;
-    unawaited(_loadOptions());
+    if (_isStudent) unawaited(_loadOptions());
+    if (!_isStudent) _loadingOptions = false;
   }
 
   @override
@@ -86,8 +79,6 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     _guardianName.dispose();
     _guardianPhone.dispose();
     _guardianEmail.dispose();
-    _phone.dispose();
-    _position.dispose();
     super.dispose();
   }
 
@@ -132,22 +123,10 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
         .toList(growable: false);
   }
 
-  List<SchoolClassInfo> get _teacherClasses {
-    final schoolId = _schoolId;
-    if (schoolId == null) return const [];
-    return (_options?.classes ?? const [])
-        .where((item) => item.schoolId == schoolId)
-        .toList(growable: false);
-  }
-
   void _normaliseSelections() {
     if (_isStudent &&
         !_studentClasses.any((item) => item.id == _schoolClassId)) {
       _schoolClassId = null;
-    }
-    if (_isTeacher &&
-        !_teacherClasses.any((item) => item.id == _homeroomClassId)) {
-      _homeroomClassId = null;
     }
   }
 
@@ -157,7 +136,10 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
   }
 
   Future<void> _save() async {
-    if (!_formKey.currentState!.validate() || _options == null) return;
+    if (!_formKey.currentState!.validate() ||
+        (_isStudent && _options == null)) {
+      return;
+    }
     if (_isStudent && _gradeLevel == null) return;
 
     setState(() => _saving = true);
@@ -173,10 +155,6 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
           guardianName: _clean(_guardianName),
           guardianPhone: _clean(_guardianPhone),
           guardianEmail: _clean(_guardianEmail),
-          phone: _clean(_phone),
-          position: _clean(_position),
-          subjectIds: _subjectIds.toList(growable: false),
-          homeroomClassId: _homeroomClassId,
         ),
       );
       if (mounted) Navigator.of(context).pop(updated);
@@ -388,6 +366,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
   );
 
   Widget _profileFields() {
+    if (!_isStudent) return const SizedBox.shrink();
     if (_loadingOptions) {
       return const Padding(
         padding: EdgeInsets.all(16),
@@ -411,8 +390,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
         ),
         const SizedBox(height: 12),
         _schoolDropdown(),
-        if (_isStudent) ..._studentFields(),
-        if (_isTeacher) ..._teacherFields(),
+        ..._studentFields(),
       ],
     );
   }
@@ -531,77 +509,6 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
         labelText: 'E-mel penjaga',
         prefixIcon: Icon(Icons.mail_outline_rounded),
       ),
-    ),
-  ];
-
-  List<Widget> _teacherFields() => [
-    const SizedBox(height: 16),
-    TextFormField(
-      controller: _position,
-      textCapitalization: TextCapitalization.words,
-      decoration: const InputDecoration(
-        labelText: 'Jawatan',
-        prefixIcon: Icon(Icons.work_outline_rounded),
-      ),
-    ),
-    const SizedBox(height: 16),
-    TextFormField(
-      controller: _phone,
-      keyboardType: TextInputType.phone,
-      decoration: const InputDecoration(
-        labelText: 'Nombor telefon',
-        prefixIcon: Icon(Icons.phone_outlined),
-      ),
-    ),
-    const SizedBox(height: 22),
-    const Text(
-      'Subjek diajar',
-      style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
-    ),
-    const SizedBox(height: 9),
-    Wrap(
-      spacing: 8,
-      runSpacing: 8,
-      children: (_options?.subjects ?? const [])
-          .map(
-            (subject) => FilterChip(
-              label: Text(subject.name),
-              selected: _subjectIds.contains(subject.id),
-              onSelected: (selected) => setState(() {
-                if (selected) {
-                  _subjectIds.add(subject.id);
-                } else {
-                  _subjectIds.remove(subject.id);
-                }
-              }),
-            ),
-          )
-          .toList(growable: false),
-    ),
-    const SizedBox(height: 22),
-    DropdownButtonFormField<int?>(
-      key: ValueKey('homeroom-$_homeroomClassId-$_schoolId'),
-      initialValue: _homeroomClassId,
-      isExpanded: true,
-      decoration: const InputDecoration(
-        labelText: 'Guru kelas',
-        prefixIcon: Icon(Icons.class_outlined),
-      ),
-      items: [
-        const DropdownMenuItem<int?>(
-          value: null,
-          child: Text('Belum ditetapkan'),
-        ),
-        ..._teacherClasses.map(
-          (schoolClass) => DropdownMenuItem<int?>(
-            value: schoolClass.id,
-            child: Text(schoolClass.label, overflow: TextOverflow.ellipsis),
-          ),
-        ),
-      ],
-      onChanged: _schoolId == null
-          ? null
-          : (value) => setState(() => _homeroomClassId = value),
     ),
   ];
 }

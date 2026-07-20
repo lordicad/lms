@@ -51,15 +51,10 @@ class ChapterController extends Controller
             'grade_id' => ['required', 'integer'],
         ]);
 
-        $teacherId = $request->user()->id;
         $chapters = Chapter::where('subject_id', $data['subject_id'])
             ->where('grade_id', $data['grade_id'])
             ->ordered()
-            ->withCount([
-                'lessons as lessons_count' => fn ($query) => $query->where('teacher_id', $teacherId),
-                'materials as materials_count' => fn ($query) => $query->where('teacher_id', $teacherId),
-                'quizzes as quizzes_count' => fn ($query) => $query->where('teacher_id', $teacherId),
-            ])
+            ->withCount(['lessons', 'materials', 'quizzes'])
             ->get();
 
         return response()->json([
@@ -68,7 +63,6 @@ class ChapterController extends Controller
                 'id' => $c->id,
                 'number' => $c->number,
                 'title' => $c->title,
-                'description' => $c->description,
                 'lessons_count' => $c->lessons_count,
                 'materials_count' => $c->materials_count,
                 'quizzes_count' => $c->quizzes_count,

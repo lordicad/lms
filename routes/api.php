@@ -96,6 +96,9 @@ Route::middleware('auth:sanctum')->prefix('teacher')->group(function () {
     // Bab management + the Subject/Tahun options for teacher pickers.
     Route::get('options', [TeacherChapterController::class, 'options']);
     Route::get('chapters', [TeacherChapterController::class, 'index']);
+    Route::post('chapters', [TeacherChapterController::class, 'store']);
+    Route::put('chapters/{chapter}', [TeacherChapterController::class, 'update']);
+    Route::delete('chapters/{chapter}', [TeacherChapterController::class, 'destroy']);
 
     Route::post('videos', [TeacherVideoController::class, 'store']);
     Route::put('videos/{lesson}', [TeacherVideoController::class, 'update']);

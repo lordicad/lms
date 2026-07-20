@@ -131,26 +131,16 @@ class AuthController extends Controller
                 'nullable', 'string', 'lowercase', 'email', 'max:255',
                 Rule::unique('users', 'email')->ignore($user->id),
             ],
-            'school_id' => ['nullable', 'integer', Rule::exists('schools', 'id')],
         ];
 
         if ($user->isStudent()) {
             $rules += [
                 'grade_level' => ['required', 'integer', Rule::exists('grades', 'level')],
+                'school_id' => ['nullable', 'integer', Rule::exists('schools', 'id')],
                 'school_class_id' => ['nullable', 'integer', Rule::exists('school_classes', 'id')],
                 'guardian_name' => ['nullable', 'string', 'max:255'],
                 'guardian_phone' => ['nullable', 'string', 'max:30', 'regex:/^\+?[0-9\s\-()]{6,20}$/'],
                 'guardian_email' => ['nullable', 'string', 'email', 'max:255'],
-            ];
-        }
-
-        if ($user->isTeacher()) {
-            $rules += [
-                'phone' => ['nullable', 'string', 'max:30', 'regex:/^\+?[0-9\s\-()]{6,20}$/'],
-                'position' => ['nullable', 'string', 'max:100'],
-                'subjects' => ['nullable', 'array'],
-                'subjects.*' => ['integer', Rule::exists('subjects', 'id')],
-                'homeroom_class_id' => ['nullable', 'integer', Rule::exists('school_classes', 'id')],
             ];
         }
 
@@ -176,28 +166,10 @@ class AuthController extends Controller
             }
         }
 
-        $homeroomClass = null;
-        if ($user->isTeacher() && ! empty($validated['homeroom_class_id'])) {
-            $homeroomClass = SchoolClass::find($validated['homeroom_class_id']);
-            if (! $homeroomClass
-                || (int) $homeroomClass->school_id !== (int) ($validated['school_id'] ?? 0)) {
-                throw ValidationException::withMessages([
-                    'homeroom_class_id' => [__('Kelas ini bukan di sekolah yang dipilih.')],
-                ]);
-            }
-            if ($homeroomClass->homeroom_teacher_id !== null
-                && (int) $homeroomClass->homeroom_teacher_id !== $user->id) {
-                throw ValidationException::withMessages([
-                    'homeroom_class_id' => [__('Kelas ini sudah mempunyai guru kelas.')],
-                ]);
-            }
-        }
-
         $user->update([
             'name' => $validated['name'],
             'username' => $validated['username'],
             'email' => $validated['email'] ?? null,
-            'school_id' => $validated['school_id'] ?? null,
         ]);
 
         if ($user->isStudent()) {
@@ -208,22 +180,6 @@ class AuthController extends Controller
                 'guardian_phone' => $validated['guardian_phone'] ?? null,
                 'guardian_email' => $validated['guardian_email'] ?? null,
             ]);
-        }
-
-        if ($user->isTeacher()) {
-            $user->update([
-                'phone' => $validated['phone'] ?? null,
-                'position' => $validated['position'] ?? null,
-            ]);
-            $user->subjects()->sync($validated['subjects'] ?? []);
-
-            $currentHomeroom = $user->homeroomClass()->first();
-            if ($currentHomeroom && (int) $currentHomeroom->id !== (int) ($homeroomClass?->id)) {
-                $currentHomeroom->update(['homeroom_teacher_id' => null]);
-            }
-            if ($homeroomClass) {
-                $homeroomClass->update(['homeroom_teacher_id' => $user->id]);
-            }
         }
 
         return response()->json([

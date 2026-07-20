@@ -56,7 +56,7 @@ class ProfileTab extends StatelessWidget {
                 label: 'Tahun',
                 value: user.grade?.name ?? '—',
               ),
-              if (user.school != null) ...[
+              if (user.role == UserRole.student && user.school != null) ...[
                 const Divider(height: 1),
                 _InfoRow(
                   icon: Icons.account_balance_outlined,
@@ -64,20 +64,13 @@ class ProfileTab extends StatelessWidget {
                   value: user.school!.name,
                 ),
               ],
-              if (user.schoolClass != null) ...[
+              if (user.role == UserRole.student &&
+                  user.schoolClass != null) ...[
                 const Divider(height: 1),
                 _InfoRow(
                   icon: Icons.groups_outlined,
                   label: 'Kelas',
                   value: user.schoolClass!.label,
-                ),
-              ],
-              if (user.role == UserRole.teacher && user.position != null) ...[
-                const Divider(height: 1),
-                _InfoRow(
-                  icon: Icons.work_outline_rounded,
-                  label: 'Jawatan',
-                  value: user.position!,
                 ),
               ],
               if (user.email != null) ...[
