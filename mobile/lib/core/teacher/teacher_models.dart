@@ -173,3 +173,73 @@ class TeacherQuiz {
     attempts: _int(j['attempts']),
   );
 }
+
+// --- Bab management + picker options ---
+
+class OptionItem {
+  const OptionItem({required this.id, required this.name, this.level});
+
+  final int id;
+  final String name;
+  final int? level; // grades only
+
+  factory OptionItem.fromJson(Map<String, dynamic> j) => OptionItem(
+    id: _int(j['id']),
+    name: _str(j['name']),
+    level: j['level'] == null ? null : _int(j['level']),
+  );
+}
+
+class TeacherOptions {
+  const TeacherOptions({required this.subjects, required this.grades});
+
+  final List<OptionItem> subjects;
+  final List<OptionItem> grades;
+
+  factory TeacherOptions.fromJson(Map<String, dynamic> j) => TeacherOptions(
+    subjects: _mapList(j['subjects'], OptionItem.fromJson),
+    grades: _mapList(j['grades'], OptionItem.fromJson),
+  );
+}
+
+class TeacherChapter {
+  const TeacherChapter({
+    required this.id,
+    required this.number,
+    required this.title,
+    required this.lessonsCount,
+    required this.materialsCount,
+    required this.quizzesCount,
+    required this.isEmpty,
+  });
+
+  final int id;
+  final int number;
+  final String title;
+  final int lessonsCount;
+  final int materialsCount;
+  final int quizzesCount;
+  final bool isEmpty;
+
+  factory TeacherChapter.fromJson(Map<String, dynamic> j) => TeacherChapter(
+    id: _int(j['id']),
+    number: _int(j['number']),
+    title: _str(j['title']),
+    lessonsCount: _int(j['lessons_count']),
+    materialsCount: _int(j['materials_count']),
+    quizzesCount: _int(j['quizzes_count']),
+    isEmpty: _bool(j['is_empty']),
+  );
+}
+
+class ChaptersData {
+  const ChaptersData({required this.isOffered, required this.chapters});
+
+  final bool isOffered;
+  final List<TeacherChapter> chapters;
+
+  factory ChaptersData.fromJson(Map<String, dynamic> j) => ChaptersData(
+    isOffered: _bool(j['is_offered']),
+    chapters: _mapList(j['chapters'], TeacherChapter.fromJson),
+  );
+}

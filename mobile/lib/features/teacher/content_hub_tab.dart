@@ -4,6 +4,7 @@ import '../../core/teacher/teacher_models.dart';
 import '../../core/teacher/teacher_repository.dart';
 import '../../core/theme/lms_theme.dart';
 import '../student/widgets/content_widgets.dart';
+import 'chapters_manage_tab.dart';
 
 /// The teacher's Content Hub: a segmented list of their videos, materials and quizzes
 /// with publish status. Read-only for now (edit/publish/delete arrive later).
@@ -48,6 +49,7 @@ class _ContentHubTabState extends State<ContentHubTab> {
               ButtonSegment(value: 0, label: Text('Video')),
               ButtonSegment(value: 1, label: Text('Bahan')),
               ButtonSegment(value: 2, label: Text('Kuiz')),
+              ButtonSegment(value: 3, label: Text('Bab')),
             ],
             selected: {_segment},
             onSelectionChanged: (s) => _select(s.first),
@@ -128,6 +130,8 @@ class _ContentHubTabState extends State<ContentHubTab> {
 
   Widget _body() {
     switch (_segment) {
+      case 3:
+        return ChaptersManageTab(repository: widget.repository);
       case 1:
         return _MaterialsList(
           future: _materials!,

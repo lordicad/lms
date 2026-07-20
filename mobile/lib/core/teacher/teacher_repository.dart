@@ -39,4 +39,23 @@ class TeacherRepository {
   Future<void> deleteMaterial(int id) async => _api.deleteMaterial(await _token(), id);
 
   Future<void> deleteQuiz(int id) async => _api.deleteQuiz(await _token(), id);
+
+  Future<TeacherOptions> options() async => _api.options(await _token());
+
+  Future<ChaptersData> chapters(int subjectId, int gradeId) async =>
+      _api.chapters(await _token(), subjectId, gradeId);
+
+  Future<void> createChapter({
+    required int subjectId,
+    required int gradeId,
+    required String title,
+    String? description,
+  }) async =>
+      _api.createChapter(await _token(),
+          subjectId: subjectId, gradeId: gradeId, title: title, description: description);
+
+  Future<void> updateChapter(int id, {required String title, String? description}) async =>
+      _api.updateChapter(await _token(), id, title: title, description: description);
+
+  Future<void> deleteChapter(int id) async => _api.deleteChapter(await _token(), id);
 }

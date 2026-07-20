@@ -55,6 +55,45 @@ class TeacherApi {
   Future<void> deleteQuiz(String token, int id) =>
       _delete(token, '/teacher/content/quizzes/$id');
 
+  Future<TeacherOptions> options(String token) async {
+    final json = await _get(token, '/teacher/options');
+    return TeacherOptions.fromJson(json);
+  }
+
+  Future<ChaptersData> chapters(String token, int subjectId, int gradeId) async {
+    final json = await _get(token, '/teacher/chapters?subject_id=$subjectId&grade_id=$gradeId');
+    return ChaptersData.fromJson(json);
+  }
+
+  Future<void> createChapter(
+    String token, {
+    required int subjectId,
+    required int gradeId,
+    required String title,
+    String? description,
+  }) async {
+    await _sendJson('POST', token, '/teacher/chapters', {
+      'subject_id': subjectId,
+      'grade_id': gradeId,
+      'title': title,
+      if (description != null && description.isNotEmpty) 'description': description,
+    });
+  }
+
+  Future<void> updateChapter(
+    String token,
+    int id, {
+    required String title,
+    String? description,
+  }) async {
+    await _sendJson('PUT', token, '/teacher/chapters/$id', {
+      'title': title,
+      if (description != null && description.isNotEmpty) 'description': description,
+    });
+  }
+
+  Future<void> deleteChapter(String token, int id) => _delete(token, '/teacher/chapters/$id');
+
   Future<Map<String, dynamic>> _get(String token, String path) async {
     final response = await _http.get(
       Uri.parse('$baseUrl$path'),
@@ -86,6 +125,42 @@ class TeacherApi {
     if (response.statusCode >= 400) {
       if (response.statusCode == 401) {
         throw const ApiException('Sesi tamat. Sila log masuk semula.');
+      }
+      throw ApiException((map['message'] as String?) ?? 'Tindakan gagal.');
+    }
+
+    return map;
+  }
+
+  Future<Map<String, dynamic>> _sendJson(
+    String method,
+    String token,
+    String path,
+    Map<String, dynamic> body,
+  ) async {
+    final uri = Uri.parse('$baseUrl$path');
+    final headers = {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+    };
+    final encoded = jsonEncode(body);
+
+    final response = method == 'PUT'
+        ? await _http.put(uri, headers: headers, body: encoded)
+        : await _http.post(uri, headers: headers, body: encoded);
+
+    final decoded = response.body.isEmpty ? const <String, dynamic>{} : jsonDecode(response.body);
+    final map = decoded is Map<String, dynamic> ? decoded : const <String, dynamic>{};
+
+    if (response.statusCode >= 400) {
+      if (response.statusCode == 401) {
+        throw const ApiException('Sesi tamat. Sila log masuk semula.');
+      }
+      final errors = map['errors'];
+      if (errors is Map && errors.values.isNotEmpty) {
+        final first = errors.values.first;
+        if (first is List && first.isNotEmpty) throw ApiException(first.first.toString());
       }
       throw ApiException((map['message'] as String?) ?? 'Tindakan gagal.');
     }

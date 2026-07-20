@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\Student\LearnController;
 use App\Http\Controllers\Api\Student\LessonController;
 use App\Http\Controllers\Api\Student\QuizController;
 use App\Http\Controllers\Api\Student\RankingController;
+use App\Http\Controllers\Api\Teacher\ChapterController as TeacherChapterController;
 use App\Http\Controllers\Api\Teacher\ContentController as TeacherContentController;
 use App\Http\Controllers\Api\Teacher\DashboardController as TeacherDashboardController;
 use Illuminate\Support\Facades\Route;
@@ -72,4 +73,11 @@ Route::middleware('auth:sanctum')->prefix('teacher')->group(function () {
     Route::delete('content/videos/{lesson}', [TeacherContentController::class, 'deleteVideo']);
     Route::delete('content/materials/{material}', [TeacherContentController::class, 'deleteMaterial']);
     Route::delete('content/quizzes/{quiz}', [TeacherContentController::class, 'deleteQuiz']);
+
+    // Bab management + the Subject/Tahun options for teacher pickers.
+    Route::get('options', [TeacherChapterController::class, 'options']);
+    Route::get('chapters', [TeacherChapterController::class, 'index']);
+    Route::post('chapters', [TeacherChapterController::class, 'store']);
+    Route::put('chapters/{chapter}', [TeacherChapterController::class, 'update']);
+    Route::delete('chapters/{chapter}', [TeacherChapterController::class, 'destroy']);
 });
