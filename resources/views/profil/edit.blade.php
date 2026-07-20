@@ -157,5 +157,14 @@
             </form>
         </section>
 
+        {{-- Log out (moved here from the student sidebar) --}}
+        <form method="POST" action="{{ route('logout') }}">
+            @csrf
+            <button type="submit" style="display:inline-flex;align-items:center;gap:10px;min-height:48px;border:1.5px solid rgba(194,73,54,.3);cursor:pointer;border-radius:13px;background:#fff;color:#C24936;font-family:'Geist',sans-serif;font-weight:800;font-size:15px;padding:0 22px">
+                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                {{ __('Log Keluar') }}
+            </button>
+        </form>
+
     </div>
 </x-dynamic-component>

@@ -100,14 +100,6 @@
 
         <a href="{{ route('profile.edit') }}" title="{{ __('Profil') }}" class="wl-profile"
            style="width:44px;height:44px;flex-shrink:0;border-radius:50%;background:#17907B;color:#fff;display:grid;place-items:center;font-family:'Geist',sans-serif;font-weight:800;font-size:15px;text-decoration:none">{{ $user->initials() }}</a>
-
-        <form method="POST" action="{{ route('logout') }}" style="margin-top:8px">
-            @csrf
-            <button type="submit" title="{{ __('Log Keluar') }}" class="wl-logout"
-                    style="width:44px;height:44px;flex-shrink:0;border-radius:14px;border:none;background:transparent;cursor:pointer;display:grid;place-items:center;color:#C24936">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
-            </button>
-        </form>
     </aside>
 
     {{-- ── MAIN ── --}}
