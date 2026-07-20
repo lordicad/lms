@@ -22,7 +22,7 @@
 @endphp
 
 <a href="{{ route('video.show', $lesson) }}" class="vid-card"
-   style="display:flex;flex-direction:column;height:100%;box-sizing:border-box;text-decoration:none;background:#fff;border:1px solid rgba(46,44,80,.08);border-radius:18px;overflow:hidden;box-shadow:0 4px 16px rgba(46,44,80,.04);cursor:pointer">
+   style="display:flex;flex-direction:column;height:100%;box-sizing:border-box;text-decoration:none;background:var(--wl-surface);border:1px solid var(--wl-line);border-radius:18px;overflow:hidden;box-shadow:0 4px 16px rgba(46,44,80,.04);cursor:pointer">
     <div style="height:{{ $thumbHeight }}px;flex-shrink:0;background:{{ $grad }};display:grid;place-items:center;position:relative">
         @if ($thumb)
             <img src="{{ $thumb }}" alt="" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
@@ -31,7 +31,7 @@
         <button type="button" class="fav-btn" data-fav="{{ $fav ? 'true' : 'false' }}" title="{{ __('Kegemaran') }}"
                 data-add="{{ route('kegemaran.simpan', $lesson) }}" data-remove="{{ route('kegemaran.padam', $lesson) }}"
                 onclick="wlToggleFav(event, this)"
-                style="position:absolute;top:10px;right:10px;width:34px;height:34px;border-radius:50%;border:none;cursor:pointer;background:rgba(255,255,255,.92);display:grid;place-items:center;font-size:15px;z-index:2;color:{{ $fav ? '#EB5E5A' : '#6C6F87' }};box-shadow:0 2px 8px rgba(46,44,80,.15)">{{ $fav ? '♥' : '♡' }}</button>
+                style="position:absolute;top:10px;right:10px;width:34px;height:34px;border-radius:50%;border:none;cursor:pointer;background:rgba(255,255,255,.92);display:grid;place-items:center;font-size:15px;z-index:2;color:{{ $fav ? '#EB5E5A' : '#6C6F87' }};box-shadow:0 2px 8px var(--wl-line-3)">{{ $fav ? '♥' : '♡' }}</button>
 
         <span style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.9);display:grid;place-items:center;color:#4276AE;font-size:13px;z-index:1">▶</span>
 
@@ -41,10 +41,10 @@
     </div>
 
     <div style="padding:{{ $showMeta ? '14px 16px' : '13px 15px' }};flex:1 1 auto;display:flex;flex-direction:column;gap:{{ $showMeta ? '4px' : '8px' }}">
-        <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:{{ $showMeta ? '15px' : '14.5px' }};color:#28293F">{{ $lesson->title }}</span>
+        <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:{{ $showMeta ? '15px' : '14.5px' }};color:var(--wl-ink)">{{ $lesson->title }}</span>
 
         @if ($showMeta)
-            <span style="margin-top:auto;font-size:12.5px;color:#8B8AA3">{{ $subject->displayName() }} · Bab {{ $lesson->chapter->number }}@if ($lesson->durationLabel()) · {{ $lesson->durationLabel() }}@endif</span>
+            <span style="margin-top:auto;font-size:12.5px;color:var(--wl-muted)">{{ $subject->displayName() }} · Bab {{ $lesson->chapter->number }}@if ($lesson->durationLabel()) · {{ $lesson->durationLabel() }}@endif</span>
             @if ($showProgress)
                 <div style="height:6px;border-radius:999px;background:#EFEEE6;overflow:hidden;margin-top:6px">
                     <div style="height:100%;border-radius:999px;background:#17907B;width:{{ $pct }}%"></div>
@@ -53,9 +53,9 @@
         @else
             <div style="margin-top:auto;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
                 <span style="background:{{ $tagBg }};color:{{ $tagColor }};border-radius:999px;padding:3px 10px;font-family:'Geist',sans-serif;font-size:11.5px;font-weight:800">{{ $subject->displayName() }}</span>
-                <span style="font-size:12px;font-weight:700;color:#8B8AA3">Bab {{ $lesson->chapter->number }}</span>
+                <span style="font-size:12px;font-weight:700;color:var(--wl-muted)">Bab {{ $lesson->chapter->number }}</span>
                 @if ($showViews)
-                    <span style="margin-left:auto;font-size:12px;font-weight:700;color:#8B8AA3">👁 {{ $lesson->views_count }}</span>
+                    <span style="margin-left:auto;font-size:12px;font-weight:700;color:var(--wl-muted)">👁 {{ $lesson->views_count }}</span>
                 @endif
             </div>
         @endif

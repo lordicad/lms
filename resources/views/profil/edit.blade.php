@@ -1,27 +1,27 @@
 <x-dynamic-component :component="auth()->user()->isTeacher() ? 'app-layout' : 'student-layout'" :title="__('Profil Saya')">
     @php
-        $cardStyle = 'background:#fff;border:1px solid rgba(46,44,80,.08);border-radius:22px;padding:28px;box-shadow:0 4px 16px rgba(46,44,80,.04)';
+        $cardStyle = 'background:var(--wl-surface);border:1px solid var(--wl-line);border-radius:22px;padding:28px;box-shadow:0 4px 16px rgba(46,44,80,.04)';
         $labelStyle = 'display:block;margin-bottom:6px;font-family:\'Geist\',sans-serif;font-weight:700;font-size:14px;color:#4A5A4E';
-        $inputStyle = 'min-height:48px;width:100%;border:1px solid rgba(46,44,80,.15);border-radius:12px;padding:0 16px;font-family:\'Nunito\',sans-serif;font-size:15px;color:#2D2F44;background:#fff;box-sizing:border-box';
+        $inputStyle = 'min-height:48px;width:100%;border:1px solid var(--wl-line-3);border-radius:12px;padding:0 16px;font-family:\'Nunito\',sans-serif;font-size:15px;color:var(--wl-body);background:var(--wl-surface);box-sizing:border-box';
         $errStyle = 'margin:6px 0 0;font-weight:700;font-size:13px;color:#C24936';
-        $h2Style = 'margin:0 0 6px;font-family:\'Geist\',sans-serif;font-size:20px;font-weight:800;color:#28293F';
+        $h2Style = 'margin:0 0 6px;font-family:\'Geist\',sans-serif;font-size:20px;font-weight:800;color:var(--wl-ink)';
     @endphp
 
     <div style="display:flex;flex-direction:column;gap:32px;max-width:820px;margin:0 auto;width:100%">
         @if ($stats)
             {{-- Header --}}
-            <div style="background:#fff;border:1px solid rgba(46,44,80,.08);border-radius:22px;padding:28px;display:flex;align-items:center;gap:22px;box-shadow:0 8px 24px rgba(46,44,80,.06);flex-wrap:wrap">
+            <div style="background:var(--wl-surface);border:1px solid var(--wl-line);border-radius:22px;padding:28px;display:flex;align-items:center;gap:22px;box-shadow:0 8px 24px var(--wl-line);flex-wrap:wrap">
                 <span style="width:84px;height:84px;border-radius:50%;background:#17907B;color:#fff;display:grid;place-items:center;font-family:'Geist',sans-serif;font-weight:800;font-size:32px;flex-shrink:0;border:4px solid #DCF2EE;overflow:hidden">
                     @if ($user->avatarUrl())<img src="{{ $user->avatarUrl() }}" alt="" style="width:100%;height:100%;object-fit:cover">@else{{ $user->initials() }}@endif
                 </span>
                 <div style="display:flex;flex-direction:column;gap:6px;min-width:0;flex:1">
-                    <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:24px;font-weight:800;letter-spacing:-.01em;color:#28293F">{{ $user->name }}</h2>
+                    <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:24px;font-weight:800;letter-spacing:-.01em;color:var(--wl-ink)">{{ $user->name }}</h2>
                     <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
                         @if ($user->grade)<span style="background:#E4EEF9;color:#2E6CA8;border-radius:999px;padding:4px 12px;font-family:'Geist',sans-serif;font-size:12px;font-weight:800">{{ $user->grade->name }}</span>@endif
                     </div>
-                    @if ($user->email)<span style="font-size:13px;color:#8B8AA3">{{ $user->email }}</span>@endif
+                    @if ($user->email)<span style="font-size:13px;color:var(--wl-muted)">{{ $user->email }}</span>@endif
                 </div>
-                <a href="#akaun" class="wl-btn-secondary" style="min-height:44px;display:inline-flex;align-items:center;border-radius:12px;border:1.5px solid rgba(46,44,80,.12);background:#fff;color:#28293F;font-family:'Geist',sans-serif;font-weight:800;font-size:13.5px;padding:0 18px;flex-shrink:0;text-decoration:none">✏️&nbsp; {{ __('Sunting') }}</a>
+                <a href="#akaun" class="wl-btn-secondary" style="min-height:44px;display:inline-flex;align-items:center;border-radius:12px;border:1.5px solid var(--wl-line-2);background:var(--wl-surface);color:var(--wl-ink);font-family:'Geist',sans-serif;font-weight:800;font-size:13.5px;padding:0 18px;flex-shrink:0;text-decoration:none">✏️&nbsp; {{ __('Sunting') }}</a>
             </div>
 
             {{-- Stats --}}
@@ -56,7 +56,7 @@
                 ['icon' => '🚀', 'name' => __('Top 10'), 'desc' => __('Capai ranking top 10'), 'got' => $stats['rank'] && $stats['rank'] <= 10, 'tint' => '#EDEDF1', 'ring' => '#B9B8C6', 'ribbon' => '#C9C8D4'],
             ])
             <div style="display:flex;flex-direction:column;gap:12px">
-                <h3 style="margin:0;font-family:'Geist',sans-serif;font-size:17px;font-weight:800;color:#28293F">{{ __('Lencana Saya') }}</h3>
+                <h3 style="margin:0;font-family:'Geist',sans-serif;font-size:17px;font-weight:800;color:var(--wl-ink)">{{ __('Lencana Saya') }}</h3>
                 <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px">
                     @foreach ($badges as $b)
                         @php($filter = $b['got'] ? 'none' : 'grayscale(1) opacity(.45)')
@@ -69,19 +69,19 @@
                                 <span style="position:absolute;top:6px;left:13px;width:52px;height:52px;background:{{ $b['ribbon'] }};border-radius:9px;transform:rotate(30deg)"></span>
                                 <span style="position:absolute;top:6px;left:13px;width:52px;height:52px;background:{{ $b['ribbon'] }};border-radius:9px;transform:rotate(60deg)"></span>
                                 <span style="position:absolute;top:5px;width:54px;height:54px;border-radius:50%;background:{{ $b['tint'] }};display:grid;place-items:center;box-shadow:0 4px 12px rgba(46,44,80,.16)">
-                                    <span style="width:41px;height:41px;border-radius:50%;background:#fff;border:2px solid {{ $b['ring'] }};display:grid;place-items:center">
+                                    <span style="width:41px;height:41px;border-radius:50%;background:var(--wl-surface);border:2px solid {{ $b['ring'] }};display:grid;place-items:center">
                                         <span style="font-size:19px;filter:{{ $filter }}">{{ $b['icon'] }}</span>
                                     </span>
                                 </span>
                             </div>
-                            <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:13px;color:#28293F;text-align:center">{{ $b['name'] }}</span>
-                            <span style="font-size:11.5px;font-weight:700;color:#8B8AA3;text-align:center">{{ $b['desc'] }}</span>
+                            <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:13px;color:var(--wl-ink);text-align:center">{{ $b['name'] }}</span>
+                            <span style="font-size:11.5px;font-weight:700;color:var(--wl-muted);text-align:center">{{ $b['desc'] }}</span>
                         </div>
                     @endforeach
                 </div>
             </div>
         @else
-            <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:24px;font-weight:800;color:#28293F">{{ __('Profil Saya') }}</h2>
+            <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:24px;font-weight:800;color:var(--wl-ink)">{{ __('Profil Saya') }}</h2>
         @endif
 
         {{-- Account info form --}}
@@ -160,7 +160,7 @@
         {{-- Log out (moved here from the student sidebar) --}}
         <form method="POST" action="{{ route('logout') }}">
             @csrf
-            <button type="submit" style="display:inline-flex;align-items:center;gap:10px;min-height:48px;border:1.5px solid rgba(194,73,54,.3);cursor:pointer;border-radius:13px;background:#fff;color:#C24936;font-family:'Geist',sans-serif;font-weight:800;font-size:15px;padding:0 22px">
+            <button type="submit" style="display:inline-flex;align-items:center;gap:10px;min-height:48px;border:1.5px solid rgba(194,73,54,.3);cursor:pointer;border-radius:13px;background:var(--wl-surface);color:#C24936;font-family:'Geist',sans-serif;font-weight:800;font-size:15px;padding:0 22px">
                 <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
                 {{ __('Log Keluar') }}
             </button>

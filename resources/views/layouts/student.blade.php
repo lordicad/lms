@@ -26,7 +26,7 @@
 @endphp
 
 <!DOCTYPE html>
-<html lang="{{ $current }}">
+<html lang="{{ $current }}" @class(['theme-dark' => $isDark])>
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -37,8 +37,21 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <style>
+        /* Student surface tokens (warm cream light + a night-mode ramp). Same NAMES are aliased
+           in app-layout, so pages shared with the teacher shell theme there too. */
+        .wl {
+            --wl-page:#FAF5EE; --wl-surface:#fff; --wl-surface-2:#FBFAF6; --wl-input:#F6F5F0; --wl-chip:#ECEBF4;
+            --wl-ink:#28293F; --wl-body:#2D2F44; --wl-muted:#8B8AA3; --wl-muted-2:#6C6F87;
+            --wl-line:rgba(46,44,80,.08); --wl-line-2:rgba(46,44,80,.1); --wl-line-3:rgba(46,44,80,.15);
+        }
+        html.theme-dark .wl {
+            --wl-page:#0E1116; --wl-surface:#171E27; --wl-surface-2:#1E2731; --wl-input:#1E2731; --wl-chip:#232D38;
+            --wl-ink:#EDF2F8; --wl-body:#C9D2DC; --wl-muted:#8A94A3; --wl-muted-2:#A6AFBC;
+            --wl-line:rgba(255,255,255,.09); --wl-line-2:rgba(255,255,255,.12); --wl-line-3:rgba(255,255,255,.16);
+        }
+
         /* ── WeLearn prototype styles, ported verbatim ── */
-        body { margin: 0; background: #FAF5EE; font-family: 'Nunito', sans-serif; color: #2D2F44; }
+        body { margin: 0; background: var(--wl-page); font-family: 'Nunito', sans-serif; color: var(--wl-body); }
         .wl a { color: #17907B; text-decoration: none; }
         .wl a:hover { color: #2BB39B; }
         .wl input:focus, .wl select:focus { outline: none; border-color: #17907B !important; box-shadow: 0 0 0 3px rgba(43,179,155,.25); }
@@ -53,9 +66,9 @@
         .vid-card { transition: transform .15s ease-out, box-shadow .15s ease-out; }
         .vid-card:hover { transform: translateY(-3px); box-shadow: 0 10px 24px rgba(46,44,80,.09) !important; }
         .wl-lift { transition: transform .15s ease-out, box-shadow .15s ease-out; }
-        .wl-lift:hover { transform: translateY(-3px); box-shadow: 0 10px 24px rgba(46,44,80,.1) !important; }
+        .wl-lift:hover { transform: translateY(-3px); box-shadow: 0 10px 24px var(--wl-line-2) !important; }
         .wl-row-lift { transition: transform .15s ease-out, box-shadow .15s ease-out; }
-        .wl-row-lift:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(46,44,80,.08) !important; }
+        .wl-row-lift:hover { transform: translateY(-2px); box-shadow: 0 8px 20px var(--wl-line) !important; }
         .wl-btn-primary { transition: background .15s, transform .1s; }
         .wl-btn-primary:hover { background: #2BB39B !important; }
         .wl-btn-primary:active { transform: scale(.98); }
@@ -82,15 +95,15 @@
 <body class="wl">
 <div class="wl-shell" style="min-height:100vh;display:grid;grid-template-columns:96px 1fr">
     {{-- ── SIDEBAR ── --}}
-    <aside style="background:#fff;border-right:1px solid rgba(46,44,80,.08);display:flex;flex-direction:column;align-items:center;padding:12px 8px;gap:4px;position:sticky;top:0;height:100vh;box-sizing:border-box">
-        <a href="{{ route('belajar.index') }}" title="WeLearn" style="width:46px;height:46px;flex-shrink:0;border-radius:14px;overflow:hidden;display:block;background:#fff">
+    <aside style="background:var(--wl-surface);border-right:1px solid var(--wl-line);display:flex;flex-direction:column;align-items:center;padding:12px 8px;gap:4px;position:sticky;top:0;height:100vh;box-sizing:border-box">
+        <a href="{{ route('belajar.index') }}" title="WeLearn" style="width:46px;height:46px;flex-shrink:0;border-radius:14px;overflow:hidden;display:block;background:var(--wl-surface)">
             <img src="{{ asset('images/welearn1.png') }}" alt="WeLearn" style="width:46px;height:46px;object-fit:contain;display:block">
         </a>
         <div style="height:6px"></div>
 
         @foreach ($nav as $n)
             <a href="{{ route($n['route']) }}" title="{{ $n['label'] }}" @if ($n['active']) aria-current="page" @endif
-               style="width:70px;min-height:52px;flex-shrink:0;text-decoration:none;border-radius:16px;display:flex;flex-direction:column;gap:3px;align-items:center;justify-content:center;padding:6px 4px;{{ $n['active'] ? 'background:#DCF2EE;color:#0F7A68' : 'background:transparent;color:#8B8AA3' }}">
+               style="width:70px;min-height:52px;flex-shrink:0;text-decoration:none;border-radius:16px;display:flex;flex-direction:column;gap:3px;align-items:center;justify-content:center;padding:6px 4px;{{ $n['active'] ? 'background:#DCF2EE;color:#0F7A68' : 'background:transparent;color:var(--wl-muted)' }}">
                 <span style="display:block;width:22px;height:22px;margin:0 auto">{!! $icons[$n['icon']] !!}</span>
                 <span style="font-family:'Geist',sans-serif;font-size:11.5px;font-weight:700">{{ $n['label'] }}</span>
             </a>
@@ -107,34 +120,34 @@
         {{-- HEADER --}}
         <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
             <form method="GET" action="{{ route('cari.index') }}" role="search"
-                  style="display:flex;align-items:center;gap:10px;background:#fff;border:1px solid rgba(46,44,80,.1);border-radius:999px;padding:0 18px;min-height:48px;flex:0 1 380px;min-width:220px;margin-right:auto">
-                <span style="color:#8B8AA3;font-size:15px">🔍</span>
+                  style="display:flex;align-items:center;gap:10px;background:var(--wl-surface);border:1px solid var(--wl-line-2);border-radius:999px;padding:0 18px;min-height:48px;flex:0 1 380px;min-width:220px;margin-right:auto">
+                <span style="color:var(--wl-muted);font-size:15px">🔍</span>
                 <input type="search" name="q" value="{{ request('q') }}" placeholder="{{ __('Cari video...') }}" aria-label="{{ __('Cari video') }}"
-                       style="border:none;background:transparent;font-family:'Nunito',sans-serif;font-size:14.5px;color:#2D2F44;width:100%;min-height:44px">
+                       style="border:none;background:transparent;font-family:'Nunito',sans-serif;font-size:14.5px;color:var(--wl-body);width:100%;min-height:44px">
             </form>
 
             {{-- Tahun switcher — kept for real revision use, styled to match the header pills. --}}
             <select onchange="if (this.value) window.location.href = '{{ url('tahun') }}/' + this.value"
-                    style="min-height:48px;border:1px solid rgba(46,44,80,.1);border-radius:999px;padding:0 38px 0 16px;-webkit-appearance:none;-moz-appearance:none;appearance:none;background:#fff url(&quot;data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='24'%20height='24'%20viewBox='0%200%2024%2024'%20fill='none'%20stroke='%2328293F'%20stroke-width='2.5'%20stroke-linecap='round'%20stroke-linejoin='round'%3E%3Cpath%20d='M6%209l6%206%206-6'/%3E%3C/svg%3E&quot;) no-repeat right 14px center;background-size:12px;font-family:'Geist',sans-serif;font-weight:700;font-size:12.5px;color:#28293F;cursor:pointer">
+                    style="min-height:48px;border:1px solid var(--wl-line-2);border-radius:999px;padding:0 38px 0 16px;-webkit-appearance:none;-moz-appearance:none;appearance:none;background:var(--wl-surface) url(&quot;data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='24'%20height='24'%20viewBox='0%200%2024%2024'%20fill='none'%20stroke='%2328293F'%20stroke-width='2.5'%20stroke-linecap='round'%20stroke-linejoin='round'%3E%3Cpath%20d='M6%209l6%206%206-6'/%3E%3C/svg%3E&quot;) no-repeat right 14px center;background-size:12px;font-family:'Geist',sans-serif;font-weight:700;font-size:12.5px;color:var(--wl-ink);cursor:pointer">
                 @foreach ($grades as $g)
                     <option value="{{ $g->level }}" @selected($activeGrade?->level === $g->level)>{{ $g->name }}</option>
                 @endforeach
             </select>
 
-            <div style="display:flex;background:#ECEBF4;border-radius:999px;padding:3px;font-family:'Geist',sans-serif;font-size:12.5px;font-weight:700">
+            <div style="display:flex;background:var(--wl-chip);border-radius:999px;padding:3px;font-family:'Geist',sans-serif;font-size:12.5px;font-weight:700">
                 @foreach (['ms' => 'BM', 'en' => 'EN'] as $code => $lbl)
                     <a href="{{ route('locale.switch', $code) }}" @if ($current === $code) aria-current="true" @endif
-                       style="min-width:40px;min-height:34px;border-radius:999px;padding:5px 12px;font-family:'Geist',sans-serif;font-size:12.5px;font-weight:800;text-decoration:none;display:flex;align-items:center;justify-content:center;{{ $current === $code ? 'background:#17907B;color:#fff' : 'background:transparent;color:#6C6F87' }}">{{ $lbl }}</a>
+                       style="min-width:40px;min-height:34px;border-radius:999px;padding:5px 12px;font-family:'Geist',sans-serif;font-size:12.5px;font-weight:800;text-decoration:none;display:flex;align-items:center;justify-content:center;{{ $current === $code ? 'background:#17907B;color:#fff' : 'background:transparent;color:var(--wl-muted-2)' }}">{{ $lbl }}</a>
                 @endforeach
             </div>
 
             <a href="{{ route('theme.switch', $isDark ? 'light' : 'dark') }}" title="{{ __('Mod Malam') }}" class="wl-icbtn"
-               style="width:48px;height:48px;border-radius:14px;border:1px solid rgba(46,44,80,.1);background:#fff;display:grid;place-items:center;color:#4A5A52;text-decoration:none">
+               style="width:48px;height:48px;border-radius:14px;border:1px solid var(--wl-line-2);background:var(--wl-surface);display:grid;place-items:center;color:#4A5A52;text-decoration:none">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
             </a>
 
             <button title="{{ __('Notifikasi') }}" class="wl-icbtn"
-                    style="width:48px;height:48px;border-radius:50%;border:1px solid rgba(46,44,80,.1);background:#fff;cursor:pointer;font-size:17px">🔔</button>
+                    style="width:48px;height:48px;border-radius:50%;border:1px solid var(--wl-line-2);background:var(--wl-surface);cursor:pointer;font-size:17px">🔔</button>
         </div>
 
         <x-flash />

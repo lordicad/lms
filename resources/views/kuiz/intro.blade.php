@@ -5,33 +5,33 @@
 
     <div style="display:flex;flex-direction:column;gap:16px;max-width:760px;margin:0 auto;width:100%">
         <a href="{{ route('bab.show', $chapter) }}" class="wl-back"
-           style="align-self:flex-start;display:flex;align-items:center;gap:8px;font-family:'Geist',sans-serif;font-size:14px;font-weight:800;color:#6C6F87;text-decoration:none;padding:6px 0">← {{ __('Kembali') }}</a>
+           style="align-self:flex-start;display:flex;align-items:center;gap:8px;font-family:'Geist',sans-serif;font-size:14px;font-weight:800;color:var(--wl-muted-2);text-decoration:none;padding:6px 0">← {{ __('Kembali') }}</a>
 
         @if ($isPreview)
             <div style="background:#FEF0CE;border-radius:14px;padding:14px 18px;font-weight:700;font-size:14px;color:#8A6A12">{{ __('Anda melihat kuiz ini sebagai cikgu. Guru tidak boleh mencuba kuiz, hanya menyemak.') }}</div>
         @endif
 
-        <div style="background:#fff;border:1px solid rgba(46,44,80,.08);border-radius:22px;padding:28px;display:flex;flex-direction:column;gap:20px;box-shadow:0 8px 24px rgba(46,44,80,.06)">
+        <div style="background:var(--wl-surface);border:1px solid var(--wl-line);border-radius:22px;padding:28px;display:flex;flex-direction:column;gap:20px;box-shadow:0 8px 24px var(--wl-line)">
             <span style="align-self:flex-start;background:{{ $tagBg }};color:{{ $tagColor }};border-radius:999px;padding:5px 14px;font-family:'Geist',sans-serif;font-size:12.5px;font-weight:800"><x-subject-emoji :subject="$subject" class="text-sm" /> {{ $subject->name }}</span>
-            <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:26px;font-weight:800;letter-spacing:-.01em;color:#28293F">{{ $quiz->title }}</h2>
+            <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:26px;font-weight:800;letter-spacing:-.01em;color:var(--wl-ink)">{{ $quiz->title }}</h2>
 
             <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px">
                 <div style="background:#F6F3EC;border-radius:14px;padding:14px 18px;display:flex;flex-direction:column;gap:3px">
-                    <span style="font-size:12.5px;font-weight:700;color:#8B8AA3">{{ __('Soalan') }}</span>
-                    <span style="font-family:'Geist',sans-serif;font-size:20px;font-weight:800;color:#28293F">{{ $questionCount }}</span>
+                    <span style="font-size:12.5px;font-weight:700;color:var(--wl-muted)">{{ __('Soalan') }}</span>
+                    <span style="font-family:'Geist',sans-serif;font-size:20px;font-weight:800;color:var(--wl-ink)">{{ $questionCount }}</span>
                 </div>
                 <div style="background:#F6F3EC;border-radius:14px;padding:14px 18px;display:flex;flex-direction:column;gap:3px">
-                    <span style="font-size:12.5px;font-weight:700;color:#8B8AA3">{{ __('Markah penuh') }}</span>
-                    <span style="font-family:'Geist',sans-serif;font-size:20px;font-weight:800;color:#28293F">{{ $maxScore }}</span>
+                    <span style="font-size:12.5px;font-weight:700;color:var(--wl-muted)">{{ __('Markah penuh') }}</span>
+                    <span style="font-family:'Geist',sans-serif;font-size:20px;font-weight:800;color:var(--wl-ink)">{{ $maxScore }}</span>
                 </div>
                 <div style="background:#F6F3EC;border-radius:14px;padding:14px 18px;display:flex;flex-direction:column;gap:3px">
-                    <span style="font-size:12.5px;font-weight:700;color:#8B8AA3">{{ __('Masa') }}</span>
-                    <span style="font-family:'Geist',sans-serif;font-size:20px;font-weight:800;color:#28293F">{{ $quiz->duration_minutes ? $quiz->duration_minutes.' minit' : __('Bebas') }}</span>
+                    <span style="font-size:12.5px;font-weight:700;color:var(--wl-muted)">{{ __('Masa') }}</span>
+                    <span style="font-family:'Geist',sans-serif;font-size:20px;font-weight:800;color:var(--wl-ink)">{{ $quiz->duration_minutes ? $quiz->duration_minutes.' minit' : __('Bebas') }}</span>
                 </div>
             </div>
 
-            <div style="background:#F6F3EC;border:1px solid rgba(46,44,80,.06);border-radius:16px;padding:20px 22px;display:flex;flex-direction:column;gap:12px">
-                <span style="font-family:'Geist',sans-serif;font-size:14.5px;font-weight:800;color:#28293F">ℹ️ {{ __('Peraturan kuiz') }}</span>
+            <div style="background:#F6F3EC;border:1px solid var(--wl-line);border-radius:16px;padding:20px 22px;display:flex;flex-direction:column;gap:12px">
+                <span style="font-family:'Geist',sans-serif;font-size:14.5px;font-weight:800;color:var(--wl-ink)">ℹ️ {{ __('Peraturan kuiz') }}</span>
                 <div style="display:flex;gap:10px;align-items:flex-start">
                     <span style="color:#17907B;font-size:13px;flex-shrink:0">✓</span>
                     <span style="font-size:13.5px;color:#4A4B63;line-height:1.5">{{ __('Soalan pilihan: pilih') }} <b>{{ __('satu') }}</b> {{ __('jawapan sahaja.') }}</span>

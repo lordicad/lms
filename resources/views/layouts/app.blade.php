@@ -8,6 +8,17 @@
     <title>{{ isset($title) ? $title.' | '.config('app.name') : config('app.name') }}</title>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    {{-- Alias the WeLearn student (--wl-*) tokens to the design-system tokens, so pages shared
+         between the student shell and this shell (subjek, bab, tonton, profil) theme here too. --}}
+    <style>
+        :root {
+            --wl-page: rgb(var(--c-bg)); --wl-surface: rgb(var(--c-surface)); --wl-surface-2: rgb(var(--c-surface-2));
+            --wl-input: rgb(var(--c-surface-2)); --wl-chip: rgb(var(--c-surface-2));
+            --wl-ink: rgb(var(--c-ink)); --wl-body: rgb(var(--c-ink)); --wl-muted: rgb(var(--c-ink-2)); --wl-muted-2: rgb(var(--c-ink-2));
+            --wl-line: var(--border-subtle); --wl-line-2: var(--border-subtle); --wl-line-3: var(--border-strong);
+        }
+    </style>
 </head>
 
 <body class="min-h-screen bg-bg font-sans {{ auth()->user()?->isStudent() ? 'type-student' : '' }}">

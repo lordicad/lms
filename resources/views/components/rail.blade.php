@@ -11,7 +11,7 @@
          the heading + "See all" line up identically across sections. --}}
     @if ($title)
         <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:16px">
-            <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:21px;font-weight:800;color:#28293F">{{ $title }}</h2>
+            <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:21px;font-weight:800;color:var(--wl-ink)">{{ $title }}</h2>
             @if ($seeAll)
                 <a href="{{ $seeAll }}" style="font-size:13.5px;font-weight:700">{{ $seeAllLabel ?? __('Lihat semua') }}</a>
             @endif

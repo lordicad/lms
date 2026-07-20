@@ -1,9 +1,9 @@
 <x-student-layout :title="__('Utama')">
     @if (! $grade)
-        <div style="background:#fff;border:1px dashed rgba(46,44,80,.2);border-radius:22px;padding:56px;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;max-width:520px;margin:0 auto">
+        <div style="background:var(--wl-surface);border:1px dashed var(--wl-line-3);border-radius:22px;padding:56px;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;max-width:520px;margin:0 auto">
             <span style="font-size:32px">📚</span>
-            <h3 style="margin:0;font-family:'Geist',sans-serif;font-size:19px;font-weight:800;color:#28293F">{{ __('Tahun anda belum ditetapkan') }}</h3>
-            <p style="margin:0;font-size:14.5px;color:#8B8AA3;max-width:360px">{{ __('Sila kemas kini profil anda dan pilih Tahun supaya kami boleh tunjukkan kandungan yang betul.') }}</p>
+            <h3 style="margin:0;font-family:'Geist',sans-serif;font-size:19px;font-weight:800;color:var(--wl-ink)">{{ __('Tahun anda belum ditetapkan') }}</h3>
+            <p style="margin:0;font-size:14.5px;color:var(--wl-muted);max-width:360px">{{ __('Sila kemas kini profil anda dan pilih Tahun supaya kami boleh tunjukkan kandungan yang betul.') }}</p>
             <a href="{{ route('profile.edit') }}" class="wl-btn-primary" style="margin-top:6px;min-height:46px;display:inline-flex;align-items:center;border-radius:12px;background:#17907B;color:#fff;font-family:'Geist',sans-serif;font-weight:800;font-size:14.5px;padding:0 22px;text-decoration:none">{{ __('Kemas Kini Profil') }}</a>
         </div>
     @else
@@ -17,8 +17,8 @@
                     <div style="border-radius:22px;overflow:hidden;display:grid;grid-template-columns:minmax(0,1fr) minmax(160px,42%);background:#E3F0FA;box-shadow:0 10px 30px rgba(66,118,174,.18)">
                         <div style="padding:50px;display:flex;flex-direction:column;justify-content:center;gap:14px;min-width:0">
                             <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-                                <span style="background:#fff;color:#2E6CA8;border-radius:999px;padding:5px 13px;font-family:'Geist',sans-serif;font-size:12px;font-weight:800"><x-subject-emoji :subject="$hs" class="text-sm" /> {{ $hs->displayName() }}</span>
-                                <span style="background:#fff;color:#4A5A6B;border-radius:999px;padding:5px 13px;font-family:'Geist',sans-serif;font-size:12px;font-weight:800">Bab {{ $hero->chapter->number }}</span>
+                                <span style="background:var(--wl-surface);color:#2E6CA8;border-radius:999px;padding:5px 13px;font-family:'Geist',sans-serif;font-size:12px;font-weight:800"><x-subject-emoji :subject="$hs" class="text-sm" /> {{ $hs->displayName() }}</span>
+                                <span style="background:var(--wl-surface);color:#4A5A6B;border-radius:999px;padding:5px 13px;font-family:'Geist',sans-serif;font-size:12px;font-weight:800">Bab {{ $hero->chapter->number }}</span>
                                 @unless ($heroResuming)
                                     <span style="background:#17907B;color:#fff;border-radius:999px;padding:5px 13px;font-family:'Geist',sans-serif;font-size:11.5px;font-weight:800;letter-spacing:.08em">TRENDING</span>
                                 @endunless
@@ -47,7 +47,7 @@
                                         @click="toggle()"
                                         :aria-pressed="fav ? 'true' : 'false'"
                                         class="wl-btn-secondary"
-                                        style="min-height:46px;cursor:pointer;border-radius:12px;border:1.5px solid rgba(46,44,80,.15);background:#fff;color:#28293F;font-family:'Geist',sans-serif;font-weight:700;font-size:14.5px;padding:0 18px;display:inline-flex;align-items:center;gap:6px">
+                                        style="min-height:46px;cursor:pointer;border-radius:12px;border:1.5px solid var(--wl-line-3);background:var(--wl-surface);color:var(--wl-ink);font-family:'Geist',sans-serif;font-weight:700;font-size:14.5px;padding:0 18px;display:inline-flex;align-items:center;gap:6px">
                                     <span x-text="fav ? '♥' : '♡'" :style="fav ? 'color:#EB5E5A' : ''"></span>
                                     <span>{{ __('Favourite') }}</span>
                                 </button>
@@ -81,7 +81,7 @@
             @if ($trending->isNotEmpty())
                 <div style="display:flex;flex-direction:column;gap:16px">
                     <div style="display:flex;justify-content:space-between;align-items:baseline">
-                        <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:21px;font-weight:800;color:#28293F">{{ $trendingFallback ? __('Baru ditambah') : __('Paling popular') }}</h2>
+                        <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:21px;font-weight:800;color:var(--wl-ink)">{{ $trendingFallback ? __('Baru ditambah') : __('Paling popular') }}</h2>
                         <a href="{{ route('subjek.index') }}" style="font-size:13.5px;font-weight:700">{{ __('Lihat semua') }}</a>
                     </div>
                     <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px">
@@ -96,7 +96,7 @@
             @if ($newest->isNotEmpty() && ! $trendingFallback)
                 <div style="display:flex;flex-direction:column;gap:16px">
                     <div style="display:flex;justify-content:space-between;align-items:baseline">
-                        <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:21px;font-weight:800;color:#28293F">{{ __('Baru ditambah') }}</h2>
+                        <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:21px;font-weight:800;color:var(--wl-ink)">{{ __('Baru ditambah') }}</h2>
                         <a href="{{ route('subjek.index') }}" style="font-size:13.5px;font-weight:700">{{ __('Lihat semua') }}</a>
                     </div>
                     <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px">
@@ -110,7 +110,7 @@
             {{-- ── ANDA MUNGKIN SUKA ── --}}
             @if ($suggested->isNotEmpty())
                 <div style="display:flex;flex-direction:column;gap:16px">
-                    <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:21px;font-weight:800;color:#28293F">{{ __('Anda mungkin suka') }}</h2>
+                    <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:21px;font-weight:800;color:var(--wl-ink)">{{ __('Anda mungkin suka') }}</h2>
                     <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px">
                         @foreach ($suggested->take(3) as $lesson)
                             <x-vid-card :lesson="$lesson" :thumbHeight="116" />
@@ -121,7 +121,7 @@
         </div>
 
         @if (! $hero && $continue->isEmpty() && $trending->isEmpty() && $newest->isEmpty() && $suggested->isEmpty())
-            <div style="background:#fff;border:1px dashed rgba(46,44,80,.2);border-radius:18px;padding:44px;text-align:center;color:#8B8AA3;font-weight:600">
+            <div style="background:var(--wl-surface);border:1px dashed var(--wl-line-3);border-radius:18px;padding:44px;text-align:center;color:var(--wl-muted);font-weight:600">
                 {{ __('Belum ada video untuk :grade. Sila semak semula kemudian.', ['grade' => $grade->name]) }}
             </div>
         @endif
