@@ -9,11 +9,9 @@ use App\Models\Grade;
 use App\Models\Lesson;
 use App\Models\Material;
 use App\Models\Subject;
-use App\Support\ContentFilter;
 use App\Support\Uploads;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
@@ -21,12 +19,16 @@ class MaterialController extends Controller
 {
     public function index(Request $request): View
     {
-        $teacher = $request->user();
-        $filter = ContentFilter::fromRequest($request);
-
-        $materials = $filter->apply(
-            $teacher->materials()->with('chapter.subject', 'chapter.grade', 'lesson')
-        )
+        $materials = $request->user()->materials()
+            ->with('chapter.subject', 'chapter.grade', 'lesson')
+            ->when($request->filled('subjek'), fn ($q) => $q->whereHas(
+                'chapter.subject',
+                fn ($s) => $s->where('slug', $request->string('subjek')),
+            ))
+            ->when($request->filled('tahun'), fn ($q) => $q->whereHas(
+                'chapter.grade',
+                fn ($g) => $g->where('level', $request->integer('tahun')),
+            ))
             ->latest('id')
             ->paginate(15)
             ->withQueryString();
@@ -35,9 +37,6 @@ class MaterialController extends Controller
             'materials' => $materials,
             'subjects' => Subject::orderBy('sort_order')->get(),
             'grades' => Grade::orderBy('level')->get(),
-            'filter' => $filter,
-            'totalMaterials' => $teacher->materials()->count(),
-            'filteredCount' => $materials->total(),
         ]);
     }
 
@@ -161,7 +160,7 @@ class MaterialController extends Controller
     /**
      * The teacher's own lessons inside a chapter, for the optional "attach to video" select.
      *
-     * @return Collection<int, Lesson>
+     * @return \Illuminate\Support\Collection<int, Lesson>
      */
     private function lessonsInChapter(int $teacherId, ?int $chapterId)
     {

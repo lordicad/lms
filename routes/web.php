@@ -15,6 +15,7 @@ use App\Http\Controllers\Cikgu\NotificationController;
 use App\Http\Controllers\Cikgu\QuizBuilderController;
 use App\Http\Controllers\Cikgu\QuizController;
 use App\Http\Controllers\Cikgu\QuizStatsController;
+use App\Http\Controllers\Cikgu\TalentController;
 use App\Http\Controllers\Cikgu\TeacherRankingController;
 use App\Http\Controllers\ContinueController;
 use App\Http\Controllers\DownloadController;
@@ -146,21 +147,18 @@ Route::middleware(['auth', 'role:teacher'])
         Route::put('kuiz/{quiz}/soalan', [QuizBuilderController::class, 'update'])->name('kuiz.soalan.simpan');
         Route::get('kuiz/{quiz}/statistik', QuizStatsController::class)->name('kuiz.statistik');
 
-        // The teacher Chapters page is read-only navigation: browse a Bab and see your own content
-        // in it. Chapters are shared curriculum taxonomy and are no longer managed here, so only
-        // index + show are exposed. Chapter selection for content still uses /api/bab (below).
+        // Adding a Bab happens inline on the index page, so there is no separate create screen.
         Route::resource('bab', ChapterController::class)
             ->parameters(['bab' => 'chapter'])
-            ->only(['index', 'show']);
+            ->only(['index', 'store', 'edit', 'update', 'destroy']);
 
         Route::get('notifikasi', [NotificationController::class, 'index'])->name('notifikasi');
         Route::post('notifikasi/baca', [NotificationController::class, 'markRead'])->name('notifikasi.baca');
 
         Route::get('ranking', TeacherRankingController::class)->name('ranking');
 
-        // The standalone Talent (Bakat) page has been merged into Teacher Home (brief §2.4). The
-        // old authenticated URL now redirects there so bookmarks keep working.
-        Route::get('bakat', fn () => redirect()->route('cikgu.dashboard'))->name('bakat');
+        // The teacher's own talent signal (four sub-scores + headline + per-lesson breakdown).
+        Route::get('bakat', TalentController::class)->name('bakat');
     });
 
 /*

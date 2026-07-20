@@ -9,9 +9,7 @@ use App\Models\Lesson;
 use App\Models\Subject;
 use App\Models\User;
 use App\Services\OwnershipService;
-use App\Support\ContentFilter;
 use App\Support\Uploads;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -24,7 +22,7 @@ class LessonController extends Controller
      * JSON list of the teacher's own videos in a chapter, for the "Attach to a video"
      * dropdown on the material form. Mirrors ChapterController@lookup (/api/bab).
      */
-    public function lookup(Request $request): JsonResponse
+    public function lookup(Request $request): \Illuminate\Http\JsonResponse
     {
         $chapterId = $request->integer('chapter');
 
@@ -45,12 +43,16 @@ class LessonController extends Controller
 
     public function index(Request $request): View
     {
-        $teacher = $request->user();
-        $filter = ContentFilter::fromRequest($request);
-
-        $lessons = $filter->apply(
-            $teacher->lessons()->with('chapter.subject', 'chapter.grade')
-        )
+        $lessons = $request->user()->lessons()
+            ->with('chapter.subject', 'chapter.grade')
+            ->when($request->filled('subjek'), fn ($q) => $q->whereHas(
+                'chapter.subject',
+                fn ($s) => $s->where('slug', $request->string('subjek')),
+            ))
+            ->when($request->filled('tahun'), fn ($q) => $q->whereHas(
+                'chapter.grade',
+                fn ($g) => $g->where('level', $request->integer('tahun')),
+            ))
             ->latest('id')
             ->paginate(12)
             ->withQueryString();
@@ -59,9 +61,6 @@ class LessonController extends Controller
             'lessons' => $lessons,
             'subjects' => Subject::orderBy('sort_order')->get(),
             'grades' => Grade::orderBy('level')->get(),
-            'filter' => $filter,
-            'totalVideos' => $teacher->lessons()->count(),
-            'filteredCount' => $lessons->total(),
         ]);
     }
 

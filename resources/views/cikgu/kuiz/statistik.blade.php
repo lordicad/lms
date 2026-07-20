@@ -21,10 +21,6 @@
                 <span class="tp-stat-label">{{ __('Purata ketepatan') }}</span>
                 <span class="tp-stat-value">{{ $averagePercent }}%</span>
             </div>
-            <div class="tp-stat">
-                <span class="tp-stat-label">{{ __('Lulus / Gagal') }}</span>
-                <span class="tp-stat-value" style="color:#0F7A68">{{ $passedCount }}<span style="font-size:18px;color:var(--tp-muted)"> / {{ $failedCount }}</span></span>
-            </div>
         </div>
 
         {{-- Per-question correctness --}}
@@ -80,17 +76,15 @@
             @else
                 <div class="tp-card" style="overflow:hidden">
                     <div style="overflow-x:auto">
-                        <div style="min-width:800px">
-                            @php($cols = '44px minmax(0,2fr) 1fr 1fr 1fr 1fr 1fr 1.4fr')
+                        <div style="min-width:760px">
+                            @php($cols = 'minmax(0,2fr) 1fr 1fr 1fr 1fr 1fr 1.4fr')
                             <div style="display:grid;grid-template-columns:{{ $cols }};gap:12px;padding:14px 20px;border-bottom:1px solid var(--tp-line)">
-                                @foreach (['#', __('Murid'), __('Tahun'), __('Markah'), __('Betul'), __('Masa'), __('Jenis'), __('Tarikh')] as $h)
+                                @foreach ([__('Murid'), __('Tahun'), __('Markah'), __('Betul'), __('Masa'), __('Jenis'), __('Tarikh')] as $h)
                                     <span class="tp-g" style="font-size:12px;font-weight:800;color:var(--tp-muted)">{{ $h }}</span>
                                 @endforeach
                             </div>
                             @foreach ($attempts as $attempt)
                                 <div class="tp-row" style="display:grid;grid-template-columns:{{ $cols }};gap:12px;padding:13px 20px">
-                                    {{-- Continuous number across pages: page 1 is 1-10, page 2 is 11-20. --}}
-                                    <span class="tp-meta" style="font-variant-numeric:tabular-nums">{{ $attempts->firstItem() + $loop->index }}</span>
                                     <div style="display:flex;align-items:center;gap:10px;min-width:0">
                                         <span style="width:34px;height:34px;border-radius:9px;background:#DCF2EE;color:#0F7A68;display:grid;place-items:center;font-family:'Geist',sans-serif;font-weight:800;font-size:11px;flex-shrink:0">{{ $attempt->student->initials() }}</span>
                                         <span class="tp-g" style="font-weight:800;font-size:14px;color:var(--tp-ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $attempt->student->name }}</span>
@@ -112,10 +106,6 @@
                         </div>
                     </div>
                 </div>
-
-                @if ($attempts->hasPages())
-                    <div style="margin-top:4px">{{ $attempts->links() }}</div>
-                @endif
             @endif
         </div>
     </div>

@@ -6,8 +6,6 @@ use App\Models\Grade;
 use App\Models\QuizAttempt;
 use App\Models\School;
 use App\Models\SchoolClass;
-use App\Models\Subject;
-use App\Models\User;
 use App\Services\LeaderboardService;
 use App\Support\Uploads;
 use Illuminate\Http\RedirectResponse;
@@ -46,8 +44,13 @@ class ProfileController extends Controller
             ];
         }
 
-        // All active classes, so the School -> Class dropdowns can depend on each other client-side
-        // without a round trip. Small dataset (a handful of schools).
+        // Teachers get the WeLearn Teacher profile in their own portal shell.
+        if ($user->isTeacher()) {
+            return view('cikgu.profil', ['user' => $user]);
+        }
+
+        // All active classes, so the student's School -> Class dropdowns can depend on each other
+        // client-side without a round trip. Small dataset (a handful of schools).
         $allClasses = SchoolClass::active()->with('grade', 'homeroomTeacher:id,name')
             ->orderBy('grade_id')->orderBy('name')
             ->get()
@@ -58,20 +61,6 @@ class ProfileController extends Controller
                 'label' => $c->label(),
                 'homeroom' => $c->homeroomTeacher?->name,
             ])->values();
-
-        // Teachers get the WeLearn Teacher profile in their own portal shell.
-        if ($user->isTeacher()) {
-            $user->load('subjects', 'homeroomClass', 'school');
-
-            return view('cikgu.profil', [
-                'user' => $user,
-                'schools' => School::orderBy('name')->get(),
-                'subjects' => Subject::orderBy('sort_order')->get(),
-                'allClasses' => $allClasses,
-                'selectedSubjectIds' => $user->subjects->pluck('id')->all(),
-                'homeroomClassId' => $user->homeroomClass?->id,
-            ]);
-        }
 
         $user->load('school', 'schoolClass.grade');
 
@@ -102,8 +91,6 @@ class ProfileController extends Controller
                 Rule::unique('users', 'email')->ignore($user->id),
             ],
             'avatar' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
-            // Shared School field for teachers and students.
-            'school_id' => ['nullable', 'integer', Rule::exists('schools', 'id')],
         ];
 
         $messages = [
@@ -116,10 +103,8 @@ class ProfileController extends Controller
             'avatar.max' => __('Gambar profil terlalu besar. Had ialah 2 MB.'),
         ];
 
-        if ($user->isTeacher()) {
-            $rules += $this->teacherRules($request, $user);
-        } elseif ($user->isStudent()) {
-            $rules += $this->studentRules($request, $user);
+        if ($user->isStudent()) {
+            $rules += $this->studentRules($request);
         }
 
         $validated = $request->validate($rules, $messages);
@@ -128,18 +113,13 @@ class ProfileController extends Controller
             'name' => $validated['name'],
             'username' => $validated['username'],
             'email' => $validated['email'] ?? null,
-            'school_id' => $validated['school_id'] ?? null,
         ]);
-
-        if ($user->isTeacher()) {
-            $user->phone = $validated['phone'] ?? null;
-            $user->position = $validated['position'] ?? null;
-        }
 
         if ($user->isStudent()) {
             $user->grade_id = Grade::where('level', $validated['grade_level'])->value('id');
-            // A class must be consistent with the chosen School + Year, else it is cleared.
-            $user->school_class_id = $this->resolveStudentClass($validated, $user);
+            $user->school_id = $validated['school_id'] ?? null;
+            // A class is only kept when it matches the submitted School + Year (validated below).
+            $user->school_class_id = $validated['school_class_id'] ?? null;
             $user->guardian_name = $validated['guardian_name'] ?? null;
             $user->guardian_phone = $validated['guardian_phone'] ?? null;
             $user->guardian_email = $validated['guardian_email'] ?? null;
@@ -153,12 +133,6 @@ class ProfileController extends Controller
 
         $user->save();
 
-        // Relational side-effects after the base row is saved.
-        if ($user->isTeacher()) {
-            $user->subjects()->sync($validated['subjects'] ?? []);
-            $this->assignHomeroomClass($user, $validated['homeroom_class_id'] ?? null);
-        }
-
         if ($request->hasFile('avatar') && $oldAvatar) {
             Storage::disk('uploads')->delete($oldAvatar);
         }
@@ -171,47 +145,11 @@ class ProfileController extends Controller
     /**
      * @return array<string, array<int, mixed>>
      */
-    private function teacherRules(Request $request, User $user): array
-    {
-        return [
-            'phone' => ['nullable', 'string', 'max:30', 'regex:/^\+?[0-9\s\-()]{6,20}$/'],
-            'position' => ['nullable', 'string', 'max:100'],
-            'subjects' => ['nullable', 'array'],
-            'subjects.*' => ['integer', Rule::exists('subjects', 'id')],
-            'homeroom_class_id' => [
-                'nullable', 'integer',
-                function (string $attribute, mixed $value, \Closure $fail) use ($request, $user) {
-                    $class = SchoolClass::find($value);
-
-                    if (! $class) {
-                        $fail(__('Kelas tidak sah.'));
-
-                        return;
-                    }
-
-                    // The class must be in the school the teacher just selected.
-                    if ((int) $class->school_id !== (int) $request->input('school_id')) {
-                        $fail(__('Kelas ini bukan di sekolah yang dipilih.'));
-
-                        return;
-                    }
-
-                    // Only one homeroom teacher per class.
-                    if ($class->homeroom_teacher_id !== null && (int) $class->homeroom_teacher_id !== $user->id) {
-                        $fail(__('Kelas ini sudah mempunyai guru kelas.'));
-                    }
-                },
-            ],
-        ];
-    }
-
-    /**
-     * @return array<string, array<int, mixed>>
-     */
-    private function studentRules(Request $request, User $user): array
+    private function studentRules(Request $request): array
     {
         return [
             'grade_level' => ['required', 'integer', Rule::exists('grades', 'level')],
+            'school_id' => ['nullable', 'integer', Rule::exists('schools', 'id')],
             'school_class_id' => [
                 'nullable', 'integer',
                 function (string $attribute, mixed $value, \Closure $fail) use ($request) {
@@ -235,33 +173,6 @@ class ProfileController extends Controller
             'guardian_phone' => ['nullable', 'string', 'max:30', 'regex:/^\+?[0-9\s\-()]{6,20}$/'],
             'guardian_email' => ['nullable', 'string', 'email', 'max:255'],
         ];
-    }
-
-    /**
-     * A student's class is only kept when it matches the submitted School + Year.
-     *
-     * @param  array<string, mixed>  $validated
-     */
-    private function resolveStudentClass(array $validated, User $user): ?int
-    {
-        return $validated['school_class_id'] ?? null;
-    }
-
-    /**
-     * Point school_classes.homeroom_teacher_id at this teacher for the chosen class (the single
-     * source of truth), first releasing any class they were previously homeroom of.
-     */
-    private function assignHomeroomClass(User $teacher, ?int $classId): void
-    {
-        $current = $teacher->homeroomClass()->first();
-
-        if ($current && (int) $current->id !== (int) $classId) {
-            $current->update(['homeroom_teacher_id' => null]);
-        }
-
-        if ($classId) {
-            SchoolClass::where('id', $classId)->update(['homeroom_teacher_id' => $teacher->id]);
-        }
     }
 
     public function updatePassword(Request $request): RedirectResponse
