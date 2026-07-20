@@ -13,8 +13,8 @@
     @if ($lessons->isEmpty())
         <div class="tp-empty">
             <span style="font-size:30px">🎬</span>
-            <h3 class="tp-g" style="font-size:19px;font-weight:800;color:#28293F">{{ __('Belum ada video') }}</h3>
-            <p style="margin:0;font-size:14.5px;color:#8B8AA3;max-width:380px">{{ __('Muat naik rakaman kelas anda, atau tampal pautan YouTube dari akaun anda sendiri.') }}</p>
+            <h3 class="tp-g" style="font-size:19px;font-weight:800;color:var(--tp-ink)">{{ __('Belum ada video') }}</h3>
+            <p style="margin:0;font-size:14.5px;color:var(--tp-muted);max-width:380px">{{ __('Muat naik rakaman kelas anda, atau tampal pautan YouTube dari akaun anda sendiri.') }}</p>
             <a href="{{ route('cikgu.video.create') }}" class="tp-btn" style="margin-top:6px">{{ __('Tambah Video Pertama') }}</a>
         </div>
     @else
@@ -31,7 +31,7 @@
                     </span>
 
                     <div style="display:flex;flex-direction:column;gap:6px;min-width:0;flex:1">
-                        <a href="{{ route('video.show', $lesson) }}" class="tp-g" style="font-weight:800;font-size:15.5px;color:#28293F;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $lesson->title }}</a>
+                        <a href="{{ route('video.show', $lesson) }}" class="tp-g" style="font-weight:800;font-size:15.5px;color:var(--tp-ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $lesson->title }}</a>
                         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
                             <span class="tp-tag" style="background:rgb({{ $subject->rgb }} / .14);color:rgb({{ $subject->rgb }})">{{ $subject->name }}</span>
                             <span class="tp-meta">{{ $lesson->chapter->grade->name }}</span>

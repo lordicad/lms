@@ -44,28 +44,28 @@
         </div>
 
         @if (request()->hasAny(['tahun', 'subjek', 'kuiz']))
-            <a href="{{ route('cikgu.ranking') }}" style="min-height:46px;display:inline-flex;align-items:center;font-family:'Geist',sans-serif;font-weight:800;font-size:13.5px;color:#6C6F87">{{ __('Kosongkan') }}</a>
+            <a href="{{ route('cikgu.ranking') }}" style="min-height:46px;display:inline-flex;align-items:center;font-family:'Geist',sans-serif;font-weight:800;font-size:13.5px;color:var(--tp-muted-2)">{{ __('Kosongkan') }}</a>
         @endif
     </form>
 
     @if ($rows->isEmpty())
         <div class="tp-empty">
             <span style="font-size:30px">🏁</span>
-            <h3 class="tp-g" style="font-size:19px;font-weight:800;color:#28293F">{{ __('Belum ada data ranking') }}</h3>
-            <p style="margin:0;font-size:14.5px;color:#8B8AA3;max-width:420px">{{ __('Ranking akan muncul setelah murid menyelesaikan kuiz interaktif yang diterbitkan.') }}</p>
+            <h3 class="tp-g" style="font-size:19px;font-weight:800;color:var(--tp-ink)">{{ __('Belum ada data ranking') }}</h3>
+            <p style="margin:0;font-size:14.5px;color:var(--tp-muted);max-width:420px">{{ __('Ranking akan muncul setelah murid menyelesaikan kuiz interaktif yang diterbitkan.') }}</p>
         </div>
     @else
         <div class="tp-card" style="overflow:hidden">
             <div style="overflow-x:auto">
                 <div style="min-width:820px">
-                    <div style="display:grid;grid-template-columns:{{ $cols }};gap:12px;align-items:center;padding:14px 20px;border-bottom:1px solid rgba(46,44,80,.08)">
-                        <span class="tp-g" style="font-size:12px;font-weight:800;color:#8B8AA3">#</span>
-                        <span class="tp-g" style="font-size:12px;font-weight:800;color:#8B8AA3">{{ __('Murid') }}</span>
-                        <span class="tp-g" style="font-size:12px;font-weight:800;color:#8B8AA3">{{ __('Tahun') }}</span>
-                        <span class="tp-g" style="font-size:12px;font-weight:800;color:#8B8AA3">{{ __('Mata') }}</span>
-                        <span class="tp-g" style="font-size:12px;font-weight:800;color:#8B8AA3">{{ __('Betul') }}</span>
-                        <span class="tp-g" style="font-size:12px;font-weight:800;color:#8B8AA3">{{ __('Ketepatan') }}</span>
-                        <span class="tp-g" style="font-size:12px;font-weight:800;color:#8B8AA3">{{ __('Kuiz') }}</span>
+                    <div style="display:grid;grid-template-columns:{{ $cols }};gap:12px;align-items:center;padding:14px 20px;border-bottom:1px solid var(--tp-line)">
+                        <span class="tp-g" style="font-size:12px;font-weight:800;color:var(--tp-muted)">#</span>
+                        <span class="tp-g" style="font-size:12px;font-weight:800;color:var(--tp-muted)">{{ __('Murid') }}</span>
+                        <span class="tp-g" style="font-size:12px;font-weight:800;color:var(--tp-muted)">{{ __('Tahun') }}</span>
+                        <span class="tp-g" style="font-size:12px;font-weight:800;color:var(--tp-muted)">{{ __('Mata') }}</span>
+                        <span class="tp-g" style="font-size:12px;font-weight:800;color:var(--tp-muted)">{{ __('Betul') }}</span>
+                        <span class="tp-g" style="font-size:12px;font-weight:800;color:var(--tp-muted)">{{ __('Ketepatan') }}</span>
+                        <span class="tp-g" style="font-size:12px;font-weight:800;color:var(--tp-muted)">{{ __('Kuiz') }}</span>
                     </div>
 
                     @foreach ($rows as $row)
@@ -78,19 +78,19 @@
                             </span>
                             <div style="display:flex;align-items:center;gap:12px;min-width:0">
                                 <span style="width:36px;height:36px;border-radius:10px;background:{{ $p[0] }};color:{{ $p[1] }};display:grid;place-items:center;font-family:'Geist',sans-serif;font-weight:800;font-size:12px;flex-shrink:0">{{ $row->student->initials() }}</span>
-                                <span class="tp-g" style="font-weight:800;font-size:14.5px;color:#28293F;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $row->student->name }}</span>
+                                <span class="tp-g" style="font-weight:800;font-size:14.5px;color:var(--tp-ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $row->student->name }}</span>
                             </div>
-                            <span style="font-size:13.5px;font-weight:700;color:#6C6F87">{{ $row->student->grade?->name ?? '-' }}</span>
-                            <span class="tp-g" style="font-weight:800;font-size:15px;color:#28293F">{{ $row->points }}</span>
-                            <span style="font-size:13.5px;font-weight:700;color:#6C6F87">{{ $row->correct }}/{{ $row->questions }}</span>
+                            <span style="font-size:13.5px;font-weight:700;color:var(--tp-muted-2)">{{ $row->student->grade?->name ?? '-' }}</span>
+                            <span class="tp-g" style="font-weight:800;font-size:15px;color:var(--tp-ink)">{{ $row->points }}</span>
+                            <span style="font-size:13.5px;font-weight:700;color:var(--tp-muted-2)">{{ $row->correct }}/{{ $row->questions }}</span>
                             <span style="justify-self:start;background:{{ $accBg }};color:{{ $accFg }};border-radius:999px;padding:4px 12px;font-family:'Geist',sans-serif;font-size:12px;font-weight:800">{{ $row->accuracy }}%</span>
-                            <span style="font-size:13.5px;font-weight:700;color:#6C6F87">{{ $row->quizzes }}</span>
+                            <span style="font-size:13.5px;font-weight:700;color:var(--tp-muted-2)">{{ $row->quizzes }}</span>
                         </div>
                     @endforeach
                 </div>
             </div>
         </div>
 
-        <span style="font-size:13px;color:#8B8AA3">{{ __(':count murid dalam senarai ini.', ['count' => $rows->count()]) }}</span>
+        <span style="font-size:13px;color:var(--tp-muted)">{{ __(':count murid dalam senarai ini.', ['count' => $rows->count()]) }}</span>
     @endif
 </x-cikgu-layout>

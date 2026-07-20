@@ -14,7 +14,7 @@
 
         <div style="display:flex;flex-direction:column;gap:6px">
             <span style="align-self:flex-start;background:#E4EEF9;color:#2E6CA8;border-radius:999px;padding:5px 14px;font-family:'Geist',sans-serif;font-size:12.5px;font-weight:800">{{ $chapter->subject->icon }} {{ $chapter->subject->name }}. {{ $chapter->grade->name }}. Bab {{ $chapter->number }}</span>
-            <h2 class="tp-g" style="font-size:24px;font-weight:800;letter-spacing:-.01em;color:#28293F">{{ $quiz->title }}</h2>
+            <h2 class="tp-g" style="font-size:24px;font-weight:800;letter-spacing:-.01em;color:var(--tp-ink)">{{ $quiz->title }}</h2>
         </div>
 
         @if ($hasAttempts)
@@ -48,7 +48,7 @@
             <template x-for="(question, qIndex) in questions" :key="question.uid">
                 <div class="tp-panelform" style="padding:24px">
                     <div style="display:flex;align-items:center;gap:8px">
-                        <h3 class="tp-g" style="font-size:16px;font-weight:800;color:#28293F;flex:1">{{ __('Soalan') }} <span x-text="qIndex + 1"></span></h3>
+                        <h3 class="tp-g" style="font-size:16px;font-weight:800;color:var(--tp-ink);flex:1">{{ __('Soalan') }} <span x-text="qIndex + 1"></span></h3>
                         <button type="button" class="tp-icon-action" style="width:36px;height:36px" @click="moveUp(qIndex)" :disabled="qIndex === 0" title="{{ __('Naik') }}">↑</button>
                         <button type="button" class="tp-icon-action" style="width:36px;height:36px" @click="moveDown(qIndex)" :disabled="qIndex === questions.length - 1" title="{{ __('Turun') }}">↓</button>
                         <button type="button" class="tp-icon-action tp-icon-danger" style="width:36px;height:36px" @click="removeQuestion(qIndex)" :disabled="questions.length === 1" title="{{ __('Padam') }}">
@@ -93,10 +93,10 @@
                                     <span class="sr-only">{{ __('Tandakan pilihan ini sebagai jawapan betul') }}</span>
                                 </label>
 
-                                <span style="width:30px;height:30px;border-radius:50%;flex-shrink:0;display:grid;place-items:center;font-family:'Geist',sans-serif;font-weight:800;font-size:13px;background:#F1F0E8;color:#6C6F87" x-text="String.fromCharCode(65 + oIndex)"></span>
+                                <span style="width:30px;height:30px;border-radius:50%;flex-shrink:0;display:grid;place-items:center;font-family:'Geist',sans-serif;font-weight:800;font-size:13px;background:#F1F0E8;color:var(--tp-muted-2)" x-text="String.fromCharCode(65 + oIndex)"></span>
 
                                 <input type="text" :name="`questions[${qIndex}][options][${oIndex}][option_text]`" x-model="option.option_text" required
-                                       style="flex:1;min-height:42px;border:1.5px solid rgba(46,44,80,.1);border-radius:10px;padding:0 12px;background:#F6F5F0;font-family:'Nunito',sans-serif;font-size:14px;color:#28293F;min-width:0"
+                                       style="flex:1;min-height:42px;border:1.5px solid var(--tp-line-3);border-radius:10px;padding:0 12px;background:var(--tp-input);font-family:'Nunito',sans-serif;font-size:14px;color:var(--tp-ink);min-width:0"
                                        :aria-label="labels.optionAria.replace(':letter', String.fromCharCode(65 + oIndex))" placeholder="{{ __('Teks jawapan') }}">
 
                                 <input type="hidden" :name="`questions[${qIndex}][options][${oIndex}][is_correct]`" :value="option.is_correct ? 1 : 0">
@@ -115,11 +115,11 @@
             </template>
 
             <button type="button" @click="addQuestion()"
-                    class="tp-g" style="min-height:52px;cursor:pointer;border-radius:14px;border:1.5px dashed rgba(46,44,80,.2);background:#F1F0E8;color:#28293F;font-weight:800;font-size:14.5px">+ {{ __('Tambah Soalan') }}</button>
+                    class="tp-g" style="min-height:52px;cursor:pointer;border-radius:14px;border:1.5px dashed rgba(46,44,80,.2);background:#F1F0E8;color:var(--tp-ink);font-weight:800;font-size:14.5px">+ {{ __('Tambah Soalan') }}</button>
 
             <div style="position:sticky;bottom:16px">
                 <div class="tp-card" style="border-radius:16px;padding:16px 20px;display:flex;align-items:center;gap:14px">
-                    <span style="font-size:13.5px;font-weight:700;color:#6C6F87;flex:1"><span x-text="questions.length"></span> {{ __('soalan.') }} <span x-text="totalPoints()"></span> {{ __('mata keseluruhan.') }}</span>
+                    <span style="font-size:13.5px;font-weight:700;color:var(--tp-muted-2);flex:1"><span x-text="questions.length"></span> {{ __('soalan.') }} <span x-text="totalPoints()"></span> {{ __('mata keseluruhan.') }}</span>
                     <a href="{{ route('cikgu.kuiz.index') }}" class="tp-btn-ghost">{{ __('Batal') }}</a>
                     <button type="submit" class="tp-btn tp-btn-sm" :disabled="! isValid() || submitting">
                         <span x-show="! submitting">{{ __('Simpan Soalan') }}</span>

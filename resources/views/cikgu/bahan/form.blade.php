@@ -15,8 +15,8 @@
         {{-- Location --}}
         <div class="tp-panelform">
             <div style="display:flex;flex-direction:column;gap:3px">
-                <h2 class="tp-g" style="font-size:17px;font-weight:800;color:#28293F">{{ __('Lokasi bahan') }}</h2>
-                <span style="font-size:13px;color:#8B8AA3">{{ __('Bahan ini akan dipaparkan pada halaman Bab tersebut.') }}</span>
+                <h2 class="tp-g" style="font-size:17px;font-weight:800;color:var(--tp-ink)">{{ __('Lokasi bahan') }}</h2>
+                <span style="font-size:13px;color:var(--tp-muted)">{{ __('Bahan ini akan dipaparkan pada halaman Bab tersebut.') }}</span>
             </div>
 
             <x-chapter-picker :subjects="$subjects" :grades="$grades" :chapter="$chapter" />
@@ -45,7 +45,7 @@
 
         {{-- File --}}
         <div class="tp-panelform">
-            <h2 class="tp-g" style="font-size:17px;font-weight:800;color:#28293F">{{ __('Fail') }}</h2>
+            <h2 class="tp-g" style="font-size:17px;font-weight:800;color:var(--tp-ink)">{{ __('Fail') }}</h2>
             <div class="tp-field">
                 <label for="title" class="tp-label">{{ __('Tajuk') }}</label>
                 <input id="title" name="title" type="text" value="{{ old('title', $material->title) }}" required class="tp-input" @error('title') aria-invalid="true" @enderror>
@@ -60,7 +60,7 @@
                 </p>
                 @error('file') <span class="tp-error">{{ $message }}</span> @enderror
                 @if ($editing)
-                    <p style="display:flex;align-items:center;gap:8px;background:var(--tp-input);border-radius:12px;padding:12px 14px;font-size:13.5px;color:#6C6F87;margin:6px 0 0">
+                    <p style="display:flex;align-items:center;gap:8px;background:var(--tp-input);border-radius:12px;padding:12px 14px;font-size:13.5px;color:var(--tp-muted-2);margin:6px 0 0">
                         <span style="font-size:18px">{{ $material->icon() }}</span>
                         {{ __('Fail semasa:') }} {{ $material->original_name }} ({{ $material->humanSize() }})
                     </p>

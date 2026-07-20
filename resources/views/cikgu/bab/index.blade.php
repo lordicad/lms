@@ -50,7 +50,7 @@
         </form>
 
         @if ($subject && $grade)
-            <h2 class="tp-g" style="font-size:17px;font-weight:800;color:#28293F">{{ $subject->name }}. {{ $grade->name }}</h2>
+            <h2 class="tp-g" style="font-size:17px;font-weight:800;color:var(--tp-ink)">{{ $subject->name }}. {{ $grade->name }}</h2>
 
             @unless ($isOffered)
                 <div style="display:flex;gap:10px;background:#FEF0CE;border:1px solid rgba(138,106,18,.25);border-radius:14px;padding:14px 18px;font-size:13.5px;color:#8A6A12">
@@ -63,8 +63,8 @@
                 @if ($isOffered)
                     <div class="tp-empty">
                         <span style="font-size:30px">📚</span>
-                        <h3 class="tp-g" style="font-size:19px;font-weight:800;color:#28293F">{{ __('Belum ada bab') }}</h3>
-                        <p style="margin:0;font-size:14.5px;color:#8B8AA3;max-width:420px">{{ __('Tambah bab pertama untuk :subject :grade menggunakan borang di bawah.', ['subject' => $subject->name, 'grade' => $grade->name]) }}</p>
+                        <h3 class="tp-g" style="font-size:19px;font-weight:800;color:var(--tp-ink)">{{ __('Belum ada bab') }}</h3>
+                        <p style="margin:0;font-size:14.5px;color:var(--tp-muted);max-width:420px">{{ __('Tambah bab pertama untuk :subject :grade menggunakan borang di bawah.', ['subject' => $subject->name, 'grade' => $grade->name]) }}</p>
                     </div>
                 @endif
             @else
@@ -75,7 +75,7 @@
                             <span style="width:40px;height:40px;border-radius:12px;background:#E4EEF9;color:#2E6CA8;display:grid;place-items:center;font-family:'Geist',sans-serif;font-weight:800;font-size:15px;flex-shrink:0">{{ $chapter->number }}</span>
 
                             <div style="display:flex;flex-direction:column;gap:4px;min-width:0;flex:1">
-                                <span class="tp-g" style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-weight:800;font-size:15px;color:#28293F">
+                                <span class="tp-g" style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-weight:800;font-size:15px;color:var(--tp-ink)">
                                     {{ $chapter->title }}
                                     @unless ($chapter->is_active)
                                         <span class="tp-tag" style="background:#FEF0CE;color:#8A6A12">{{ __('Tidak aktif') }}</span>
@@ -111,7 +111,7 @@
             {{-- Add a Bab, only where the pair is offered. --}}
             @if ($isOffered)
                 <div class="tp-panelform">
-                    <h2 class="tp-g" style="font-size:17px;font-weight:800;color:#28293F">{{ __('Tambah') }} Bab {{ $nextNumber }}</h2>
+                    <h2 class="tp-g" style="font-size:17px;font-weight:800;color:var(--tp-ink)">{{ __('Tambah') }} Bab {{ $nextNumber }}</h2>
 
                     <form method="POST" action="{{ route('cikgu.bab.store') }}" style="display:flex;flex-direction:column;gap:16px">
                         @csrf

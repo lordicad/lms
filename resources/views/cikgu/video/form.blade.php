@@ -29,15 +29,15 @@
         {{-- Location --}}
         <div class="tp-panelform">
             <div style="display:flex;flex-direction:column;gap:3px">
-                <h2 class="tp-g" style="font-size:17px;font-weight:800;color:#28293F">{{ __('Lokasi video') }}</h2>
-                <span style="font-size:13px;color:#8B8AA3">{{ __('Setiap video mesti dimasukkan dalam satu Bab.') }}</span>
+                <h2 class="tp-g" style="font-size:17px;font-weight:800;color:var(--tp-ink)">{{ __('Lokasi video') }}</h2>
+                <span style="font-size:13px;color:var(--tp-muted)">{{ __('Setiap video mesti dimasukkan dalam satu Bab.') }}</span>
             </div>
             <x-chapter-picker :subjects="$subjects" :grades="$grades" :chapter="$chapter" />
         </div>
 
         {{-- Details --}}
         <div class="tp-panelform">
-            <h2 class="tp-g" style="font-size:17px;font-weight:800;color:#28293F">{{ __('Butiran video') }}</h2>
+            <h2 class="tp-g" style="font-size:17px;font-weight:800;color:var(--tp-ink)">{{ __('Butiran video') }}</h2>
             <div class="tp-field">
                 <label for="title" class="tp-label">{{ __('Tajuk') }}</label>
                 <input id="title" name="title" type="text" value="{{ old('title', $lesson->title) }}" required class="tp-input" @error('title') aria-invalid="true" @enderror>
@@ -52,7 +52,7 @@
 
         {{-- Source --}}
         <div class="tp-panelform">
-            <h2 class="tp-g" style="font-size:17px;font-weight:800;color:#28293F">{{ __('Sumber video') }}</h2>
+            <h2 class="tp-g" style="font-size:17px;font-weight:800;color:var(--tp-ink)">{{ __('Sumber video') }}</h2>
 
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px" role="tablist" aria-label="{{ __('Sumber video') }}">
                 <button type="button" role="tab" id="tab-youtube" :aria-selected="source === 'youtube'" aria-controls="panel-youtube"
@@ -108,18 +108,18 @@
         <label for="is_published" class="tp-checkrow">
             <input id="is_published" name="is_published" type="checkbox" value="1" @checked(old('is_published', $lesson->is_published ?? true)) style="width:20px;height:20px;margin-top:2px;accent-color:#17907B">
             <span style="display:flex;flex-direction:column;gap:2px">
-                <span class="tp-g" style="font-weight:800;font-size:14.5px;color:#28293F">{{ __('Terbitkan kepada murid') }}</span>
-                <span style="font-size:12.5px;color:#8B8AA3">{{ __('Nyahtanda untuk simpan sebagai draf. Murid tidak dapat melihat draf.') }}</span>
+                <span class="tp-g" style="font-weight:800;font-size:14.5px;color:var(--tp-ink)">{{ __('Terbitkan kepada murid') }}</span>
+                <span style="font-size:12.5px;color:var(--tp-muted)">{{ __('Nyahtanda untuk simpan sebagai draf. Murid tidak dapat melihat draf.') }}</span>
             </span>
         </label>
 
         {{-- Upload progress --}}
         <div x-show="uploading" x-cloak class="tp-panelform">
-            <div style="display:flex;align-items:center;justify-content:space-between;font-size:13.5px;font-weight:700;color:#28293F">
+            <div style="display:flex;align-items:center;justify-content:space-between;font-size:13.5px;font-weight:700;color:var(--tp-ink)">
                 <span>{{ __('Memuat naik video...') }}</span>
                 <span x-text="progress + '%'">0%</span>
             </div>
-            <div style="height:12px;width:100%;overflow:hidden;border-radius:999px;background:rgba(46,44,80,.08)" role="progressbar" :aria-valuenow="progress" aria-valuemin="0" aria-valuemax="100">
+            <div style="height:12px;width:100%;overflow:hidden;border-radius:999px;background:var(--tp-line)" role="progressbar" :aria-valuenow="progress" aria-valuemin="0" aria-valuemax="100">
                 <div style="height:100%;border-radius:999px;background:#17907B;transition:width .15s" :style="`width: ${progress}%`"></div>
             </div>
             <p class="tp-hint">{{ __('Jangan tutup halaman ini sehingga selesai.') }}</p>

@@ -62,23 +62,23 @@
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start">
         @foreach ($lists as $list)
             <div class="tp-card" style="overflow:hidden">
-                <div style="padding:18px 22px;border-bottom:1px solid rgba(46,44,80,.07);display:flex;flex-direction:column;gap:2px">
-                    <h2 class="tp-g" style="font-size:16px;font-weight:800;color:#28293F">{{ $list['icon'] }} {{ $list['title'] }}</h2>
-                    <span style="font-size:12.5px;color:#8B8AA3">{{ $list['sub'] }}</span>
+                <div style="padding:18px 22px;border-bottom:1px solid var(--tp-line);display:flex;flex-direction:column;gap:2px">
+                    <h2 class="tp-g" style="font-size:16px;font-weight:800;color:var(--tp-ink)">{{ $list['icon'] }} {{ $list['title'] }}</h2>
+                    <span style="font-size:12.5px;color:var(--tp-muted)">{{ $list['sub'] }}</span>
                 </div>
 
                 @forelse ($list['items'] as $i => $item)
-                    <div style="display:flex;align-items:center;gap:14px;padding:13px 22px;border-bottom:1px solid rgba(46,44,80,.05)">
+                    <div style="display:flex;align-items:center;gap:14px;padding:13px 22px;border-bottom:1px solid var(--tp-line)">
                         <span style="font-size:14px;width:22px;text-align:center;flex-shrink:0">{{ $medals[$i] ?? $i + 1 }}</span>
                         <span style="width:36px;height:36px;border-radius:10px;background:rgb({{ $item['subject']->rgb }} / .14);display:grid;place-items:center;font-size:14px;flex-shrink:0">{{ $item['subject']->icon ?? '🎬' }}</span>
                         <div style="display:flex;flex-direction:column;gap:1px;min-width:0;flex:1">
-                            <span class="tp-g" style="font-weight:800;font-size:14px;color:#28293F;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $item['title'] }}</span>
-                            <span style="font-size:12px;color:#8B8AA3">{{ $item['detail'] }}</span>
+                            <span class="tp-g" style="font-weight:800;font-size:14px;color:var(--tp-ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $item['title'] }}</span>
+                            <span style="font-size:12px;color:var(--tp-muted)">{{ $item['detail'] }}</span>
                         </div>
-                        <span class="tp-g" style="font-weight:800;font-size:14.5px;color:#28293F;flex-shrink:0">{{ $item['value'] }}</span>
+                        <span class="tp-g" style="font-weight:800;font-size:14.5px;color:var(--tp-ink);flex-shrink:0">{{ $item['value'] }}</span>
                     </div>
                 @empty
-                    <div style="padding:22px;text-align:center;color:#8B8AA3;font-size:13.5px">{{ __('Belum ada data.') }}</div>
+                    <div style="padding:22px;text-align:center;color:var(--tp-muted);font-size:13.5px">{{ __('Belum ada data.') }}</div>
                 @endforelse
             </div>
         @endforeach

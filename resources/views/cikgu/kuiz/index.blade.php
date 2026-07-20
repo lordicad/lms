@@ -15,8 +15,8 @@
     @if ($quizzes->isEmpty())
         <div class="tp-empty">
             <span style="font-size:30px">📝</span>
-            <h3 class="tp-g" style="font-size:19px;font-weight:800;color:#28293F">{{ __('Belum ada kuiz') }}</h3>
-            <p style="margin:0;font-size:14.5px;color:#8B8AA3;max-width:420px">{{ __('Bina kuiz interaktif yang menyemak jawapan sendiri, atau muat naik kuiz bercetak.') }}</p>
+            <h3 class="tp-g" style="font-size:19px;font-weight:800;color:var(--tp-ink)">{{ __('Belum ada kuiz') }}</h3>
+            <p style="margin:0;font-size:14.5px;color:var(--tp-muted);max-width:420px">{{ __('Bina kuiz interaktif yang menyemak jawapan sendiri, atau muat naik kuiz bercetak.') }}</p>
             <a href="{{ route('cikgu.kuiz.mod') }}" class="tp-btn" style="margin-top:6px">{{ __('Cipta Kuiz Pertama') }}</a>
         </div>
     @else
@@ -26,7 +26,7 @@
                 <div class="tp-listcard" style="padding:18px 20px">
                     <div style="display:flex;flex-direction:column;gap:8px;min-width:0;flex:1">
                         <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-                            <span class="tp-g" style="font-weight:800;font-size:16px;color:#28293F">{{ $quiz->title }}</span>
+                            <span class="tp-g" style="font-weight:800;font-size:16px;color:var(--tp-ink)">{{ $quiz->title }}</span>
                             @if ($quiz->isInteractive())
                                 <span class="tp-tag" style="background:#DCF2EE;color:#0F7A68">{{ __('Interaktif') }}</span>
                             @else
@@ -100,34 +100,34 @@
             <div style="position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;padding:16px" role="dialog" aria-modal="true" :aria-label="quiz.title">
                 <div @click="close()" aria-hidden="true" style="position:absolute;inset:0;background:rgba(20,18,40,.6)"></div>
 
-                <div style="position:relative;display:flex;flex-direction:column;max-height:90vh;width:100%;max-width:640px;background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 24px 70px rgba(46,44,80,.4)">
-                    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:16px 20px;border-bottom:1px solid rgba(46,44,80,.08)">
+                <div style="position:relative;display:flex;flex-direction:column;max-height:90vh;width:100%;max-width:640px;background:var(--tp-surface);border-radius:18px;overflow:hidden;box-shadow:0 24px 70px rgba(46,44,80,.4)">
+                    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:16px 20px;border-bottom:1px solid var(--tp-line)">
                         <div style="min-width:0">
-                            <h2 class="tp-g" style="margin:0;font-weight:800;font-size:17px;color:#28293F;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" x-text="quiz.title"></h2>
-                            <p style="margin:2px 0 0;font-size:12.5px;color:#8B8AA3"><span x-text="quiz.questions.length"></span> {{ __('soalan') }}</p>
+                            <h2 class="tp-g" style="margin:0;font-weight:800;font-size:17px;color:var(--tp-ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis" x-text="quiz.title"></h2>
+                            <p style="margin:2px 0 0;font-size:12.5px;color:var(--tp-muted)"><span x-text="quiz.questions.length"></span> {{ __('soalan') }}</p>
                         </div>
                         <button type="button" @click="close()" x-init="$el.focus()" title="{{ __('Tutup') }}"
-                                style="flex-shrink:0;width:34px;height:34px;border:none;border-radius:9px;background:#F1F0E8;color:#6C6F87;cursor:pointer;font-size:15px">✕</button>
+                                style="flex-shrink:0;width:34px;height:34px;border:none;border-radius:9px;background:#F1F0E8;color:var(--tp-muted-2);cursor:pointer;font-size:15px">✕</button>
                     </div>
 
                     <div style="overflow-y:auto;padding:16px 20px">
                         <template x-if="! quiz.questions.length">
-                            <p style="text-align:center;color:#8B8AA3;padding:32px 0;font-weight:700">{{ __('Kuiz ini belum ada soalan.') }}</p>
+                            <p style="text-align:center;color:var(--tp-muted);padding:32px 0;font-weight:700">{{ __('Kuiz ini belum ada soalan.') }}</p>
                         </template>
 
                         <template x-if="quiz.questions.length">
                             <ol style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:14px">
                                 <template x-for="(question, index) in quiz.questions" :key="index">
-                                    <li style="border:1.5px solid rgba(46,44,80,.1);border-radius:13px;padding:14px 16px">
+                                    <li style="border:1.5px solid var(--tp-line-3);border-radius:13px;padding:14px 16px">
                                         <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px">
-                                            <p class="tp-g" style="margin:0;font-weight:800;font-size:14.5px;color:#28293F"><span x-text="(index + 1) + '.'"></span> <span x-text="question.text"></span></p>
-                                            <span style="flex-shrink:0;font-size:12px;font-weight:800;color:#8B8AA3" x-text="question.points + ' {{ __('mata') }}'"></span>
+                                            <p class="tp-g" style="margin:0;font-weight:800;font-size:14.5px;color:var(--tp-ink)"><span x-text="(index + 1) + '.'"></span> <span x-text="question.text"></span></p>
+                                            <span style="flex-shrink:0;font-size:12px;font-weight:800;color:var(--tp-muted)" x-text="question.points + ' {{ __('mata') }}'"></span>
                                         </div>
                                         <div style="display:flex;flex-direction:column;gap:6px;margin-top:10px">
                                             <template x-for="(option, oIndex) in question.options" :key="oIndex">
                                                 <div class="tp-optview" :class="{ 'is-correct': option.correct }">
                                                     <span class="tp-optview-badge" x-text="option.letter"></span>
-                                                    <span style="flex:1;min-width:0;font-size:13.5px;color:#28293F" x-text="option.text"></span>
+                                                    <span style="flex:1;min-width:0;font-size:13.5px;color:var(--tp-ink)" x-text="option.text"></span>
                                                     <span x-show="option.correct" style="flex-shrink:0;font-size:12px;font-weight:800;color:#0F7A68">✓ {{ __('Betul') }}</span>
                                                 </div>
                                             </template>

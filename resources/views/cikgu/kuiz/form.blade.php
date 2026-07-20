@@ -26,21 +26,21 @@
 
         {{-- Quiz type --}}
         <div class="tp-panelform">
-            <h2 class="tp-g" style="font-size:17px;font-weight:800;color:#28293F">{{ __('Jenis kuiz') }}</h2>
+            <h2 class="tp-g" style="font-size:17px;font-weight:800;color:var(--tp-ink)">{{ __('Jenis kuiz') }}</h2>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
                 <button type="button" @click="type = 'interactive'" class="tp-typeopt" :class="{ 'is-on': type === 'interactive' }" :aria-pressed="type === 'interactive'">
                     <span class="tp-typeopt-head">
                         <span style="font-size:16px;flex-shrink:0">📝</span>
-                        <span class="tp-g" style="font-weight:800;font-size:14px;color:#28293F">{{ __('Kuiz Interaktif') }}</span>
+                        <span class="tp-g" style="font-weight:800;font-size:14px;color:var(--tp-ink)">{{ __('Kuiz Interaktif') }}</span>
                     </span>
-                    <span style="font-size:12.5px;color:#6C6F87;line-height:1.45">{{ __('Ditanda secara automatik. Memberi mata ranking.') }}</span>
+                    <span style="font-size:12.5px;color:var(--tp-muted-2);line-height:1.45">{{ __('Ditanda secara automatik. Memberi mata ranking.') }}</span>
                 </button>
                 <button type="button" @click="type = 'file'" class="tp-typeopt" :class="{ 'is-on': type === 'file' }" :aria-pressed="type === 'file'">
                     <span class="tp-typeopt-head">
                         <span style="font-size:16px;flex-shrink:0">📄</span>
-                        <span class="tp-g" style="font-weight:800;font-size:14px;color:#28293F">{{ __('Kuiz Bercetak') }}</span>
+                        <span class="tp-g" style="font-weight:800;font-size:14px;color:var(--tp-ink)">{{ __('Kuiz Bercetak') }}</span>
                     </span>
-                    <span style="font-size:12.5px;color:#6C6F87;line-height:1.45">{{ __('Fail untuk dimuat turun. Tiada mata.') }}</span>
+                    <span style="font-size:12.5px;color:var(--tp-muted-2);line-height:1.45">{{ __('Fail untuk dimuat turun. Tiada mata.') }}</span>
                 </button>
             </div>
             @error('type') <span class="tp-error">{{ $message }}</span> @enderror
@@ -49,15 +49,15 @@
         {{-- Location --}}
         <div class="tp-panelform">
             <div style="display:flex;flex-direction:column;gap:3px">
-                <h2 class="tp-g" style="font-size:17px;font-weight:800;color:#28293F">{{ __('Lokasi kuiz') }}</h2>
-                <span style="font-size:13px;color:#8B8AA3">{{ __('Kuiz ini akan dipaparkan pada halaman Bab tersebut.') }}</span>
+                <h2 class="tp-g" style="font-size:17px;font-weight:800;color:var(--tp-ink)">{{ __('Lokasi kuiz') }}</h2>
+                <span style="font-size:13px;color:var(--tp-muted)">{{ __('Kuiz ini akan dipaparkan pada halaman Bab tersebut.') }}</span>
             </div>
             <x-chapter-picker :subjects="$subjects" :grades="$grades" :chapter="$chapter" />
         </div>
 
         {{-- Details --}}
         <div class="tp-panelform">
-            <h2 class="tp-g" style="font-size:17px;font-weight:800;color:#28293F">{{ __('Butiran kuiz') }}</h2>
+            <h2 class="tp-g" style="font-size:17px;font-weight:800;color:var(--tp-ink)">{{ __('Butiran kuiz') }}</h2>
             <div class="tp-field">
                 <label for="title" class="tp-label">{{ __('Tajuk') }}</label>
                 <input id="title" name="title" type="text" value="{{ old('title', $quiz->title) }}" required class="tp-input" @error('title') aria-invalid="true" @enderror>
@@ -94,8 +94,8 @@
         <label for="is_published" class="tp-checkrow">
             <input id="is_published" name="is_published" type="checkbox" value="1" @checked(old('is_published', $quiz->is_published ?? true)) style="width:20px;height:20px;margin-top:2px;accent-color:#17907B">
             <span style="display:flex;flex-direction:column;gap:2px">
-                <span class="tp-g" style="font-weight:800;font-size:14.5px;color:#28293F">{{ __('Terbitkan kepada murid') }}</span>
-                <span style="font-size:12.5px;color:#8B8AA3">{{ __('Nyahtanda untuk simpan sebagai draf.') }}</span>
+                <span class="tp-g" style="font-weight:800;font-size:14.5px;color:var(--tp-ink)">{{ __('Terbitkan kepada murid') }}</span>
+                <span style="font-size:12.5px;color:var(--tp-muted)">{{ __('Nyahtanda untuk simpan sebagai draf.') }}</span>
             </span>
         </label>
 

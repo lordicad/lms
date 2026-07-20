@@ -1,10 +1,10 @@
 <x-cikgu-layout :title="__('Profil')" :heading="__('Profil')" :sub="__('Urus akaun dan tetapan anda')">
     @php
         // Exact WeLearn Teacher design tokens.
-        $card = "background:#fff;border:1px solid rgba(46,44,80,.08);border-radius:18px;padding:24px;display:flex;flex-direction:column;box-shadow:0 2px 10px rgba(46,44,80,.04)";
-        $h2 = "margin:0;font-family:'Geist',sans-serif;font-size:17px;font-weight:800;color:#28293F";
-        $label = "font-family:'Geist',sans-serif;font-size:12.5px;font-weight:800;color:#6C6F87";
-        $input = "min-height:46px;border:1.5px solid rgba(46,44,80,.12);border-radius:12px;padding:0 14px;background:#F6F5F0;font-family:'Nunito',sans-serif;font-size:14.5px;color:#28293F;box-sizing:border-box;width:100%";
+        $card = "background:var(--tp-surface);border:1px solid var(--tp-line);border-radius:18px;padding:24px;display:flex;flex-direction:column;box-shadow:0 2px 10px rgba(46,44,80,.04)";
+        $h2 = "margin:0;font-family:'Geist',sans-serif;font-size:17px;font-weight:800;color:var(--tp-ink)";
+        $label = "font-family:'Geist',sans-serif;font-size:12.5px;font-weight:800;color:var(--tp-muted-2)";
+        $input = "min-height:46px;border:1.5px solid var(--tp-line-2);border-radius:12px;padding:0 14px;background:var(--tp-input);font-family:'Nunito',sans-serif;font-size:14.5px;color:var(--tp-ink);box-sizing:border-box;width:100%";
         $field = "display:flex;flex-direction:column;gap:6px";
         $primary = "align-self:flex-start;min-height:46px;border:none;cursor:pointer;border-radius:12px;background:#17907B;color:#fff;font-family:'Geist',sans-serif;font-weight:800;font-size:14px;padding:0 22px";
         $err = "margin:0;font-size:12.5px;font-weight:700;color:#C24936";
@@ -36,7 +36,7 @@
                 <div style="{{ $field }};flex:1">
                     <label for="avatar" style="{{ $label }}">{{ __('Gambar profil') }}</label>
                     <input id="avatar" name="avatar" type="file" accept="image/*" class="wl-file"
-                           style="min-height:46px;border:1.5px solid rgba(46,44,80,.12);border-radius:12px;padding:10px 14px;background:#F6F5F0;font-family:'Nunito',sans-serif;font-size:13.5px;color:#28293F;box-sizing:border-box;width:100%">
+                           style="min-height:46px;border:1.5px solid var(--tp-line-2);border-radius:12px;padding:10px 14px;background:var(--tp-input);font-family:'Nunito',sans-serif;font-size:13.5px;color:var(--tp-ink);box-sizing:border-box;width:100%">
                     @error('avatar')<p style="{{ $err }}">{{ $message }}</p>@enderror
                 </div>
             </div>
@@ -66,34 +66,34 @@
         @php($channels = $user->youtubeChannels()->latest('verified_at')->get())
         <div style="{{ $card }};gap:14px">
             <h2 style="{{ $h2 }}">{{ __('Sambung YouTube') }}</h2>
-            <p style="margin:0;font-size:13.5px;color:#6C6F87;line-height:1.55">{{ __('Sahkan pemilikan saluran YouTube anda supaya video YouTube anda sendiri dikira dalam skor bakat. Kami hanya membaca senarai saluran anda — tiada token disimpan.') }}</p>
+            <p style="margin:0;font-size:13.5px;color:var(--tp-muted-2);line-height:1.55">{{ __('Sahkan pemilikan saluran YouTube anda supaya video YouTube anda sendiri dikira dalam skor bakat. Kami hanya membaca senarai saluran anda — tiada token disimpan.') }}</p>
 
             @if (\App\Http\Controllers\YoutubeConnectController::isConfigured())
                 <a href="{{ route('oauth.youtube.redirect') }}" class="wl-primary" style="{{ $primary }};padding:0 20px;display:flex;align-items:center;gap:8px;text-decoration:none">▶ {{ $channels->isEmpty() ? __('Sambung Akaun') : __('Sambung Lagi') }}</a>
             @endif
 
             @if ($channels->isEmpty())
-                <div style="background:#F6F5F0;border-radius:12px;padding:14px 16px">
-                    <span style="font-size:13px;color:#6C6F87">{{ __('Tiada saluran disambungkan lagi. Video YouTube anda dikira sebagai rujukan sehingga anda menyambung.') }}</span>
+                <div style="background:var(--tp-input);border-radius:12px;padding:14px 16px">
+                    <span style="font-size:13px;color:var(--tp-muted-2)">{{ __('Tiada saluran disambungkan lagi. Video YouTube anda dikira sebagai rujukan sehingga anda menyambung.') }}</span>
                 </div>
             @else
                 <div style="display:flex;flex-direction:column;gap:8px">
                     @foreach ($channels as $channel)
-                        <div style="display:flex;align-items:center;gap:12px;background:#F6F5F0;border-radius:12px;padding:12px 14px">
+                        <div style="display:flex;align-items:center;gap:12px;background:var(--tp-input);border-radius:12px;padding:12px 14px">
                             @if ($channel->thumbnail_url)
                                 <img src="{{ $channel->thumbnail_url }}" alt="" loading="lazy" style="width:40px;height:40px;border-radius:50%;flex-shrink:0">
                             @else
                                 <span style="width:40px;height:40px;border-radius:50%;flex-shrink:0;background:#DCF2EE;color:#0F7A68;display:grid;place-items:center">▶</span>
                             @endif
                             <span style="min-width:0;flex:1">
-                                <span style="display:block;font-family:'Geist',sans-serif;font-weight:800;font-size:14px;color:#28293F;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $channel->title }}</span>
-                                <span style="display:block;font-size:12px;color:#8B8AA3">{{ __('Disahkan :date', ['date' => $channel->verified_at->translatedFormat('d M Y')]) }}</span>
+                                <span style="display:block;font-family:'Geist',sans-serif;font-weight:800;font-size:14px;color:var(--tp-ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $channel->title }}</span>
+                                <span style="display:block;font-size:12px;color:var(--tp-muted)">{{ __('Disahkan :date', ['date' => $channel->verified_at->translatedFormat('d M Y')]) }}</span>
                             </span>
                             <form method="POST" action="{{ route('oauth.youtube.disconnect', $channel) }}" style="flex-shrink:0"
                                   onsubmit='return confirm(@js(__("Putuskan sambungan saluran ini? Video YouTube dari saluran ini tidak akan lagi dikira untuk skor bakat anda.")))'>
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" style="min-height:38px;border:1.5px solid rgba(46,44,80,.12);cursor:pointer;border-radius:10px;background:#fff;color:#C24936;font-family:'Geist',sans-serif;font-weight:800;font-size:13px;padding:0 14px">{{ __('Putuskan') }}</button>
+                                <button type="submit" style="min-height:38px;border:1.5px solid var(--tp-line-2);cursor:pointer;border-radius:10px;background:var(--tp-surface);color:#C24936;font-family:'Geist',sans-serif;font-weight:800;font-size:13px;padding:0 14px">{{ __('Putuskan') }}</button>
                             </form>
                         </div>
                     @endforeach
