@@ -151,6 +151,7 @@ Route::middleware(['auth', 'role:teacher'])
             ->only(['index', 'store', 'edit', 'update', 'destroy']);
 
         Route::get('notifikasi', [\App\Http\Controllers\Cikgu\NotificationController::class, 'index'])->name('notifikasi');
+        Route::post('notifikasi/baca', [\App\Http\Controllers\Cikgu\NotificationController::class, 'markRead'])->name('notifikasi.baca');
 
         Route::get('ranking', TeacherRankingController::class)->name('ranking');
 
