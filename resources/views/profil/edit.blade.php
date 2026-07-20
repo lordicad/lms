@@ -94,7 +94,11 @@
                     <x-avatar :user="$user" size="lg" />
                     <div style="flex:1;min-width:200px">
                         <label for="avatar" style="{{ $labelStyle }}">{{ __('Gambar profil') }}</label>
-                        <input id="avatar" name="avatar" type="file" accept="image/*" style="{{ $inputStyle }};padding:10px 12px">
+                        <input id="avatar" name="avatar" type="file" accept="image/*" class="wl-file" style="{{ $inputStyle }};padding:9px 12px">
+                        <style>
+                            .wl-file::file-selector-button { min-height:38px;border:none;cursor:pointer;border-radius:10px;background:#17907B;color:#fff;font-family:'Geist',sans-serif;font-weight:800;font-size:13px;padding:0 16px;margin-right:14px;transition:background .15s; }
+                            .wl-file::file-selector-button:hover { background:#2BB39B; }
+                        </style>
                         @error('avatar')<p style="{{ $errStyle }}">{{ $message }}</p>@enderror
                     </div>
                 </div>
