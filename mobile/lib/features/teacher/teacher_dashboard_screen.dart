@@ -288,14 +288,14 @@ class _DashboardTabState extends State<_DashboardTab> {
                     ),
                     Row(
                       children: [
-                        const LmsLogo(size: 48, radius: 16),
+                        _TeacherHeaderAvatar(user: widget.user),
                         const SizedBox(width: 12),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               const Text(
-                                'Ruang Guru',
+                                'Portal Cikgu',
                                 style: TextStyle(
                                   fontSize: 11.5,
                                   fontWeight: FontWeight.w700,
@@ -304,7 +304,7 @@ class _DashboardTabState extends State<_DashboardTab> {
                               ),
                               const SizedBox(height: 2),
                               Text(
-                                widget.user.name,
+                                'Cikgu ${widget.user.username}',
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: const TextStyle(
@@ -499,6 +499,74 @@ class _DashboardTabState extends State<_DashboardTab> {
       },
     );
   }
+}
+
+/// Mirrors the web Cikgu userbar: the uploaded profile photo when available,
+/// otherwise the teacher's initials instead of the application logo.
+class _TeacherHeaderAvatar extends StatelessWidget {
+  const _TeacherHeaderAvatar({required this.user});
+
+  final AuthUser user;
+
+  String get _initials {
+    final parts = user.name.trim().split(RegExp(r'\s+'));
+    final letters = parts
+        .where((part) => part.isNotEmpty)
+        .take(2)
+        .map((part) => part.substring(0, 1).toUpperCase())
+        .join();
+    if (letters.isNotEmpty) return letters;
+    final username = user.username.trim();
+    if (username.isEmpty) return '?';
+    return username
+        .substring(0, username.length < 2 ? username.length : 2)
+        .toUpperCase();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final url = user.avatarUrl;
+
+    return Container(
+      width: 48,
+      height: 48,
+      padding: const EdgeInsets.all(2),
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        shape: BoxShape.circle,
+      ),
+      child: ClipOval(
+        child: url == null || url.isEmpty
+            ? _AvatarInitials(initials: _initials)
+            : Image.network(
+                url,
+                fit: BoxFit.cover,
+                errorBuilder: (_, _, _) => _AvatarInitials(initials: _initials),
+              ),
+      ),
+    );
+  }
+}
+
+class _AvatarInitials extends StatelessWidget {
+  const _AvatarInitials({required this.initials});
+
+  final String initials;
+
+  @override
+  Widget build(BuildContext context) => ColoredBox(
+    color: LmsColors.brandSoft,
+    child: Center(
+      child: Text(
+        initials,
+        style: const TextStyle(
+          color: LmsColors.brandStrong,
+          fontSize: 14,
+          fontWeight: FontWeight.w800,
+        ),
+      ),
+    ),
+  );
 }
 
 class _Heading extends StatelessWidget {
