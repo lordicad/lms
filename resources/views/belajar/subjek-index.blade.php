@@ -32,7 +32,6 @@
                                     <x-subject-emoji :subject="$subject" style="font-size:24px" />
                                     <div style="margin-top:auto;display:flex;flex-direction:column;gap:3px">
                                         <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:16px;color:#28293F">{{ $subject->displayName() }}</span>
-                                        <span style="font-family:'Geist',sans-serif;font-size:11.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#6C6F87">{{ $subject->lessons_count ?? 0 }} video</span>
                                     </div>
                                 </a>
                             @endforeach
