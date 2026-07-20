@@ -37,7 +37,7 @@ class RegisteredUserController extends Controller
             'username' => [
                 'required', 'string', 'min:3', 'max:30',
                 'regex:/^[a-zA-Z0-9._-]+$/',
-                Rule::unique(User::class, 'username'),
+                // Usernames may repeat; email is the unique identifier.
             ],
             // Kids-friendly minimum. Deliberately below Laravel's default of 8.
             'password' => ['required', 'confirmed', 'string', 'min:6'],

@@ -151,7 +151,7 @@ class AdminUserController extends Controller
             'username' => [
                 'required', 'string', 'min:3', 'max:30',
                 'regex:/^[a-zA-Z0-9._-]+$/',
-                Rule::unique('users', 'username')->ignore($user?->id),
+                // Usernames may repeat; email is the unique identifier.
             ],
             'email' => [
                 Rule::requiredIf($isTeacher),
