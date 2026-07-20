@@ -161,7 +161,7 @@
                 {{-- Ranks 4-10 --}}
                 @if ($contributors->count() > 3)
                     <div style="background:var(--tp-surface);border:1px solid var(--tp-line);border-radius:18px;overflow:hidden;box-shadow:0 2px 10px rgba(46,44,80,.04)">
-                        @foreach ($contributors->slice(3) as $i => $teacher)
+                        @foreach ($contributors->slice(3)->values() as $i => $teacher)
                             @php($p = $pal[$i % count($pal)])
                             <div class="tp-tr" style="display:flex;align-items:center;gap:14px;padding:12px 20px;border-bottom:1px solid var(--tp-line)">
                                 <span style="width:30px;font-family:'Geist',sans-serif;font-weight:800;font-size:13.5px;color:var(--tp-muted);text-align:center;flex-shrink:0">{{ $i + 4 }}</span>
