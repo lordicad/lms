@@ -4,6 +4,7 @@ import '../../core/auth/auth_user.dart';
 import '../../core/content/content_models.dart';
 import '../../core/content/content_repository.dart';
 import '../../core/theme/lms_theme.dart';
+import 'ranking_screen.dart';
 import 'subject_chapters_screen.dart';
 import 'watch_screen.dart';
 import 'widgets/content_widgets.dart';
@@ -58,6 +59,12 @@ class _DashboardTabState extends State<DashboardTab> {
     ));
   }
 
+  void _openRanking() {
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (_) => RankingScreen(repository: widget.repository),
+    ));
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<DashboardData>(
@@ -93,13 +100,18 @@ class _DashboardTabState extends State<DashboardTab> {
                     const SizedBox(height: 4),
                     Text('Jom sambung belajar untuk $gradeName.'),
                     const SizedBox(height: 16),
-                    if (data.continueWatching.isNotEmpty)
+                    if (data.continueWatching.isNotEmpty) ...[
                       _ContinueHero(
                         lesson: data.continueWatching.first,
                         onResume: () => _openLesson(data.continueWatching.first),
-                      )
-                    else
-                      _PointsCard(points: data.points, rank: data.rank),
+                      ),
+                      const SizedBox(height: 12),
+                    ],
+                    _PointsCard(
+                      points: data.points,
+                      rank: data.rank,
+                      onTap: _openRanking,
+                    ),
                   ],
                 ),
               ),
@@ -324,33 +336,38 @@ class _ThumbFallback extends StatelessWidget {
 }
 
 class _PointsCard extends StatelessWidget {
-  const _PointsCard({required this.points, required this.rank});
+  const _PointsCard({required this.points, required this.rank, this.onTap});
   final int points;
   final int? rank;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(color: LmsColors.brand, borderRadius: BorderRadius.circular(18)),
-      padding: const EdgeInsets.all(18),
-      child: Row(
-        children: [
-          const Icon(Icons.emoji_events_rounded, color: Colors.white, size: 30),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('$points mata',
-                    style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w800)),
-                Text(
-                  rank != null ? 'Kedudukan #$rank dalam Tahun anda' : 'Buat kuiz untuk kumpul mata',
-                  style: const TextStyle(color: Colors.white70, fontWeight: FontWeight.w600),
-                ),
-              ],
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(color: LmsColors.brand, borderRadius: BorderRadius.circular(18)),
+        padding: const EdgeInsets.all(18),
+        child: Row(
+          children: [
+            const Icon(Icons.emoji_events_rounded, color: Colors.white, size: 30),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('$points mata',
+                      style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w800)),
+                  Text(
+                    rank != null ? 'Kedudukan #$rank dalam Tahun anda' : 'Buat kuiz untuk kumpul mata',
+                    style: const TextStyle(color: Colors.white70, fontWeight: FontWeight.w600),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+            if (onTap != null) const Icon(Icons.chevron_right, color: Colors.white70),
+          ],
+        ),
       ),
     );
   }

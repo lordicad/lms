@@ -632,3 +632,58 @@ class QuizListItem {
     percent: _intOrNull(j['percent']),
   );
 }
+
+double _double(Object? v) => v is num ? v.toDouble() : double.tryParse('$v') ?? 0;
+
+// --- Ranking (leaderboard, scoped to the student's Tahun) ---
+
+class RankRow {
+  const RankRow({
+    required this.rank,
+    required this.name,
+    required this.points,
+    required this.accuracy,
+    required this.quizzes,
+    required this.isMe,
+  });
+
+  final int rank;
+  final String name;
+  final int points;
+  final double accuracy;
+  final int quizzes;
+  final bool isMe;
+
+  factory RankRow.fromJson(Map<String, dynamic> j) => RankRow(
+    rank: _int(j['rank']),
+    name: _str(j['name']),
+    points: _int(j['points']),
+    accuracy: _double(j['accuracy']),
+    quizzes: _int(j['quizzes']),
+    isMe: _bool(j['is_me']),
+  );
+}
+
+class RankingData {
+  const RankingData({
+    required this.gradeName,
+    required this.top,
+    required this.myRow,
+    required this.showMyRow,
+  });
+
+  final String? gradeName;
+  final List<RankRow> top;
+  final RankRow? myRow;
+  final bool showMyRow;
+
+  factory RankingData.fromJson(Map<String, dynamic> j) {
+    final grade = j['grade'] as Map<String, dynamic>?;
+    return RankingData(
+      gradeName: grade == null ? null : _strOrNull(grade['name']),
+      top: _list(j['top'], RankRow.fromJson),
+      myRow: j['my_row'] == null ? null : RankRow.fromJson(j['my_row'] as Map<String, dynamic>),
+      showMyRow: _bool(j['show_my_row']),
+    );
+  }
+}

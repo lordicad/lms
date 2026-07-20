@@ -108,6 +108,11 @@ class ContentApi {
     return QuizResult.fromJson(json);
   }
 
+  Future<RankingData> ranking(String token) async {
+    final json = await _get(token, '/student/ranking');
+    return RankingData.fromJson(json);
+  }
+
   Future<Map<String, dynamic>> _get(String token, String path, {int? grade}) async {
     final query = grade == null ? '' : '?grade=$grade';
     final response = await _http.get(

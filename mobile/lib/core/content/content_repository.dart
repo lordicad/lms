@@ -59,4 +59,6 @@ class ContentRepository {
 
   Future<QuizResult> quizResult(int attemptId) async =>
       _api.quizResult(await _token(), attemptId);
+
+  Future<RankingData> ranking() async => _api.ranking(await _token());
 }
