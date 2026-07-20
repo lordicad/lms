@@ -30,7 +30,7 @@
                                 <a href="{{ route('belajar.subjek', ['subject' => $subject->slug, 'grade' => $grade->level]) }}" class="wl-lift"
                                    style="background:{{ $grad }};border:1px solid rgba(46,44,80,.05);border-radius:18px;padding:20px;min-height:160px;display:flex;flex-direction:column;box-shadow:0 4px 16px rgba(46,44,80,.05);cursor:pointer;text-decoration:none">
                                     <x-subject-emoji :subject="$subject" style="font-size:24px" />
-                                    <div style="margin-top:auto;display:flex;flex-direction:column;gap:3px">
+                                    <div style="margin-top:auto;margin-bottom:12px;display:flex;flex-direction:column;gap:3px">
                                         <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:16px;color:#28293F">{{ $subject->displayName() }}</span>
                                     </div>
                                 </a>
