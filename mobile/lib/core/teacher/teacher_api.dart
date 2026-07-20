@@ -94,6 +94,23 @@ class TeacherApi {
 
   Future<void> deleteChapter(String token, int id) => _delete(token, '/teacher/chapters/$id');
 
+  Future<void> createVideo(
+    String token, {
+    required int chapterId,
+    required String title,
+    String? description,
+    required String youtubeUrl,
+    required bool isPublished,
+  }) async {
+    await _sendJson('POST', token, '/teacher/videos', {
+      'chapter_id': chapterId,
+      'title': title,
+      if (description != null && description.isNotEmpty) 'description': description,
+      'youtube_url': youtubeUrl,
+      'is_published': isPublished,
+    });
+  }
+
   Future<Map<String, dynamic>> _get(String token, String path) async {
     final response = await _http.get(
       Uri.parse('$baseUrl$path'),

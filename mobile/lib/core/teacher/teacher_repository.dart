@@ -58,4 +58,20 @@ class TeacherRepository {
       _api.updateChapter(await _token(), id, title: title, description: description);
 
   Future<void> deleteChapter(int id) async => _api.deleteChapter(await _token(), id);
+
+  Future<void> createVideo({
+    required int chapterId,
+    required String title,
+    String? description,
+    required String youtubeUrl,
+    required bool isPublished,
+  }) async =>
+      _api.createVideo(
+        await _token(),
+        chapterId: chapterId,
+        title: title,
+        description: description,
+        youtubeUrl: youtubeUrl,
+        isPublished: isPublished,
+      );
 }

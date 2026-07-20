@@ -7,6 +7,7 @@ import '../../core/theme/lms_theme.dart';
 import '../student/profile_tab.dart';
 import '../student/widgets/content_widgets.dart';
 import 'content_hub_tab.dart';
+import 'video_form_screen.dart';
 
 /// The teacher shell: a bottom nav between the (live) dashboard, the content hub and the
 /// profile. Each tab owns its top area — the dashboard bleeds a forest header under the
@@ -106,6 +107,13 @@ class _DashboardTabState extends State<_DashboardTab> {
     const SnackBar(content: Text('Ciri ini akan datang tidak lama lagi.')),
   );
 
+  Future<void> _openAddVideo() async {
+    final created = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(builder: (_) => VideoFormScreen(repository: widget.repository)),
+    );
+    if (created == true) _reload();
+  }
+
   @override
   Widget build(BuildContext context) {
     final topInset = MediaQuery.of(context).padding.top;
@@ -164,7 +172,7 @@ class _DashboardTabState extends State<_DashboardTab> {
                       ),
                     ),
                     GestureDetector(
-                      onTap: _soon,
+                      onTap: _openAddVideo,
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
                         decoration: BoxDecoration(
@@ -213,7 +221,7 @@ class _DashboardTabState extends State<_DashboardTab> {
                       const SizedBox(height: 10),
                       Row(
                         children: [
-                          _QuickAction(icon: Icons.video_call_outlined, label: 'Video', onTap: _soon),
+                          _QuickAction(icon: Icons.video_call_outlined, label: 'Video', onTap: _openAddVideo),
                           const SizedBox(width: 9),
                           _QuickAction(icon: Icons.upload_file_outlined, label: 'Bahan', onTap: _soon),
                           const SizedBox(width: 9),
