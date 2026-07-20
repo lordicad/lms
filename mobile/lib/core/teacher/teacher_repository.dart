@@ -32,6 +32,17 @@ class TeacherRepository {
 
   Future<TeacherTalentData> talent() async => _api.talent(await _token());
 
+  Future<TeacherRankingData> ranking({
+    int? gradeId,
+    int? subjectId,
+    int? quizId,
+  }) async => _api.ranking(
+    await _token(),
+    gradeId: gradeId,
+    subjectId: subjectId,
+    quizId: quizId,
+  );
+
   Future<List<TeacherVideo>> videos() async => _api.videos(await _token());
 
   Future<List<TeacherMaterial>> materials() async =>

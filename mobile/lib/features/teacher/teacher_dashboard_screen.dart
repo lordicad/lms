@@ -12,6 +12,7 @@ import 'content_hub_tab.dart';
 import 'material_form_screen.dart';
 import 'quiz_builder_screen.dart';
 import 'teacher_notifications_screen.dart';
+import 'teacher_ranking_screen.dart';
 import 'teacher_talent_screen.dart';
 import 'video_form_screen.dart';
 
@@ -223,6 +224,14 @@ class _DashboardTabState extends State<_DashboardTab> {
     );
   }
 
+  Future<void> _openRanking() async {
+    await Navigator.of(context).push<void>(
+      MaterialPageRoute(
+        builder: (_) => TeacherRankingScreen(repository: widget.repository),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final topInset = MediaQuery.of(context).padding.top;
@@ -401,15 +410,38 @@ class _DashboardTabState extends State<_DashboardTab> {
                         ],
                       ),
                       const SizedBox(height: 12),
-                      OutlinedButton.icon(
-                        onPressed: _openTalent,
-                        icon: const Icon(Icons.insights_outlined),
-                        label: const Text('Bakat Kandungan'),
-                        style: OutlinedButton.styleFrom(
-                          minimumSize: const Size.fromHeight(48),
-                          foregroundColor: LmsColors.brandStrong,
-                          side: const BorderSide(color: Color(0x334A7C3A)),
-                        ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: OutlinedButton.icon(
+                              onPressed: _openTalent,
+                              icon: const Icon(Icons.insights_outlined),
+                              label: const Text('Bakat'),
+                              style: OutlinedButton.styleFrom(
+                                minimumSize: const Size.fromHeight(48),
+                                foregroundColor: LmsColors.brandStrong,
+                                side: const BorderSide(
+                                  color: Color(0x334A7C3A),
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: OutlinedButton.icon(
+                              onPressed: _openRanking,
+                              icon: const Icon(Icons.emoji_events_outlined),
+                              label: const Text('Ranking'),
+                              style: OutlinedButton.styleFrom(
+                                minimumSize: const Size.fromHeight(48),
+                                foregroundColor: LmsColors.brandStrong,
+                                side: const BorderSide(
+                                  color: Color(0x334A7C3A),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                       const SizedBox(height: 22),
                       const _Heading('Aksi pantas'),
@@ -456,7 +488,7 @@ class _DashboardTabState extends State<_DashboardTab> {
                           (a) => _ActivityRow(attempt: a),
                         ),
                       const SizedBox(height: 16),
-                      _TalentCard(onTap: _soon),
+                      _TalentCard(onTap: _openTalent),
                     ],
                   ),
                 ),

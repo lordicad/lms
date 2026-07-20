@@ -36,6 +36,22 @@ class TeacherApi {
     return TeacherTalentData.fromJson(json);
   }
 
+  Future<TeacherRankingData> ranking(
+    String token, {
+    int? gradeId,
+    int? subjectId,
+    int? quizId,
+  }) async {
+    final params = <String>[
+      if (gradeId != null) 'grade_id=$gradeId',
+      if (subjectId != null) 'subject_id=$subjectId',
+      if (quizId != null) 'quiz_id=$quizId',
+    ];
+    final suffix = params.isEmpty ? '' : '?${params.join('&')}';
+    final json = await _get(token, '/teacher/ranking$suffix');
+    return TeacherRankingData.fromJson(json);
+  }
+
   Future<List<TeacherVideo>> videos(String token) async {
     final json = await _get(token, '/teacher/content/videos');
     return _mapList(json['videos'], TeacherVideo.fromJson);

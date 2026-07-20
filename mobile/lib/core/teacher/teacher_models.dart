@@ -100,6 +100,89 @@ class TeacherNotificationsData {
       );
 }
 
+/// Full student leaderboard, filtered by the same Tahun/Subjek/Kuiz controls
+/// available on the web Cikgu page.
+class TeacherRankingData {
+  const TeacherRankingData({required this.filters, required this.rows});
+
+  final TeacherRankingFilters filters;
+  final List<TeacherRankingRow> rows;
+
+  factory TeacherRankingData.fromJson(Map<String, dynamic> j) =>
+      TeacherRankingData(
+        filters: TeacherRankingFilters.fromJson(
+          (j['filters'] as Map<String, dynamic>?) ?? const {},
+        ),
+        rows: _mapList(j['rows'], TeacherRankingRow.fromJson),
+      );
+}
+
+class TeacherRankingFilters {
+  const TeacherRankingFilters({
+    required this.grades,
+    required this.subjects,
+    required this.quizzes,
+  });
+
+  final List<OptionItem> grades;
+  final List<OptionItem> subjects;
+  final List<TeacherRankingQuiz> quizzes;
+
+  factory TeacherRankingFilters.fromJson(Map<String, dynamic> j) =>
+      TeacherRankingFilters(
+        grades: _mapList(j['grades'], OptionItem.fromJson),
+        subjects: _mapList(j['subjects'], OptionItem.fromJson),
+        quizzes: _mapList(j['quizzes'], TeacherRankingQuiz.fromJson),
+      );
+}
+
+class TeacherRankingQuiz {
+  const TeacherRankingQuiz({required this.id, required this.title});
+
+  final int id;
+  final String title;
+
+  factory TeacherRankingQuiz.fromJson(Map<String, dynamic> j) =>
+      TeacherRankingQuiz(id: _int(j['id']), title: _str(j['title']));
+}
+
+class TeacherRankingRow {
+  const TeacherRankingRow({
+    required this.rank,
+    required this.studentName,
+    required this.initials,
+    required this.gradeName,
+    required this.points,
+    required this.correct,
+    required this.questions,
+    required this.accuracy,
+    required this.quizzes,
+  });
+
+  final int rank;
+  final String studentName;
+  final String initials;
+  final String? gradeName;
+  final int points;
+  final int correct;
+  final int questions;
+  final double accuracy;
+  final int quizzes;
+
+  factory TeacherRankingRow.fromJson(Map<String, dynamic> j) =>
+      TeacherRankingRow(
+        rank: _int(j['rank']),
+        studentName: _str(j['student_name']),
+        initials: _str(j['initials']),
+        gradeName: _strOrNull(j['grade_name']),
+        points: _int(j['points']),
+        correct: _int(j['correct']),
+        questions: _int(j['questions']),
+        accuracy: _double(j['accuracy']),
+        quizzes: _int(j['quizzes']),
+      );
+}
+
 class TeacherNotificationItem {
   const TeacherNotificationItem({
     required this.id,

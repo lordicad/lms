@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\Teacher\DashboardController as TeacherDashboardCont
 use App\Http\Controllers\Api\Teacher\MaterialController as TeacherMaterialController;
 use App\Http\Controllers\Api\Teacher\NotificationController as TeacherNotificationController;
 use App\Http\Controllers\Api\Teacher\QuizController as TeacherQuizController;
+use App\Http\Controllers\Api\Teacher\RankingController as TeacherRankingController;
 use App\Http\Controllers\Api\Teacher\TalentController as TeacherTalentController;
 use App\Http\Controllers\Api\Teacher\VideoController as TeacherVideoController;
 use Illuminate\Support\Facades\Route;
@@ -74,6 +75,7 @@ Route::middleware('auth:sanctum')->prefix('teacher')->group(function () {
     Route::get('notifications', [TeacherNotificationController::class, 'index']);
     Route::post('notifications/read', [TeacherNotificationController::class, 'markRead']);
     Route::get('talent', TeacherTalentController::class);
+    Route::get('ranking', TeacherRankingController::class);
 
     Route::get('content/videos', [TeacherContentController::class, 'videos']);
     Route::get('content/materials', [TeacherContentController::class, 'materials']);
