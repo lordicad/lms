@@ -12,6 +12,7 @@ class ProfileTab extends StatelessWidget {
     super.key,
     required this.user,
     required this.onSignOut,
+    required this.loadProfileOptions,
     required this.onUpdateProfile,
     required this.onUpdateAvatar,
     this.roleLabel = 'Murid',
@@ -19,12 +20,8 @@ class ProfileTab extends StatelessWidget {
 
   final AuthUser user;
   final Future<void> Function() onSignOut;
-  final Future<AuthUser> Function({
-    required String name,
-    required String username,
-    String? email,
-  })
-  onUpdateProfile;
+  final Future<ProfileOptions> Function() loadProfileOptions;
+  final Future<AuthUser> Function(ProfileUpdate update) onUpdateProfile;
   final Future<AuthUser> Function(NativeUploadFile file) onUpdateAvatar;
   final String roleLabel;
 
@@ -59,6 +56,30 @@ class ProfileTab extends StatelessWidget {
                 label: 'Tahun',
                 value: user.grade?.name ?? '—',
               ),
+              if (user.school != null) ...[
+                const Divider(height: 1),
+                _InfoRow(
+                  icon: Icons.account_balance_outlined,
+                  label: 'Sekolah',
+                  value: user.school!.name,
+                ),
+              ],
+              if (user.schoolClass != null) ...[
+                const Divider(height: 1),
+                _InfoRow(
+                  icon: Icons.groups_outlined,
+                  label: 'Kelas',
+                  value: user.schoolClass!.label,
+                ),
+              ],
+              if (user.role == UserRole.teacher && user.position != null) ...[
+                const Divider(height: 1),
+                _InfoRow(
+                  icon: Icons.work_outline_rounded,
+                  label: 'Jawatan',
+                  value: user.position!,
+                ),
+              ],
               if (user.email != null) ...[
                 const Divider(height: 1),
                 _InfoRow(
@@ -131,6 +152,7 @@ class ProfileTab extends StatelessWidget {
         builder: (_) => ProfileEditScreen(
           user: user,
           roleLabel: roleLabel,
+          loadOptions: loadProfileOptions,
           onSave: onUpdateProfile,
           onSaveAvatar: onUpdateAvatar,
         ),

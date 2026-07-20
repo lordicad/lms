@@ -3,6 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Grade;
+use App\Models\School;
+use App\Models\SchoolClass;
+use App\Models\Subject;
 use App\Models\User;
 use App\Support\Uploads;
 use Illuminate\Http\JsonResponse;
@@ -63,6 +67,49 @@ class AuthController extends Controller
     }
 
     /**
+     * Reference data for the self-service profile form. The web profile uses
+     * these same School -> Tahun -> Kelas relationships, so mobile users see
+     * only classes that are valid for their selected school and year.
+     */
+    public function profileOptions(Request $request): JsonResponse
+    {
+        $classes = SchoolClass::active()
+            ->with(['grade:id,name', 'homeroomTeacher:id,name'])
+            ->orderBy('school_id')
+            ->orderBy('grade_id')
+            ->orderBy('name')
+            ->get();
+
+        return response()->json([
+            'schools' => School::orderBy('name')->get(['id', 'name', 'code', 'state'])
+                ->map(fn (School $school) => [
+                    'id' => $school->id,
+                    'name' => $school->name,
+                    'code' => $school->code,
+                    'state' => $school->state,
+                ])->values(),
+            'grades' => Grade::orderBy('level')->get(['id', 'level', 'name'])
+                ->map(fn (Grade $grade) => [
+                    'id' => $grade->id,
+                    'level' => $grade->level,
+                    'name' => $grade->name,
+                ])->values(),
+            'classes' => $classes->map(fn (SchoolClass $class) => [
+                'id' => $class->id,
+                'school_id' => $class->school_id,
+                'grade_id' => $class->grade_id,
+                'label' => $class->label(),
+                'homeroom_teacher_name' => $class->homeroomTeacher?->name,
+            ])->values(),
+            'subjects' => Subject::orderBy('sort_order')->get(['id', 'name', 'short_name', 'icon'])
+                ->map(fn (Subject $subject) => [
+                    'id' => $subject->id,
+                    'name' => $subject->displayName(),
+                ])->values(),
+        ]);
+    }
+
+    /**
      * Update the account fields that are editable in the mobile profile.
      *
      * Avatar uploads and password changes remain separate actions, so this JSON
@@ -73,7 +120,7 @@ class AuthController extends Controller
         /** @var User $user */
         $user = $request->user();
 
-        $validated = $request->validate([
+        $rules = [
             'name' => ['required', 'string', 'max:255'],
             'username' => [
                 'required', 'string', 'min:3', 'max:30',
@@ -84,19 +131,100 @@ class AuthController extends Controller
                 'nullable', 'string', 'lowercase', 'email', 'max:255',
                 Rule::unique('users', 'email')->ignore($user->id),
             ],
-        ], [
+            'school_id' => ['nullable', 'integer', Rule::exists('schools', 'id')],
+        ];
+
+        if ($user->isStudent()) {
+            $rules += [
+                'grade_level' => ['required', 'integer', Rule::exists('grades', 'level')],
+                'school_class_id' => ['nullable', 'integer', Rule::exists('school_classes', 'id')],
+                'guardian_name' => ['nullable', 'string', 'max:255'],
+                'guardian_phone' => ['nullable', 'string', 'max:30', 'regex:/^\+?[0-9\s\-()]{6,20}$/'],
+                'guardian_email' => ['nullable', 'string', 'email', 'max:255'],
+            ];
+        }
+
+        if ($user->isTeacher()) {
+            $rules += [
+                'phone' => ['nullable', 'string', 'max:30', 'regex:/^\+?[0-9\s\-()]{6,20}$/'],
+                'position' => ['nullable', 'string', 'max:100'],
+                'subjects' => ['nullable', 'array'],
+                'subjects.*' => ['integer', Rule::exists('subjects', 'id')],
+                'homeroom_class_id' => ['nullable', 'integer', Rule::exists('school_classes', 'id')],
+            ];
+        }
+
+        $validated = $request->validate($rules, [
             'name.required' => __('Sila isi nama anda.'),
             'username.required' => __('Sila isi nama pengguna.'),
             'username.regex' => __('Nama pengguna hanya boleh mengandungi huruf, nombor, titik, garis bawah dan sengkang.'),
             'email.required' => __('Guru perlu memberikan alamat emel.'),
             'email.unique' => __('Emel ini sudah didaftarkan.'),
+            'grade_level.required' => __('Sila pilih Tahun anda.'),
         ]);
+
+        $studentClass = null;
+        if ($user->isStudent() && ! empty($validated['school_class_id'])) {
+            $studentClass = SchoolClass::find($validated['school_class_id']);
+            $gradeId = Grade::where('level', $validated['grade_level'])->value('id');
+            if (! $studentClass
+                || (int) $studentClass->school_id !== (int) ($validated['school_id'] ?? 0)
+                || (int) $studentClass->grade_id !== (int) $gradeId) {
+                throw ValidationException::withMessages([
+                    'school_class_id' => [__('Kelas tidak sepadan dengan sekolah dan tahun yang dipilih.')],
+                ]);
+            }
+        }
+
+        $homeroomClass = null;
+        if ($user->isTeacher() && ! empty($validated['homeroom_class_id'])) {
+            $homeroomClass = SchoolClass::find($validated['homeroom_class_id']);
+            if (! $homeroomClass
+                || (int) $homeroomClass->school_id !== (int) ($validated['school_id'] ?? 0)) {
+                throw ValidationException::withMessages([
+                    'homeroom_class_id' => [__('Kelas ini bukan di sekolah yang dipilih.')],
+                ]);
+            }
+            if ($homeroomClass->homeroom_teacher_id !== null
+                && (int) $homeroomClass->homeroom_teacher_id !== $user->id) {
+                throw ValidationException::withMessages([
+                    'homeroom_class_id' => [__('Kelas ini sudah mempunyai guru kelas.')],
+                ]);
+            }
+        }
 
         $user->update([
             'name' => $validated['name'],
             'username' => $validated['username'],
             'email' => $validated['email'] ?? null,
+            'school_id' => $validated['school_id'] ?? null,
         ]);
+
+        if ($user->isStudent()) {
+            $user->update([
+                'grade_id' => Grade::where('level', $validated['grade_level'])->value('id'),
+                'school_class_id' => $studentClass?->id,
+                'guardian_name' => $validated['guardian_name'] ?? null,
+                'guardian_phone' => $validated['guardian_phone'] ?? null,
+                'guardian_email' => $validated['guardian_email'] ?? null,
+            ]);
+        }
+
+        if ($user->isTeacher()) {
+            $user->update([
+                'phone' => $validated['phone'] ?? null,
+                'position' => $validated['position'] ?? null,
+            ]);
+            $user->subjects()->sync($validated['subjects'] ?? []);
+
+            $currentHomeroom = $user->homeroomClass()->first();
+            if ($currentHomeroom && (int) $currentHomeroom->id !== (int) ($homeroomClass?->id)) {
+                $currentHomeroom->update(['homeroom_teacher_id' => null]);
+            }
+            if ($homeroomClass) {
+                $homeroomClass->update(['homeroom_teacher_id' => $user->id]);
+            }
+        }
 
         return response()->json([
             'user' => $this->userPayload($user->fresh() ?? $user),
@@ -148,7 +276,15 @@ class AuthController extends Controller
      */
     private function userPayload(User $user): array
     {
-        $user->loadMissing('grade');
+        $user->loadMissing([
+            'grade',
+            'school',
+            'schoolClass.grade',
+            'schoolClass.homeroomTeacher',
+            'subjects',
+            'homeroomClass.grade',
+            'homeroomClass.school',
+        ]);
 
         return [
             'id' => $user->id,
@@ -161,6 +297,32 @@ class AuthController extends Controller
                 'id' => $user->grade->id,
                 'level' => $user->grade->level,
                 'name' => $user->grade->name,
+            ],
+            'school' => $user->school === null ? null : [
+                'id' => $user->school->id,
+                'name' => $user->school->name,
+            ],
+            'school_class' => $user->schoolClass === null ? null : [
+                'id' => $user->schoolClass->id,
+                'school_id' => $user->schoolClass->school_id,
+                'grade_id' => $user->schoolClass->grade_id,
+                'label' => $user->schoolClass->label(),
+                'homeroom_teacher_name' => $user->schoolClass->homeroomTeacher?->name,
+            ],
+            'guardian_name' => $user->guardian_name,
+            'guardian_phone' => $user->guardian_phone,
+            'guardian_email' => $user->guardian_email,
+            'phone' => $user->phone,
+            'position' => $user->position,
+            'subjects' => $user->subjects->map(fn (Subject $subject) => [
+                'id' => $subject->id,
+                'name' => $subject->displayName(),
+            ])->values(),
+            'homeroom_class' => $user->homeroomClass === null ? null : [
+                'id' => $user->homeroomClass->id,
+                'school_id' => $user->homeroomClass->school_id,
+                'grade_id' => $user->homeroomClass->grade_id,
+                'label' => $user->homeroomClass->label(),
             ],
         ];
     }

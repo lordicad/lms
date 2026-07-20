@@ -74,11 +74,9 @@ class _LmsMobileAppState extends State<LmsMobileApp> {
     }
   }
 
-  Future<AuthUser> _updateProfile({
-    required String name,
-    required String username,
-    String? email,
-  }) async {
+  Future<ProfileOptions> _loadProfileOptions() => _auth.profileOptions();
+
+  Future<AuthUser> _updateProfile(ProfileUpdate update) async {
     final user = _user;
     if (user == null) {
       throw StateError('Sila log masuk semula untuk mengemas kini profil.');
@@ -86,9 +84,7 @@ class _LmsMobileAppState extends State<LmsMobileApp> {
 
     final updated = await _auth.updateProfile(
       currentUser: user,
-      name: name,
-      username: username,
-      email: email,
+      update: update,
     );
 
     if (mounted) {
@@ -124,6 +120,7 @@ class _LmsMobileAppState extends State<LmsMobileApp> {
           : _RoleHome(
               user: _user!,
               onSignOut: _signOut,
+              loadProfileOptions: _loadProfileOptions,
               onUpdateProfile: _updateProfile,
               onUpdateAvatar: _updateAvatar,
             ),
@@ -135,18 +132,15 @@ class _RoleHome extends StatelessWidget {
   const _RoleHome({
     required this.user,
     required this.onSignOut,
+    required this.loadProfileOptions,
     required this.onUpdateProfile,
     required this.onUpdateAvatar,
   });
 
   final AuthUser user;
   final Future<void> Function() onSignOut;
-  final Future<AuthUser> Function({
-    required String name,
-    required String username,
-    String? email,
-  })
-  onUpdateProfile;
+  final Future<ProfileOptions> Function() loadProfileOptions;
+  final Future<AuthUser> Function(ProfileUpdate update) onUpdateProfile;
   final Future<AuthUser> Function(NativeUploadFile file) onUpdateAvatar;
 
   @override
@@ -155,12 +149,14 @@ class _RoleHome extends StatelessWidget {
       UserRole.student => StudentShell(
         user: user,
         onSignOut: onSignOut,
+        loadProfileOptions: loadProfileOptions,
         onUpdateProfile: onUpdateProfile,
         onUpdateAvatar: onUpdateAvatar,
       ),
       UserRole.teacher => TeacherDashboardScreen(
         user: user,
         onSignOut: onSignOut,
+        loadProfileOptions: loadProfileOptions,
         onUpdateProfile: onUpdateProfile,
         onUpdateAvatar: onUpdateAvatar,
       ),

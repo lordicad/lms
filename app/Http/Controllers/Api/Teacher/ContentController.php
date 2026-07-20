@@ -84,7 +84,7 @@ class ContentController extends Controller
         }
 
         $quizzes = $teacher->quizzes()
-            ->with('chapter.subject')
+            ->with('chapter.subject', 'chapter.grade')
             ->withCount(['questions', 'completedAttempts as attempts_count'])
             ->orderByDesc('id')
             ->get();
@@ -94,6 +94,9 @@ class ContentController extends Controller
                 'id' => $q->id,
                 'title' => $q->title,
                 'type' => $q->type,
+                'chapter_id' => $q->chapter_id,
+                'subject_id' => $q->chapter?->subject_id,
+                'grade_id' => $q->chapter?->grade_id,
                 'chapter_label' => $q->chapter?->label(),
                 'subject_name' => $q->chapter?->subject?->displayName(),
                 'published' => (bool) $q->is_published,

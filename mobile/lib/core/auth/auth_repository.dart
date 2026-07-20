@@ -66,14 +66,24 @@ class AuthRepository {
     }
   }
 
+  Future<ProfileOptions> profileOptions() async {
+    final token = await _tokenStore.read();
+    if (token == null) {
+      throw const ApiException('Sesi anda telah tamat. Sila log masuk semula.');
+    }
+    return _api.profileOptions(token);
+  }
+
   Future<AuthUser> updateProfile({
     required AuthUser currentUser,
-    required String name,
-    required String username,
-    String? email,
+    required ProfileUpdate update,
   }) async {
     if (usePreviewAuthentication) {
-      return currentUser.copyWith(name: name, username: username, email: email);
+      return currentUser.copyWith(
+        name: update.name,
+        username: update.username,
+        email: update.email,
+      );
     }
 
     final token = await _tokenStore.read();
@@ -83,9 +93,8 @@ class AuthRepository {
 
     return _api.updateProfile(
       token: token,
-      name: name,
-      username: username,
-      email: email,
+      role: currentUser.role,
+      update: update,
     );
   }
 

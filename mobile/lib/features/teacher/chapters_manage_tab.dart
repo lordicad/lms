@@ -4,9 +4,10 @@ import '../../core/teacher/teacher_models.dart';
 import '../../core/teacher/teacher_repository.dart';
 import '../../core/theme/lms_theme.dart';
 import '../student/widgets/content_widgets.dart';
+import 'teacher_chapter_detail_screen.dart';
 
-/// Teacher Bab management: pick a Subject + Tahun, then add, rename or remove a Bab.
-/// The Bab number is server-assigned; only an empty Bab can be deleted.
+/// Mirrors the web Bab page: chapters are shared curriculum taxonomy. A teacher
+/// picks a year and subject, then opens a Bab to see only their own content.
 class ChaptersManageTab extends StatefulWidget {
   const ChaptersManageTab({super.key, required this.repository});
 
@@ -36,12 +37,12 @@ class _ChaptersManageTabState extends State<ChaptersManageTab> {
       if (!mounted) return;
       setState(() {
         _options = options;
-        _subject = options.subjects.isNotEmpty ? options.subjects.first : null;
         _grade = options.grades.isNotEmpty ? options.grades.first : null;
+        _subject = options.subjects.isNotEmpty ? options.subjects.first : null;
       });
       _reloadChapters();
-    } catch (e) {
-      if (mounted) setState(() => _optionsError = e);
+    } catch (error) {
+      if (mounted) setState(() => _optionsError = error);
     }
   }
 
@@ -52,107 +53,21 @@ class _ChaptersManageTabState extends State<ChaptersManageTab> {
     });
   }
 
-  Future<void> _showChapterDialog({TeacherChapter? existing}) async {
-    final titleCtrl = TextEditingController(text: existing?.title ?? '');
-    final descCtrl = TextEditingController();
-
-    final ok = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(
-          existing == null
-              ? 'Tambah Bab'
-              : 'Namakan semula Bab ${existing.number}',
+  Future<void> _openChapter(TeacherChapter chapter) async {
+    final subject = _subject;
+    final grade = _grade;
+    if (subject == null || grade == null) return;
+    await Navigator.of(context).push<void>(
+      MaterialPageRoute(
+        builder: (_) => TeacherChapterDetailScreen(
+          repository: widget.repository,
+          chapter: chapter,
+          subjectName: subject.name,
+          gradeName: grade.name,
         ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: titleCtrl,
-              autofocus: true,
-              decoration: const InputDecoration(labelText: 'Tajuk Bab'),
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: descCtrl,
-              maxLines: 2,
-              decoration: const InputDecoration(
-                labelText: 'Penerangan (pilihan)',
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Batal'),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Simpan'),
-          ),
-        ],
       ),
     );
-
-    if (ok != true) return;
-    final title = titleCtrl.text.trim();
-    if (title.isEmpty) return;
-
-    try {
-      if (existing == null) {
-        await widget.repository.createChapter(
-          subjectId: _subject!.id,
-          gradeId: _grade!.id,
-          title: title,
-          description: descCtrl.text.trim(),
-        );
-      } else {
-        await widget.repository.updateChapter(
-          existing.id,
-          title: title,
-          description: descCtrl.text.trim(),
-        );
-      }
-      _reloadChapters();
-    } catch (e) {
-      if (mounted)
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('$e')));
-    }
-  }
-
-  Future<void> _deleteChapter(TeacherChapter chapter) async {
-    final ok = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Padam Bab?'),
-        content: Text('Padam Bab ${chapter.number}: ${chapter.title}?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Batal'),
-          ),
-          FilledButton(
-            style: FilledButton.styleFrom(backgroundColor: LmsColors.danger),
-            onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Padam'),
-          ),
-        ],
-      ),
-    );
-    if (ok != true) return;
-
-    try {
-      await widget.repository.deleteChapter(chapter.id);
-      _reloadChapters();
-    } catch (e) {
-      if (mounted)
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('$e')));
-    }
+    _reloadChapters();
   }
 
   @override
@@ -172,20 +87,27 @@ class _ChaptersManageTabState extends State<ChaptersManageTab> {
 
     return Column(
       children: [
+        const Padding(
+          padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
+          child: Text(
+            'Pilih Tahun dan Subjek, kemudian lihat kandungan anda dalam setiap Bab.',
+            style: TextStyle(fontSize: 12, color: LmsColors.inkMuted),
+          ),
+        ),
         Padding(
-          padding: const EdgeInsets.fromLTRB(20, 8, 20, 8),
+          padding: const EdgeInsets.fromLTRB(20, 12, 20, 8),
           child: Row(
             children: [
               Expanded(
-                child: _dropdown('Subjek', options.subjects, _subject, (v) {
-                  setState(() => _subject = v);
+                child: _dropdown('Tahun', options.grades, _grade, (value) {
+                  setState(() => _grade = value);
                   _reloadChapters();
                 }),
               ),
               const SizedBox(width: 12),
               Expanded(
-                child: _dropdown('Tahun', options.grades, _grade, (v) {
-                  setState(() => _grade = v);
+                child: _dropdown('Subjek', options.subjects, _subject, (value) {
+                  setState(() => _subject = value);
                   _reloadChapters();
                 }),
               ),
@@ -197,64 +119,36 @@ class _ChaptersManageTabState extends State<ChaptersManageTab> {
               ? const SizedBox()
               : FutureBuilder<ChaptersData>(
                   future: _chapters,
-                  builder: (context, snap) {
-                    if (snap.connectionState == ConnectionState.waiting) {
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(child: CircularProgressIndicator());
                     }
-                    if (snap.hasError) {
+                    if (snapshot.hasError) {
                       return StateMessage(
                         icon: Icons.error_outline,
-                        title: 'Tidak dapat memuatkan bab',
-                        subtitle: '${snap.error}',
+                        title: 'Tidak dapat memuatkan Bab',
+                        subtitle: '${snapshot.error}',
                         onRetry: _reloadChapters,
                       );
                     }
 
-                    final data = snap.data!;
-                    return Column(
-                      children: [
-                        Expanded(
-                          child: data.chapters.isEmpty
-                              ? StateMessage(
-                                  icon: Icons.inbox_outlined,
-                                  title: 'Belum ada bab',
-                                  subtitle: data.isOffered
-                                      ? 'Tambah bab pertama di bawah.'
-                                      : 'Subjek ini tidak ditawarkan untuk Tahun ini.',
-                                )
-                              : ListView.separated(
-                                  padding: const EdgeInsets.fromLTRB(
-                                    20,
-                                    4,
-                                    20,
-                                    12,
-                                  ),
-                                  itemCount: data.chapters.length,
-                                  separatorBuilder: (_, _) =>
-                                      const SizedBox(height: 8),
-                                  itemBuilder: (context, i) => _ChapterTile(
-                                    chapter: data.chapters[i],
-                                    onRename: () => _showChapterDialog(
-                                      existing: data.chapters[i],
-                                    ),
-                                    onDelete: () =>
-                                        _deleteChapter(data.chapters[i]),
-                                  ),
-                                ),
-                        ),
-                        if (data.isOffered)
-                          SafeArea(
-                            top: false,
-                            child: Padding(
-                              padding: const EdgeInsets.fromLTRB(20, 4, 20, 12),
-                              child: FilledButton.icon(
-                                onPressed: () => _showChapterDialog(),
-                                icon: const Icon(Icons.add),
-                                label: const Text('Tambah Bab'),
-                              ),
-                            ),
-                          ),
-                      ],
+                    final chapters = snapshot.data!.chapters;
+                    if (chapters.isEmpty) {
+                      return const StateMessage(
+                        icon: Icons.inbox_outlined,
+                        title: 'Tiada Bab',
+                        subtitle:
+                            'Bab bagi Tahun dan Subjek ini belum tersedia.',
+                      );
+                    }
+                    return ListView.separated(
+                      padding: const EdgeInsets.fromLTRB(20, 4, 20, 24),
+                      itemCount: chapters.length,
+                      separatorBuilder: (_, _) => const SizedBox(height: 8),
+                      itemBuilder: (context, index) => _ChapterTile(
+                        chapter: chapters[index],
+                        onTap: () => _openChapter(chapters[index]),
+                      ),
                     );
                   },
                 ),
@@ -268,115 +162,79 @@ class _ChaptersManageTabState extends State<ChaptersManageTab> {
     List<OptionItem> items,
     OptionItem? value,
     ValueChanged<OptionItem?> onChanged,
-  ) {
-    return DropdownButtonFormField<OptionItem>(
-      initialValue: value,
-      isExpanded: true,
-      decoration: InputDecoration(
-        labelText: label,
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 12,
-          vertical: 10,
-        ),
-      ),
-      items: items
-          .map(
-            (o) => DropdownMenuItem(
-              value: o,
-              child: Text(o.name, overflow: TextOverflow.ellipsis),
-            ),
-          )
-          .toList(),
-      onChanged: onChanged,
-    );
-  }
+  ) => DropdownButtonFormField<OptionItem>(
+    key: ValueKey('$label-${value?.id}'),
+    initialValue: value,
+    isExpanded: true,
+    decoration: InputDecoration(
+      labelText: label,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+    ),
+    items: items
+        .map(
+          (item) => DropdownMenuItem(
+            value: item,
+            child: Text(item.name, overflow: TextOverflow.ellipsis),
+          ),
+        )
+        .toList(growable: false),
+    onChanged: onChanged,
+  );
 }
 
 class _ChapterTile extends StatelessWidget {
-  const _ChapterTile({
-    required this.chapter,
-    required this.onRename,
-    required this.onDelete,
-  });
+  const _ChapterTile({required this.chapter, required this.onTap});
 
   final TeacherChapter chapter;
-  final VoidCallback onRename;
-  final VoidCallback onDelete;
+  final VoidCallback onTap;
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: LmsColors.surface,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: LmsColors.border),
-      ),
-      padding: const EdgeInsets.all(12),
-      child: Row(
-        children: [
-          CircleAvatar(
-            radius: 17,
-            backgroundColor: LmsColors.brandSoft,
-            foregroundColor: LmsColors.brand,
-            child: Text(
-              '${chapter.number}',
-              style: const TextStyle(fontWeight: FontWeight.w800),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  chapter.title,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  '${chapter.lessonsCount} video · ${chapter.materialsCount} bahan · ${chapter.quizzesCount} kuiz',
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-              ],
-            ),
-          ),
-          PopupMenuButton<String>(
-            icon: const Icon(Icons.more_vert, color: LmsColors.inkFaint),
-            onSelected: (v) {
-              if (v == 'rename') onRename();
-              if (v == 'delete') onDelete();
-            },
-            itemBuilder: (_) => const [
-              PopupMenuItem(
-                value: 'rename',
-                child: Row(
-                  children: [
-                    Icon(Icons.edit_outlined, size: 18),
-                    SizedBox(width: 10),
-                    Text('Namakan semula'),
-                  ],
-                ),
+  Widget build(BuildContext context) => Material(
+    color: Colors.transparent,
+    child: InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(14),
+      child: Ink(
+        padding: const EdgeInsets.all(13),
+        decoration: BoxDecoration(
+          color: LmsColors.surface,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: LmsColors.border),
+        ),
+        child: Row(
+          children: [
+            CircleAvatar(
+              radius: 18,
+              backgroundColor: LmsColors.brandSoft,
+              foregroundColor: LmsColors.brand,
+              child: Text(
+                '${chapter.number}',
+                style: const TextStyle(fontWeight: FontWeight.w800),
               ),
-              PopupMenuItem(
-                value: 'delete',
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.delete_outline,
-                      size: 18,
-                      color: LmsColors.danger,
-                    ),
-                    SizedBox(width: 10),
-                    Text('Padam', style: TextStyle(color: LmsColors.danger)),
-                  ],
-                ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    chapter.title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                  const SizedBox(height: 3),
+                  Text(
+                    '${chapter.lessonsCount} video · ${chapter.materialsCount} bahan · ${chapter.quizzesCount} kuiz',
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                ],
               ),
-            ],
-          ),
-        ],
+            ),
+            const Icon(Icons.chevron_right_rounded, color: LmsColors.inkFaint),
+          ],
+        ),
       ),
-    );
-  }
+    ),
+  );
 }

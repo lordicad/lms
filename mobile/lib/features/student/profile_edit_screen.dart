@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../../core/auth/auth_user.dart';
@@ -10,18 +12,15 @@ class ProfileEditScreen extends StatefulWidget {
     super.key,
     required this.user,
     required this.roleLabel,
+    required this.loadOptions,
     required this.onSave,
     required this.onSaveAvatar,
   });
 
   final AuthUser user;
   final String roleLabel;
-  final Future<AuthUser> Function({
-    required String name,
-    required String username,
-    String? email,
-  })
-  onSave;
+  final Future<ProfileOptions> Function() loadOptions;
+  final Future<AuthUser> Function(ProfileUpdate update) onSave;
   final Future<AuthUser> Function(NativeUploadFile file) onSaveAvatar;
 
   @override
@@ -33,11 +32,27 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
   late final TextEditingController _name;
   late final TextEditingController _username;
   late final TextEditingController _email;
+  late final TextEditingController _guardianName;
+  late final TextEditingController _guardianPhone;
+  late final TextEditingController _guardianEmail;
+  late final TextEditingController _phone;
+  late final TextEditingController _position;
+
+  ProfileOptions? _options;
+  Object? _optionsError;
+  int? _schoolId;
+  int? _gradeLevel;
+  int? _schoolClassId;
+  int? _homeroomClassId;
+  late Set<int> _subjectIds;
+  var _loadingOptions = true;
   var _saving = false;
   var _uploadingAvatar = false;
   late AuthUser _currentUser;
 
-  bool get _emailRequired => widget.user.role == UserRole.teacher;
+  bool get _isStudent => widget.user.role == UserRole.student;
+  bool get _isTeacher => widget.user.role == UserRole.teacher;
+  bool get _emailRequired => _isTeacher;
 
   @override
   void initState() {
@@ -45,7 +60,22 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     _name = TextEditingController(text: widget.user.name);
     _username = TextEditingController(text: widget.user.username);
     _email = TextEditingController(text: widget.user.email ?? '');
+    _guardianName = TextEditingController(text: widget.user.guardianName ?? '');
+    _guardianPhone = TextEditingController(
+      text: widget.user.guardianPhone ?? '',
+    );
+    _guardianEmail = TextEditingController(
+      text: widget.user.guardianEmail ?? '',
+    );
+    _phone = TextEditingController(text: widget.user.phone ?? '');
+    _position = TextEditingController(text: widget.user.position ?? '');
+    _schoolId = widget.user.school?.id;
+    _gradeLevel = widget.user.grade?.level;
+    _schoolClassId = widget.user.schoolClass?.id;
+    _homeroomClassId = widget.user.homeroomClass?.id;
+    _subjectIds = widget.user.subjects.map((subject) => subject.id).toSet();
     _currentUser = widget.user;
+    unawaited(_loadOptions());
   }
 
   @override
@@ -53,24 +83,103 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     _name.dispose();
     _username.dispose();
     _email.dispose();
+    _guardianName.dispose();
+    _guardianPhone.dispose();
+    _guardianEmail.dispose();
+    _phone.dispose();
+    _position.dispose();
     super.dispose();
   }
 
-  Future<void> _save() async {
-    if (!_formKey.currentState!.validate()) {
-      return;
+  Future<void> _loadOptions() async {
+    setState(() {
+      _loadingOptions = true;
+      _optionsError = null;
+    });
+    try {
+      final options = await widget.loadOptions();
+      if (!mounted) return;
+      setState(() {
+        _options = options;
+        _loadingOptions = false;
+        _normaliseSelections();
+      });
+    } catch (error) {
+      if (mounted) {
+        setState(() {
+          _loadingOptions = false;
+          _optionsError = error;
+        });
+      }
     }
+  }
+
+  int? get _selectedGradeId {
+    final level = _gradeLevel;
+    if (level == null) return null;
+    for (final grade in _options?.grades ?? const <Grade>[]) {
+      if (grade.level == level) return grade.id;
+    }
+    return null;
+  }
+
+  List<SchoolClassInfo> get _studentClasses {
+    final schoolId = _schoolId;
+    final gradeId = _selectedGradeId;
+    if (schoolId == null || gradeId == null) return const [];
+    return (_options?.classes ?? const [])
+        .where((item) => item.schoolId == schoolId && item.gradeId == gradeId)
+        .toList(growable: false);
+  }
+
+  List<SchoolClassInfo> get _teacherClasses {
+    final schoolId = _schoolId;
+    if (schoolId == null) return const [];
+    return (_options?.classes ?? const [])
+        .where((item) => item.schoolId == schoolId)
+        .toList(growable: false);
+  }
+
+  void _normaliseSelections() {
+    if (_isStudent &&
+        !_studentClasses.any((item) => item.id == _schoolClassId)) {
+      _schoolClassId = null;
+    }
+    if (_isTeacher &&
+        !_teacherClasses.any((item) => item.id == _homeroomClassId)) {
+      _homeroomClassId = null;
+    }
+  }
+
+  String? _clean(TextEditingController controller) {
+    final value = controller.text.trim();
+    return value.isEmpty ? null : value;
+  }
+
+  Future<void> _save() async {
+    if (!_formKey.currentState!.validate() || _options == null) return;
+    if (_isStudent && _gradeLevel == null) return;
 
     setState(() => _saving = true);
     try {
       final updated = await widget.onSave(
-        name: _name.text.trim(),
-        username: _username.text.trim(),
-        email: _email.text.trim().isEmpty ? null : _email.text.trim(),
+        ProfileUpdate(
+          name: _name.text.trim(),
+          username: _username.text.trim(),
+          email: _clean(_email),
+          schoolId: _schoolId,
+          gradeLevel: _gradeLevel,
+          schoolClassId: _schoolClassId,
+          guardianName: _clean(_guardianName),
+          guardianPhone: _clean(_guardianPhone),
+          guardianEmail: _clean(_guardianEmail),
+          phone: _clean(_phone),
+          position: _clean(_position),
+          subjectIds: _subjectIds.toList(growable: false),
+          homeroomClassId: _homeroomClassId,
+        ),
       );
-      if (mounted) {
-        Navigator.of(context).pop(updated);
-      }
+      if (mounted) Navigator.of(context).pop(updated);
     } catch (error) {
       if (mounted) {
         ScaffoldMessenger.of(
@@ -78,9 +187,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
         ).showSnackBar(SnackBar(content: Text('$error')));
       }
     } finally {
-      if (mounted) {
-        setState(() => _saving = false);
-      }
+      if (mounted) setState(() => _saving = false);
     }
   }
 
@@ -168,90 +275,16 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                 ),
               ),
               const SizedBox(height: 22),
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: LmsColors.brandSoft,
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Row(
-                  children: [
-                    const Icon(
-                      Icons.manage_accounts_outlined,
-                      color: LmsColors.brandStrong,
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        'Kemaskini butiran akaun ${widget.roleLabel.toLowerCase()}.',
-                        style: const TextStyle(
-                          color: LmsColors.brandStrong,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              _notice(),
               const SizedBox(height: 24),
-              TextFormField(
-                controller: _name,
-                textCapitalization: TextCapitalization.words,
-                decoration: const InputDecoration(
-                  labelText: 'Nama penuh',
-                  prefixIcon: Icon(Icons.person_outline_rounded),
-                ),
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'Sila isi nama anda.';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _username,
-                autocorrect: false,
-                decoration: const InputDecoration(
-                  labelText: 'Nama pengguna',
-                  prefixIcon: Icon(Icons.alternate_email_rounded),
-                ),
-                validator: (value) {
-                  final username = value?.trim() ?? '';
-                  if (username.length < 3) {
-                    return 'Nama pengguna mesti sekurang-kurangnya 3 aksara.';
-                  }
-                  if (!RegExp(r'^[a-zA-Z0-9._-]+$').hasMatch(username)) {
-                    return 'Gunakan huruf, nombor, titik, garis bawah atau sengkang sahaja.';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _email,
-                keyboardType: TextInputType.emailAddress,
-                autocorrect: false,
-                decoration: InputDecoration(
-                  labelText: _emailRequired ? 'Emel' : 'Emel (pilihan)',
-                  prefixIcon: const Icon(Icons.mail_outline_rounded),
-                ),
-                validator: (value) {
-                  final email = value?.trim() ?? '';
-                  if (_emailRequired && email.isEmpty) {
-                    return 'Guru perlu memberikan alamat emel.';
-                  }
-                  if (email.isNotEmpty &&
-                      !RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(email)) {
-                    return 'Sila masukkan emel yang sah.';
-                  }
-                  return null;
-                },
-              ),
+              _accountFields(),
+              const SizedBox(height: 20),
+              _profileFields(),
               const SizedBox(height: 28),
               FilledButton.icon(
-                onPressed: _saving ? null : _save,
+                onPressed: _saving || _loadingOptions || _optionsError != null
+                    ? null
+                    : _save,
                 icon: _saving
                     ? const SizedBox(
                         height: 18,
@@ -270,6 +303,307 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
       ),
     );
   }
+
+  Widget _notice() => Container(
+    padding: const EdgeInsets.all(16),
+    decoration: BoxDecoration(
+      color: LmsColors.brandSoft,
+      borderRadius: BorderRadius.circular(16),
+    ),
+    child: Row(
+      children: [
+        const Icon(
+          Icons.manage_accounts_outlined,
+          color: LmsColors.brandStrong,
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Text(
+            'Kemaskini butiran akaun ${widget.roleLabel.toLowerCase()}.',
+            style: const TextStyle(
+              color: LmsColors.brandStrong,
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
+
+  Widget _accountFields() => Column(
+    children: [
+      TextFormField(
+        controller: _name,
+        textCapitalization: TextCapitalization.words,
+        decoration: const InputDecoration(
+          labelText: 'Nama penuh',
+          prefixIcon: Icon(Icons.person_outline_rounded),
+        ),
+        validator: (value) => value == null || value.trim().isEmpty
+            ? 'Sila isi nama anda.'
+            : null,
+      ),
+      const SizedBox(height: 16),
+      TextFormField(
+        controller: _username,
+        autocorrect: false,
+        decoration: const InputDecoration(
+          labelText: 'Nama pengguna',
+          prefixIcon: Icon(Icons.alternate_email_rounded),
+        ),
+        validator: (value) {
+          final username = value?.trim() ?? '';
+          if (username.length < 3) {
+            return 'Nama pengguna mesti sekurang-kurangnya 3 aksara.';
+          }
+          if (!RegExp(r'^[a-zA-Z0-9._-]+$').hasMatch(username)) {
+            return 'Gunakan huruf, nombor, titik, garis bawah atau sengkang sahaja.';
+          }
+          return null;
+        },
+      ),
+      const SizedBox(height: 16),
+      TextFormField(
+        controller: _email,
+        keyboardType: TextInputType.emailAddress,
+        autocorrect: false,
+        decoration: InputDecoration(
+          labelText: _emailRequired ? 'Emel' : 'Emel (pilihan)',
+          prefixIcon: const Icon(Icons.mail_outline_rounded),
+        ),
+        validator: (value) {
+          final email = value?.trim() ?? '';
+          if (_emailRequired && email.isEmpty) {
+            return 'Guru perlu memberikan alamat emel.';
+          }
+          if (email.isNotEmpty &&
+              !RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(email)) {
+            return 'Sila masukkan emel yang sah.';
+          }
+          return null;
+        },
+      ),
+    ],
+  );
+
+  Widget _profileFields() {
+    if (_loadingOptions) {
+      return const Padding(
+        padding: EdgeInsets.all(16),
+        child: Center(child: CircularProgressIndicator()),
+      );
+    }
+    if (_optionsError != null) {
+      return OutlinedButton.icon(
+        onPressed: _loadOptions,
+        icon: const Icon(Icons.refresh_rounded),
+        label: Text('Muat semula pilihan profil: $_optionsError'),
+      );
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Maklumat sekolah',
+          style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
+        ),
+        const SizedBox(height: 12),
+        _schoolDropdown(),
+        if (_isStudent) ..._studentFields(),
+        if (_isTeacher) ..._teacherFields(),
+      ],
+    );
+  }
+
+  Widget _schoolDropdown() => DropdownButtonFormField<int?>(
+    key: ValueKey('school-$_schoolId'),
+    initialValue: _schoolId,
+    isExpanded: true,
+    decoration: const InputDecoration(
+      labelText: 'Sekolah',
+      prefixIcon: Icon(Icons.account_balance_outlined),
+    ),
+    items: [
+      const DropdownMenuItem<int?>(
+        value: null,
+        child: Text('Belum ditetapkan'),
+      ),
+      ...(_options?.schools ?? const []).map(
+        (school) => DropdownMenuItem<int?>(
+          value: school.id,
+          child: Text(school.name, overflow: TextOverflow.ellipsis),
+        ),
+      ),
+    ],
+    onChanged: (value) => setState(() {
+      _schoolId = value;
+      _normaliseSelections();
+    }),
+  );
+
+  List<Widget> _studentFields() => [
+    const SizedBox(height: 16),
+    DropdownButtonFormField<int>(
+      key: ValueKey('grade-$_gradeLevel'),
+      initialValue: _gradeLevel,
+      isExpanded: true,
+      decoration: const InputDecoration(
+        labelText: 'Tahun',
+        prefixIcon: Icon(Icons.school_outlined),
+      ),
+      items: (_options?.grades ?? const [])
+          .map(
+            (grade) => DropdownMenuItem<int>(
+              value: grade.level,
+              child: Text(grade.name),
+            ),
+          )
+          .toList(growable: false),
+      onChanged: (value) => setState(() {
+        _gradeLevel = value;
+        _normaliseSelections();
+      }),
+      validator: (value) => value == null ? 'Sila pilih Tahun anda.' : null,
+    ),
+    const SizedBox(height: 16),
+    DropdownButtonFormField<int?>(
+      key: ValueKey('student-class-$_schoolClassId-$_schoolId-$_gradeLevel'),
+      initialValue: _schoolClassId,
+      isExpanded: true,
+      decoration: const InputDecoration(
+        labelText: 'Kelas',
+        prefixIcon: Icon(Icons.groups_outlined),
+      ),
+      items: [
+        const DropdownMenuItem<int?>(
+          value: null,
+          child: Text('Belum ditetapkan'),
+        ),
+        ..._studentClasses.map(
+          (schoolClass) => DropdownMenuItem<int?>(
+            value: schoolClass.id,
+            child: Text(schoolClass.label, overflow: TextOverflow.ellipsis),
+          ),
+        ),
+      ],
+      onChanged: _schoolId == null || _gradeLevel == null
+          ? null
+          : (value) => setState(() => _schoolClassId = value),
+    ),
+    if (_schoolId == null || _gradeLevel == null)
+      const Padding(
+        padding: EdgeInsets.only(top: 7),
+        child: Text(
+          'Pilih sekolah dan Tahun dahulu untuk melihat kelas.',
+          style: TextStyle(fontSize: 12, color: LmsColors.inkMuted),
+        ),
+      ),
+    const SizedBox(height: 22),
+    const Text(
+      'Maklumat penjaga',
+      style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
+    ),
+    const SizedBox(height: 12),
+    TextFormField(
+      controller: _guardianName,
+      textCapitalization: TextCapitalization.words,
+      decoration: const InputDecoration(
+        labelText: 'Nama penjaga',
+        prefixIcon: Icon(Icons.family_restroom_outlined),
+      ),
+    ),
+    const SizedBox(height: 16),
+    TextFormField(
+      controller: _guardianPhone,
+      keyboardType: TextInputType.phone,
+      decoration: const InputDecoration(
+        labelText: 'Nombor telefon penjaga',
+        prefixIcon: Icon(Icons.phone_outlined),
+      ),
+    ),
+    const SizedBox(height: 16),
+    TextFormField(
+      controller: _guardianEmail,
+      keyboardType: TextInputType.emailAddress,
+      decoration: const InputDecoration(
+        labelText: 'E-mel penjaga',
+        prefixIcon: Icon(Icons.mail_outline_rounded),
+      ),
+    ),
+  ];
+
+  List<Widget> _teacherFields() => [
+    const SizedBox(height: 16),
+    TextFormField(
+      controller: _position,
+      textCapitalization: TextCapitalization.words,
+      decoration: const InputDecoration(
+        labelText: 'Jawatan',
+        prefixIcon: Icon(Icons.work_outline_rounded),
+      ),
+    ),
+    const SizedBox(height: 16),
+    TextFormField(
+      controller: _phone,
+      keyboardType: TextInputType.phone,
+      decoration: const InputDecoration(
+        labelText: 'Nombor telefon',
+        prefixIcon: Icon(Icons.phone_outlined),
+      ),
+    ),
+    const SizedBox(height: 22),
+    const Text(
+      'Subjek diajar',
+      style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
+    ),
+    const SizedBox(height: 9),
+    Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      children: (_options?.subjects ?? const [])
+          .map(
+            (subject) => FilterChip(
+              label: Text(subject.name),
+              selected: _subjectIds.contains(subject.id),
+              onSelected: (selected) => setState(() {
+                if (selected) {
+                  _subjectIds.add(subject.id);
+                } else {
+                  _subjectIds.remove(subject.id);
+                }
+              }),
+            ),
+          )
+          .toList(growable: false),
+    ),
+    const SizedBox(height: 22),
+    DropdownButtonFormField<int?>(
+      key: ValueKey('homeroom-$_homeroomClassId-$_schoolId'),
+      initialValue: _homeroomClassId,
+      isExpanded: true,
+      decoration: const InputDecoration(
+        labelText: 'Guru kelas',
+        prefixIcon: Icon(Icons.class_outlined),
+      ),
+      items: [
+        const DropdownMenuItem<int?>(
+          value: null,
+          child: Text('Belum ditetapkan'),
+        ),
+        ..._teacherClasses.map(
+          (schoolClass) => DropdownMenuItem<int?>(
+            value: schoolClass.id,
+            child: Text(schoolClass.label, overflow: TextOverflow.ellipsis),
+          ),
+        ),
+      ],
+      onChanged: _schoolId == null
+          ? null
+          : (value) => setState(() => _homeroomClassId = value),
+    ),
+  ];
 }
 
 class _AvatarPreview extends StatelessWidget {

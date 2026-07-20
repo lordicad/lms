@@ -71,16 +71,25 @@ class ApiClient {
     return AuthUser.fromJson(body['user'] as Map<String, dynamic>);
   }
 
+  Future<ProfileOptions> profileOptions(String token) async {
+    final response = await _http.get(
+      Uri.parse('$baseUrl/auth/profile/options'),
+      headers: _authHeaders(token),
+    );
+    final body = _decode(response);
+    _throwIfUnsuccessful(response, body);
+    return ProfileOptions.fromJson(body);
+  }
+
   Future<AuthUser> updateProfile({
     required String token,
-    required String name,
-    required String username,
-    String? email,
+    required UserRole role,
+    required ProfileUpdate update,
   }) async {
     final response = await _http.patch(
       Uri.parse('$baseUrl/auth/profile'),
       headers: {..._authHeaders(token), 'Content-Type': 'application/json'},
-      body: jsonEncode({'name': name, 'username': username, 'email': email}),
+      body: jsonEncode(update.toJson(role)),
     );
 
     final body = _decode(response);

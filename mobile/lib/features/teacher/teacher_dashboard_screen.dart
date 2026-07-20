@@ -24,18 +24,15 @@ class TeacherDashboardScreen extends StatefulWidget {
     super.key,
     required this.user,
     required this.onSignOut,
+    required this.loadProfileOptions,
     required this.onUpdateProfile,
     required this.onUpdateAvatar,
   });
 
   final AuthUser user;
   final Future<void> Function() onSignOut;
-  final Future<AuthUser> Function({
-    required String name,
-    required String username,
-    String? email,
-  })
-  onUpdateProfile;
+  final Future<ProfileOptions> Function() loadProfileOptions;
+  final Future<AuthUser> Function(ProfileUpdate update) onUpdateProfile;
   final Future<AuthUser> Function(NativeUploadFile file) onUpdateAvatar;
 
   @override
@@ -63,6 +60,7 @@ class _TeacherDashboardScreenState extends State<TeacherDashboardScreen> {
             child: ProfileTab(
               user: widget.user,
               onSignOut: widget.onSignOut,
+              loadProfileOptions: widget.loadProfileOptions,
               onUpdateProfile: widget.onUpdateProfile,
               onUpdateAvatar: widget.onUpdateAvatar,
               roleLabel: 'Guru',
