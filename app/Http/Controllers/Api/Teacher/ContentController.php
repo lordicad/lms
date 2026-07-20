@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Teacher;
 
 use App\Http\Controllers\Controller;
 use App\Models\Lesson;
+use App\Models\Material;
 use App\Models\Quiz;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
@@ -111,6 +112,45 @@ class ContentController extends Controller
         $quiz->update(['is_published' => ! $quiz->is_published]);
 
         return response()->json(['published' => (bool) $quiz->is_published]);
+    }
+
+    public function deleteVideo(Request $request, Lesson $lesson): JsonResponse
+    {
+        $teacher = $this->teacher($request);
+        if (! $teacher || $lesson->teacher_id !== $teacher->id) {
+            return $this->forbidden();
+        }
+
+        $lesson->deleteFiles();
+        $lesson->delete();
+
+        return response()->json(['deleted' => true]);
+    }
+
+    public function deleteMaterial(Request $request, Material $material): JsonResponse
+    {
+        $teacher = $this->teacher($request);
+        if (! $teacher || $material->teacher_id !== $teacher->id) {
+            return $this->forbidden();
+        }
+
+        $material->deleteFile();
+        $material->delete();
+
+        return response()->json(['deleted' => true]);
+    }
+
+    public function deleteQuiz(Request $request, Quiz $quiz): JsonResponse
+    {
+        $teacher = $this->teacher($request);
+        if (! $teacher || $quiz->teacher_id !== $teacher->id) {
+            return $this->forbidden();
+        }
+
+        $quiz->deleteFile();
+        $quiz->delete(); // questions, options and attempts cascade
+
+        return response()->json(['deleted' => true]);
     }
 
     private function teacher(Request $request): ?User

@@ -46,6 +46,15 @@ class TeacherApi {
     return json['published'] == true;
   }
 
+  Future<void> deleteVideo(String token, int id) =>
+      _delete(token, '/teacher/content/videos/$id');
+
+  Future<void> deleteMaterial(String token, int id) =>
+      _delete(token, '/teacher/content/materials/$id');
+
+  Future<void> deleteQuiz(String token, int id) =>
+      _delete(token, '/teacher/content/quizzes/$id');
+
   Future<Map<String, dynamic>> _get(String token, String path) async {
     final response = await _http.get(
       Uri.parse('$baseUrl$path'),
@@ -82,6 +91,22 @@ class TeacherApi {
     }
 
     return map;
+  }
+
+  Future<void> _delete(String token, String path) async {
+    final response = await _http.delete(
+      Uri.parse('$baseUrl$path'),
+      headers: {'Accept': 'application/json', 'Authorization': 'Bearer $token'},
+    );
+
+    if (response.statusCode >= 400) {
+      if (response.statusCode == 401) {
+        throw const ApiException('Sesi tamat. Sila log masuk semula.');
+      }
+      final decoded = response.body.isEmpty ? const {} : jsonDecode(response.body);
+      final message = decoded is Map ? decoded['message'] as String? : null;
+      throw ApiException(message ?? 'Tidak dapat memadam.');
+    }
   }
 
   List<T> _mapList<T>(Object? raw, T Function(Map<String, dynamic>) fromJson) {

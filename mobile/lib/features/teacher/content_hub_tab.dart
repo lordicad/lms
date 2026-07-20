@@ -77,24 +77,76 @@ class _ContentHubTabState extends State<ContentHubTab> {
     }
   }
 
+  Future<bool> _confirmDelete(String what) async {
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Padam?'),
+        content: Text('Padam $what? Tindakan ini tidak boleh dibatalkan.'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Batal')),
+          FilledButton(
+            style: FilledButton.styleFrom(backgroundColor: LmsColors.danger),
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Padam'),
+          ),
+        ],
+      ),
+    );
+    return ok ?? false;
+  }
+
+  Future<void> _deleteVideo(int id) async {
+    if (!await _confirmDelete('video ini')) return;
+    try {
+      await widget.repository.deleteVideo(id);
+      if (mounted) setState(() => _videos = widget.repository.videos());
+    } catch (e) {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$e')));
+    }
+  }
+
+  Future<void> _deleteMaterial(int id) async {
+    if (!await _confirmDelete('bahan ini')) return;
+    try {
+      await widget.repository.deleteMaterial(id);
+      if (mounted) setState(() => _materials = widget.repository.materials());
+    } catch (e) {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$e')));
+    }
+  }
+
+  Future<void> _deleteQuiz(int id) async {
+    if (!await _confirmDelete('kuiz ini')) return;
+    try {
+      await widget.repository.deleteQuiz(id);
+      if (mounted) setState(() => _quizzes = widget.repository.quizzes());
+    } catch (e) {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$e')));
+    }
+  }
+
   Widget _body() {
     switch (_segment) {
       case 1:
         return _MaterialsList(
           future: _materials!,
           onReload: () => setState(() => _materials = widget.repository.materials()),
+          onDelete: _deleteMaterial,
         );
       case 2:
         return _QuizzesList(
           future: _quizzes!,
           onReload: () => setState(() => _quizzes = widget.repository.quizzes()),
           onToggle: _togglePublishQuiz,
+          onDelete: _deleteQuiz,
         );
       default:
         return _VideosList(
           future: _videos!,
           onReload: () => setState(() => _videos = widget.repository.videos()),
           onToggle: _togglePublishVideo,
+          onDelete: _deleteVideo,
         );
     }
   }
@@ -125,10 +177,16 @@ class _StatusChip extends StatelessWidget {
 }
 
 class _VideosList extends StatelessWidget {
-  const _VideosList({required this.future, required this.onReload, required this.onToggle});
+  const _VideosList({
+    required this.future,
+    required this.onReload,
+    required this.onToggle,
+    required this.onDelete,
+  });
   final Future<List<TeacherVideo>> future;
   final VoidCallback onReload;
   final void Function(int id) onToggle;
+  final void Function(int id) onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -171,6 +229,7 @@ class _VideosList extends StatelessWidget {
               ].join(' · '),
               published: v.published,
               onTogglePublish: () => onToggle(v.id),
+              onDelete: () => onDelete(v.id),
             );
           },
         );
@@ -180,9 +239,10 @@ class _VideosList extends StatelessWidget {
 }
 
 class _MaterialsList extends StatelessWidget {
-  const _MaterialsList({required this.future, required this.onReload});
+  const _MaterialsList({required this.future, required this.onReload, required this.onDelete});
   final Future<List<TeacherMaterial>> future;
   final VoidCallback onReload;
+  final void Function(int id) onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -221,6 +281,7 @@ class _MaterialsList extends StatelessWidget {
                 m.extension.toUpperCase(),
                 if (m.humanSize.isNotEmpty) m.humanSize,
               ].join(' · '),
+              onDelete: () => onDelete(m.id),
             );
           },
         );
@@ -230,10 +291,16 @@ class _MaterialsList extends StatelessWidget {
 }
 
 class _QuizzesList extends StatelessWidget {
-  const _QuizzesList({required this.future, required this.onReload, required this.onToggle});
+  const _QuizzesList({
+    required this.future,
+    required this.onReload,
+    required this.onToggle,
+    required this.onDelete,
+  });
   final Future<List<TeacherQuiz>> future;
   final VoidCallback onReload;
   final void Function(int id) onToggle;
+  final void Function(int id) onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -276,6 +343,7 @@ class _QuizzesList extends StatelessWidget {
               ].join(' · '),
               published: q.published,
               onTogglePublish: () => onToggle(q.id),
+              onDelete: () => onDelete(q.id),
             );
           },
         );
@@ -291,6 +359,7 @@ class _ContentCard extends StatelessWidget {
     required this.subtitle,
     this.published,
     this.onTogglePublish,
+    this.onDelete,
   });
 
   final IconData icon;
@@ -298,6 +367,7 @@ class _ContentCard extends StatelessWidget {
   final String subtitle;
   final bool? published;
   final VoidCallback? onTogglePublish;
+  final VoidCallback? onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -349,26 +419,41 @@ class _ContentCard extends StatelessWidget {
               ],
             ),
           ),
-          if (onTogglePublish != null && published != null)
+          if (onTogglePublish != null || onDelete != null)
             PopupMenuButton<String>(
               icon: const Icon(Icons.more_vert, color: LmsColors.inkFaint),
               tooltip: 'Tindakan',
-              onSelected: (_) => onTogglePublish!(),
+              onSelected: (value) {
+                if (value == 'toggle') onTogglePublish?.call();
+                if (value == 'delete') onDelete?.call();
+              },
               itemBuilder: (_) => [
-                PopupMenuItem(
-                  value: 'toggle',
-                  child: Row(
-                    children: [
-                      Icon(
-                        published! ? Icons.visibility_off_outlined : Icons.public,
-                        size: 18,
-                        color: LmsColors.ink,
-                      ),
-                      const SizedBox(width: 10),
-                      Text(published! ? 'Sembunyikan' : 'Terbitkan'),
-                    ],
+                if (onTogglePublish != null && published != null)
+                  PopupMenuItem(
+                    value: 'toggle',
+                    child: Row(
+                      children: [
+                        Icon(
+                          published! ? Icons.visibility_off_outlined : Icons.public,
+                          size: 18,
+                          color: LmsColors.ink,
+                        ),
+                        const SizedBox(width: 10),
+                        Text(published! ? 'Sembunyikan' : 'Terbitkan'),
+                      ],
+                    ),
                   ),
-                ),
+                if (onDelete != null)
+                  const PopupMenuItem(
+                    value: 'delete',
+                    child: Row(
+                      children: [
+                        Icon(Icons.delete_outline, size: 18, color: LmsColors.danger),
+                        SizedBox(width: 10),
+                        Text('Padam', style: TextStyle(color: LmsColors.danger)),
+                      ],
+                    ),
+                  ),
               ],
             ),
         ],

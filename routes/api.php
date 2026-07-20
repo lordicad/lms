@@ -68,4 +68,8 @@ Route::middleware('auth:sanctum')->prefix('teacher')->group(function () {
 
     Route::post('content/videos/{lesson}/publish', [TeacherContentController::class, 'toggleVideo']);
     Route::post('content/quizzes/{quiz}/publish', [TeacherContentController::class, 'toggleQuiz']);
+
+    Route::delete('content/videos/{lesson}', [TeacherContentController::class, 'deleteVideo']);
+    Route::delete('content/materials/{material}', [TeacherContentController::class, 'deleteMaterial']);
+    Route::delete('content/quizzes/{quiz}', [TeacherContentController::class, 'deleteQuiz']);
 });

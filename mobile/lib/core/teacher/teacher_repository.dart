@@ -33,4 +33,10 @@ class TeacherRepository {
 
   Future<bool> togglePublishQuiz(int id) async =>
       _api.togglePublishQuiz(await _token(), id);
+
+  Future<void> deleteVideo(int id) async => _api.deleteVideo(await _token(), id);
+
+  Future<void> deleteMaterial(int id) async => _api.deleteMaterial(await _token(), id);
+
+  Future<void> deleteQuiz(int id) async => _api.deleteQuiz(await _token(), id);
 }
