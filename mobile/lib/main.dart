@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import 'core/auth/auth_repository.dart';
 import 'core/auth/auth_user.dart';
 import 'core/platform/native_file_picker.dart';
 import 'core/theme/lms_theme.dart';
+import 'core/widgets/lms_logo.dart';
 import 'features/auth/login_screen.dart';
 import 'features/student/student_shell.dart';
 import 'features/teacher/teacher_dashboard_screen.dart';
@@ -24,15 +27,30 @@ class _LmsMobileAppState extends State<LmsMobileApp> {
   final AuthRepository _auth = AuthRepository();
   AuthUser? _user;
   var _initialising = true;
+  var _sessionRestoreStarted = false;
 
   @override
   void initState() {
     super.initState();
-    _restoreSession();
+  }
+
+  void _startSessionRestore() {
+    if (_sessionRestoreStarted) return;
+    _sessionRestoreStarted = true;
+    unawaited(_restoreSession());
   }
 
   Future<void> _restoreSession() async {
+    final startedAt = DateTime.now();
     final user = await _auth.restoreSession();
+
+    // Let the branded animation register even when the encrypted token is read
+    // immediately from disk. It also makes cold and warm starts feel consistent.
+    const minimumSplash = Duration(milliseconds: 1300);
+    final elapsed = DateTime.now().difference(startedAt);
+    if (elapsed < minimumSplash) {
+      await Future<void>.delayed(minimumSplash - elapsed);
+    }
 
     if (!mounted) {
       return;
@@ -100,7 +118,7 @@ class _LmsMobileAppState extends State<LmsMobileApp> {
       debugShowCheckedModeBanner: false,
       theme: buildLmsTheme(),
       home: _initialising
-          ? const _SplashScreen()
+          ? _SplashScreen(onPresented: _startSessionRestore)
           : _user == null
           ? LoginScreen(auth: _auth, onSignedIn: _signedIn)
           : _RoleHome(
@@ -151,13 +169,201 @@ class _RoleHome extends StatelessWidget {
   }
 }
 
-class _SplashScreen extends StatelessWidget {
-  const _SplashScreen();
+class _SplashScreen extends StatefulWidget {
+  const _SplashScreen({required this.onPresented});
+
+  final VoidCallback onPresented;
+
+  @override
+  State<_SplashScreen> createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<_SplashScreen>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<double> _logoScale;
+  late final Animation<double> _contentOpacity;
+  late final Animation<Offset> _taglineOffset;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) widget.onPresented();
+    });
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 900),
+    )..forward();
+    _logoScale = Tween<double>(begin: .76, end: 1).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: const Interval(0, .72, curve: Curves.easeOutBack),
+      ),
+    );
+    _contentOpacity = CurvedAnimation(
+      parent: _controller,
+      curve: const Interval(.08, .72, curve: Curves.easeOut),
+    );
+    _taglineOffset =
+        Tween<Offset>(begin: const Offset(0, .36), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _controller,
+            curve: const Interval(.35, 1, curve: Curves.easeOutCubic),
+          ),
+        );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    return Scaffold(
+      backgroundColor: LmsColors.forest,
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          const _SplashBackdrop(),
+          SafeArea(
+            child: Center(
+              child: FadeTransition(
+                opacity: _contentOpacity,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    ScaleTransition(
+                      scale: _logoScale,
+                      child: const LmsLogo(
+                        size: 112,
+                        radius: 34,
+                        backgroundColor: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(height: 22),
+                    const Text(
+                      'WeLearn',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 30,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: -.6,
+                      ),
+                    ),
+                    const SizedBox(height: 7),
+                    SlideTransition(
+                      position: _taglineOffset,
+                      child: const Text(
+                        'Belajar, teroka, berjaya.',
+                        style: TextStyle(
+                          color: Color(0xFFD8E8D2),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 36),
+                    const _SplashLoadingIndicator(),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
+}
+
+class _SplashBackdrop extends StatelessWidget {
+  const _SplashBackdrop();
+
+  @override
+  Widget build(BuildContext context) => const Stack(
+    children: [
+      Positioned(
+        top: -126,
+        right: -90,
+        child: _SplashOrb(size: 300, color: Color(0x164F8D42)),
+      ),
+      Positioned(
+        bottom: -138,
+        left: -100,
+        child: _SplashOrb(size: 330, color: Color(0x142F7040)),
+      ),
+      Positioned(
+        top: 118,
+        left: 34,
+        child: _SplashOrb(size: 78, color: Color(0x18FFFFFF)),
+      ),
+    ],
+  );
+}
+
+class _SplashOrb extends StatelessWidget {
+  const _SplashOrb({required this.size, required this.color});
+
+  final double size;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) => Container(
+    width: size,
+    height: size,
+    decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+  );
+}
+
+class _SplashLoadingIndicator extends StatefulWidget {
+  const _SplashLoadingIndicator();
+
+  @override
+  State<_SplashLoadingIndicator> createState() =>
+      _SplashLoadingIndicatorState();
+}
+
+class _SplashLoadingIndicatorState extends State<_SplashLoadingIndicator>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 900),
+    )..repeat(reverse: true);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => AnimatedBuilder(
+    animation: _controller,
+    builder: (context, _) => Row(
+      mainAxisSize: MainAxisSize.min,
+      children: List.generate(3, (index) {
+        final distance = (_controller.value - index * .18).abs();
+        final opacity = (1 - distance * 1.7).clamp(.28, 1.0);
+        return Container(
+          width: 7,
+          height: 7,
+          margin: const EdgeInsets.symmetric(horizontal: 4),
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: opacity),
+            shape: BoxShape.circle,
+          ),
+        );
+      }),
+    ),
+  );
 }
 
 class _AdminWebOnlyScreen extends StatelessWidget {
