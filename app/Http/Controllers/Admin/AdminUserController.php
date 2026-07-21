@@ -10,7 +10,6 @@ use App\Models\SchoolClass;
 use App\Models\Subject;
 use App\Models\User;
 use App\Support\TemporaryPassword;
-use App\Support\WhatsAppLink;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -101,9 +100,9 @@ class AdminUserController extends Controller
     /**
      * Send the new sign-in details out, and describe what happened for the flash message.
      *
-     * A teacher gets them at their own address. A student's go to the guardian: by email when there
-     * is one, and by WhatsApp when there is a phone number — the WhatsApp part comes back as a
-     * click-to-send link for the admin to press, since sending server-side needs a paid API account.
+     * A teacher gets them at their own address; a student's go to their guardian's. Email is the
+     * only channel: it is the one that delivers by itself at no cost. (WhatsApp would need either a
+     * paid Business API or a human pressing send — see App\Support\WhatsAppLink, currently parked.)
      *
      * Used for a new account and for an admin password reset alike: both end with the admin holding
      * a password the owner does not yet know, so both need the same hand-off.
@@ -114,23 +113,16 @@ class AdminUserController extends Controller
     {
         $sentTo = [];
 
-        // The password is deliberately never put on screen: it reaches its owner by email, or the
-        // guardian by WhatsApp, and nowhere else.
+        // The password is deliberately never put on screen: it reaches its owner by email and
+        // nowhere else.
         $flash = [];
 
         if ($user->isTeacher()) {
             if ($this->mail($user->email, $user, $plainPassword)) {
                 $sentTo[] = $user->email;
             }
-        } else {
-            if ($this->mail($user->guardian_email, $user, $plainPassword, $user->guardian_name)) {
-                $sentTo[] = $user->guardian_email;
-            }
-
-            if ($link = WhatsAppLink::for($user, $plainPassword, $user->guardian_name)) {
-                $flash['wa_link'] = $link;
-                $flash['wa_name'] = $user->name;
-            }
+        } elseif ($this->mail($user->guardian_email, $user, $plainPassword, $user->guardian_name)) {
+            $sentTo[] = $user->guardian_email;
         }
 
         if ($isReset) {
@@ -339,17 +331,12 @@ class AdminUserController extends Controller
                 },
             ],
             'guardian_name' => ['nullable', 'string', 'max:255'],
-            // A student's sign-in details are only ever delivered to their guardian, so one of
-            // these has to be reachable — otherwise the password is generated, sent nowhere, and
-            // lost for good. Either channel satisfies it; requiring both would block a guardian
-            // who only has WhatsApp. `blank()` rather than `required_without`, because an empty
-            // form field still counts as present and would slip past that rule.
-            'guardian_phone' => [
-                Rule::requiredIf(fn () => ! $isTeacher && blank($request->input('guardian_email'))),
-                'nullable', 'string', 'max:30', 'regex:/^\+?[0-9\s\-()]{6,20}$/',
-            ],
+            // Kept as contact details only — nothing is sent here.
+            'guardian_phone' => ['nullable', 'string', 'max:30', 'regex:/^\+?[0-9\s\-()]{6,20}$/'],
+            // The single delivery address for a student's sign-in details, so it has to be there:
+            // without it the password is generated, sent nowhere, and lost for good.
             'guardian_email' => [
-                Rule::requiredIf(fn () => ! $isTeacher && blank($request->input('guardian_phone'))),
+                Rule::requiredIf(fn () => ! $isTeacher),
                 'nullable', 'string', 'email', 'max:255',
             ],
         ], [
@@ -364,8 +351,7 @@ class AdminUserController extends Controller
             'email.unique' => __('Emel ini sudah didaftarkan.'),
             'grade_level.required' => __('Sila pilih Tahun untuk murid.'),
             'password.required' => __('Sila tetapkan kata laluan.'),
-            'guardian_email.required' => __('Isi e-mel penjaga atau nombor telefon penjaga — butiran log masuk murid dihantar kepada mereka.'),
-            'guardian_phone.required' => __('Isi e-mel penjaga atau nombor telefon penjaga — butiran log masuk murid dihantar kepada mereka.'),
+            'guardian_email.required' => __('Sila isi e-mel penjaga — butiran log masuk murid dihantar ke alamat ini.'),
         ]);
     }
 

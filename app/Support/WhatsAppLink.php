@@ -10,6 +10,11 @@ use App\Models\User;
  * Sending a WhatsApp message from the server needs a paid Business API account, so this takes the
  * other route: the admin gets a link that opens WhatsApp with the recipient and the whole message
  * already filled in, and presses send. No API credentials, and nothing leaves the server.
+ *
+ * PARKED — nothing calls this today. Student sign-in details go to the guardian's email, which is
+ * the only channel that delivers by itself at no cost; the click-to-send step was dropped rather
+ * than kept as a manual chore. Kept intact (with its tests) because the WhatsApp route is expected
+ * to come back, either via this link or a Business API sender reusing self::message().
  */
 class WhatsAppLink
 {

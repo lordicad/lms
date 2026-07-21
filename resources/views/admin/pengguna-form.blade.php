@@ -141,19 +141,16 @@
                         <input id="guardian_name" name="guardian_name" type="text" value="{{ old('guardian_name', $user->guardian_name) }}" class="tp-input">
                         @error('guardian_name')<p class="pg-err">{{ $message }}</p>@enderror
                     </div>
-                    {{-- One of the two below is required: a student's sign-in details go to their
-                         guardian, so there has to be somewhere to send them. --}}
-                    <p class="tp-hint" style="margin:0">
-                        {{ __('Isi sekurang-kurangnya satu daripada dua di bawah — butiran log masuk murid dihantar kepada penjaga.') }}
-                    </p>
                     <div class="tp-field">
-                        <label for="guardian_phone" class="tp-label">{{ __('Telefon penjaga') }} <span style="font-weight:600;color:var(--tp-muted)">({{ __('WhatsApp') }})</span></label>
+                        <label for="guardian_phone" class="tp-label">{{ __('Telefon penjaga') }}</label>
                         <input id="guardian_phone" name="guardian_phone" type="tel" value="{{ old('guardian_phone', $user->guardian_phone) }}" class="tp-input">
                         @error('guardian_phone')<p class="pg-err">{{ $message }}</p>@enderror
                     </div>
+                    {{-- The one place a student's sign-in details are delivered, so it is required. --}}
                     <div class="tp-field">
-                        <label for="guardian_email" class="tp-label">{{ __('E-mel penjaga') }}</label>
-                        <input id="guardian_email" name="guardian_email" type="email" value="{{ old('guardian_email', $user->guardian_email) }}" class="tp-input">
+                        <label for="guardian_email" class="tp-label">{{ __('E-mel penjaga') }} <span style="font-weight:600;color:var(--tp-muted)">({{ __('untuk butiran log masuk') }})</span></label>
+                        <input id="guardian_email" name="guardian_email" type="email" value="{{ old('guardian_email', $user->guardian_email) }}" required class="tp-input">
+                        <span class="tp-hint">{{ __('Nama pengguna dan kata laluan murid dihantar ke alamat ini.') }}</span>
                         @error('guardian_email')<p class="pg-err">{{ $message }}</p>@enderror
                     </div>
                 </div>

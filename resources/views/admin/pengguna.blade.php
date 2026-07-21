@@ -9,27 +9,6 @@
     {{-- The success banner is rendered once by <x-flash /> in the admin layout. --}}
     <div style="display:flex;flex-direction:column;gap:18px">
 
-        {{-- Handing the new details to a guardian over WhatsApp. Sending server-side needs a paid
-             Business API account, so this opens WhatsApp with the message already written and the
-             admin presses send. Shown once, right after the account is created. --}}
-        @if (session('wa_link'))
-            <div style="background:#DCF2EE;border:1px solid rgba(15,122,104,.3);border-radius:14px;padding:16px 18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
-                <div style="display:flex;flex-direction:column;gap:2px;flex:1;min-width:220px">
-                    <span style="font-family:'Geist',sans-serif;font-size:14px;font-weight:800;color:#0F7A68">
-                        {{ __('Hantar butiran log masuk melalui WhatsApp') }}
-                    </span>
-                    <span style="font-size:12.5px;color:var(--tp-muted-2)">
-                        {{ __('Mesej untuk penjaga :name sudah siap ditulis. Klik untuk membuka WhatsApp, kemudian tekan hantar.', ['name' => session('wa_name')]) }}
-                    </span>
-                </div>
-                <a href="{{ session('wa_link') }}" target="_blank" rel="noopener"
-                   style="display:inline-flex;align-items:center;gap:8px;background:#25D366;color:#fff;border-radius:11px;padding:11px 18px;font-family:'Geist',sans-serif;font-size:13.5px;font-weight:800;text-decoration:none;white-space:nowrap">
-                    <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.5 14.4c-.3-.2-1.7-.9-2-1s-.5-.2-.7.1-.7 1-.9 1.2-.4.2-.7.1a8.2 8.2 0 0 1-2.4-1.5 9 9 0 0 1-1.7-2.1c-.2-.3 0-.5.1-.6l.5-.6.3-.5v-.5l-1-2.3c-.2-.6-.5-.5-.7-.5h-.6a1.2 1.2 0 0 0-.8.4A3.4 3.4 0 0 0 5.9 9c0 1.5 1.1 3 1.2 3.2a12 12 0 0 0 4.6 4.1c2.2.9 2.2.6 2.6.6a3 3 0 0 0 2-1.4 2.5 2.5 0 0 0 .2-1.4l-.6-.3zM12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.1l-.3-.2-3.1.8.8-3-.2-.3A8.2 8.2 0 1 1 12 20.2z"/></svg>
-                    {{ __('Buka WhatsApp') }}
-                </a>
-            </div>
-        @endif
-
         {{-- Summary chips --}}
         <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px">
             <div style="background:var(--tp-surface);border:1px solid var(--tp-line);border-radius:14px;padding:16px 18px;display:flex;flex-direction:column;gap:4px;box-shadow:0 2px 10px rgba(46,44,80,.04)">

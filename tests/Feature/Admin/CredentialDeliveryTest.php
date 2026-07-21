@@ -47,7 +47,7 @@ class CredentialDeliveryTest extends TestCase
         });
     }
 
-    public function test_a_new_students_details_go_to_the_guardian_email_and_offer_whatsapp(): void
+    public function test_a_new_students_details_go_to_the_guardian_email(): void
     {
         $grade = Grade::factory()->level(3)->create();
 
@@ -65,36 +65,15 @@ class CredentialDeliveryTest extends TestCase
             'is_active' => 1,
         ]);
 
-        // Email goes to the guardian, addressed to them rather than to the child.
+        // Addressed to the guardian rather than the child, and carrying the real password.
         Mail::assertSent(AccountCredentialsMail::class, function (AccountCredentialsMail $mail) {
-            return $mail->hasTo('salmah@example.com') && $mail->guardianName === 'Puan Salmah';
+            return $mail->hasTo('salmah@example.com')
+                && $mail->guardianName === 'Puan Salmah'
+                && $mail->plainPassword === 'handed-over';
         });
 
-        // ...and a ready-to-send WhatsApp link is offered for the same guardian.
-        $link = $response->getSession()->get('wa_link');
-        $this->assertStringStartsWith('https://wa.me/60123456789?text=', $link);
-        $this->assertStringContainsString('aisyah', urldecode($link));
-        $this->assertStringContainsString('handed-over', urldecode($link));
-    }
-
-    public function test_a_student_without_a_guardian_email_still_gets_a_whatsapp_link(): void
-    {
-        $grade = Grade::factory()->level(3)->create();
-
-        $response = $this->actingAs($this->admin())->post(route('admin.pengguna.store'), [
-            'role' => User::ROLE_STUDENT,
-            'name' => 'Harith Danial',
-            'username' => 'harith',
-            'email' => 'harith@moe.gov.my',
-            'grade_level' => $grade->level,
-            'guardian_phone' => '+60 19-876 5432',
-            'password' => 'handed-over',
-            'password_confirmation' => 'handed-over',
-            'is_active' => 1,
-        ]);
-
-        Mail::assertNothingSent();
-        $this->assertStringStartsWith('https://wa.me/60198765432?text=', $response->getSession()->get('wa_link'));
+        // The WhatsApp hand-off is gone: nothing is left for the admin to click.
+        $this->assertNull($response->getSession()->get('wa_link'));
     }
 
     public function test_an_admin_password_reset_sends_the_new_details_to_the_teacher(): void
@@ -116,31 +95,29 @@ class CredentialDeliveryTest extends TestCase
                 && $mail->plainPassword === 'reset-by-admin');
     }
 
-    public function test_a_reset_on_a_student_offers_the_guardian_whatsapp_link_again(): void
+    public function test_a_reset_on_a_student_emails_the_guardian_again(): void
     {
         $grade = Grade::factory()->level(3)->create();
         $student = User::factory()->student($grade->level)->create([
             'email' => 'murid@moe.gov.my',
             'guardian_name' => 'Puan Salmah',
-            'guardian_phone' => '012-345 6789',
+            'guardian_email' => 'salmah@example.com',
         ]);
 
-        $response = $this->actingAs($this->admin())->put(route('admin.pengguna.update', $student), [
+        $this->actingAs($this->admin())->put(route('admin.pengguna.update', $student), [
             'role' => User::ROLE_STUDENT,
             'name' => $student->name,
             'username' => $student->username,
             'email' => $student->email,
             'grade_level' => $grade->level,
             'guardian_name' => 'Puan Salmah',
-            'guardian_phone' => '012-345 6789',
+            'guardian_email' => 'salmah@example.com',
             'password' => 'reset-by-admin',
             'password_confirmation' => 'reset-by-admin',
             'is_active' => 1,
         ]);
 
-        $link = $response->getSession()->get('wa_link');
-        $this->assertStringStartsWith('https://wa.me/60123456789?text=', $link);
-        $this->assertStringContainsString('reset-by-admin', urldecode($link));
+        Mail::assertSent(AccountCredentialsMail::class, fn (AccountCredentialsMail $mail) => $mail->hasTo('salmah@example.com') && $mail->plainPassword === 'reset-by-admin');
     }
 
     public function test_an_edit_that_leaves_the_password_alone_sends_nothing(): void
@@ -321,13 +298,14 @@ class CredentialDeliveryTest extends TestCase
     {
         $grade = Grade::factory()->level(3)->create();
 
-        $response = $this->actingAs($this->admin())->post(route('admin.pengguna.store'), [
+        $this->actingAs($this->admin())->post(route('admin.pengguna.store'), [
             'role' => User::ROLE_STUDENT,
             'name' => 'Nur Aisyah',
             'username' => 'Aisyah',
             'email' => 'aisyah@moe.gov.my',
             'grade_level' => $grade->level,
             'guardian_name' => 'Puan Salmah',
+            'guardian_email' => 'salmah@example.com',
             'guardian_phone' => '012-345 6789',
             'auto_password' => 1,
             'is_active' => 1,
@@ -338,14 +316,15 @@ class CredentialDeliveryTest extends TestCase
         $this->assertSame('aisyah@moe.gov.my', $student->signInIdentifier());
 
         // The guardian is told the child's sign-in email, not the display nickname.
-        $this->assertStringContainsString('aisyah@moe.gov.my', urldecode($response->getSession()->get('wa_link')));
+        $html = $this->htmlOfSentMail();
+        $this->assertStringContainsString('aisyah@moe.gov.my', $html);
     }
 
     /**
-     * A student's details only ever go to their guardian, so saving one with no guardian contact
-     * would generate a password, send it nowhere, and lose it for good.
+     * The guardian's email is the only place a student's details are delivered, so saving one
+     * without it would generate a password, send it nowhere, and lose it for good.
      */
-    public function test_a_student_needs_a_guardian_email_or_phone(): void
+    public function test_a_student_needs_a_guardian_email(): void
     {
         $grade = Grade::factory()->level(3)->create();
 
@@ -356,32 +335,13 @@ class CredentialDeliveryTest extends TestCase
             'email' => 'sunyi@moe.gov.my',
             'grade_level' => $grade->level,
             'guardian_email' => '',
-            'guardian_phone' => '',
+            'guardian_phone' => '012-345 6789',   // a phone no longer stands in for it
             'auto_password' => 1,
             'is_active' => 1,
-        ])->assertSessionHasErrors(['guardian_email', 'guardian_phone']);
+        ])->assertSessionHasErrors('guardian_email');
 
         $this->assertDatabaseMissing('users', ['username' => 'sunyi']);
         Mail::assertNothingSent();
-    }
-
-    /** Either channel on its own is enough — a guardian with only WhatsApp must not be blocked. */
-    public function test_a_guardian_phone_alone_satisfies_the_requirement(): void
-    {
-        $grade = Grade::factory()->level(3)->create();
-
-        $this->actingAs($this->admin())->post(route('admin.pengguna.store'), [
-            'role' => User::ROLE_STUDENT,
-            'name' => 'Murid WhatsApp',
-            'username' => 'wasap',
-            'email' => 'wasap@moe.gov.my',
-            'grade_level' => $grade->level,
-            'guardian_phone' => '012-345 6789',
-            'auto_password' => 1,
-            'is_active' => 1,
-        ])->assertSessionHasNoErrors();
-
-        $this->assertDatabaseHas('users', ['username' => 'wasap']);
     }
 
     /** A teacher has no guardian, so the rule must not reach them. */
