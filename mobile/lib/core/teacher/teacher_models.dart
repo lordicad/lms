@@ -368,6 +368,7 @@ class TeacherVideo {
     required this.subjectId,
     required this.gradeId,
     required this.chapterLabel,
+    required this.chapterNumber,
     required this.subjectName,
     required this.gradeName,
     required this.published,
@@ -385,6 +386,7 @@ class TeacherVideo {
   final int? subjectId;
   final int? gradeId;
   final String? chapterLabel;
+  final int? chapterNumber;
   final String? subjectName;
   final String? gradeName;
   final bool published;
@@ -409,6 +411,9 @@ class TeacherVideo {
     subjectId: j['subject_id'] == null ? null : _int(j['subject_id']),
     gradeId: j['grade_id'] == null ? null : _int(j['grade_id']),
     chapterLabel: _strOrNull(j['chapter_label']),
+    chapterNumber: j['chapter_number'] == null
+        ? null
+        : _int(j['chapter_number']),
     subjectName: _strOrNull(j['subject_name']),
     gradeName: _strOrNull(j['grade_name']),
     published: _bool(j['published']),
@@ -428,7 +433,9 @@ class TeacherMaterial {
     required this.subjectId,
     required this.gradeId,
     required this.chapterLabel,
+    required this.chapterNumber,
     required this.subjectName,
+    required this.gradeName,
     required this.extension,
     required this.humanSize,
   });
@@ -439,7 +446,9 @@ class TeacherMaterial {
   final int? subjectId;
   final int? gradeId;
   final String? chapterLabel;
+  final int? chapterNumber;
   final String? subjectName;
+  final String? gradeName;
   final String extension;
   final String humanSize;
 
@@ -450,7 +459,11 @@ class TeacherMaterial {
     subjectId: j['subject_id'] == null ? null : _int(j['subject_id']),
     gradeId: j['grade_id'] == null ? null : _int(j['grade_id']),
     chapterLabel: _strOrNull(j['chapter_label']),
+    chapterNumber: j['chapter_number'] == null
+        ? null
+        : _int(j['chapter_number']),
     subjectName: _strOrNull(j['subject_name']),
+    gradeName: _strOrNull(j['grade_name']),
     extension: _str(j['extension']),
     humanSize: _str(j['human_size']),
   );
@@ -462,7 +475,9 @@ class TeacherQuiz {
     required this.title,
     required this.type,
     required this.chapterLabel,
+    required this.chapterNumber,
     required this.subjectName,
+    required this.gradeName,
     required this.published,
     required this.questionCount,
     required this.attempts,
@@ -472,7 +487,9 @@ class TeacherQuiz {
   final String title;
   final String type; // 'interactive' | 'file'
   final String? chapterLabel;
+  final int? chapterNumber;
   final String? subjectName;
+  final String? gradeName;
   final bool published;
   final int questionCount;
   final int attempts;
@@ -484,7 +501,11 @@ class TeacherQuiz {
     title: _str(j['title']),
     type: _str(j['type']),
     chapterLabel: _strOrNull(j['chapter_label']),
+    chapterNumber: j['chapter_number'] == null
+        ? null
+        : _int(j['chapter_number']),
     subjectName: _strOrNull(j['subject_name']),
+    gradeName: _strOrNull(j['grade_name']),
     published: _bool(j['published']),
     questionCount: _int(j['question_count']),
     attempts: _int(j['attempts']),

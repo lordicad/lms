@@ -533,25 +533,25 @@ class _DashboardTabState extends State<_DashboardTab> {
                         children: [
                           _QuickAction(
                             icon: Icons.video_call_outlined,
-                            label: 'Video',
+                            label: context.copy(bm: 'Video', en: 'Video'),
                             onTap: _openAddVideo,
                           ),
                           const SizedBox(width: 9),
                           _QuickAction(
                             icon: Icons.upload_file_outlined,
-                            label: 'Bahan',
+                            label: context.copy(bm: 'Bahan', en: 'Material'),
                             onTap: _openAddMaterial,
                           ),
                           const SizedBox(width: 9),
                           _QuickAction(
                             icon: Icons.post_add_outlined,
-                            label: 'Kuiz',
+                            label: context.copy(bm: 'Kuiz', en: 'Quiz'),
                             onTap: _openAddQuiz,
                           ),
                           const SizedBox(width: 9),
                           _QuickAction(
                             icon: Icons.library_add_outlined,
-                            label: 'Bab',
+                            label: context.copy(bm: 'Bab', en: 'Chapter'),
                             onTap: _openChapters,
                           ),
                         ],

@@ -439,9 +439,26 @@ class _VideosList extends StatelessWidget {
               title: v.title,
               subtitle: [
                 if (v.subjectName != null) v.subjectName!,
-                if (v.chapterLabel != null) v.chapterLabel!,
+                if (v.gradeName != null) v.gradeName!,
+                if (v.chapterNumber != null)
+                  context.copy(
+                    bm: 'Bab ${v.chapterNumber}',
+                    en: 'Chapter ${v.chapterNumber}',
+                  )
+                else if (v.chapterLabel != null)
+                  v.chapterLabel!,
                 context.copy(bm: '${v.views} tontonan', en: '${v.views} views'),
-                v.ownershipLabel,
+                switch (v.ownership) {
+                  'owned' => context.copy(
+                    bm: 'YouTube — Anda',
+                    en: 'YouTube — Yours',
+                  ),
+                  'reference' => context.copy(
+                    bm: 'YouTube — Rujukan',
+                    en: 'YouTube — Reference',
+                  ),
+                  _ => context.copy(bm: 'Muat naik', en: 'Upload'),
+                },
               ].join(' · '),
               published: v.published,
               onEdit: v.source == 'youtube' ? () => onEdit(v) : null,
@@ -508,7 +525,14 @@ class _MaterialsList extends StatelessWidget {
               title: m.title,
               subtitle: [
                 if (m.subjectName != null) m.subjectName!,
-                if (m.chapterLabel != null) m.chapterLabel!,
+                if (m.gradeName != null) m.gradeName!,
+                if (m.chapterNumber != null)
+                  context.copy(
+                    bm: 'Bab ${m.chapterNumber}',
+                    en: 'Chapter ${m.chapterNumber}',
+                  )
+                else if (m.chapterLabel != null)
+                  m.chapterLabel!,
                 m.extension.toUpperCase(),
                 if (m.humanSize.isNotEmpty) m.humanSize,
               ].join(' · '),
@@ -579,7 +603,14 @@ class _QuizzesList extends StatelessWidget {
               title: q.title,
               subtitle: [
                 if (q.subjectName != null) q.subjectName!,
-                if (q.chapterLabel != null) q.chapterLabel!,
+                if (q.gradeName != null) q.gradeName!,
+                if (q.chapterNumber != null)
+                  context.copy(
+                    bm: 'Bab ${q.chapterNumber}',
+                    en: 'Chapter ${q.chapterNumber}',
+                  )
+                else if (q.chapterLabel != null)
+                  q.chapterLabel!,
                 if (!q.isFile)
                   context.copy(
                     bm: '${q.questionCount} soalan',

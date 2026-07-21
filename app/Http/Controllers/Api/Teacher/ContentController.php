@@ -37,6 +37,7 @@ class ContentController extends Controller
                 'subject_id' => $l->chapter?->subject_id,
                 'grade_id' => $l->chapter?->grade_id,
                 'chapter_label' => $l->chapter?->label(),
+                'chapter_number' => $l->chapter?->number,
                 'subject_name' => $l->chapter?->subject?->displayName(),
                 'grade_name' => $l->chapter?->grade?->name,
                 'published' => (bool) $l->is_published,
@@ -69,7 +70,9 @@ class ContentController extends Controller
                 'subject_id' => $m->chapter?->subject_id,
                 'grade_id' => $m->chapter?->grade_id,
                 'chapter_label' => $m->chapter?->label(),
+                'chapter_number' => $m->chapter?->number,
                 'subject_name' => $m->chapter?->subject?->displayName(),
+                'grade_name' => $m->chapter?->grade?->name,
                 'extension' => $m->extension(),
                 'human_size' => $m->humanSize(),
             ])->all(),
@@ -84,7 +87,7 @@ class ContentController extends Controller
         }
 
         $quizzes = $teacher->quizzes()
-            ->with('chapter.subject')
+            ->with('chapter.subject', 'chapter.grade')
             ->withCount(['questions', 'completedAttempts as attempts_count'])
             ->orderByDesc('id')
             ->get();
@@ -95,7 +98,9 @@ class ContentController extends Controller
                 'title' => $q->title,
                 'type' => $q->type,
                 'chapter_label' => $q->chapter?->label(),
+                'chapter_number' => $q->chapter?->number,
                 'subject_name' => $q->chapter?->subject?->displayName(),
+                'grade_name' => $q->chapter?->grade?->name,
                 'published' => (bool) $q->is_published,
                 'question_count' => $q->questions_count,
                 'attempts' => $q->attempts_count,
