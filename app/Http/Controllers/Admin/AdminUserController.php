@@ -109,14 +109,9 @@ class AdminUserController extends Controller
     {
         $sentTo = [];
 
-        // Shown to the admin once, so a generated password can still be handed over by hand when
-        // no address is on record — or when mail is not configured yet.
-        $flash = [
-            'new_password' => $plainPassword,
-            // The identifier that actually signs them in, not the display nickname.
-            'new_username' => $user->signInIdentifier(),
-            'new_password_for' => $user->name,
-        ];
+        // The password is deliberately never put on screen: it reaches its owner by email, or the
+        // guardian by WhatsApp, and nowhere else.
+        $flash = [];
 
         if ($user->isTeacher()) {
             if ($this->mail($user->email, $user, $plainPassword)) {

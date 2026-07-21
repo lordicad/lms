@@ -9,31 +9,6 @@
     {{-- The success banner is rendered once by <x-flash /> in the admin layout. --}}
     <div style="display:flex;flex-direction:column;gap:18px">
 
-        {{-- The temporary password, shown to the admin exactly once. It is never stored in readable
-             form, so this is the only chance to copy it down if it has to be handed over in person. --}}
-        @if (session('new_password'))
-            <div style="background:var(--tp-surface);border:1.5px solid rgba(15,122,104,.35);border-radius:14px;padding:16px 18px;display:flex;flex-direction:column;gap:10px"
-                 x-data="{ copied: false }">
-                <div style="display:flex;flex-direction:column;gap:2px">
-                    <span style="font-family:'Geist',sans-serif;font-size:14px;font-weight:800;color:var(--tp-ink)">
-                        🔑 {{ __('Kata laluan sementara untuk :name', ['name' => session('new_password_for')]) }}
-                    </span>
-                    <span style="font-size:12.5px;color:var(--tp-muted-2)">
-                        {{ __('Hanya dipaparkan sekali. Salin sekarang jika perlu diberi secara bersemuka.') }}
-                    </span>
-                </div>
-                <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-                    <code style="background:var(--tp-input);border:1px solid var(--tp-line-2);border-radius:10px;padding:9px 14px;font-size:14px;font-weight:700;color:var(--tp-ink)">{{ session('new_username') }}</code>
-                    <code style="background:var(--tp-input);border:1px solid var(--tp-line-2);border-radius:10px;padding:9px 14px;font-size:14px;font-weight:700;color:#0F7A68;letter-spacing:.4px">{{ session('new_password') }}</code>
-                    <button type="button" class="tp-btn-outline" style="min-height:38px;padding:0 14px;font-size:13px"
-                            @click="navigator.clipboard.writeText(@js(session('new_username').' / '.session('new_password'))); copied = true; setTimeout(() => copied = false, 2000)">
-                        <span x-show="! copied">{{ __('Salin') }}</span>
-                        <span x-show="copied" x-cloak>✓ {{ __('Disalin') }}</span>
-                    </button>
-                </div>
-            </div>
-        @endif
-
         {{-- Handing the new details to a guardian over WhatsApp. Sending server-side needs a paid
              Business API account, so this opens WhatsApp with the message already written and the
              admin presses send. Shown once, right after the account is created. --}}

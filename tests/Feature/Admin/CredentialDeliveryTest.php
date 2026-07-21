@@ -159,6 +159,7 @@ class CredentialDeliveryTest extends TestCase
         $this->assertSame('Nama Baharu', $teacher->fresh()->name);
     }
 
+    /** The generated password reaches its owner by email only — never the admin's screen. */
     public function test_a_password_is_generated_when_the_admin_does_not_type_one(): void
     {
         $response = $this->actingAs($this->admin())->post(route('admin.pengguna.store'), [
@@ -170,15 +171,32 @@ class CredentialDeliveryTest extends TestCase
             'is_active' => 1,
         ])->assertRedirect(route('admin.pengguna'));
 
-        $generated = $response->getSession()->get('new_password');
+        $generated = $this->passwordFromSentMail();
         $this->assertNotEmpty($generated);
 
-        // It is the real password: it signs in, and it is what was emailed.
+        // It is the real password: it signs in, and it forces a change at first sign-in.
         $teacher = User::where('username', 'auto')->firstOrFail();
         $this->assertTrue(Hash::check($generated, $teacher->password));
         $this->assertTrue($teacher->mustChangePassword());
 
-        Mail::assertSent(AccountCredentialsMail::class, fn (AccountCredentialsMail $mail) => $mail->plainPassword === $generated);
+        // Nothing about the password is handed back to the admin.
+        $session = $response->getSession();
+        $this->assertNull($session->get('new_password'));
+        $this->assertNull($session->get('new_username'));
+    }
+
+    /** Pull the plain password out of the mail that was sent, since it is not flashed anywhere. */
+    private function passwordFromSentMail(): ?string
+    {
+        $captured = null;
+
+        Mail::assertSent(AccountCredentialsMail::class, function (AccountCredentialsMail $mail) use (&$captured) {
+            $captured = $mail->plainPassword;
+
+            return true;
+        });
+
+        return $captured;
     }
 
     public function test_a_typed_password_still_wins_when_auto_is_off(): void
@@ -214,7 +232,7 @@ class CredentialDeliveryTest extends TestCase
         $teacher = User::factory()->teacher()->create(['email' => 'reset@moe.gov.my']);
         $teacher->markPasswordChanged();
 
-        $response = $this->actingAs($this->admin())->put(route('admin.pengguna.update', $teacher), [
+        $this->actingAs($this->admin())->put(route('admin.pengguna.update', $teacher), [
             'role' => User::ROLE_TEACHER,
             'name' => $teacher->name,
             'username' => $teacher->username,
@@ -223,7 +241,7 @@ class CredentialDeliveryTest extends TestCase
             'is_active' => 1,
         ])->assertRedirect(route('admin.pengguna'));
 
-        $generated = $response->getSession()->get('new_password');
+        $generated = $this->passwordFromSentMail();
         $this->assertNotEmpty($generated);
         $this->assertTrue(Hash::check($generated, $teacher->fresh()->password));
         $this->assertTrue($teacher->fresh()->mustChangePassword());
@@ -246,7 +264,7 @@ class CredentialDeliveryTest extends TestCase
 
     public function test_a_teacher_is_told_to_sign_in_with_their_email_not_their_nickname(): void
     {
-        $response = $this->actingAs($this->admin())->post(route('admin.pengguna.store'), [
+        $this->actingAs($this->admin())->post(route('admin.pengguna.store'), [
             'role' => User::ROLE_TEACHER,
             'name' => 'Rohana Osman',
             'username' => 'Cikgu Ana',        // a display nickname, not a login
@@ -259,10 +277,7 @@ class CredentialDeliveryTest extends TestCase
         $this->assertTrue($teacher->signsInWithEmail());
         $this->assertSame('rohana@moe.gov.my', $teacher->signInIdentifier());
 
-        // The admin's own copy shows the email, not the nickname.
-        $this->assertSame('rohana@moe.gov.my', $response->getSession()->get('new_username'));
-
-        // ...and so does the email itself.
+        // The email tells them to sign in with the address, and names the nickname separately.
         Mail::assertSent(AccountCredentialsMail::class, function (AccountCredentialsMail $mail) {
             $html = $mail->render();
 
@@ -289,7 +304,6 @@ class CredentialDeliveryTest extends TestCase
         $student = User::where('email', 'aisyah@moe.gov.my')->firstOrFail();
         $this->assertTrue($student->signsInWithEmail());
         $this->assertSame('aisyah@moe.gov.my', $student->signInIdentifier());
-        $this->assertSame('aisyah@moe.gov.my', $response->getSession()->get('new_username'));
 
         // The guardian is told the child's sign-in email, not the display nickname.
         $this->assertStringContainsString('aisyah@moe.gov.my', urldecode($response->getSession()->get('wa_link')));
