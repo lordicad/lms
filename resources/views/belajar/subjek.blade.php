@@ -7,7 +7,7 @@
            style="align-self:flex-start;display:flex;align-items:center;gap:8px;font-family:'Geist',sans-serif;font-size:14px;font-weight:800;color:var(--wl-muted-2);text-decoration:none;padding:6px 0">← {{ __('Semua subjek') }}</a>
 
         <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
-            <span style="width:56px;height:56px;border-radius:16px;background:{{ $selGrad }};display:grid;place-items:center;font-size:25px"><x-subject-emoji :subject="$subject" style="font-size:25px" /></span>
+            <span style="width:56px;height:56px;border-radius:16px;background:{{ $selGrad }};display:grid;place-items:center"><x-subject-icon :subject="$subject" class="h-7 w-7" /></span>
             <div style="display:flex;flex-direction:column;gap:2px;margin-right:auto">
                 <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:26px;font-weight:800;letter-spacing:-.01em;color:var(--wl-ink)">{{ $subject->name }}</h2>
                 <span style="font-size:14px;font-weight:700;color:var(--wl-muted)">{{ $grade->name }}</span>

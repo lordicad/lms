@@ -29,7 +29,7 @@
                                 @php($grad = $grads[$gi++ % count($grads)])
                                 <a href="{{ route('belajar.subjek', ['subject' => $subject->slug, 'grade' => $grade->level]) }}" class="wl-lift"
                                    style="background:{{ $grad }};border:1px solid var(--wl-line);border-radius:18px;padding:20px;min-height:160px;display:flex;flex-direction:column;box-shadow:0 4px 16px var(--wl-line);cursor:pointer;text-decoration:none">
-                                    <x-subject-emoji :subject="$subject" style="font-size:24px" />
+                                    <x-subject-icon :subject="$subject" class="h-7 w-7" />
                                     <div style="margin-top:auto;margin-bottom:12px;display:flex;flex-direction:column;gap:3px">
                                         <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:16px;color:var(--wl-ink)">{{ $subject->displayName() }}</span>
                                     </div>
