@@ -137,11 +137,11 @@ class _TeacherDashboardScreenState extends State<TeacherDashboardScreen> {
                       style: Theme.of(context).textTheme.headlineMedium,
                     ),
                     const SizedBox(height: 2),
-                    const Text(
+                    Text(
                       'Urus video, bahan dan kuiz anda.',
                       style: TextStyle(
                         fontSize: 11.5,
-                        color: LmsColors.inkMuted,
+                        color: LmsPalette.muted(context),
                       ),
                     ),
                   ],

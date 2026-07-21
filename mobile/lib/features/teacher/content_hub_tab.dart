@@ -74,7 +74,7 @@ class _ContentHubTabState extends State<ContentHubTab> {
                 child: Container(
                   padding: const EdgeInsets.all(3),
                   decoration: BoxDecoration(
-                    color: LmsColors.surfaceMuted,
+                    color: LmsPalette.soft(context),
                     borderRadius: BorderRadius.circular(13),
                   ),
                   child: SegmentedButton<int>(
@@ -94,7 +94,7 @@ class _ContentHubTabState extends State<ContentHubTab> {
                       foregroundColor: WidgetStateProperty.resolveWith(
                         (states) => states.contains(WidgetState.selected)
                             ? Colors.white
-                            : LmsColors.inkMuted,
+                            : LmsPalette.muted(context),
                       ),
                       backgroundColor: WidgetStateProperty.resolveWith(
                         (states) => states.contains(WidgetState.selected)
@@ -114,9 +114,9 @@ class _ContentHubTabState extends State<ContentHubTab> {
               const SizedBox(width: 8),
               Container(
                 decoration: BoxDecoration(
-                  color: LmsColors.surface,
+                  color: LmsPalette.surface(context),
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: LmsColors.border),
+                  border: Border.all(color: LmsPalette.border(context)),
                 ),
                 child: IconButton(
                   tooltip: 'Muat semula',
@@ -350,7 +350,11 @@ class _StatusChip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
       decoration: BoxDecoration(
-        color: published ? LmsColors.brandSoft : const Color(0xFFFBEEDC),
+        color: published
+            ? LmsPalette.soft(context)
+            : Theme.of(context).brightness == Brightness.dark
+            ? const Color(0xFF4C3C25)
+            : const Color(0xFFFBEEDC),
         borderRadius: BorderRadius.circular(999),
       ),
       child: Text(
@@ -584,9 +588,9 @@ class _ContentCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: LmsColors.surface,
+        color: LmsPalette.surface(context),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: LmsColors.border),
+        border: Border.all(color: LmsPalette.border(context)),
         boxShadow: const [
           BoxShadow(
             color: Color(0x0D1B3520),
@@ -600,7 +604,7 @@ class _ContentCard extends StatelessWidget {
         children: [
           Container(
             decoration: BoxDecoration(
-              color: LmsColors.brandSoft,
+              color: LmsPalette.soft(context),
               borderRadius: BorderRadius.circular(12),
             ),
             padding: const EdgeInsets.all(11),
@@ -642,7 +646,7 @@ class _ContentCard extends StatelessWidget {
               onTogglePublish != null ||
               onDelete != null)
             PopupMenuButton<String>(
-              icon: const Icon(Icons.more_vert, color: LmsColors.inkFaint),
+              icon: Icon(Icons.more_vert, color: LmsPalette.faint(context)),
               tooltip: 'Tindakan',
               onSelected: (value) {
                 if (value == 'edit') onEdit?.call();

@@ -56,15 +56,15 @@ class ProfileTab extends StatelessWidget {
           style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w800,
-            color: LmsColors.ink,
+            color: LmsPalette.text(context),
           ),
         ),
         const SizedBox(height: 10),
         Container(
           decoration: BoxDecoration(
-            color: LmsColors.surface,
+            color: LmsPalette.surface(context),
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: LmsColors.border),
+            border: Border.all(color: LmsPalette.border(context)),
           ),
           child: Column(
             children: [
@@ -499,9 +499,9 @@ class _StudentStatCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(13),
       decoration: BoxDecoration(
-        color: LmsColors.surface,
+        color: LmsPalette.surface(context),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: LmsColors.border),
+        border: Border.all(color: LmsPalette.border(context)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -517,8 +517,8 @@ class _StudentStatCard extends StatelessWidget {
           ),
           Text(
             value,
-            style: const TextStyle(
-              color: LmsColors.ink,
+            style: TextStyle(
+              color: LmsPalette.text(context),
               fontSize: 19,
               fontWeight: FontWeight.w800,
             ),
@@ -527,7 +527,7 @@ class _StudentStatCard extends StatelessWidget {
             label,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: const TextStyle(fontSize: 10.5, color: LmsColors.inkMuted),
+            style: TextStyle(fontSize: 10.5, color: LmsPalette.muted(context)),
           ),
         ],
       ),
@@ -552,16 +552,18 @@ class _StudentBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final iconColor = earned ? color : LmsColors.inkMuted;
+    final iconColor = earned ? color : LmsPalette.muted(context);
     return Opacity(
       opacity: earned ? 1 : .52,
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: LmsColors.surface,
+          color: LmsPalette.surface(context),
           borderRadius: BorderRadius.circular(15),
           border: Border.all(
-            color: earned ? color.withValues(alpha: .25) : LmsColors.border,
+            color: earned
+                ? color.withValues(alpha: .25)
+                : LmsPalette.border(context),
           ),
         ),
         child: Row(
@@ -584,10 +586,10 @@ class _StudentBadge extends StatelessWidget {
                     title,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 11.5,
                       fontWeight: FontWeight.w800,
-                      color: LmsColors.ink,
+                      color: LmsPalette.text(context),
                     ),
                   ),
                   const SizedBox(height: 2),
@@ -595,9 +597,9 @@ class _StudentBadge extends StatelessWidget {
                     caption,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 9.5,
-                      color: LmsColors.inkMuted,
+                      color: LmsPalette.muted(context),
                     ),
                   ),
                 ],
@@ -748,15 +750,15 @@ class _InfoRow extends StatelessWidget {
         children: [
           Icon(icon, color: LmsColors.brand, size: 22),
           const SizedBox(width: 14),
-          Text(label, style: const TextStyle(color: LmsColors.inkMuted)),
+          Text(label, style: TextStyle(color: LmsPalette.muted(context))),
           const Spacer(),
           Flexible(
             child: Text(
               value,
               textAlign: TextAlign.right,
-              style: const TextStyle(
+              style: TextStyle(
                 fontWeight: FontWeight.w700,
-                color: LmsColors.ink,
+                color: LmsPalette.text(context),
               ),
             ),
           ),

@@ -32,11 +32,11 @@ abstract final class LmsPalette {
       Theme.of(context).brightness == Brightness.dark;
 
   static Color surface(BuildContext context) =>
-      isDark(context) ? const Color(0xFF18231B) : LmsColors.surface;
+      isDark(context) ? const Color(0xFF26382A) : LmsColors.surface;
   static Color surfaceRaised(BuildContext context) =>
-      isDark(context) ? const Color(0xFF203026) : const Color(0xFFFBFCFA);
+      isDark(context) ? const Color(0xFF304536) : const Color(0xFFFBFCFA);
   static Color soft(BuildContext context) =>
-      isDark(context) ? const Color(0xFF2A3D2D) : LmsColors.brandSoft;
+      isDark(context) ? const Color(0xFF3B543E) : LmsColors.brandSoft;
   static Color text(BuildContext context) =>
       isDark(context) ? const Color(0xFFE7F1E5) : LmsColors.ink;
   static Color muted(BuildContext context) =>
@@ -44,7 +44,7 @@ abstract final class LmsPalette {
   static Color faint(BuildContext context) =>
       isDark(context) ? const Color(0xFF849685) : LmsColors.inkFaint;
   static Color border(BuildContext context) =>
-      isDark(context) ? const Color(0xFF304735) : LmsColors.border;
+      isDark(context) ? const Color(0xFF49654D) : LmsColors.border;
 }
 
 ThemeData buildLmsTheme() {
@@ -144,12 +144,12 @@ ThemeData buildLmsTheme() {
 /// navigation and form controls update immediately with this theme; older
 /// content cards retain their readable WeLearn styling while they are migrated.
 ThemeData buildLmsDarkTheme() {
-  const surface = Color(0xFF172019);
-  const surfaceMuted = Color(0xFF243027);
-  const background = Color(0xFF101712);
+  const surface = Color(0xFF26382A);
+  const surfaceMuted = Color(0xFF304536);
+  const background = Color(0xFF18261C);
   const text = Color(0xFFE8F0E5);
   const muted = Color(0xFFB5C4B5);
-  const border = Color(0x335D8062);
+  const border = Color(0xFF49654D);
   const scheme = ColorScheme.dark(
     primary: LmsColors.accent,
     onPrimary: LmsColors.onAccent,
