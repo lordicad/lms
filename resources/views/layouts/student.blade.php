@@ -51,7 +51,18 @@
         }
 
         /* ── WeLearn prototype styles, ported verbatim ── */
-        body { margin: 0; background: var(--wl-page); font-family: 'Nunito', sans-serif; color: var(--wl-body); }
+        /* The page wallpaper. `fixed` keeps it sized to the viewport and still while the page
+           scrolls: the artwork is portrait, so letting it stretch to the document height would
+           smear it on long pages. --wl-page stays underneath as the fallback colour. */
+        body {
+            margin: 0;
+            background: var(--wl-page) url('{{ asset('images/gambar1.jpg') }}') center center / cover no-repeat fixed;
+            font-family: 'Nunito', sans-serif;
+            color: var(--wl-body);
+        }
+        /* Night mode keeps its dark ramp — a pale wallpaper behind it would undo the point of it
+           and leave the light text on the cards fighting the background. */
+        html.theme-dark body { background: var(--wl-page); }
         .wl a { color: #17907B; text-decoration: none; }
         .wl a:hover { color: #2BB39B; }
         .wl input:focus, .wl select:focus { outline: none; border-color: #17907B !important; box-shadow: 0 0 0 3px rgba(43,179,155,.25); }
