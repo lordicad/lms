@@ -94,9 +94,12 @@ class AdminUserController extends Controller
      * is one, and by WhatsApp when there is a phone number — the WhatsApp part comes back as a
      * click-to-send link for the admin to press, since sending server-side needs a paid API account.
      *
+     * Used for a new account and for an admin password reset alike: both end with the admin holding
+     * a password the owner does not yet know, so both need the same hand-off.
+     *
      * @return array<string, string> session keys to flash
      */
-    private function deliverCredentials(User $user, string $plainPassword): array
+    private function deliverCredentials(User $user, string $plainPassword, bool $isReset = false): array
     {
         $sentTo = [];
         $flash = [];
@@ -116,12 +119,21 @@ class AdminUserController extends Controller
             }
         }
 
-        $flash['status'] = $sentTo === []
-            ? __('Akaun :name berjaya dicipta. Butiran log masuk belum dihantar — tiada alamat e-mel disimpan.', ['name' => $user->name])
-            : __('Akaun :name berjaya dicipta. Butiran log masuk dihantar ke :to.', [
-                'name' => $user->name,
-                'to' => implode(', ', $sentTo),
-            ]);
+        if ($isReset) {
+            $flash['status'] = $sentTo === []
+                ? __('Kata laluan :name berjaya ditetapkan semula. Butiran belum dihantar — tiada alamat e-mel disimpan.', ['name' => $user->name])
+                : __('Kata laluan :name berjaya ditetapkan semula. Butiran log masuk baharu dihantar ke :to.', [
+                    'name' => $user->name,
+                    'to' => implode(', ', $sentTo),
+                ]);
+        } else {
+            $flash['status'] = $sentTo === []
+                ? __('Akaun :name berjaya dicipta. Butiran log masuk belum dihantar — tiada alamat e-mel disimpan.', ['name' => $user->name])
+                : __('Akaun :name berjaya dicipta. Butiran log masuk dihantar ke :to.', [
+                    'name' => $user->name,
+                    'to' => implode(', ', $sentTo),
+                ]);
+        }
 
         return $flash;
     }
@@ -198,6 +210,13 @@ class AdminUserController extends Controller
 
         $user->save();
         $this->syncSubjects($user, $data);
+
+        // A reset leaves the admin holding a password the owner does not know yet, so it is handed
+        // over the same way a brand new account is. An edit that left the password alone is silent.
+        if (! empty($data['password'])) {
+            return redirect()->route('admin.pengguna')
+                ->with($this->deliverCredentials($user, $data['password'], isReset: true));
+        }
 
         return redirect()->route('admin.pengguna')
             ->with('status', __('Akaun :name berjaya dikemas kini.', ['name' => $user->name]));

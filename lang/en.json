@@ -1134,6 +1134,8 @@
     "Terima kasih,": "Thank you,",
     "Akaun :name berjaya dicipta. Butiran log masuk dihantar ke :to.": "Account :name created. Sign-in details sent to :to.",
     "Akaun :name berjaya dicipta. Butiran log masuk belum dihantar — tiada alamat e-mel disimpan.": "Account :name created. Sign-in details were not emailed — no email address on record.",
+    "Kata laluan :name berjaya ditetapkan semula. Butiran log masuk baharu dihantar ke :to.": "Password for :name has been reset. The new sign-in details were sent to :to.",
+    "Kata laluan :name berjaya ditetapkan semula. Butiran belum dihantar — tiada alamat e-mel disimpan.": "Password for :name has been reset. The details were not emailed — no email address on record.",
     "Hantar butiran log masuk melalui WhatsApp": "Send sign-in details via WhatsApp",
     "Mesej untuk penjaga :name sudah siap ditulis. Klik untuk membuka WhatsApp, kemudian tekan hantar.": "The message for :name's guardian is already written. Click to open WhatsApp, then press send.",
     "Buka WhatsApp": "Open WhatsApp"

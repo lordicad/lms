@@ -93,6 +93,66 @@ class CredentialDeliveryTest extends TestCase
         $this->assertStringStartsWith('https://wa.me/60198765432?text=', $response->getSession()->get('wa_link'));
     }
 
+    public function test_an_admin_password_reset_sends_the_new_details_to_the_teacher(): void
+    {
+        $teacher = User::factory()->teacher()->create(['email' => 'rohana@moe.gov.my']);
+        $teacher->markPasswordChanged();
+
+        $this->actingAs($this->admin())->put(route('admin.pengguna.update', $teacher), [
+            'role' => User::ROLE_TEACHER,
+            'name' => $teacher->name,
+            'username' => $teacher->username,
+            'email' => $teacher->email,
+            'password' => 'reset-by-admin',
+            'password_confirmation' => 'reset-by-admin',
+            'is_active' => 1,
+        ])->assertRedirect(route('admin.pengguna'));
+
+        Mail::assertSent(AccountCredentialsMail::class, fn (AccountCredentialsMail $mail) => $mail->hasTo('rohana@moe.gov.my')
+                && $mail->plainPassword === 'reset-by-admin');
+    }
+
+    public function test_a_reset_on_a_student_offers_the_guardian_whatsapp_link_again(): void
+    {
+        $grade = Grade::factory()->level(3)->create();
+        $student = User::factory()->student($grade->level)->create([
+            'guardian_name' => 'Puan Salmah',
+            'guardian_phone' => '012-345 6789',
+        ]);
+
+        $response = $this->actingAs($this->admin())->put(route('admin.pengguna.update', $student), [
+            'role' => User::ROLE_STUDENT,
+            'name' => $student->name,
+            'username' => $student->username,
+            'grade_level' => $grade->level,
+            'guardian_name' => 'Puan Salmah',
+            'guardian_phone' => '012-345 6789',
+            'password' => 'reset-by-admin',
+            'password_confirmation' => 'reset-by-admin',
+            'is_active' => 1,
+        ]);
+
+        $link = $response->getSession()->get('wa_link');
+        $this->assertStringStartsWith('https://wa.me/60123456789?text=', $link);
+        $this->assertStringContainsString('reset-by-admin', urldecode($link));
+    }
+
+    public function test_an_edit_that_leaves_the_password_alone_sends_nothing(): void
+    {
+        $teacher = User::factory()->teacher()->create(['email' => 'quiet@moe.gov.my']);
+
+        $this->actingAs($this->admin())->put(route('admin.pengguna.update', $teacher), [
+            'role' => User::ROLE_TEACHER,
+            'name' => 'Nama Baharu',
+            'username' => $teacher->username,
+            'email' => $teacher->email,
+            'is_active' => 1,
+        ])->assertRedirect(route('admin.pengguna'));
+
+        Mail::assertNothingSent();
+        $this->assertSame('Nama Baharu', $teacher->fresh()->name);
+    }
+
     /** A saved account must not be undone just because the mail server refused it. */
     public function test_the_account_survives_a_mail_failure(): void
     {
