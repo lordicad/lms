@@ -1140,6 +1140,8 @@
     "Mesej untuk penjaga :name sudah siap ditulis. Klik untuk membuka WhatsApp, kemudian tekan hantar.": "The message for :name's guardian is already written. Click to open WhatsApp, then press send.",
     "Buka WhatsApp": "Open WhatsApp",
     "Jana kata laluan secara automatik": "Generate the password automatically",
+    "Isi sekurang-kurangnya satu daripada dua di bawah — butiran log masuk murid dihantar kepada penjaga.": "Fill in at least one of the two below — the student's sign-in details are sent to their guardian.",
+    "Isi e-mel penjaga atau nombor telefon penjaga — butiran log masuk murid dihantar kepada mereka.": "Fill in a guardian email or a guardian phone number — the student's sign-in details are sent to them.",
     "Kata laluan baharu akan dijana dan dihantar kepada pengguna atau penjaga.": "A new password will be generated and sent to the user or their guardian.",
     "Nama pengguna (nama paparan)": "Username (display name)",
     "Dipaparkan di papan pemuka mereka, dan boleh ditukar sendiri. Log masuk menggunakan emel, bukan nama ini.": "Shown on their dashboard, and they can change it themselves. Signing in uses the email, not this name.",

@@ -339,8 +339,19 @@ class AdminUserController extends Controller
                 },
             ],
             'guardian_name' => ['nullable', 'string', 'max:255'],
-            'guardian_phone' => ['nullable', 'string', 'max:30', 'regex:/^\+?[0-9\s\-()]{6,20}$/'],
-            'guardian_email' => ['nullable', 'string', 'email', 'max:255'],
+            // A student's sign-in details are only ever delivered to their guardian, so one of
+            // these has to be reachable — otherwise the password is generated, sent nowhere, and
+            // lost for good. Either channel satisfies it; requiring both would block a guardian
+            // who only has WhatsApp. `blank()` rather than `required_without`, because an empty
+            // form field still counts as present and would slip past that rule.
+            'guardian_phone' => [
+                Rule::requiredIf(fn () => ! $isTeacher && blank($request->input('guardian_email'))),
+                'nullable', 'string', 'max:30', 'regex:/^\+?[0-9\s\-()]{6,20}$/',
+            ],
+            'guardian_email' => [
+                Rule::requiredIf(fn () => ! $isTeacher && blank($request->input('guardian_phone'))),
+                'nullable', 'string', 'email', 'max:255',
+            ],
         ], [
             'name.required' => __('Sila isi nama penuh.'),
             'username.required' => __('Sila pilih nama pengguna.'),
@@ -353,6 +364,8 @@ class AdminUserController extends Controller
             'email.unique' => __('Emel ini sudah didaftarkan.'),
             'grade_level.required' => __('Sila pilih Tahun untuk murid.'),
             'password.required' => __('Sila tetapkan kata laluan.'),
+            'guardian_email.required' => __('Isi e-mel penjaga atau nombor telefon penjaga — butiran log masuk murid dihantar kepada mereka.'),
+            'guardian_phone.required' => __('Isi e-mel penjaga atau nombor telefon penjaga — butiran log masuk murid dihantar kepada mereka.'),
         ]);
     }
 

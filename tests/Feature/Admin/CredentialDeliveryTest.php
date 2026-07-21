@@ -341,6 +341,64 @@ class CredentialDeliveryTest extends TestCase
         $this->assertStringContainsString('aisyah@moe.gov.my', urldecode($response->getSession()->get('wa_link')));
     }
 
+    /**
+     * A student's details only ever go to their guardian, so saving one with no guardian contact
+     * would generate a password, send it nowhere, and lose it for good.
+     */
+    public function test_a_student_needs_a_guardian_email_or_phone(): void
+    {
+        $grade = Grade::factory()->level(3)->create();
+
+        $this->actingAs($this->admin())->post(route('admin.pengguna.store'), [
+            'role' => User::ROLE_STUDENT,
+            'name' => 'Murid Sunyi',
+            'username' => 'sunyi',
+            'email' => 'sunyi@moe.gov.my',
+            'grade_level' => $grade->level,
+            'guardian_email' => '',
+            'guardian_phone' => '',
+            'auto_password' => 1,
+            'is_active' => 1,
+        ])->assertSessionHasErrors(['guardian_email', 'guardian_phone']);
+
+        $this->assertDatabaseMissing('users', ['username' => 'sunyi']);
+        Mail::assertNothingSent();
+    }
+
+    /** Either channel on its own is enough — a guardian with only WhatsApp must not be blocked. */
+    public function test_a_guardian_phone_alone_satisfies_the_requirement(): void
+    {
+        $grade = Grade::factory()->level(3)->create();
+
+        $this->actingAs($this->admin())->post(route('admin.pengguna.store'), [
+            'role' => User::ROLE_STUDENT,
+            'name' => 'Murid WhatsApp',
+            'username' => 'wasap',
+            'email' => 'wasap@moe.gov.my',
+            'grade_level' => $grade->level,
+            'guardian_phone' => '012-345 6789',
+            'auto_password' => 1,
+            'is_active' => 1,
+        ])->assertSessionHasNoErrors();
+
+        $this->assertDatabaseHas('users', ['username' => 'wasap']);
+    }
+
+    /** A teacher has no guardian, so the rule must not reach them. */
+    public function test_a_teacher_needs_no_guardian_contact(): void
+    {
+        $this->actingAs($this->admin())->post(route('admin.pengguna.store'), [
+            'role' => User::ROLE_TEACHER,
+            'name' => 'Cikgu Tanpa Penjaga',
+            'username' => 'tanpa',
+            'email' => 'tanpa@moe.gov.my',
+            'auto_password' => 1,
+            'is_active' => 1,
+        ])->assertSessionHasNoErrors();
+
+        $this->assertDatabaseHas('users', ['username' => 'tanpa']);
+    }
+
     /** Every account signs in with an email, so one is required even for a student. */
     public function test_an_email_is_required_for_a_student(): void
     {
