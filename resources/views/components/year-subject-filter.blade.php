@@ -99,7 +99,6 @@
                     </option>
                 @endforeach
             </select>
-            <p class="tp-hint" x-show="! subject" x-cloak>{{ __('Pilih subjek dahulu.') }}</p>
         </div>
     @endif
 
