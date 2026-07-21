@@ -98,12 +98,12 @@
                         <div style="min-width:900px">
                             <div style="display:grid;{{ $tcols }};padding:14px 20px;border-bottom:1px solid var(--tp-line)">
                                 <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:var(--tp-muted)">{{ __('Nama Cikgu') }}</span>
-                                <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:var(--tp-muted)">{{ __('Subjek') }}</span>
-                                <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:var(--tp-muted)">{{ __('Video') }}</span>
-                                <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:var(--tp-muted)">{{ __('Bahan') }}</span>
-                                <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:var(--tp-muted)">{{ __('Kuiz') }}</span>
-                                <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:var(--tp-muted)">{{ __('Status') }}</span>
-                                <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:var(--tp-muted);text-align:right">{{ __('Tindakan') }}</span>
+                                <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:var(--tp-muted);text-align:center">{{ __('Subjek') }}</span>
+                                <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:var(--tp-muted);text-align:center">{{ __('Video') }}</span>
+                                <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:var(--tp-muted);text-align:center">{{ __('Bahan') }}</span>
+                                <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:var(--tp-muted);text-align:center">{{ __('Kuiz') }}</span>
+                                <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:var(--tp-muted);text-align:center">{{ __('Status') }}</span>
+                                <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:var(--tp-muted);text-align:center">{{ __('Tindakan') }}</span>
                             </div>
                             @foreach ($teachers as $teacher)
                                 <div class="tp-tr" style="display:grid;{{ $tcols }};padding:12px 20px;border-bottom:1px solid var(--tp-line)">
@@ -113,16 +113,16 @@
                                             <span style="font-size:11.5px;color:var(--tp-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $teacher->email }}</span>
                                         @endif
                                     </a>
-                                    <span style="font-size:13px;font-weight:700;color:#4276AE">{{ $subjectLabel($teacher->id) }}</span>
-                                    <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2)">{{ number_format($teacher->video_count) }}</span>
-                                    <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2)">{{ number_format($teacher->material_count) }}</span>
-                                    <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2)">{{ number_format($teacher->quiz_count) }}</span>
+                                    <span style="font-size:13px;font-weight:700;color:#4276AE;text-align:center">{{ $subjectLabel($teacher->id) }}</span>
+                                    <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2);text-align:center">{{ number_format($teacher->video_count) }}</span>
+                                    <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2);text-align:center">{{ number_format($teacher->material_count) }}</span>
+                                    <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2);text-align:center">{{ number_format($teacher->quiz_count) }}</span>
                                     @if ($teacher->isActive())
-                                        <span style="justify-self:start;background:#DCF2EE;color:#0F7A68;border-radius:999px;padding:4px 12px;font-family:'Geist',sans-serif;font-size:11.5px;font-weight:800">{{ __('Aktif') }}</span>
+                                        <span style="justify-self:center;background:#DCF2EE;color:#0F7A68;border-radius:999px;padding:4px 12px;font-family:'Geist',sans-serif;font-size:11.5px;font-weight:800">{{ __('Aktif') }}</span>
                                     @else
-                                        <span style="justify-self:start;background:#F1F0E8;color:var(--tp-muted-2);border-radius:999px;padding:4px 12px;font-family:'Geist',sans-serif;font-size:11.5px;font-weight:800">{{ __('Tidak aktif') }}</span>
+                                        <span style="justify-self:center;background:#F1F0E8;color:var(--tp-muted-2);border-radius:999px;padding:4px 12px;font-family:'Geist',sans-serif;font-size:11.5px;font-weight:800">{{ __('Tidak aktif') }}</span>
                                     @endif
-                                    <form method="POST" action="{{ route('admin.guru.status', $teacher) }}" style="justify-self:end">
+                                    <form method="POST" action="{{ route('admin.guru.status', $teacher) }}" style="justify-self:center;white-space:nowrap">
                                         @csrf
                                         <button type="submit" class="tp-linkbtn {{ $teacher->isActive() ? 'is-muted is-danger' : '' }}">
                                             {{ $teacher->isActive() ? '🚫 '.__('Nyahaktif') : '✓ '.__('Aktifkan') }}<span class="sr-only">{{ $teacher->name }}</span>
