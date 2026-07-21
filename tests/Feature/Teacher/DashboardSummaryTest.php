@@ -56,4 +56,12 @@ class DashboardSummaryTest extends TestCase
         $this->assertSame(5, $passFail['failed']);
         $this->assertSame(7, $passFail['total']);
     }
+
+    public function test_old_talent_page_redirects_to_home(): void
+    {
+        $teacher = User::factory()->teacher()->create();
+
+        $this->actingAs($teacher)->get(route('cikgu.bakat'))
+            ->assertRedirect(route('cikgu.dashboard'));
+    }
 }
