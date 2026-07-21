@@ -85,9 +85,21 @@
             <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:24px;font-weight:800;color:var(--wl-ink)">{{ __('Profil Saya') }}</h2>
         @endif
 
-        {{-- Account info form --}}
-        <section id="akaun" style="{{ $cardStyle }};scroll-margin-top:24px">
-            <h2 style="{{ $h2Style }}">{{ __('Maklumat akaun') }}</h2>
+        {{-- Account info form. Collapsed by default: it is a long form, and most visits to this
+             page are only a look at the profile. It opens itself when the last save came back with
+             errors, so a validation message is never left hidden behind a closed panel. --}}
+        <section id="akaun" style="{{ $cardStyle }};scroll-margin-top:24px"
+                 x-data="{ open: @js($errors->getBag('default')->any()) }">
+            <button type="button" @click="open = ! open"
+                    :aria-expanded="open ? 'true' : 'false'" aria-controls="akaun-panel"
+                    style="width:100%;display:flex;align-items:center;gap:12px;background:none;border:none;padding:0;margin:0;cursor:pointer;text-align:left;font:inherit;color:inherit">
+                <h2 style="{{ $h2Style }};flex:1">{{ __('Maklumat akaun') }}</h2>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                     stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"
+                     style="flex-shrink:0;color:var(--wl-muted);transition:transform .15s"
+                     :style="open ? 'transform:rotate(180deg)' : ''"><path d="M6 9l6 6 6-6"/></svg>
+            </button>
+            <div id="akaun-panel" x-show="open" x-cloak>
             <form method="POST" action="{{ route('profile.update') }}" enctype="multipart/form-data" style="display:flex;flex-direction:column;gap:18px;margin-top:14px"
                   @if ($user->isStudent())
                   x-data="{
@@ -202,15 +214,27 @@
                 @endif
                 <button type="submit" class="wl-btn-primary" style="align-self:flex-start;min-height:48px;border:none;cursor:pointer;border-radius:13px;background:#17907B;color:#fff;font-family:'Geist',sans-serif;font-weight:800;font-size:15px;padding:0 24px">{{ __('Simpan') }}</button>
             </form>
+            </div>
         </section>
 
         @if ($user->isTeacher())
             <x-youtube-connect-card :user="$user" />
         @endif
 
-        {{-- Change password --}}
-        <section style="{{ $cardStyle }}">
-            <h2 style="{{ $h2Style }}">{{ __('Tukar kata laluan') }}</h2>
+        {{-- Change password. Same treatment, and it opens on its own error bag: this form posts
+             to password.update, which reports into 'updatePassword' rather than the default bag. --}}
+        <section style="{{ $cardStyle }}"
+                 x-data="{ open: @js($errors->getBag('updatePassword')->any()) }">
+            <button type="button" @click="open = ! open"
+                    :aria-expanded="open ? 'true' : 'false'" aria-controls="kata-laluan-panel"
+                    style="width:100%;display:flex;align-items:center;gap:12px;background:none;border:none;padding:0;margin:0;cursor:pointer;text-align:left;font:inherit;color:inherit">
+                <h2 style="{{ $h2Style }};flex:1">{{ __('Tukar kata laluan') }}</h2>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                     stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"
+                     style="flex-shrink:0;color:var(--wl-muted);transition:transform .15s"
+                     :style="open ? 'transform:rotate(180deg)' : ''"><path d="M6 9l6 6 6-6"/></svg>
+            </button>
+            <div id="kata-laluan-panel" x-show="open" x-cloak>
             <form method="POST" action="{{ route('password.update') }}" style="display:flex;flex-direction:column;gap:18px;margin-top:14px">
                 @csrf
                 @method('PUT')
@@ -230,6 +254,7 @@
                 </div>
                 <button type="submit" class="wl-btn-primary" style="align-self:flex-start;min-height:48px;border:none;cursor:pointer;border-radius:13px;background:#17907B;color:#fff;font-family:'Geist',sans-serif;font-weight:800;font-size:15px;padding:0 24px">{{ __('Tukar Kata Laluan') }}</button>
             </form>
+            </div>
         </section>
 
         {{-- Log out (moved here from the student sidebar) --}}
