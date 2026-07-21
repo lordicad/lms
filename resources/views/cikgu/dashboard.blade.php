@@ -5,34 +5,17 @@
     :heading="__('Selamat datang, :name', ['name' => 'Cikgu '.$teacher->username])"
     :sub="__('Ringkasan kelas anda pada hari ini, :date', ['date' => now()->translatedFormat('l, j F Y')])">
 
-    {{-- Stat cards --}}
-    <div class="tp-stats">
-        <a href="{{ route('cikgu.video.index') }}" class="tp-stat" style="text-decoration:none">
-            <div style="display:flex;align-items:center;gap:10px">
-                <span class="tp-stat-ico" style="background:#E4EEF9">🎬</span>
-                <span class="tp-stat-label">{{ __('Video Saya') }}</span>
+    {{-- Engagement summary (same figures as the Talent page). --}}
+    <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px">
+        @foreach ($summary as $s)
+            <div class="tp-stat">
+                <div style="display:flex;align-items:center;gap:10px">
+                    <span class="tp-stat-ico" style="background:{{ $s['tint'] }}">{{ $s['icon'] }}</span>
+                    <span class="tp-stat-label">{{ $s['label'] }}</span>
+                </div>
+                <span class="tp-stat-value">{{ $s['value'] }}</span>
             </div>
-            <span class="tp-stat-value">{{ $lessonCount }}</span>
-            <span style="font-size:12.5px;font-weight:700;color:var(--tp-muted)">{{ __('Jumlah tontonan: :count', ['count' => number_format($viewCount)]) }}</span>
-        </a>
-
-        <a href="{{ route('cikgu.bahan.index') }}" class="tp-stat" style="text-decoration:none">
-            <div style="display:flex;align-items:center;gap:10px">
-                <span class="tp-stat-ico" style="background:#DCF2EE">📄</span>
-                <span class="tp-stat-label">{{ __('Bahan Saya') }}</span>
-            </div>
-            <span class="tp-stat-value">{{ $materialCount }}</span>
-            <span style="font-size:12.5px;font-weight:700;color:var(--tp-muted)">{{ __('Bahan pengajaran') }}</span>
-        </a>
-
-        <a href="{{ route('cikgu.kuiz.index') }}" class="tp-stat" style="text-decoration:none">
-            <div style="display:flex;align-items:center;gap:10px">
-                <span class="tp-stat-ico" style="background:#FEF0CE">📝</span>
-                <span class="tp-stat-label">{{ __('Kuiz Saya') }}</span>
-            </div>
-            <span class="tp-stat-value">{{ $quizCount }}</span>
-            <span style="font-size:12.5px;font-weight:700;color:var(--tp-muted)">{{ __('Fail & interaktif') }}</span>
-        </a>
+        @endforeach
     </div>
 
     <div style="display:flex;flex-direction:column;gap:20px;min-width:0">
