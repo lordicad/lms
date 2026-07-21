@@ -161,9 +161,17 @@ class AdminTalentController extends Controller
             ->whereIn("{$table}.teacher_id", $teacherIds)
             ->select("{$table}.teacher_id", 'chapters.subject_id');
 
+        // The subjects on the teacher's own profile count too, not just the ones inferred from what
+        // they have posted. Without this a teacher who is assigned a subject but has not uploaded
+        // anything yet reads as teaching nothing at all.
+        $assigned = DB::table('subject_teacher')
+            ->whereIn('user_id', $teacherIds)
+            ->select('user_id as teacher_id', 'subject_id');
+
         return $of('lessons')
             ->union($of('materials'))
             ->union($of('quizzes'))
+            ->union($assigned)
             ->get()
             ->groupBy('teacher_id')
             ->map(fn ($rows) => $rows->pluck('subject_id')->unique()->values());
