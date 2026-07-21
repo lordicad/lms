@@ -26,6 +26,9 @@
 
     <div style="display:flex;flex-direction:column;gap:48px">
 
+        {{-- Teacher stats, filter and list are grouped so the gaps between them stay tight. --}}
+        <div style="display:flex;flex-direction:column;gap:16px">
+
         {{-- ============================ Teacher stats ============================ --}}
         <div style="display:flex;flex-direction:column;gap:12px">
             <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:17px;font-weight:800;color:var(--tp-ink)">{{ __('Cikgu') }}</h2>
@@ -134,6 +137,7 @@
                 <div>{{ $teachers->links() }}</div>
             </div>
         @endif
+        </div>{{-- /teacher stats + filter + list group --}}
 
         {{-- ========================= Top contributors ========================= --}}
         <div style="display:flex;flex-direction:column;gap:14px">
