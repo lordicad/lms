@@ -6,11 +6,8 @@
     @php($teacherView = $role === 'teacher')
     @php($cols = 'grid-template-columns:minmax(150px,1.7fr) 96px minmax(150px,1.5fr) '.($teacherView ? '130px' : '90px').' 118px 96px')
 
+    {{-- The success banner is rendered once by <x-flash /> in the admin layout. --}}
     <div style="display:flex;flex-direction:column;gap:18px">
-
-        @if (session('status'))
-            <div style="background:#DCF2EE;border:1px solid rgba(15,122,104,.25);border-radius:12px;padding:12px 16px;font-family:'Geist',sans-serif;font-size:13.5px;font-weight:700;color:#0F7A68">{{ session('status') }}</div>
-        @endif
 
         {{-- Summary chips --}}
         <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px">
