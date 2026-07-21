@@ -383,41 +383,48 @@ class _DashboardTabState extends State<_DashboardTab> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      GridView.count(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        crossAxisCount: 2,
-                        mainAxisSpacing: 10,
-                        crossAxisSpacing: 10,
-                        // The tablet has wide columns; a higher ratio prevents the cards from
-                        // becoming tall empty boxes when they only contain one number.
-                        childAspectRatio: 2.15,
-                        children: [
-                          _StatCard(
-                            icon: Icons.visibility_outlined,
-                            value: '${s.views}',
-                            label: 'Tontonan video',
-                            tint: const Color(0xFFE7EFFD),
+                      LayoutBuilder(
+                        builder: (context, constraints) => GridView(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            mainAxisSpacing: 10,
+                            crossAxisSpacing: 10,
+                            // A fixed, responsive-safe height leaves room for
+                            // the icon, value and label even on narrow phones.
+                            // Tablets keep the cards compact instead of huge.
+                            mainAxisExtent: constraints.maxWidth < 600
+                                ? 118
+                                : 128,
                           ),
-                          _StatCard(
-                            icon: Icons.favorite_border_rounded,
-                            value: '${s.favourites}',
-                            label: 'Video digemari',
-                            tint: const Color(0xFFFBE4ED),
-                          ),
-                          _StatCard(
-                            icon: Icons.file_download_outlined,
-                            value: '${s.downloads}',
-                            label: 'Bahan dimuat turun',
-                            tint: const Color(0xFFDCF2EE),
-                          ),
-                          _StatCard(
-                            icon: Icons.quiz_outlined,
-                            value: '${s.attempts}',
-                            label: 'Percubaan kuiz',
-                            tint: const Color(0xFFFFF0D9),
-                          ),
-                        ],
+                          children: [
+                            _StatCard(
+                              icon: Icons.visibility_outlined,
+                              value: '${s.views}',
+                              label: 'Tontonan video',
+                              tint: const Color(0xFFE7EFFD),
+                            ),
+                            _StatCard(
+                              icon: Icons.favorite_border_rounded,
+                              value: '${s.favourites}',
+                              label: 'Video digemari',
+                              tint: const Color(0xFFFBE4ED),
+                            ),
+                            _StatCard(
+                              icon: Icons.file_download_outlined,
+                              value: '${s.downloads}',
+                              label: 'Bahan dimuat turun',
+                              tint: const Color(0xFFDCF2EE),
+                            ),
+                            _StatCard(
+                              icon: Icons.quiz_outlined,
+                              value: '${s.attempts}',
+                              label: 'Percubaan kuiz',
+                              tint: const Color(0xFFFFF0D9),
+                            ),
+                          ],
+                        ),
                       ),
                       const SizedBox(height: 12),
                       _PassFailCard(data: data.passFail),
