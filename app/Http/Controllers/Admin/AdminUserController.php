@@ -3,14 +3,18 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Mail\AccountCredentialsMail;
 use App\Models\Grade;
 use App\Models\School;
 use App\Models\SchoolClass;
 use App\Models\Subject;
 use App\Models\User;
+use App\Support\WhatsAppLink;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
@@ -78,8 +82,72 @@ class AdminUserController extends Controller
         $user->save();
         $this->syncSubjects($user, $data);
 
+        // The only moment the password exists in plain text — hand it over now or never.
         return redirect()->route('admin.pengguna')
-            ->with('status', __('Akaun :name berjaya dicipta.', ['name' => $user->name]));
+            ->with($this->deliverCredentials($user, $data['password']));
+    }
+
+    /**
+     * Send the new sign-in details out, and describe what happened for the flash message.
+     *
+     * A teacher gets them at their own address. A student's go to the guardian: by email when there
+     * is one, and by WhatsApp when there is a phone number — the WhatsApp part comes back as a
+     * click-to-send link for the admin to press, since sending server-side needs a paid API account.
+     *
+     * @return array<string, string> session keys to flash
+     */
+    private function deliverCredentials(User $user, string $plainPassword): array
+    {
+        $sentTo = [];
+        $flash = [];
+
+        if ($user->isTeacher()) {
+            if ($this->mail($user->email, $user, $plainPassword)) {
+                $sentTo[] = $user->email;
+            }
+        } else {
+            if ($this->mail($user->guardian_email, $user, $plainPassword, $user->guardian_name)) {
+                $sentTo[] = $user->guardian_email;
+            }
+
+            if ($link = WhatsAppLink::for($user, $plainPassword, $user->guardian_name)) {
+                $flash['wa_link'] = $link;
+                $flash['wa_name'] = $user->name;
+            }
+        }
+
+        $flash['status'] = $sentTo === []
+            ? __('Akaun :name berjaya dicipta. Butiran log masuk belum dihantar — tiada alamat e-mel disimpan.', ['name' => $user->name])
+            : __('Akaun :name berjaya dicipta. Butiran log masuk dihantar ke :to.', [
+                'name' => $user->name,
+                'to' => implode(', ', $sentTo),
+            ]);
+
+        return $flash;
+    }
+
+    /**
+     * Mail the credentials, reporting whether it went. A mail server that is down or misconfigured
+     * must not undo an account that is already saved, so a failure is logged and swallowed.
+     */
+    private function mail(?string $address, User $user, string $plainPassword, ?string $guardianName = null): bool
+    {
+        if (! $address) {
+            return false;
+        }
+
+        try {
+            Mail::to($address)->send(new AccountCredentialsMail($user, $plainPassword, $guardianName));
+
+            return true;
+        } catch (\Throwable $e) {
+            Log::error('Could not send account credentials', [
+                'user_id' => $user->id,
+                'error' => $e->getMessage(),
+            ]);
+
+            return false;
+        }
     }
 
     public function edit(User $user): View

@@ -1117,5 +1117,24 @@
     "Ditetapkan sendiri oleh pengguna pada :date.": "Set by the user themselves on :date.",
     "Pengguna akan diminta menetapkan kata laluan sendiri pada log masuk seterusnya.": "The user will be asked to set their own password at their next sign-in.",
     "Set semula kata laluan": "Reset password",
-    "Biarkan kosong untuk mengekalkan kata laluan semasa. Jika diisi, pengguna perlu menetapkan kata laluan sendiri semula pada log masuk seterusnya.": "Leave blank to keep the current password. If filled, the user must set their own password again at their next sign-in."
+    "Biarkan kosong untuk mengekalkan kata laluan semasa. Jika diisi, pengguna perlu menetapkan kata laluan sendiri semula pada log masuk seterusnya.": "Leave blank to keep the current password. If filled, the user must set their own password again at their next sign-in.",
+
+    "Akaun WeLearn anda telah dibuka": "Your WeLearn account is ready",
+    "Selamat datang ke WeLearn!": "Welcome to WeLearn!",
+    "Salam sejahtera :name,": "Hello :name,",
+    "Salam sejahtera,": "Hello,",
+    "Akaun WeLearn anda telah dibuka. Berikut ialah butiran log masuk anda.": "Your WeLearn account has been created. Here are your sign-in details.",
+    "Akaun WeLearn telah dibuka untuk anak jagaan anda, :name. Berikut ialah butiran log masuknya.": "A WeLearn account has been created for your child, :name. Here are their sign-in details.",
+    "Akaun WeLearn telah dibuka untuk :name.": "A WeLearn account has been created for :name.",
+    "Kata laluan sementara": "Temporary password",
+    "Log masuk di": "Sign in at",
+    "Penting:": "Important:",
+    "Kata laluan di atas adalah sementara. Pada log masuk pertama, anda akan diminta menetapkan kata laluan sendiri. Nama pengguna kekal sama.": "The password above is temporary. At the first sign-in you will be asked to set your own password. The username stays the same.",
+    "Sila jangan kongsi butiran ini dengan sesiapa.": "Please do not share these details with anyone.",
+    "Terima kasih,": "Thank you,",
+    "Akaun :name berjaya dicipta. Butiran log masuk dihantar ke :to.": "Account :name created. Sign-in details sent to :to.",
+    "Akaun :name berjaya dicipta. Butiran log masuk belum dihantar — tiada alamat e-mel disimpan.": "Account :name created. Sign-in details were not emailed — no email address on record.",
+    "Hantar butiran log masuk melalui WhatsApp": "Send sign-in details via WhatsApp",
+    "Mesej untuk penjaga :name sudah siap ditulis. Klik untuk membuka WhatsApp, kemudian tekan hantar.": "The message for :name's guardian is already written. Click to open WhatsApp, then press send.",
+    "Buka WhatsApp": "Open WhatsApp"
 }
