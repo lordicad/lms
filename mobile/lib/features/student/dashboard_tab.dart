@@ -489,19 +489,23 @@ class _SubjectsGrid extends StatelessWidget {
   final ValueChanged<SubjectCard> onTap;
 
   @override
-  Widget build(BuildContext context) => GridView.builder(
-    shrinkWrap: true,
-    physics: const NeverScrollableScrollPhysics(),
-    itemCount: subjects.length,
-    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-      crossAxisCount: 2,
-      mainAxisSpacing: 12,
-      crossAxisSpacing: 12,
-      childAspectRatio: 2.3,
-    ),
-    itemBuilder: (context, index) => SubjectTile(
-      subject: subjects[index],
-      onTap: () => onTap(subjects[index]),
+  Widget build(BuildContext context) => LayoutBuilder(
+    builder: (context, constraints) => GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: subjects.length,
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        mainAxisSpacing: 12,
+        crossAxisSpacing: 12,
+        // Two-line subject names need more room than a wide tablet card.
+        // Fixed extents avoid RenderFlex overflows on every phone width.
+        mainAxisExtent: constraints.maxWidth < 600 ? 110 : 120,
+      ),
+      itemBuilder: (context, index) => SubjectTile(
+        subject: subjects[index],
+        onTap: () => onTap(subjects[index]),
+      ),
     ),
   );
 }
