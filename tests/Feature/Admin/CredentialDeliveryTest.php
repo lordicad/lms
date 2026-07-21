@@ -5,8 +5,10 @@ namespace Tests\Feature\Admin;
 use App\Mail\AccountCredentialsMail;
 use App\Models\Grade;
 use App\Models\User;
+use App\Support\TemporaryPassword;
 use App\Support\WhatsAppLink;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
@@ -151,6 +153,91 @@ class CredentialDeliveryTest extends TestCase
 
         Mail::assertNothingSent();
         $this->assertSame('Nama Baharu', $teacher->fresh()->name);
+    }
+
+    public function test_a_password_is_generated_when_the_admin_does_not_type_one(): void
+    {
+        $response = $this->actingAs($this->admin())->post(route('admin.pengguna.store'), [
+            'role' => User::ROLE_TEACHER,
+            'name' => 'Cikgu Auto',
+            'username' => 'auto',
+            'email' => 'auto@moe.gov.my',
+            'auto_password' => 1,
+            'is_active' => 1,
+        ])->assertRedirect(route('admin.pengguna'));
+
+        $generated = $response->getSession()->get('new_password');
+        $this->assertNotEmpty($generated);
+
+        // It is the real password: it signs in, and it is what was emailed.
+        $teacher = User::where('username', 'auto')->firstOrFail();
+        $this->assertTrue(Hash::check($generated, $teacher->password));
+        $this->assertTrue($teacher->mustChangePassword());
+
+        Mail::assertSent(AccountCredentialsMail::class, fn (AccountCredentialsMail $mail) => $mail->plainPassword === $generated);
+    }
+
+    public function test_a_typed_password_still_wins_when_auto_is_off(): void
+    {
+        $this->actingAs($this->admin())->post(route('admin.pengguna.store'), [
+            'role' => User::ROLE_TEACHER,
+            'name' => 'Cikgu Manual',
+            'username' => 'manual',
+            'email' => 'manual@moe.gov.my',
+            'password' => 'chosen-by-admin',
+            'password_confirmation' => 'chosen-by-admin',
+            'is_active' => 1,
+        ])->assertRedirect(route('admin.pengguna'));
+
+        $this->assertTrue(Hash::check('chosen-by-admin', User::where('username', 'manual')->firstOrFail()->password));
+    }
+
+    public function test_a_password_is_still_required_when_auto_is_off_and_none_is_typed(): void
+    {
+        $this->actingAs($this->admin())->post(route('admin.pengguna.store'), [
+            'role' => User::ROLE_TEACHER,
+            'name' => 'Cikgu Kosong',
+            'username' => 'kosong',
+            'email' => 'kosong@moe.gov.my',
+            'is_active' => 1,
+        ])->assertSessionHasErrors('password');
+
+        $this->assertDatabaseMissing('users', ['username' => 'kosong']);
+    }
+
+    public function test_auto_generating_on_edit_resets_and_sends_a_fresh_password(): void
+    {
+        $teacher = User::factory()->teacher()->create(['email' => 'reset@moe.gov.my']);
+        $teacher->markPasswordChanged();
+
+        $response = $this->actingAs($this->admin())->put(route('admin.pengguna.update', $teacher), [
+            'role' => User::ROLE_TEACHER,
+            'name' => $teacher->name,
+            'username' => $teacher->username,
+            'email' => $teacher->email,
+            'auto_password' => 1,
+            'is_active' => 1,
+        ])->assertRedirect(route('admin.pengguna'));
+
+        $generated = $response->getSession()->get('new_password');
+        $this->assertNotEmpty($generated);
+        $this->assertTrue(Hash::check($generated, $teacher->fresh()->password));
+        $this->assertTrue($teacher->fresh()->mustChangePassword());
+    }
+
+    public function test_generated_passwords_are_readable_and_unique(): void
+    {
+        $seen = [];
+
+        for ($i = 0; $i < 50; $i++) {
+            $password = TemporaryPassword::generate();
+            // Pronounceable syllables + digits, no characters that read as each other.
+            $this->assertMatchesRegularExpression('/^[bdghjkmnprsty aeiou]{6}-\d{4}$/', $password);
+            $this->assertGreaterThanOrEqual(6, strlen($password));
+            $seen[] = $password;
+        }
+
+        $this->assertGreaterThan(45, count(array_unique($seen)), 'generated passwords repeat too often');
     }
 
     /** A saved account must not be undone just because the mail server refused it. */

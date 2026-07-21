@@ -1138,5 +1138,12 @@
     "Kata laluan :name berjaya ditetapkan semula. Butiran belum dihantar — tiada alamat e-mel disimpan.": "Password for :name has been reset. The details were not emailed — no email address on record.",
     "Hantar butiran log masuk melalui WhatsApp": "Send sign-in details via WhatsApp",
     "Mesej untuk penjaga :name sudah siap ditulis. Klik untuk membuka WhatsApp, kemudian tekan hantar.": "The message for :name's guardian is already written. Click to open WhatsApp, then press send.",
-    "Buka WhatsApp": "Open WhatsApp"
+    "Buka WhatsApp": "Open WhatsApp",
+    "Jana kata laluan secara automatik": "Generate the password automatically",
+    "Jana kata laluan baharu secara automatik": "Generate a new password automatically",
+    "Kata laluan akan dijana dan dipaparkan sekali selepas disimpan, serta dihantar kepada pengguna atau penjaga.": "A password will be generated and shown once after saving, and sent to the user or their guardian.",
+    "Kata laluan sementara untuk :name": "Temporary password for :name",
+    "Hanya dipaparkan sekali. Salin sekarang jika perlu diberi secara bersemuka.": "Shown only once. Copy it now if it has to be handed over in person.",
+    "Salin": "Copy",
+    "Disalin": "Copied"
 }

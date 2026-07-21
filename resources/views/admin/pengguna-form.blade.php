@@ -17,6 +17,7 @@
              schoolId: '{{ old('school_id', $user->school_id) }}',
              gradeLevel: '{{ old('grade_level', $user->grade?->level) }}',
              schoolClass: '{{ old('school_class_id', $user->school_class_id) }}',
+             autoPassword: {{ old('auto_password', $editing ? 0 : 1) ? 'true' : 'false' }},
              classes: {{ \Illuminate\Support\Js::from($allClasses) }},
              gradeMap: {{ \Illuminate\Support\Js::from($grades->pluck('id', 'level')) }},
              get gradeId() { return this.gradeMap[this.gradeLevel] ?? null; },
@@ -170,14 +171,28 @@
                 </div>
             @endif
 
-            <div class="tp-field">
+            {{-- Auto-generate is the default for a new account: it saves the admin inventing one,
+                 and the result is readable enough to pass on by phone or on paper. --}}
+            <label style="display:flex;align-items:center;gap:10px;cursor:pointer">
+                <input type="checkbox" name="auto_password" value="1" x-model="autoPassword"
+                       style="width:20px;height:20px;accent-color:#17907B">
+                <span style="font-family:'Geist',sans-serif;font-size:13.5px;font-weight:700;color:var(--tp-ink)">
+                    {{ $editing ? __('Jana kata laluan baharu secara automatik') : __('Jana kata laluan secara automatik') }}
+                </span>
+            </label>
+
+            <p class="tp-hint" x-show="autoPassword" style="margin:-6px 0 0">
+                {{ __('Kata laluan akan dijana dan dipaparkan sekali selepas disimpan, serta dihantar kepada pengguna atau penjaga.') }}
+            </p>
+
+            <div class="tp-field" x-show="! autoPassword" x-cloak>
                 <label for="password" class="tp-label">{{ $editing ? __('Set semula kata laluan') : __('Kata laluan') }}</label>
-                <input id="password" name="password" type="password" class="tp-input" autocomplete="new-password" @unless ($editing) required @endunless>
+                <input id="password" name="password" type="password" class="tp-input" autocomplete="new-password">
                 @if ($editing)<span class="tp-hint">{{ __('Biarkan kosong untuk mengekalkan kata laluan semasa. Jika diisi, pengguna perlu menetapkan kata laluan sendiri semula pada log masuk seterusnya.') }}</span>@endif
                 @error('password')<p class="pg-err">{{ $message }}</p>@enderror
             </div>
 
-            <div class="tp-field">
+            <div class="tp-field" x-show="! autoPassword" x-cloak>
                 <label for="password_confirmation" class="tp-label">{{ __('Sahkan kata laluan') }}</label>
                 <input id="password_confirmation" name="password_confirmation" type="password" class="tp-input" autocomplete="new-password">
             </div>

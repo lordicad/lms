@@ -9,6 +9,7 @@ use App\Models\School;
 use App\Models\SchoolClass;
 use App\Models\Subject;
 use App\Models\User;
+use App\Support\TemporaryPassword;
 use App\Support\WhatsAppLink;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -73,10 +74,15 @@ class AdminUserController extends Controller
     {
         $data = $this->validated($request, null);
 
+        // Blank or auto_password: generate one rather than making the admin invent it.
+        $plainPassword = empty($data['password'])
+            ? TemporaryPassword::generate()
+            : $data['password'];
+
         $user = new User;
         $user->role = $data['role'];
         $this->fill($user, $data);
-        $user->password = Hash::make($data['password']);
+        $user->password = Hash::make($plainPassword);
         // Admin-issued: left null so the owner is asked to choose their own at first sign-in.
         $user->password_changed_at = null;
         $user->save();
@@ -84,7 +90,7 @@ class AdminUserController extends Controller
 
         // The only moment the password exists in plain text — hand it over now or never.
         return redirect()->route('admin.pengguna')
-            ->with($this->deliverCredentials($user, $data['password']));
+            ->with($this->deliverCredentials($user, $plainPassword));
     }
 
     /**
@@ -102,7 +108,14 @@ class AdminUserController extends Controller
     private function deliverCredentials(User $user, string $plainPassword, bool $isReset = false): array
     {
         $sentTo = [];
-        $flash = [];
+
+        // Shown to the admin once, so a generated password can still be handed over by hand when
+        // no address is on record — or when mail is not configured yet.
+        $flash = [
+            'new_password' => $plainPassword,
+            'new_username' => $user->username,
+            'new_password_for' => $user->name,
+        ];
 
         if ($user->isTeacher()) {
             if ($this->mail($user->email, $user, $plainPassword)) {
@@ -201,10 +214,14 @@ class AdminUserController extends Controller
 
         $this->fill($user, $data);
 
+        // Blank password on edit means "leave it alone" — unless auto_password asks for a fresh one.
+        $plainPassword = ($data['password'] ?? null)
+            ?: (($data['auto_password'] ?? false) ? TemporaryPassword::generate() : null);
+
         // Setting a password here is a reset: the admin now knows it, so the owner is asked to
         // replace it at their next sign-in, exactly as when the account was first created.
-        if (! empty($data['password'])) {
-            $user->password = Hash::make($data['password']);
+        if ($plainPassword) {
+            $user->password = Hash::make($plainPassword);
             $user->password_changed_at = null;
         }
 
@@ -213,9 +230,9 @@ class AdminUserController extends Controller
 
         // A reset leaves the admin holding a password the owner does not know yet, so it is handed
         // over the same way a brand new account is. An edit that left the password alone is silent.
-        if (! empty($data['password'])) {
+        if ($plainPassword) {
             return redirect()->route('admin.pengguna')
-                ->with($this->deliverCredentials($user, $data['password'], isReset: true));
+                ->with($this->deliverCredentials($user, $plainPassword, isReset: true));
         }
 
         return redirect()->route('admin.pengguna')
@@ -280,7 +297,12 @@ class AdminUserController extends Controller
                 Rule::requiredIf(! $isTeacher),
                 'nullable', 'integer', Rule::exists('grades', 'level'),
             ],
-            'password' => [$creating ? 'required' : 'nullable', 'confirmed', Password::min(6)],
+            // Typing a password is optional: with auto_password on, one is generated instead.
+            'auto_password' => ['nullable', 'boolean'],
+            'password' => [
+                $creating && ! $request->boolean('auto_password') ? 'required' : 'nullable',
+                'confirmed', Password::min(6),
+            ],
             'is_active' => ['nullable', 'boolean'],
 
             // Shared + role-specific profile fields, so the admin form stays coherent with the schema.
