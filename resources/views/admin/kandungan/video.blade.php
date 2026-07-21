@@ -45,13 +45,14 @@
                     <div style="min-width:860px">
                         {{-- Header --}}
                         <div style="display:grid;{{ $cols }};padding:14px 20px;border-bottom:1px solid var(--tp-line)">
+                            {{-- Everything but the title is centred; titles keep a common left edge to scan down. --}}
                             <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:var(--tp-muted)">{{ __('Tajuk Video') }}</span>
-                            <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:var(--tp-muted)">{{ __('Subjek') }}</span>
-                            <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:var(--tp-muted)">{{ __('Tahun') }}</span>
-                            <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:var(--tp-muted)">{{ __('Tontonan') }}</span>
-                            <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:var(--tp-muted)">{{ __('Tarikh Siar') }}</span>
-                            <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:var(--tp-muted)">{{ __('Kegemaran') }}</span>
-                            <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:var(--tp-muted);text-align:right">{{ __('Tindakan') }}</span>
+                            <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:var(--tp-muted);text-align:center">{{ __('Subjek') }}</span>
+                            <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:var(--tp-muted);text-align:center">{{ __('Tahun') }}</span>
+                            <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:var(--tp-muted);text-align:center">{{ __('Tontonan') }}</span>
+                            <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:var(--tp-muted);text-align:center">{{ __('Tarikh Siar') }}</span>
+                            <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:var(--tp-muted);text-align:center">{{ __('Kegemaran') }}</span>
+                            <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:var(--tp-muted);text-align:center">{{ __('Tindakan') }}</span>
                         </div>
                         @foreach ($lessons as $lesson)
                             <div class="tp-tr" style="display:grid;{{ $cols }};padding:12px 20px;border-bottom:1px solid var(--tp-line)">
@@ -59,12 +60,13 @@
                                     <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:13.5px;color:var(--tp-ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $lesson->title }}</span>
                                     <span style="font-size:11.5px;color:var(--tp-muted)">{{ $lesson->teacher?->name }}</span>
                                 </div>
-                                <span style="font-size:13px;font-weight:700;color:#4276AE">{{ $lesson->chapter->subject->displayName() }}</span>
-                                <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2)">{{ $lesson->chapter->grade->name }}</span>
-                                <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2)">{{ number_format($lesson->views_count) }}</span>
-                                <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2)">{{ $lesson->created_at->translatedFormat('j M Y') }}</span>
-                                <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2)">{{ number_format($lesson->favourites_count) }}</span>
-                                <button type="button" class="tp-linkbtn" style="justify-self:end"
+                                <span style="font-size:13px;font-weight:700;color:#4276AE;text-align:center">{{ $lesson->chapter->subject->displayName() }}</span>
+                                <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2);text-align:center">{{ $lesson->chapter->grade->name }}</span>
+                                <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2);text-align:center">{{ number_format($lesson->views_count) }}</span>
+                                <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2);text-align:center">{{ $lesson->created_at->translatedFormat('j M Y') }}</span>
+                                <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2);text-align:center">{{ number_format($lesson->favourites_count) }}</span>
+                                {{-- justify-self, not text-align: a button sizes to its label rather than the column. --}}
+                                <button type="button" class="tp-linkbtn" style="justify-self:center"
                                         @click="open(@js([
                                             'title' => $lesson->title,
                                             'kindLabel' => $lesson->isYoutube() ? 'YouTube' : __('Video'),

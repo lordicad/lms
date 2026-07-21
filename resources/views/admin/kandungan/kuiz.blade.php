@@ -49,13 +49,13 @@
                     <div style="min-width:900px">
                         <div style="display:grid;{{ $cols }};padding:14px 20px;border-bottom:1px solid var(--tp-line)">
                             <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:var(--tp-muted)">{{ __('Tajuk Kuiz') }}</span>
-                            <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:var(--tp-muted)">{{ __('Subjek') }}</span>
-                            <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:var(--tp-muted)">{{ __('Tahun') }}</span>
-                            <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:var(--tp-muted)">{{ __('Percubaan') }}</span>
-                            <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:var(--tp-muted)">{{ __('Lulus') }}</span>
-                            <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:var(--tp-muted)">{{ __('Gagal') }}</span>
-                            <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:var(--tp-muted)">{{ __('Tarikh Siar') }}</span>
-                            <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:var(--tp-muted);text-align:right">{{ __('Tindakan') }}</span>
+                            <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:var(--tp-muted);text-align:center">{{ __('Subjek') }}</span>
+                            <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:var(--tp-muted);text-align:center">{{ __('Tahun') }}</span>
+                            <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:var(--tp-muted);text-align:center">{{ __('Percubaan') }}</span>
+                            <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:var(--tp-muted);text-align:center">{{ __('Lulus') }}</span>
+                            <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:var(--tp-muted);text-align:center">{{ __('Gagal') }}</span>
+                            <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:var(--tp-muted);text-align:center">{{ __('Tarikh Siar') }}</span>
+                            <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:var(--tp-muted);text-align:center">{{ __('Tindakan') }}</span>
                         </div>
                         @foreach ($quizzes as $quiz)
                             @php($hasAttempts = $quiz->attempts_count > 0)
@@ -64,13 +64,13 @@
                                     <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:13.5px;color:var(--tp-ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $quiz->title }}@if ($quiz->isFile()) <span style="font-size:11px;font-weight:800;color:var(--tp-muted)">· {{ __('Fail') }}</span>@endif</span>
                                     <span style="font-size:11.5px;color:var(--tp-muted)">{{ $quiz->teacher?->name }}</span>
                                 </div>
-                                <span style="font-size:13px;font-weight:700;color:#4276AE">{{ $quiz->chapter->subject->displayName() }}</span>
-                                <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2)">{{ $quiz->chapter->grade->name }}</span>
-                                <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2)">{{ number_format($quiz->attempts_count) }}</span>
-                                <span style="font-size:13px;font-weight:800;color:{{ $hasAttempts ? '#0F7A68' : '#8B8AA3' }}">{{ $hasAttempts ? number_format($quiz->pass_count) : '—' }}</span>
-                                <span style="font-size:13px;font-weight:800;color:{{ $hasAttempts ? '#C24936' : '#8B8AA3' }}">{{ $hasAttempts ? number_format($quiz->attempts_count - $quiz->pass_count) : '—' }}</span>
-                                <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2)">{{ $quiz->created_at->translatedFormat('j M Y') }}</span>
-                                <button type="button" class="tp-linkbtn" style="justify-self:end"
+                                <span style="font-size:13px;font-weight:700;color:#4276AE;text-align:center">{{ $quiz->chapter->subject->displayName() }}</span>
+                                <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2);text-align:center">{{ $quiz->chapter->grade->name }}</span>
+                                <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2);text-align:center">{{ number_format($quiz->attempts_count) }}</span>
+                                <span style="text-align:center;font-size:13px;font-weight:800;color:{{ $hasAttempts ? '#0F7A68' : '#8B8AA3' }}">{{ $hasAttempts ? number_format($quiz->pass_count) : '—' }}</span>
+                                <span style="text-align:center;font-size:13px;font-weight:800;color:{{ $hasAttempts ? '#C24936' : '#8B8AA3' }}">{{ $hasAttempts ? number_format($quiz->attempts_count - $quiz->pass_count) : '—' }}</span>
+                                <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2);text-align:center">{{ $quiz->created_at->translatedFormat('j M Y') }}</span>
+                                <button type="button" class="tp-linkbtn" style="justify-self:center"
                                         @click="open(@js([
                                             'title' => $quiz->title,
                                             'subtitle' => collect([$quiz->teacher?->name, $quiz->chapter->subject->displayName(), $quiz->chapter->grade->name])->filter()->implode(' · '),
