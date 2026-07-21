@@ -56,7 +56,7 @@
            smear it on long pages. --wl-page stays underneath as the fallback colour. */
         body {
             margin: 0;
-            background: var(--wl-page) url('{{ asset('images/gambar1.jpg') }}') center center / cover no-repeat fixed;
+            background: var(--wl-page) url('{{ asset('images/gambar2.jpg') }}') center center / cover no-repeat fixed;
             font-family: 'Nunito', sans-serif;
             color: var(--wl-body);
         }
