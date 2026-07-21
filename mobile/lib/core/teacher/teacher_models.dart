@@ -17,25 +17,40 @@ List<T> _mapList<T>(Object? raw, T Function(Map<String, dynamic>) fromJson) {
 
 class TeacherStats {
   const TeacherStats({
-    required this.videos,
-    required this.materials,
-    required this.quizzes,
-    required this.attempts,
     required this.views,
+    required this.favourites,
+    required this.downloads,
+    required this.attempts,
   });
 
-  final int videos;
-  final int materials;
-  final int quizzes;
-  final int attempts;
   final int views;
+  final int favourites;
+  final int downloads;
+  final int attempts;
 
   factory TeacherStats.fromJson(Map<String, dynamic> j) => TeacherStats(
-    videos: _int(j['videos']),
-    materials: _int(j['materials']),
-    quizzes: _int(j['quizzes']),
-    attempts: _int(j['attempts']),
     views: _int(j['views']),
+    favourites: _int(j['favourites']),
+    downloads: _int(j['downloads']),
+    attempts: _int(j['attempts']),
+  );
+}
+
+class TeacherPassFail {
+  const TeacherPassFail({
+    required this.passed,
+    required this.failed,
+    required this.total,
+  });
+
+  final int passed;
+  final int failed;
+  final int total;
+
+  factory TeacherPassFail.fromJson(Map<String, dynamic> j) => TeacherPassFail(
+    passed: _int(j['passed']),
+    failed: _int(j['failed']),
+    total: _int(j['total']),
   );
 }
 
@@ -66,16 +81,21 @@ class RecentAttempt {
 class TeacherDashboardData {
   const TeacherDashboardData({
     required this.stats,
+    required this.passFail,
     required this.recentAttempts,
   });
 
   final TeacherStats stats;
+  final TeacherPassFail passFail;
   final List<RecentAttempt> recentAttempts;
 
   factory TeacherDashboardData.fromJson(Map<String, dynamic> j) =>
       TeacherDashboardData(
         stats: TeacherStats.fromJson(
           (j['stats'] as Map<String, dynamic>?) ?? const {},
+        ),
+        passFail: TeacherPassFail.fromJson(
+          (j['pass_fail'] as Map<String, dynamic>?) ?? const {},
         ),
         recentAttempts: _mapList(j['recent_attempts'], RecentAttempt.fromJson),
       );

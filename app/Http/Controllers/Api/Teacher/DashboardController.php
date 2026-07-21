@@ -3,13 +3,14 @@
 namespace App\Http\Controllers\Api\Teacher;
 
 use App\Http\Controllers\Controller;
+use App\Models\Favourite;
 use App\Models\QuizAttempt;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 /**
- * Teacher home for the mobile app: content counts, total views, and the latest quiz
- * attempts across this teacher's quizzes. Mirrors the web Cikgu\DashboardController.
+ * Teacher home for the mobile app: the same engagement summary and quiz outcome
+ * signal surfaced by the web Cikgu dashboard.
  */
 class DashboardController extends Controller
 {
@@ -22,6 +23,10 @@ class DashboardController extends Controller
         }
 
         $quizIds = $teacher->quizzes()->pluck('id');
+        $lessonIds = $teacher->lessons()->pluck('id');
+        $completedAttempts = QuizAttempt::whereIn('quiz_id', $quizIds)->completed();
+        $attempts = (clone $completedAttempts)->count();
+        $passed = (clone $completedAttempts)->passed()->count();
 
         $recent = QuizAttempt::whereIn('quiz_id', $quizIds)
             ->completed()
@@ -32,11 +37,15 @@ class DashboardController extends Controller
 
         return response()->json([
             'stats' => [
-                'videos' => $teacher->lessons()->count(),
-                'materials' => $teacher->materials()->count(),
-                'quizzes' => $teacher->quizzes()->count(),
-                'attempts' => QuizAttempt::whereIn('quiz_id', $quizIds)->completed()->count(),
                 'views' => (int) $teacher->lessons()->sum('views_count'),
+                'favourites' => Favourite::whereIn('lesson_id', $lessonIds)->count(),
+                'downloads' => (int) $teacher->materials()->sum('download_count'),
+                'attempts' => $attempts,
+            ],
+            'pass_fail' => [
+                'passed' => $passed,
+                'failed' => max(0, $attempts - $passed),
+                'total' => $attempts,
             ],
             'recent_attempts' => $recent->map(fn ($a) => [
                 'student_name' => $a->student?->name,

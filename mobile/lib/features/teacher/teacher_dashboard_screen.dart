@@ -394,31 +394,33 @@ class _DashboardTabState extends State<_DashboardTab> {
                         childAspectRatio: 2.15,
                         children: [
                           _StatCard(
-                            icon: Icons.play_circle_outline,
-                            value: '${s.videos}',
-                            label: 'Video',
-                            tint: const Color(0xFFE5F3E0),
-                          ),
-                          _StatCard(
-                            icon: Icons.description_outlined,
-                            value: '${s.materials}',
-                            label: 'Bahan',
-                            tint: const Color(0xFFFFF0D9),
-                          ),
-                          _StatCard(
-                            icon: Icons.quiz_outlined,
-                            value: '${s.quizzes}',
-                            label: 'Kuiz',
+                            icon: Icons.visibility_outlined,
+                            value: '${s.views}',
+                            label: 'Tontonan video',
                             tint: const Color(0xFFE7EFFD),
                           ),
                           _StatCard(
-                            icon: Icons.visibility_outlined,
-                            value: '${s.views}',
-                            label: 'Tontonan',
-                            tint: const Color(0xFFF2E9FB),
+                            icon: Icons.favorite_border_rounded,
+                            value: '${s.favourites}',
+                            label: 'Video digemari',
+                            tint: const Color(0xFFFBE4ED),
+                          ),
+                          _StatCard(
+                            icon: Icons.file_download_outlined,
+                            value: '${s.downloads}',
+                            label: 'Bahan dimuat turun',
+                            tint: const Color(0xFFDCF2EE),
+                          ),
+                          _StatCard(
+                            icon: Icons.quiz_outlined,
+                            value: '${s.attempts}',
+                            label: 'Percubaan kuiz',
+                            tint: const Color(0xFFFFF0D9),
                           ),
                         ],
                       ),
+                      const SizedBox(height: 12),
+                      _PassFailCard(data: data.passFail),
                       const SizedBox(height: 12),
                       Row(
                         children: [
@@ -576,6 +578,137 @@ class _AvatarInitials extends StatelessWidget {
         ),
       ),
     ),
+  );
+}
+
+class _PassFailCard extends StatelessWidget {
+  const _PassFailCard({required this.data});
+
+  final TeacherPassFail data;
+
+  @override
+  Widget build(BuildContext context) {
+    if (data.total == 0) {
+      return Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: LmsColors.surface,
+          border: Border.all(color: LmsColors.border),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: const Row(
+          children: [
+            Icon(Icons.quiz_outlined, color: LmsColors.brandStrong),
+            SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                'Belum ada percubaan kuiz selesai lagi.',
+                style: TextStyle(color: LmsColors.inkMuted),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    final passedPercent = (data.passed / data.total * 100).round();
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: LmsColors.surface,
+        border: Border.all(color: LmsColors.border),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Lulus / Gagal Kuiz',
+            style: TextStyle(fontWeight: FontWeight.w800, color: LmsColors.ink),
+          ),
+          const SizedBox(height: 12),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(99),
+            child: SizedBox(
+              height: 10,
+              child: Row(
+                children: [
+                  if (data.passed > 0)
+                    Expanded(
+                      flex: data.passed,
+                      child: const ColoredBox(color: LmsColors.brand),
+                    ),
+                  if (data.failed > 0)
+                    Expanded(
+                      flex: data.failed,
+                      child: const ColoredBox(color: LmsColors.danger),
+                    ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              _PassFailLabel(
+                color: LmsColors.brand,
+                label: 'Lulus',
+                value: '${data.passed} ($passedPercent%)',
+              ),
+              const SizedBox(width: 18),
+              _PassFailLabel(
+                color: LmsColors.danger,
+                label: 'Gagal',
+                value: '${data.failed} (${100 - passedPercent}%)',
+              ),
+              const Spacer(),
+              Text(
+                '${data.total} kuiz',
+                style: const TextStyle(
+                  fontSize: 11.5,
+                  color: LmsColors.inkMuted,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PassFailLabel extends StatelessWidget {
+  const _PassFailLabel({
+    required this.color,
+    required this.label,
+    required this.value,
+  });
+
+  final Color color;
+  final String label;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) => Row(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      Container(
+        width: 9,
+        height: 9,
+        decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+      ),
+      const SizedBox(width: 5),
+      Text(
+        '$label $value',
+        style: const TextStyle(
+          fontSize: 11.5,
+          fontWeight: FontWeight.w700,
+          color: LmsColors.inkMuted,
+        ),
+      ),
+    ],
   );
 }
 
