@@ -53,8 +53,11 @@
             </div>
 
             <div class="tp-field">
-                <label for="username" class="tp-label">{{ __('Nama pengguna') }}</label>
+                <label for="username" class="tp-label">{{ __('Nama pengguna (nama paparan)') }}</label>
                 <input id="username" name="username" type="text" value="{{ old('username', $user->username) }}" required class="tp-input">
+                {{-- Teachers sign in with their email, so for them this is purely a display name. --}}
+                <span class="tp-hint" x-show="role === 'teacher'">{{ __('Dipaparkan di papan pemuka mereka. Cikgu log masuk menggunakan emel, bukan nama ini.') }}</span>
+                <span class="tp-hint" x-show="role === 'student'" x-cloak>{{ __('Dipaparkan di papan pemuka mereka, dan digunakan untuk log masuk.') }}</span>
                 @error('username')<p class="pg-err">{{ $message }}</p>@enderror
             </div>
 

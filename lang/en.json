@@ -1145,5 +1145,10 @@
     "Kata laluan sementara untuk :name": "Temporary password for :name",
     "Hanya dipaparkan sekali. Salin sekarang jika perlu diberi secara bersemuka.": "Shown only once. Copy it now if it has to be handed over in person.",
     "Salin": "Copy",
-    "Disalin": "Copied"
+    "Disalin": "Copied",
+    "Nama pengguna (nama paparan)": "Username (display name)",
+    "Dipaparkan di papan pemuka mereka. Cikgu log masuk menggunakan emel, bukan nama ini.": "Shown on their dashboard. Teachers sign in with their email, not this name.",
+    "Dipaparkan di papan pemuka mereka, dan digunakan untuk log masuk.": "Shown on their dashboard, and used to sign in.",
+    "Anda log masuk dengan emel ini. Hanya kata laluan yang berubah.": "You sign in with this email. Only the password changes.",
+    "Nama paparan anda ialah \":nickname\" — itu yang akan dipaparkan di papan pemuka anda.": "Your display name is \":nickname\" — that is what appears on your dashboard."
 }

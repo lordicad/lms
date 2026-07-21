@@ -90,6 +90,24 @@ class User extends Authenticatable
     }
 
     /**
+     * Whether this account signs in with its email address.
+     *
+     * `username` is a display nickname — the dashboard greets people by it, and it is deliberately
+     * not unique. Email is the unique identifier, so a teacher signs in with it. Students are 7 to
+     * 12 and mostly have no email, leaving their username as the only thing they can sign in with.
+     */
+    public function signsInWithEmail(): bool
+    {
+        return ! $this->isStudent() && filled($this->email);
+    }
+
+    /** The exact value to type into the sign-in field. */
+    public function signInIdentifier(): string
+    {
+        return $this->signsInWithEmail() ? $this->email : $this->username;
+    }
+
+    /**
      * Teacher and student accounts are created by an admin, who picks the first password and hands
      * it over — so until the owner replaces it, someone else knows it. A null `password_changed_at`
      * means exactly that, and sends them to the change screen before they can use the system.

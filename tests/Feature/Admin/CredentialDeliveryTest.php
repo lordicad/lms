@@ -240,6 +240,71 @@ class CredentialDeliveryTest extends TestCase
         $this->assertGreaterThan(45, count(array_unique($seen)), 'generated passwords repeat too often');
     }
 
+    public function test_a_teacher_is_told_to_sign_in_with_their_email_not_their_nickname(): void
+    {
+        $response = $this->actingAs($this->admin())->post(route('admin.pengguna.store'), [
+            'role' => User::ROLE_TEACHER,
+            'name' => 'Rohana Osman',
+            'username' => 'Cikgu Ana',        // a display nickname, not a login
+            'email' => 'rohana@moe.gov.my',
+            'auto_password' => 1,
+            'is_active' => 1,
+        ]);
+
+        $teacher = User::where('email', 'rohana@moe.gov.my')->firstOrFail();
+        $this->assertTrue($teacher->signsInWithEmail());
+        $this->assertSame('rohana@moe.gov.my', $teacher->signInIdentifier());
+
+        // The admin's own copy shows the email, not the nickname.
+        $this->assertSame('rohana@moe.gov.my', $response->getSession()->get('new_username'));
+
+        // ...and so does the email itself.
+        Mail::assertSent(AccountCredentialsMail::class, function (AccountCredentialsMail $mail) {
+            $html = $mail->render();
+
+            return str_contains($html, 'rohana@moe.gov.my') && str_contains($html, 'Cikgu Ana');
+        });
+    }
+
+    public function test_a_student_still_signs_in_with_their_username(): void
+    {
+        $grade = Grade::factory()->level(3)->create();
+
+        $response = $this->actingAs($this->admin())->post(route('admin.pengguna.store'), [
+            'role' => User::ROLE_STUDENT,
+            'name' => 'Nur Aisyah',
+            'username' => 'aisyah',
+            'grade_level' => $grade->level,
+            'guardian_name' => 'Puan Salmah',
+            'guardian_phone' => '012-345 6789',
+            'auto_password' => 1,
+            'is_active' => 1,
+        ]);
+
+        $student = User::where('username', 'aisyah')->firstOrFail();
+        $this->assertFalse($student->signsInWithEmail());
+        $this->assertSame('aisyah', $student->signInIdentifier());
+        $this->assertSame('aisyah', $response->getSession()->get('new_username'));
+
+        // The guardian's WhatsApp message carries the username, since the child has no email.
+        $this->assertStringContainsString('aisyah', urldecode($response->getSession()->get('wa_link')));
+    }
+
+    /** A student types their username to sign in, so it must stay free of spaces. */
+    public function test_a_student_username_may_not_contain_spaces(): void
+    {
+        $grade = Grade::factory()->level(3)->create();
+
+        $this->actingAs($this->admin())->post(route('admin.pengguna.store'), [
+            'role' => User::ROLE_STUDENT,
+            'name' => 'Nur Aisyah',
+            'username' => 'Nur Aisyah',
+            'grade_level' => $grade->level,
+            'auto_password' => 1,
+            'is_active' => 1,
+        ])->assertSessionHasErrors('username');
+    }
+
     /** A saved account must not be undone just because the mail server refused it. */
     public function test_the_account_survives_a_mail_failure(): void
     {

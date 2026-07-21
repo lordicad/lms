@@ -11,11 +11,17 @@
 {{ __('Akaun WeLearn anda telah dibuka. Berikut ialah butiran log masuk anda.') }}
 @endif
 
+{{-- A teacher signs in with their email; a student with their username. Show whichever applies,
+     so nobody is handed an identifier that will not get them in. --}}
 <x-mail::panel>
-**{{ __('Nama pengguna') }}:** {{ $account->username }}
+**{{ $account->signsInWithEmail() ? __('Emel') : __('Nama pengguna') }}:** {{ $account->signInIdentifier() }}
 
 **{{ __('Kata laluan sementara') }}:** {{ $plainPassword }}
 </x-mail::panel>
+
+@if ($account->signsInWithEmail())
+{{ __('Nama paparan anda ialah ":nickname" — itu yang akan dipaparkan di papan pemuka anda.', ['nickname' => $account->username]) }}
+@endif
 
 <x-mail::button :url="$loginUrl">
 {{ __('Log Masuk') }}

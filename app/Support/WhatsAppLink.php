@@ -63,7 +63,9 @@ class WhatsAppLink
             '',
             __('Akaun WeLearn telah dibuka untuk :name.', ['name' => $account->name]),
             '',
-            __('Nama pengguna').': '.$account->username,
+            // Whichever identifier actually signs this account in — email for a teacher,
+            // username for a student, who usually has no email of their own.
+            ($account->signsInWithEmail() ? __('Emel') : __('Nama pengguna')).': '.$account->signInIdentifier(),
             __('Kata laluan sementara').': '.$plainPassword,
             '',
             __('Log masuk di').': '.route('login'),

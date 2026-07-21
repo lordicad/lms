@@ -113,7 +113,8 @@ class AdminUserController extends Controller
         // no address is on record — or when mail is not configured yet.
         $flash = [
             'new_password' => $plainPassword,
-            'new_username' => $user->username,
+            // The identifier that actually signs them in, not the display nickname.
+            'new_username' => $user->signInIdentifier(),
             'new_password_for' => $user->name,
         ];
 
@@ -285,8 +286,10 @@ class AdminUserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'username' => [
                 'required', 'string', 'min:3', 'max:30',
-                'regex:/^[a-zA-Z0-9._-]+$/',
-                // Usernames may repeat; email is the unique identifier.
+                // A student types this to sign in, so it stays strict. A teacher signs in with
+                // their email, making theirs a display nickname only — "Cikgu Ana" should be
+                // allowed. Usernames may repeat either way; email is the unique identifier.
+                $isTeacher ? 'regex:/^[\pL\pN ._-]+$/u' : 'regex:/^[a-zA-Z0-9._-]+$/',
             ],
             'email' => [
                 Rule::requiredIf($isTeacher),
@@ -340,7 +343,9 @@ class AdminUserController extends Controller
             'name.required' => __('Sila isi nama penuh.'),
             'username.required' => __('Sila pilih nama pengguna.'),
             'username.unique' => __('Nama pengguna ini sudah diambil.'),
-            'username.regex' => __('Nama pengguna hanya boleh mengandungi huruf, nombor, titik, garis bawah dan sengkang.'),
+            'username.regex' => $isTeacher
+                ? __('Nama pengguna hanya boleh mengandungi huruf, nombor, ruang, titik, garis bawah dan sengkang.')
+                : __('Nama pengguna hanya boleh mengandungi huruf, nombor, titik, garis bawah dan sengkang.'),
             'username.min' => __('Nama pengguna mesti sekurang-kurangnya 3 aksara.'),
             'email.required' => __('Guru perlu memberikan alamat emel.'),
             'email.unique' => __('Emel ini sudah didaftarkan.'),

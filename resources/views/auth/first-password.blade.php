@@ -9,13 +9,18 @@
             <p>{{ __('Ini kali pertama anda log masuk. Sila tetapkan kata laluan anda sendiri sebelum meneruskan.') }}</p>
         </div>
 
+        @php($me = auth()->user())
+
         <div class="wla-alert info">
-            {{ __('Nama pengguna anda kekal sama. Hanya kata laluan yang berubah.') }}
+            {{ $me->signsInWithEmail()
+                ? __('Anda log masuk dengan emel ini. Hanya kata laluan yang berubah.')
+                : __('Nama pengguna anda kekal sama. Hanya kata laluan yang berubah.') }}
         </div>
 
+        {{-- The identifier they actually sign in with: email for a teacher, username for a student. --}}
         <label class="wla-label">
-            {{ __('Nama pengguna') }}
-            <input type="text" value="{{ auth()->user()->username }}" readonly disabled
+            {{ $me->signsInWithEmail() ? __('Emel') : __('Nama pengguna') }}
+            <input type="text" value="{{ $me->signInIdentifier() }}" readonly disabled
                    class="wla-input" style="opacity:.7;cursor:not-allowed">
         </label>
 
