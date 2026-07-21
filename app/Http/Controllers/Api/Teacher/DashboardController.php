@@ -34,6 +34,28 @@ class DashboardController extends Controller
             ->orderByDesc('completed_at')
             ->take(8)
             ->get();
+        $topVideos = $teacher->lessons()
+            ->with('chapter.subject')
+            ->orderByDesc('views_count')
+            ->take(5)
+            ->get();
+        $topFavourites = $teacher->lessons()
+            ->with('chapter.subject')
+            ->withCount(['favourites as favourites_count'])
+            ->orderByDesc('favourites_count')
+            ->take(5)
+            ->get();
+        $topMaterials = $teacher->materials()
+            ->with('chapter.subject')
+            ->orderByDesc('download_count')
+            ->take(5)
+            ->get();
+        $topQuizzes = $teacher->quizzes()
+            ->with('chapter.subject')
+            ->withCount('completedAttempts')
+            ->orderByDesc('completed_attempts_count')
+            ->take(5)
+            ->get();
 
         return response()->json([
             'stats' => [
@@ -55,6 +77,32 @@ class DashboardController extends Controller
                 'percent' => $a->percentage(),
                 'completed_at' => $a->completed_at?->toIso8601String(),
             ])->all(),
+            // Mirrors the four content leaderboards on the web teacher dashboard.
+            'leaderboards' => [
+                $this->leaderboard('views', 'Video paling ditonton', $topVideos,
+                    fn ($lesson) => (int) $lesson->views_count),
+                $this->leaderboard('favourites', 'Video paling digemari', $topFavourites,
+                    fn ($lesson) => (int) $lesson->favourites_count),
+                $this->leaderboard('downloads', 'Bahan paling dimuat turun', $topMaterials,
+                    fn ($material) => (int) $material->download_count),
+                $this->leaderboard('attempts', 'Kuiz paling dicuba', $topQuizzes,
+                    fn ($quiz) => (int) $quiz->completed_attempts_count),
+            ],
         ]);
+    }
+
+    /** @param \Illuminate\Support\Collection<int, mixed> $items */
+    private function leaderboard(string $kind, string $title, $items, callable $value): array
+    {
+        return [
+            'kind' => $kind,
+            'title' => $title,
+            'items' => $items->map(fn ($item) => [
+                'title' => $item->title,
+                'subject_name' => $item->chapter?->subject?->displayName(),
+                'chapter_label' => $item->chapter?->label(),
+                'value' => $value($item),
+            ])->values()->all(),
+        ];
     }
 }

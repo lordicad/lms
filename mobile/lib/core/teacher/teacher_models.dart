@@ -83,11 +83,13 @@ class TeacherDashboardData {
     required this.stats,
     required this.passFail,
     required this.recentAttempts,
+    required this.leaderboards,
   });
 
   final TeacherStats stats;
   final TeacherPassFail passFail;
   final List<RecentAttempt> recentAttempts;
+  final List<TeacherTalentLeaderboard> leaderboards;
 
   factory TeacherDashboardData.fromJson(Map<String, dynamic> j) =>
       TeacherDashboardData(
@@ -98,6 +100,10 @@ class TeacherDashboardData {
           (j['pass_fail'] as Map<String, dynamic>?) ?? const {},
         ),
         recentAttempts: _mapList(j['recent_attempts'], RecentAttempt.fromJson),
+        leaderboards: _mapList(
+          j['leaderboards'],
+          TeacherTalentLeaderboard.fromJson,
+        ),
       );
 }
 

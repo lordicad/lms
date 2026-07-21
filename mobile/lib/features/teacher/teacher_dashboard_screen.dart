@@ -455,6 +455,13 @@ class _DashboardTabState extends State<_DashboardTab> {
                       ),
                       const SizedBox(height: 12),
                       _PassFailCard(data: data.passFail),
+                      if (data.leaderboards.isNotEmpty) ...[
+                        const SizedBox(height: 22),
+                        const _Heading('Kandungan paling mendapat sambutan'),
+                        const SizedBox(height: 10),
+                        for (final board in data.leaderboards)
+                          _DashboardLeaderboard(board: board),
+                      ],
                       const SizedBox(height: 12),
                       Row(
                         children: [
@@ -613,6 +620,172 @@ class _AvatarInitials extends StatelessWidget {
       ),
     ),
   );
+}
+
+/// Compact mobile version of the four engagement leaderboards from the web
+/// teacher dashboard: views, favourites, downloads and quiz attempts.
+class _DashboardLeaderboard extends StatelessWidget {
+  const _DashboardLeaderboard({required this.board});
+
+  final TeacherTalentLeaderboard board;
+
+  IconData get _icon => switch (board.kind) {
+    'views' => Icons.visibility_outlined,
+    'favourites' => Icons.favorite_border_rounded,
+    'downloads' => Icons.file_download_outlined,
+    'attempts' => Icons.quiz_outlined,
+    _ => Icons.insights_outlined,
+  };
+
+  String get _metric => switch (board.kind) {
+    'views' => 'tontonan',
+    'favourites' => 'suka',
+    'downloads' => 'muat turun',
+    'attempts' => 'cubaan',
+    _ => '',
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 10),
+      decoration: BoxDecoration(
+        color: LmsColors.surface,
+        border: Border.all(color: LmsColors.border),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(14, 13, 14, 9),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(7),
+                  decoration: const BoxDecoration(
+                    color: LmsColors.brandSoft,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(_icon, size: 17, color: LmsColors.brandStrong),
+                ),
+                const SizedBox(width: 9),
+                Expanded(
+                  child: Text(
+                    board.title,
+                    style: const TextStyle(
+                      fontSize: 13.5,
+                      fontWeight: FontWeight.w800,
+                      color: LmsColors.ink,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          if (board.items.isEmpty)
+            const Padding(
+              padding: EdgeInsets.fromLTRB(14, 2, 14, 15),
+              child: Text(
+                'Belum ada data.',
+                style: TextStyle(fontSize: 12, color: LmsColors.inkMuted),
+              ),
+            )
+          else
+            for (var index = 0; index < board.items.length; index++)
+              _DashboardLeaderboardItem(
+                item: board.items[index],
+                rank: index + 1,
+                metric: _metric,
+              ),
+        ],
+      ),
+    );
+  }
+}
+
+class _DashboardLeaderboardItem extends StatelessWidget {
+  const _DashboardLeaderboardItem({
+    required this.item,
+    required this.rank,
+    required this.metric,
+  });
+
+  final TeacherTalentItem item;
+  final int rank;
+  final String metric;
+
+  @override
+  Widget build(BuildContext context) {
+    final details = [
+      if (item.subjectName != null) item.subjectName!,
+      if (item.chapterLabel != null) item.chapterLabel!,
+    ].join(' • ');
+    final medal = switch (rank) {
+      1 => '1',
+      2 => '2',
+      3 => '3',
+      _ => '$rank',
+    };
+
+    return Container(
+      padding: const EdgeInsets.fromLTRB(14, 9, 14, 11),
+      decoration: const BoxDecoration(
+        border: Border(top: BorderSide(color: LmsColors.border)),
+      ),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 23,
+            child: Text(
+              medal,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w800,
+                color: rank <= 3 ? LmsColors.warning : LmsColors.inkMuted,
+              ),
+            ),
+          ),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  item.title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 12.5,
+                    fontWeight: FontWeight.w800,
+                    color: LmsColors.ink,
+                  ),
+                ),
+                if (details.isNotEmpty)
+                  Text(
+                    details,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 10.5,
+                      color: LmsColors.inkMuted,
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 9),
+          Text(
+            '${item.value}${metric.isEmpty ? '' : ' $metric'}',
+            style: const TextStyle(
+              fontSize: 11.5,
+              fontWeight: FontWeight.w800,
+              color: LmsColors.brandStrong,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 class _PassFailCard extends StatelessWidget {
