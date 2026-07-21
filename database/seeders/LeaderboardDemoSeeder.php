@@ -27,8 +27,8 @@ use Illuminate\Support\Facades\Hash;
  */
 class LeaderboardDemoSeeder extends Seeder
 {
-    /** How many demo students to rank per Tahun (podium 3 + list 7, plus a couple spare). */
-    public const PER_GRADE = 12;
+    /** How many demo students to rank per Tahun. 100+ so the Top 100 leaderboard is full. */
+    public const PER_GRADE = 100;
 
     /** Marks the accounts this seeder owns, so they can be found and removed. */
     public const EMAIL_PREFIX = 'rankdemo.';
@@ -102,7 +102,7 @@ class LeaderboardDemoSeeder extends Seeder
 
             $rows = [];
             foreach ($students as $i => $student) {
-                $accuracyPct = max(55, 96 - $i * 3);                       // 96, 93, 90, … per rank
+                $accuracyPct = max(45, 95 - intdiv($i * 2, 3));            // gentle decline across 100 ranks
                 $attempts = min($quizCount, self::QUIZ_COUNTS[$i] ?? 2);
                 $correctTotal = (int) round($accuracyPct / 100 * $attempts * 10);
                 $tieBreakBonus = self::PER_GRADE - $i;                     // keeps points strictly descending
