@@ -61,12 +61,12 @@
                         <div style="min-width:860px">
                             <div style="display:grid;{{ $scols }};padding:14px 20px;border-bottom:1px solid var(--tp-line)">
                                 <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:var(--tp-muted)">{{ __('Nama Murid') }}</span>
-                                <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:var(--tp-muted)">{{ __('Tahun') }}</span>
-                                <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:var(--tp-muted)">{{ __('Video Ditonton') }}</span>
-                                <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:var(--tp-muted)">{{ __('Bahan Dimuat Turun') }}</span>
-                                <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:var(--tp-muted)">{{ __('Percubaan Kuiz') }}</span>
-                                <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:var(--tp-muted)">{{ __('Lulus') }}</span>
-                                <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:var(--tp-muted)">{{ __('Gagal') }}</span>
+                                <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:var(--tp-muted);text-align:center">{{ __('Tahun') }}</span>
+                                <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:var(--tp-muted);text-align:center">{{ __('Video Ditonton') }}</span>
+                                <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:var(--tp-muted);text-align:center">{{ __('Bahan Dimuat Turun') }}</span>
+                                <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:var(--tp-muted);text-align:center">{{ __('Percubaan Kuiz') }}</span>
+                                <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:var(--tp-muted);text-align:center">{{ __('Lulus') }}</span>
+                                <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:var(--tp-muted);text-align:center">{{ __('Gagal') }}</span>
                             </div>
                             @foreach ($students as $student)
                                 @php($has = $student->attempts_count > 0)
@@ -75,13 +75,13 @@
                                         <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:13.5px;color:var(--tp-ink)">{{ $student->name }}</span>
                                         <span style="font-size:11.5px;color:var(--tp-muted)">{{ $student->username }}</span>
                                     </div>
-                                    <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2)">{{ $student->grade?->name ?? '—' }}</span>
-                                    <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2)">{{ number_format($student->videos_viewed) }}</span>
+                                    <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2);text-align:center">{{ $student->grade?->name ?? '—' }}</span>
+                                    <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2);text-align:center">{{ number_format($student->videos_viewed) }}</span>
                                     {{-- Downloads are counted per file, never per student — an em dash beats inventing one. --}}
-                                    <span style="font-size:13px;font-weight:700;color:var(--tp-muted)">—</span>
-                                    <span style="font-size:13px;font-weight:700;color:#4276AE">{{ number_format($student->attempts_count) }}</span>
-                                    <span style="font-size:13px;font-weight:800;color:{{ $has ? '#0F7A68' : '#8B8AA3' }}">{{ $has ? number_format($student->pass_count) : '—' }}</span>
-                                    <span style="font-size:13px;font-weight:800;color:{{ $has ? '#C24936' : '#8B8AA3' }}">{{ $has ? number_format($student->attempts_count - $student->pass_count) : '—' }}</span>
+                                    <span style="font-size:13px;font-weight:700;color:var(--tp-muted);text-align:center">—</span>
+                                    <span style="font-size:13px;font-weight:700;color:#4276AE;text-align:center">{{ number_format($student->attempts_count) }}</span>
+                                    <span style="text-align:center;font-size:13px;font-weight:800;color:{{ $has ? '#0F7A68' : '#8B8AA3' }}">{{ $has ? number_format($student->pass_count) : '—' }}</span>
+                                    <span style="text-align:center;font-size:13px;font-weight:800;color:{{ $has ? '#C24936' : '#8B8AA3' }}">{{ $has ? number_format($student->attempts_count - $student->pass_count) : '—' }}</span>
                                 </div>
                             @endforeach
                         </div>
