@@ -1,4 +1,13 @@
 <x-student-layout :title="__('Utama')">
+    {{-- Page heading, matching the admin dashboard. Greets by username rather than name: that is
+         the display nickname the owner can change, and the one this dashboard is meant to show. --}}
+    <div style="display:flex;flex-direction:column;gap:3px">
+        <h1 style="margin:0;font-family:'Geist',sans-serif;font-size:26px;font-weight:800;letter-spacing:-.01em;color:var(--wl-ink)">
+            {{ __('Selamat datang, :name', ['name' => $user->username]) }}
+        </h1>
+        <span style="font-size:14.5px;color:var(--wl-muted)">{{ __('Ringkasan pembelajaran anda pada hari ini') }}</span>
+    </div>
+
     @if (! $grade)
         <div style="background:var(--wl-surface);border:1px dashed var(--wl-line-3);border-radius:22px;padding:56px;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;max-width:520px;margin:0 auto">
             <span style="font-size:32px">📚</span>
