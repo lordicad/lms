@@ -6,6 +6,7 @@ import '../../core/auth/auth_user.dart';
 import '../../core/teacher/teacher_models.dart';
 import '../../core/teacher/teacher_repository.dart';
 import '../../core/platform/native_file_picker.dart';
+import '../../core/settings/app_settings.dart';
 import '../../core/theme/lms_theme.dart';
 import '../../core/widgets/lms_logo.dart';
 import '../../core/widgets/loading_skeleton.dart';
@@ -13,6 +14,7 @@ import '../../core/widgets/role_tutorial.dart';
 import '../student/profile_tab.dart';
 import '../student/widgets/content_widgets.dart';
 import 'content_hub_tab.dart';
+import 'chapters_manage_tab.dart';
 import 'material_form_screen.dart';
 import 'quiz_builder_screen.dart';
 import 'teacher_notifications_screen.dart';
@@ -31,6 +33,10 @@ class TeacherDashboardScreen extends StatefulWidget {
     required this.loadProfileOptions,
     required this.onUpdateProfile,
     required this.onUpdateAvatar,
+    required this.themeMode,
+    required this.language,
+    required this.onThemeModeChanged,
+    required this.onLanguageChanged,
   });
 
   final AuthUser user;
@@ -38,6 +44,10 @@ class TeacherDashboardScreen extends StatefulWidget {
   final Future<ProfileOptions> Function() loadProfileOptions;
   final Future<AuthUser> Function(ProfileUpdate update) onUpdateProfile;
   final Future<AuthUser> Function(NativeUploadFile file) onUpdateAvatar;
+  final ThemeMode themeMode;
+  final AppLanguage language;
+  final Future<void> Function(ThemeMode value) onThemeModeChanged;
+  final Future<void> Function(AppLanguage value) onLanguageChanged;
 
   @override
   State<TeacherDashboardScreen> createState() => _TeacherDashboardScreenState();
@@ -58,6 +68,7 @@ class _TeacherDashboardScreenState extends State<TeacherDashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final english = widget.language == AppLanguage.en;
     return Scaffold(
       body: IndexedStack(
         index: _index,
@@ -75,6 +86,10 @@ class _TeacherDashboardScreenState extends State<TeacherDashboardScreen> {
               loadProfileOptions: widget.loadProfileOptions,
               onUpdateProfile: widget.onUpdateProfile,
               onUpdateAvatar: widget.onUpdateAvatar,
+              themeMode: widget.themeMode,
+              language: widget.language,
+              onThemeModeChanged: widget.onThemeModeChanged,
+              onLanguageChanged: widget.onLanguageChanged,
               roleLabel: 'Guru',
             ),
           ),
@@ -83,21 +98,21 @@ class _TeacherDashboardScreenState extends State<TeacherDashboardScreen> {
       bottomNavigationBar: NavigationBar(
         selectedIndex: _index,
         onDestinationSelected: (i) => setState(() => _index = i),
-        destinations: const [
+        destinations: [
           NavigationDestination(
-            icon: Icon(Icons.dashboard_outlined),
-            selectedIcon: Icon(Icons.dashboard),
-            label: 'Papan Pemuka',
+            icon: const Icon(Icons.dashboard_outlined),
+            selectedIcon: const Icon(Icons.dashboard),
+            label: english ? 'Dashboard' : 'Papan Pemuka',
           ),
           NavigationDestination(
-            icon: Icon(Icons.folder_open_outlined),
-            selectedIcon: Icon(Icons.folder),
-            label: 'Kandungan',
+            icon: const Icon(Icons.folder_open_outlined),
+            selectedIcon: const Icon(Icons.folder),
+            label: english ? 'Content' : 'Kandungan',
           ),
           NavigationDestination(
-            icon: Icon(Icons.person_outline),
-            selectedIcon: Icon(Icons.person),
-            label: 'Profil',
+            icon: const Icon(Icons.person_outline),
+            selectedIcon: const Icon(Icons.person),
+            label: english ? 'Profile' : 'Profil',
           ),
         ],
       ),
@@ -177,10 +192,6 @@ class _DashboardTabState extends State<_DashboardTab> {
     await _future.catchError((_) => throw Exception());
   }
 
-  void _soon() => ScaffoldMessenger.of(context).showSnackBar(
-    const SnackBar(content: Text('Ciri ini akan datang tidak lama lagi.')),
-  );
-
   Future<void> _openAddVideo() async {
     final created = await Navigator.of(context).push<bool>(
       MaterialPageRoute(
@@ -215,6 +226,22 @@ class _DashboardTabState extends State<_DashboardTab> {
       widget.onContentChanged();
       _reload();
     }
+  }
+
+  Future<void> _openChapters() async {
+    await Navigator.of(context).push<void>(
+      MaterialPageRoute(
+        builder: (_) => Scaffold(
+          appBar: AppBar(title: const Text('Urus Bab')),
+          body: SafeArea(
+            top: false,
+            child: ChaptersManageTab(repository: widget.repository),
+          ),
+        ),
+      ),
+    );
+    widget.onContentChanged();
+    _reload();
   }
 
   Future<void> _openNotifications() async {
@@ -488,7 +515,7 @@ class _DashboardTabState extends State<_DashboardTab> {
                           _QuickAction(
                             icon: Icons.library_add_outlined,
                             label: 'Bab',
-                            onTap: _soon,
+                            onTap: _openChapters,
                           ),
                         ],
                       ),

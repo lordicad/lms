@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import '../../core/auth/auth_user.dart';
 import '../../core/content/content_repository.dart';
 import '../../core/platform/native_file_picker.dart';
+import '../../core/settings/app_settings.dart';
 import '../../core/widgets/role_tutorial.dart';
 import '../../shared/widgets/app_header.dart';
 import 'dashboard_tab.dart';
@@ -26,6 +27,10 @@ class StudentShell extends StatefulWidget {
     required this.loadProfileOptions,
     required this.onUpdateProfile,
     required this.onUpdateAvatar,
+    required this.themeMode,
+    required this.language,
+    required this.onThemeModeChanged,
+    required this.onLanguageChanged,
   });
 
   final AuthUser user;
@@ -33,6 +38,10 @@ class StudentShell extends StatefulWidget {
   final Future<ProfileOptions> Function() loadProfileOptions;
   final Future<AuthUser> Function(ProfileUpdate update) onUpdateProfile;
   final Future<AuthUser> Function(NativeUploadFile file) onUpdateAvatar;
+  final ThemeMode themeMode;
+  final AppLanguage language;
+  final Future<void> Function(ThemeMode value) onThemeModeChanged;
+  final Future<void> Function(AppLanguage value) onLanguageChanged;
 
   @override
   State<StudentShell> createState() => _StudentShellState();
@@ -54,6 +63,7 @@ class _StudentShellState extends State<StudentShell> {
 
   @override
   Widget build(BuildContext context) {
+    final english = widget.language == AppLanguage.en;
     final gradeName = _activeGrade == null
         ? (widget.user.grade?.name ?? 'Tahun anda')
         : 'Tahun $_activeGrade';
@@ -92,36 +102,36 @@ class _StudentShellState extends State<StudentShell> {
       bottomNavigationBar: NavigationBar(
         selectedIndex: _index,
         onDestinationSelected: (i) => setState(() => _index = i),
-        destinations: const [
+        destinations: [
           NavigationDestination(
-            icon: Icon(Icons.home_outlined),
-            selectedIcon: Icon(Icons.home),
-            label: 'Utama',
+            icon: const Icon(Icons.home_outlined),
+            selectedIcon: const Icon(Icons.home),
+            label: english ? 'Home' : 'Utama',
           ),
           NavigationDestination(
-            icon: Icon(Icons.menu_book_outlined),
-            selectedIcon: Icon(Icons.menu_book),
-            label: 'Subjek',
+            icon: const Icon(Icons.menu_book_outlined),
+            selectedIcon: const Icon(Icons.menu_book),
+            label: english ? 'Subjects' : 'Subjek',
           ),
           NavigationDestination(
-            icon: Icon(Icons.bookmark_border),
-            selectedIcon: Icon(Icons.bookmark),
-            label: 'Kegemaran',
+            icon: const Icon(Icons.bookmark_border),
+            selectedIcon: const Icon(Icons.bookmark),
+            label: english ? 'Saved' : 'Kegemaran',
           ),
           NavigationDestination(
-            icon: Icon(Icons.download_for_offline_outlined),
-            selectedIcon: Icon(Icons.download_for_offline),
+            icon: const Icon(Icons.download_for_offline_outlined),
+            selectedIcon: const Icon(Icons.download_for_offline),
             label: 'Offline',
           ),
           NavigationDestination(
-            icon: Icon(Icons.emoji_events_outlined),
-            selectedIcon: Icon(Icons.emoji_events),
+            icon: const Icon(Icons.emoji_events_outlined),
+            selectedIcon: const Icon(Icons.emoji_events),
             label: 'Ranking',
           ),
           NavigationDestination(
-            icon: Icon(Icons.quiz_outlined),
-            selectedIcon: Icon(Icons.quiz),
-            label: 'Kuiz',
+            icon: const Icon(Icons.quiz_outlined),
+            selectedIcon: const Icon(Icons.quiz),
+            label: english ? 'Quizzes' : 'Kuiz',
           ),
         ],
       ),
@@ -183,6 +193,10 @@ class _StudentShellState extends State<StudentShell> {
               loadProfileOptions: widget.loadProfileOptions,
               onUpdateProfile: widget.onUpdateProfile,
               onUpdateAvatar: widget.onUpdateAvatar,
+              themeMode: widget.themeMode,
+              language: widget.language,
+              onThemeModeChanged: widget.onThemeModeChanged,
+              onLanguageChanged: widget.onLanguageChanged,
             ),
           ),
         ),

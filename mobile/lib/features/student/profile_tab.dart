@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/auth/auth_user.dart';
 import '../../core/platform/native_file_picker.dart';
+import '../../core/settings/app_settings.dart';
 import '../../core/theme/lms_theme.dart';
 import '../../core/widgets/lms_logo.dart';
 import 'profile_edit_screen.dart';
@@ -15,6 +16,10 @@ class ProfileTab extends StatelessWidget {
     required this.loadProfileOptions,
     required this.onUpdateProfile,
     required this.onUpdateAvatar,
+    required this.themeMode,
+    required this.language,
+    required this.onThemeModeChanged,
+    required this.onLanguageChanged,
     this.roleLabel = 'Murid',
   });
 
@@ -23,14 +28,22 @@ class ProfileTab extends StatelessWidget {
   final Future<ProfileOptions> Function() loadProfileOptions;
   final Future<AuthUser> Function(ProfileUpdate update) onUpdateProfile;
   final Future<AuthUser> Function(NativeUploadFile file) onUpdateAvatar;
+  final ThemeMode themeMode;
+  final AppLanguage language;
+  final Future<void> Function(ThemeMode value) onThemeModeChanged;
+  final Future<void> Function(AppLanguage value) onLanguageChanged;
   final String roleLabel;
 
   @override
   Widget build(BuildContext context) {
+    final english = language == AppLanguage.en;
     return ListView(
       padding: const EdgeInsets.fromLTRB(20, 24, 20, 32),
       children: [
-        Text('Profil saya', style: Theme.of(context).textTheme.headlineMedium),
+        Text(
+          english ? 'My profile' : 'Profil saya',
+          style: Theme.of(context).textTheme.headlineMedium,
+        ),
         const SizedBox(height: 14),
         _ProfileHero(user: user, roleLabel: roleLabel),
         if (user.role == UserRole.student && user.studentStats != null) ...[
@@ -38,8 +51,8 @@ class ProfileTab extends StatelessWidget {
           _StudentLearningSummary(stats: user.studentStats!),
         ],
         const SizedBox(height: 24),
-        const Text(
-          'Maklumat akaun',
+        Text(
+          english ? 'Account information' : 'Maklumat akaun',
           style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w800,
@@ -179,7 +192,20 @@ class ProfileTab extends StatelessWidget {
         OutlinedButton.icon(
           onPressed: () => _openEditProfile(context),
           icon: const Icon(Icons.edit_outlined),
-          label: const Text('Sunting profil'),
+          label: Text(english ? 'Edit profile' : 'Sunting profil'),
+          style: OutlinedButton.styleFrom(
+            foregroundColor: LmsColors.brandStrong,
+            minimumSize: const Size.fromHeight(50),
+            side: const BorderSide(color: Color(0x334A7C3A)),
+          ),
+        ),
+        const SizedBox(height: 12),
+        OutlinedButton.icon(
+          onPressed: () => _openAppSettings(context),
+          icon: const Icon(Icons.tune_rounded),
+          label: Text(
+            '${english ? 'Display & language' : 'Paparan & bahasa'}  ·  ${themeMode == ThemeMode.dark ? 'Dark' : 'Light'} · ${language.shortLabel}',
+          ),
           style: OutlinedButton.styleFrom(
             foregroundColor: LmsColors.brandStrong,
             minimumSize: const Size.fromHeight(50),
@@ -190,7 +216,7 @@ class ProfileTab extends StatelessWidget {
         OutlinedButton.icon(
           onPressed: () => _confirmSignOut(context),
           icon: const Icon(Icons.logout_rounded),
-          label: const Text('Log keluar'),
+          label: Text(english ? 'Sign out' : 'Log keluar'),
           style: OutlinedButton.styleFrom(
             foregroundColor: LmsColors.danger,
             minimumSize: const Size.fromHeight(50),
@@ -201,22 +227,114 @@ class ProfileTab extends StatelessWidget {
     );
   }
 
+  Future<void> _openAppSettings(BuildContext context) async {
+    var selectedTheme = themeMode;
+    var selectedLanguage = language;
+
+    await showModalBottomSheet<void>(
+      context: context,
+      showDragHandle: true,
+      builder: (sheetContext) => StatefulBuilder(
+        builder: (context, setSheetState) => SafeArea(
+          top: false,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 4, 20, 28),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Paparan & bahasa',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
+                ),
+                const SizedBox(height: 16),
+                const Text(
+                  'Tema',
+                  style: TextStyle(fontWeight: FontWeight.w800),
+                ),
+                const SizedBox(height: 6),
+                SegmentedButton<ThemeMode>(
+                  segments: const [
+                    ButtonSegment(
+                      value: ThemeMode.light,
+                      icon: Icon(Icons.light_mode_outlined),
+                      label: Text('Light'),
+                    ),
+                    ButtonSegment(
+                      value: ThemeMode.dark,
+                      icon: Icon(Icons.dark_mode_outlined),
+                      label: Text('Dark'),
+                    ),
+                  ],
+                  selected: {selectedTheme},
+                  onSelectionChanged: (value) async {
+                    final mode = value.first;
+                    setSheetState(() => selectedTheme = mode);
+                    await onThemeModeChanged(mode);
+                  },
+                  showSelectedIcon: false,
+                ),
+                const SizedBox(height: 20),
+                const Text(
+                  'Bahasa',
+                  style: TextStyle(fontWeight: FontWeight.w800),
+                ),
+                const SizedBox(height: 6),
+                SegmentedButton<AppLanguage>(
+                  segments: const [
+                    ButtonSegment(
+                      value: AppLanguage.bm,
+                      label: Text('Bahasa Melayu'),
+                    ),
+                    ButtonSegment(
+                      value: AppLanguage.en,
+                      label: Text('English'),
+                    ),
+                  ],
+                  selected: {selectedLanguage},
+                  onSelectionChanged: (value) async {
+                    final selected = value.first;
+                    setSheetState(() => selectedLanguage = selected);
+                    await onLanguageChanged(selected);
+                  },
+                  showSelectedIcon: false,
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  selectedLanguage == AppLanguage.bm
+                      ? 'Pilihan disimpan pada peranti ini.'
+                      : 'Your preference is saved on this device.',
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: LmsColors.inkMuted,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Future<void> _confirmSignOut(BuildContext context) async {
     final go = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Log keluar?'),
-        content: const Text(
-          'Anda perlu log masuk semula untuk menggunakan aplikasi.',
+        title: Text(language == AppLanguage.en ? 'Sign out?' : 'Log keluar?'),
+        content: Text(
+          language == AppLanguage.en
+              ? 'You need to sign in again to use the app.'
+              : 'Anda perlu log masuk semula untuk menggunakan aplikasi.',
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Batal'),
+            child: Text(language == AppLanguage.en ? 'Cancel' : 'Batal'),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Log keluar'),
+            child: Text(language == AppLanguage.en ? 'Sign out' : 'Log keluar'),
           ),
         ],
       ),

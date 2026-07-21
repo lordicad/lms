@@ -6,6 +6,7 @@ import 'package:toastification/toastification.dart';
 import 'core/auth/auth_repository.dart';
 import 'core/auth/auth_user.dart';
 import 'core/platform/native_file_picker.dart';
+import 'core/settings/app_settings.dart';
 import 'core/theme/lms_theme.dart';
 import 'core/widgets/lms_logo.dart';
 import 'features/auth/login_screen.dart';
@@ -29,10 +30,32 @@ class _LmsMobileAppState extends State<LmsMobileApp> {
   AuthUser? _user;
   var _initialising = true;
   var _sessionRestoreStarted = false;
+  ThemeMode _themeMode = ThemeMode.light;
+  AppLanguage _language = AppLanguage.bm;
 
   @override
   void initState() {
     super.initState();
+    unawaited(_loadSettings());
+  }
+
+  Future<void> _loadSettings() async {
+    final settings = await AppSettings.load();
+    if (!mounted) return;
+    setState(() {
+      _themeMode = settings.themeMode;
+      _language = settings.language;
+    });
+  }
+
+  Future<void> _setThemeMode(ThemeMode value) async {
+    setState(() => _themeMode = value);
+    await AppSettings.saveTheme(value);
+  }
+
+  Future<void> _setLanguage(AppLanguage value) async {
+    setState(() => _language = value);
+    await AppSettings.saveLanguage(value);
   }
 
   void _startSessionRestore() {
@@ -115,6 +138,8 @@ class _LmsMobileAppState extends State<LmsMobileApp> {
         title: 'LMS MOE',
         debugShowCheckedModeBanner: false,
         theme: buildLmsTheme(),
+        darkTheme: buildLmsDarkTheme(),
+        themeMode: _themeMode,
         home: _initialising
             ? _SplashScreen(onPresented: _startSessionRestore)
             : _user == null
@@ -125,6 +150,10 @@ class _LmsMobileAppState extends State<LmsMobileApp> {
                 loadProfileOptions: _loadProfileOptions,
                 onUpdateProfile: _updateProfile,
                 onUpdateAvatar: _updateAvatar,
+                themeMode: _themeMode,
+                language: _language,
+                onThemeModeChanged: _setThemeMode,
+                onLanguageChanged: _setLanguage,
               ),
       ),
     );
@@ -138,6 +167,10 @@ class _RoleHome extends StatelessWidget {
     required this.loadProfileOptions,
     required this.onUpdateProfile,
     required this.onUpdateAvatar,
+    required this.themeMode,
+    required this.language,
+    required this.onThemeModeChanged,
+    required this.onLanguageChanged,
   });
 
   final AuthUser user;
@@ -145,6 +178,10 @@ class _RoleHome extends StatelessWidget {
   final Future<ProfileOptions> Function() loadProfileOptions;
   final Future<AuthUser> Function(ProfileUpdate update) onUpdateProfile;
   final Future<AuthUser> Function(NativeUploadFile file) onUpdateAvatar;
+  final ThemeMode themeMode;
+  final AppLanguage language;
+  final Future<void> Function(ThemeMode value) onThemeModeChanged;
+  final Future<void> Function(AppLanguage value) onLanguageChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -155,6 +192,10 @@ class _RoleHome extends StatelessWidget {
         loadProfileOptions: loadProfileOptions,
         onUpdateProfile: onUpdateProfile,
         onUpdateAvatar: onUpdateAvatar,
+        themeMode: themeMode,
+        language: language,
+        onThemeModeChanged: onThemeModeChanged,
+        onLanguageChanged: onLanguageChanged,
       ),
       UserRole.teacher => TeacherDashboardScreen(
         user: user,
@@ -162,6 +203,10 @@ class _RoleHome extends StatelessWidget {
         loadProfileOptions: loadProfileOptions,
         onUpdateProfile: onUpdateProfile,
         onUpdateAvatar: onUpdateAvatar,
+        themeMode: themeMode,
+        language: language,
+        onThemeModeChanged: onThemeModeChanged,
+        onLanguageChanged: onLanguageChanged,
       ),
       UserRole.admin => _AdminWebOnlyScreen(onSignOut: onSignOut),
     };

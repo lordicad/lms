@@ -116,3 +116,87 @@ ThemeData buildLmsTheme() {
     ),
   );
 }
+
+/// System-level dark palette. Screens that use Material surfaces, dialogs,
+/// navigation and form controls update immediately with this theme; older
+/// content cards retain their readable WeLearn styling while they are migrated.
+ThemeData buildLmsDarkTheme() {
+  const surface = Color(0xFF172019);
+  const surfaceMuted = Color(0xFF243027);
+  const background = Color(0xFF101712);
+  const text = Color(0xFFE8F0E5);
+  const muted = Color(0xFFB5C4B5);
+  const border = Color(0x335D8062);
+  const scheme = ColorScheme.dark(
+    primary: LmsColors.accent,
+    onPrimary: LmsColors.onAccent,
+    secondary: Color(0xFFB8D8A1),
+    onSecondary: LmsColors.forest,
+    surface: surface,
+    onSurface: text,
+    error: Color(0xFFFFB4AB),
+  );
+
+  final outlinedBorder = OutlineInputBorder(
+    borderRadius: BorderRadius.circular(12),
+    borderSide: const BorderSide(color: border),
+  );
+
+  return ThemeData(
+    useMaterial3: true,
+    brightness: Brightness.dark,
+    colorScheme: scheme,
+    scaffoldBackgroundColor: background,
+    fontFamily: 'Plus Jakarta Sans',
+    textTheme: const TextTheme(
+      headlineLarge: TextStyle(fontWeight: FontWeight.w800, color: text),
+      headlineMedium: TextStyle(fontWeight: FontWeight.w800, color: text),
+      titleLarge: TextStyle(fontWeight: FontWeight.w800, color: text),
+      titleMedium: TextStyle(fontWeight: FontWeight.w700, color: text),
+      bodyLarge: TextStyle(color: text),
+      bodyMedium: TextStyle(color: muted),
+      labelLarge: TextStyle(fontWeight: FontWeight.w700),
+    ),
+    appBarTheme: const AppBarTheme(
+      backgroundColor: surface,
+      foregroundColor: text,
+      elevation: 0,
+      surfaceTintColor: Colors.transparent,
+      centerTitle: false,
+    ),
+    cardTheme: CardThemeData(
+      color: surface,
+      elevation: 0,
+      margin: EdgeInsets.zero,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: const BorderSide(color: border),
+      ),
+    ),
+    navigationBarTheme: const NavigationBarThemeData(
+      backgroundColor: surface,
+      indicatorColor: Color(0xFF35513A),
+      elevation: 0,
+      height: 68,
+    ),
+    inputDecorationTheme: InputDecorationTheme(
+      filled: true,
+      fillColor: surfaceMuted,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      border: outlinedBorder,
+      enabledBorder: outlinedBorder,
+      focusedBorder: outlinedBorder.copyWith(
+        borderSide: const BorderSide(color: LmsColors.accent, width: 2),
+      ),
+    ),
+    filledButtonTheme: FilledButtonThemeData(
+      style: FilledButton.styleFrom(
+        backgroundColor: LmsColors.accent,
+        foregroundColor: LmsColors.onAccent,
+        minimumSize: const Size.fromHeight(52),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        textStyle: const TextStyle(fontWeight: FontWeight.w800),
+      ),
+    ),
+  );
+}
