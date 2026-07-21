@@ -54,8 +54,8 @@
                         <span style="position:absolute;top:-14px;font-size:26px">{{ $p['medal'] }}</span>
                         <span style="width:56px;height:56px;border-radius:50%;background:{{ $pal[0] }};display:grid;place-items:center;font-family:'Geist',sans-serif;font-size:20px;font-weight:800;color:{{ $pal[1] }};border:3px solid {{ $pal[2] }}">{{ $initial($row->student->name) }}</span>
                         <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:15px;color:var(--wl-ink)">{{ \Illuminate\Support\Str::before($row->student->name, ' ') }}</span>
-                        <span style="font-size:12.5px;color:var(--wl-muted)">{{ $row->quizzes }} kuiz</span>
-                        <span style="background:{{ $pal[0] }};color:{{ $pal[1] }};border-radius:999px;padding:4px 14px;font-family:'Geist',sans-serif;font-size:13px;font-weight:800">{{ number_format($row->points) }} mata</span>
+                        <span style="font-size:12.5px;color:var(--wl-muted)">{{ __(':count kuiz', ['count' => $row->quizzes]) }}</span>
+                        <span style="background:{{ $pal[0] }};color:{{ $pal[1] }};border-radius:999px;padding:4px 14px;font-family:'Geist',sans-serif;font-size:13px;font-weight:800">{{ __(':count mata', ['count' => number_format($row->points)]) }}</span>
                     </div>
                 @endforeach
             </div>
@@ -72,9 +72,9 @@
                             <span style="width:38px;height:38px;border-radius:50%;background:{{ $pal[0] }};display:grid;place-items:center;font-family:'Geist',sans-serif;font-size:14px;font-weight:800;color:{{ $pal[1] }};flex-shrink:0">{{ $initial($row->student->name) }}</span>
                             <div style="display:flex;flex-direction:column;gap:1px;min-width:0;flex:1">
                                 <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:14.5px;color:var(--wl-ink)">{{ $row->student->name }} @if ($isMe)<span style="color:#0F7A68">{{ __('(Anda)') }}</span>@endif</span>
-                                <span style="font-size:12px;color:var(--wl-muted)">{{ $row->quizzes }} kuiz · {{ $row->accuracy }}% purata</span>
+                                <span style="font-size:12px;color:var(--wl-muted)">{{ __(':count kuiz', ['count' => $row->quizzes]) }} · {{ $row->accuracy }}% {{ __('purata') }}</span>
                             </div>
-                            <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:14.5px;color:#17907B">{{ number_format($row->points) }} mata</span>
+                            <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:14.5px;color:#17907B">{{ __(':count mata', ['count' => number_format($row->points)]) }}</span>
                         </div>
                     @endforeach
                 </div>
@@ -87,9 +87,9 @@
                     <span style="width:38px;height:38px;border-radius:50%;background:var(--wl-surface);display:grid;place-items:center;font-family:'Geist',sans-serif;font-size:14px;font-weight:800;color:#17907B;flex-shrink:0">{{ $initial($me->name) }}</span>
                     <div style="display:flex;flex-direction:column;gap:1px;min-width:0;flex:1">
                         <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:14.5px;color:#fff">{{ $me->name }} {{ __('(Anda)') }}</span>
-                        <span style="font-size:12px;color:rgba(255,255,255,.8)">{{ $myRow->quizzes }} kuiz · {{ $myRow->accuracy }}% purata</span>
+                        <span style="font-size:12px;color:rgba(255,255,255,.8)">{{ __(':count kuiz', ['count' => $myRow->quizzes]) }} · {{ $myRow->accuracy }}% {{ __('purata') }}</span>
                     </div>
-                    <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:14.5px;color:#fff">{{ number_format($myRow->points) }} mata</span>
+                    <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:14.5px;color:#fff">{{ __(':count mata', ['count' => number_format($myRow->points)]) }}</span>
                 </div>
             @endif
         @endif

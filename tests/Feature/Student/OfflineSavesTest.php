@@ -63,6 +63,27 @@ class OfflineSavesTest extends TestCase
         $response->assertDontSee('rahim@moe.gov.my');
     }
 
+    public function test_chapter_filter_narrows_offline_content_to_one_chapter(): void
+    {
+        $grade = Grade::factory()->level(6)->create();
+        $subject = Subject::factory()->availableIn($grade)->create();
+        $chapterA = Chapter::factory()->create(['subject_id' => $subject->id, 'grade_id' => $grade->id]);
+        $chapterB = Chapter::factory()->create(['subject_id' => $subject->id, 'grade_id' => $grade->id]);
+
+        $teacher = User::factory()->teacher()->create();
+        $keep = Lesson::factory()->for($chapterA)->create(['teacher_id' => $teacher->id]);
+        Lesson::factory()->for($chapterB)->create(['teacher_id' => $teacher->id]);
+
+        $student = User::factory()->student(6)->create();
+
+        $response = $this->actingAs($student)->get(route('simpanan.index', [
+            'tahun' => 6, 'subjek' => $subject->slug, 'bab' => $chapterA->id,
+        ]));
+
+        $response->assertOk();
+        $this->assertEquals([$keep->id], $response->viewData('lessons')->pluck('id')->all());
+    }
+
     public function test_defaults_to_the_students_own_year_without_a_query(): void
     {
         $grade = Grade::factory()->level(2)->create();

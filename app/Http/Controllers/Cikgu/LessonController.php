@@ -43,16 +43,11 @@ class LessonController extends Controller
 
     public function index(Request $request): View
     {
-        $lessons = $request->user()->lessons()
-            ->with('chapter.subject', 'chapter.grade')
-            ->when($request->filled('subjek'), fn ($q) => $q->whereHas(
-                'chapter.subject',
-                fn ($s) => $s->where('slug', $request->string('subjek')),
-            ))
-            ->when($request->filled('tahun'), fn ($q) => $q->whereHas(
-                'chapter.grade',
-                fn ($g) => $g->where('level', $request->integer('tahun')),
-            ))
+        $filter = \App\Support\ContentFilter::fromRequest($request);
+
+        $lessons = $filter->apply(
+            $request->user()->lessons()->with('chapter.subject', 'chapter.grade')
+        )
             ->latest('id')
             ->paginate(12)
             ->withQueryString();
@@ -61,6 +56,7 @@ class LessonController extends Controller
             'lessons' => $lessons,
             'subjects' => Subject::orderBy('sort_order')->get(),
             'grades' => Grade::orderBy('level')->get(),
+            'filter' => $filter,
         ]);
     }
 

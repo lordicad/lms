@@ -17,17 +17,13 @@ class QuizController extends Controller
 {
     public function index(Request $request): View
     {
-        $quizzes = $request->user()->quizzes()
-            ->with('chapter.subject', 'chapter.grade', 'questions.options')
-            ->withCount(['questions', 'attempts as completed_attempts_count' => fn ($q) => $q->whereNotNull('completed_at')])
-            ->when($request->filled('subjek'), fn ($q) => $q->whereHas(
-                'chapter.subject',
-                fn ($s) => $s->where('slug', $request->string('subjek')),
-            ))
-            ->when($request->filled('tahun'), fn ($q) => $q->whereHas(
-                'chapter.grade',
-                fn ($g) => $g->where('level', $request->integer('tahun')),
-            ))
+        $filter = \App\Support\ContentFilter::fromRequest($request);
+
+        $quizzes = $filter->apply(
+            $request->user()->quizzes()
+                ->with('chapter.subject', 'chapter.grade', 'questions.options')
+                ->withCount(['questions', 'attempts as completed_attempts_count' => fn ($q) => $q->whereNotNull('completed_at')])
+        )
             ->latest('id')
             ->paginate(12)
             ->withQueryString();
@@ -36,6 +32,7 @@ class QuizController extends Controller
             'quizzes' => $quizzes,
             'subjects' => Subject::orderBy('sort_order')->get(),
             'grades' => Grade::orderBy('level')->get(),
+            'filter' => $filter,
         ]);
     }
 

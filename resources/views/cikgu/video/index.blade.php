@@ -3,12 +3,12 @@
     :heading="__('Video')"
     :sub="__('Rakaman kelas yang anda muat naik atau pautkan dari YouTube')">
 
-    <x-cikgu-filters :subjects="$subjects" :grades="$grades" :action="route('cikgu.video.index')">
+    <x-year-subject-filter :subjects="$subjects" :grades="$grades" :filter="$filter" with-chapter :action="route('cikgu.video.index')">
         <a href="{{ route('cikgu.video.create') }}" class="tp-btn" style="margin-left:auto">
             <x-icon name="plus" class="h-4 w-4" />
             {{ __('Video Baru') }}
         </a>
-    </x-cikgu-filters>
+    </x-year-subject-filter>
 
     @if ($lessons->isEmpty())
         <div class="tp-empty">

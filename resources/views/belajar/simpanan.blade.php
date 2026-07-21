@@ -9,7 +9,7 @@
 
         {{-- Dependent Year -> Subject filter (brief §3.1). Defaults to the student's active Tahun. --}}
         <div class="mb-6">
-            <x-year-subject-filter variant="student" :all-years="false"
+            <x-year-subject-filter variant="student" :all-years="false" with-chapter
                 :action="route('simpanan.index')" :grades="$grades" :subjects="$subjects" :filter="$filter" />
         </div>
 
@@ -25,8 +25,15 @@
                 <ul class="space-y-3">
                     @foreach ($lessons as $lesson)
                         <li class="card flex flex-wrap items-center gap-4 p-4" style="--sc: {{ $lesson->chapter->subject->rgb }}">
-                            <span class="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-control bg-subject-wash"
-                                  aria-hidden="true"><x-subject-icon :subject="$lesson->chapter->subject" class="h-5 w-5" /></span>
+                            {{-- Video thumbnail at the existing 44px size; falls back to the subject icon. --}}
+                            <span class="inline-flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-control bg-subject-wash"
+                                  aria-hidden="true">
+                                @if ($lesson->thumbnailUrl())
+                                    <img src="{{ $lesson->thumbnailUrl() }}" alt="" loading="lazy" class="h-full w-full object-cover">
+                                @else
+                                    <x-subject-icon :subject="$lesson->chapter->subject" class="h-5 w-5" />
+                                @endif
+                            </span>
 
                             <span class="min-w-0 flex-1">
                                 <a href="{{ route('video.show', $lesson) }}" class="block truncate font-extrabold text-ink hover:text-brand">{{ $lesson->title }}</a>

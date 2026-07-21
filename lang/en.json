@@ -1090,5 +1090,8 @@
     "muat turun": "downloads",
     "percubaan": "attempts",
     "percubaan selesai": "completed attempts",
-    "sumbangan": "contributions"
+    "sumbangan": "contributions",
+    ":count kuiz": ":count quizzes",
+    ":count mata": ":count pts",
+    "purata": "avg"
 }

@@ -3,12 +3,12 @@
     :heading="__('Kuiz Saya')"
     :sub="__('Kuiz interaktif yang menanda sendiri, dan kuiz bercetak')">
 
-    <x-cikgu-filters :subjects="$subjects" :grades="$grades" :action="route('cikgu.kuiz.index')">
+    <x-year-subject-filter :subjects="$subjects" :grades="$grades" :filter="$filter" with-chapter :action="route('cikgu.kuiz.index')">
         <a href="{{ route('cikgu.kuiz.mod') }}" class="tp-btn" style="margin-left:auto">
             <x-icon name="plus" class="h-4 w-4" />
             {{ __('Kuiz Baru') }}
         </a>
-    </x-cikgu-filters>
+    </x-year-subject-filter>
 
     <div x-data="{ quiz: null, open(data) { this.quiz = data }, close() { this.quiz = null } }">
 
