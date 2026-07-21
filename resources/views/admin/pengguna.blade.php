@@ -63,8 +63,9 @@
                 <div style="overflow-x:auto">
                     <div style="min-width:820px">
                         <div style="display:grid;{{ $cols }};gap:12px;padding:14px 20px;border-bottom:1px solid var(--tp-line)">
+                            {{-- Everything but Name is centred; names keep a common left edge to scan down. --}}
                             @foreach (['Nama', 'Peranan', 'Emel', $teacherView ? 'Jawatan' : 'Tahun', 'Status', 'Tindakan'] as $h)
-                                <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:var(--tp-muted)">{{ __($h) }}</span>
+                                <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:var(--tp-muted){{ $loop->first ? '' : ';text-align:center' }}">{{ __($h) }}</span>
                             @endforeach
                         </div>
 
@@ -76,16 +77,18 @@
                                 </div>
 
                                 @if ($u->isTeacher())
-                                    <span style="justify-self:start;background:#E4EEF9;color:#2E6CA8;border-radius:999px;padding:4px 11px;font-family:'Geist',sans-serif;font-size:11.5px;font-weight:800">{{ __('Cikgu') }}</span>
+                                    <span style="justify-self:center;background:#E4EEF9;color:#2E6CA8;border-radius:999px;padding:4px 11px;font-family:'Geist',sans-serif;font-size:11.5px;font-weight:800">{{ __('Cikgu') }}</span>
                                 @else
-                                    <span style="justify-self:start;background:#DCF2EE;color:#0F7A68;border-radius:999px;padding:4px 11px;font-family:'Geist',sans-serif;font-size:11.5px;font-weight:800">{{ __('Murid') }}</span>
+                                    <span style="justify-self:center;background:#DCF2EE;color:#0F7A68;border-radius:999px;padding:4px 11px;font-family:'Geist',sans-serif;font-size:11.5px;font-weight:800">{{ __('Murid') }}</span>
                                 @endif
 
-                                <span style="font-size:13px;font-weight:600;color:var(--tp-muted-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $u->email ?: '—' }}</span>
-                                <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $teacherView ? ($u->position ?: '—') : ($u->grade?->name ?? '—') }}</span>
+                                <span style="font-size:13px;font-weight:600;color:var(--tp-muted-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center">{{ $u->email ?: '—' }}</span>
+                                <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center">{{ $teacherView ? ($u->position ?: '—') : ($u->grade?->name ?? '—') }}</span>
 
-                                {{-- Status badge doubles as an activate/deactivate toggle. --}}
-                                <form method="POST" action="{{ route('admin.pengguna.status', $u) }}" style="justify-self:start">
+                                {{-- Status badge doubles as an activate/deactivate toggle. The pill
+                                     carries a background, so it centres by justify-self rather than
+                                     text-align — otherwise it would stretch the whole column. --}}
+                                <form method="POST" action="{{ route('admin.pengguna.status', $u) }}" style="justify-self:center">
                                     @csrf
                                     <button type="submit" title="{{ $u->is_active ? __('Klik untuk nyahaktifkan') : __('Klik untuk aktifkan') }}"
                                             style="display:inline-flex;align-items:center;gap:6px;cursor:pointer;border:none;border-radius:999px;padding:5px 11px;font-family:'Geist',sans-serif;font-size:11.5px;font-weight:800;{{ $u->is_active ? 'background:#DCF2EE;color:#0F7A68' : 'background:#F1F0E8;color:var(--tp-muted)' }}">
@@ -94,7 +97,7 @@
                                     </button>
                                 </form>
 
-                                <div style="display:flex;align-items:center;gap:6px;justify-self:start">
+                                <div style="display:flex;align-items:center;gap:6px;justify-self:center">
                                     <a href="{{ route('admin.pengguna.edit', $u) }}" title="{{ __('Sunting') }}"
                                        style="width:34px;height:34px;border-radius:9px;border:1.5px solid var(--tp-line-2);background:var(--tp-surface);display:grid;place-items:center;color:#4A5A6B;text-decoration:none">
                                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
