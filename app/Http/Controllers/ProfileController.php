@@ -6,6 +6,8 @@ use App\Models\Grade;
 use App\Models\QuizAttempt;
 use App\Models\School;
 use App\Models\SchoolClass;
+use App\Models\Subject;
+use App\Models\User;
 use App\Services\LeaderboardService;
 use App\Support\Uploads;
 use Illuminate\Http\RedirectResponse;
@@ -44,13 +46,8 @@ class ProfileController extends Controller
             ];
         }
 
-        // Teachers get the WeLearn Teacher profile in their own portal shell.
-        if ($user->isTeacher()) {
-            return view('cikgu.profil', ['user' => $user]);
-        }
-
-        // All active classes, so the student's School -> Class dropdowns can depend on each other
-        // client-side without a round trip. Small dataset (a handful of schools).
+        // All active classes, shared by the teacher's homeroom-class picker and the student's class
+        // picker, so the School -> Class dropdowns can depend on each other client-side.
         $allClasses = SchoolClass::active()->with('grade', 'homeroomTeacher:id,name')
             ->orderBy('grade_id')->orderBy('name')
             ->get()
@@ -61,6 +58,20 @@ class ProfileController extends Controller
                 'label' => $c->label(),
                 'homeroom' => $c->homeroomTeacher?->name,
             ])->values();
+
+        // Teachers get the WeLearn Teacher profile in their own portal shell.
+        if ($user->isTeacher()) {
+            $user->load('subjects', 'homeroomClass', 'school');
+
+            return view('cikgu.profil', [
+                'user' => $user,
+                'schools' => School::orderBy('name')->get(),
+                'subjects' => Subject::orderBy('sort_order')->get(),
+                'allClasses' => $allClasses,
+                'selectedSubjectIds' => $user->subjects->pluck('id')->all(),
+                'homeroomClassId' => $user->homeroomClass?->id,
+            ]);
+        }
 
         $user->load('school', 'schoolClass.grade');
 
@@ -105,6 +116,8 @@ class ProfileController extends Controller
 
         if ($user->isStudent()) {
             $rules += $this->studentRules($request);
+        } elseif ($user->isTeacher()) {
+            $rules += $this->teacherRules($request, $user);
         }
 
         $validated = $request->validate($rules, $messages);
@@ -114,6 +127,12 @@ class ProfileController extends Controller
             'username' => $validated['username'],
             'email' => $validated['email'] ?? null,
         ]);
+
+        if ($user->isTeacher()) {
+            $user->phone = $validated['phone'] ?? null;
+            $user->position = $validated['position'] ?? null;
+            $user->school_id = $validated['school_id'] ?? null;
+        }
 
         if ($user->isStudent()) {
             $user->grade_id = Grade::where('level', $validated['grade_level'])->value('id');
@@ -133,6 +152,12 @@ class ProfileController extends Controller
 
         $user->save();
 
+        // Relational side-effects after the base row is saved.
+        if ($user->isTeacher()) {
+            $user->subjects()->sync($validated['subjects'] ?? []);
+            $this->assignHomeroomClass($user, $validated['homeroom_class_id'] ?? null);
+        }
+
         if ($request->hasFile('avatar') && $oldAvatar) {
             Storage::disk('uploads')->delete($oldAvatar);
         }
@@ -140,6 +165,61 @@ class ProfileController extends Controller
         // back(), not a fixed route: each role edits its profile on its own surface (the admin has a
         // dedicated page), so returning to where the form was submitted keeps everyone in their shell.
         return back()->with('status', __('Profil berjaya dikemas kini.'));
+    }
+
+    /**
+     * @return array<string, array<int, mixed>>
+     */
+    private function teacherRules(Request $request, User $user): array
+    {
+        return [
+            'phone' => ['nullable', 'string', 'max:30', 'regex:/^\+?[0-9\s\-()]{6,20}$/'],
+            'position' => ['nullable', 'string', 'max:100'],
+            'school_id' => ['nullable', 'integer', Rule::exists('schools', 'id')],
+            'subjects' => ['nullable', 'array'],
+            'subjects.*' => ['integer', Rule::exists('subjects', 'id')],
+            'homeroom_class_id' => [
+                'nullable', 'integer',
+                function (string $attribute, mixed $value, \Closure $fail) use ($request, $user) {
+                    $class = SchoolClass::find($value);
+
+                    if (! $class) {
+                        $fail(__('Kelas tidak sah.'));
+
+                        return;
+                    }
+
+                    // The class must be in the school the teacher just selected.
+                    if ((int) $class->school_id !== (int) $request->input('school_id')) {
+                        $fail(__('Kelas ini bukan di sekolah yang dipilih.'));
+
+                        return;
+                    }
+
+                    // Only one homeroom teacher per class.
+                    if ($class->homeroom_teacher_id !== null && (int) $class->homeroom_teacher_id !== $user->id) {
+                        $fail(__('Kelas ini sudah mempunyai guru kelas.'));
+                    }
+                },
+            ],
+        ];
+    }
+
+    /**
+     * Point school_classes.homeroom_teacher_id at this teacher for the chosen class (the single
+     * source of truth), first releasing any class they were previously homeroom of.
+     */
+    private function assignHomeroomClass(User $teacher, ?int $classId): void
+    {
+        $current = $teacher->homeroomClass()->first();
+
+        if ($current && (int) $current->id !== (int) $classId) {
+            $current->update(['homeroom_teacher_id' => null]);
+        }
+
+        if ($classId) {
+            SchoolClass::where('id', $classId)->update(['homeroom_teacher_id' => $teacher->id]);
+        }
     }
 
     /**

@@ -24,7 +24,16 @@
         @endif
 
         {{-- Account details --}}
-        <form method="POST" action="{{ route('profile.update') }}" enctype="multipart/form-data" style="{{ $card }};gap:16px">
+        <form method="POST" action="{{ route('profile.update') }}" enctype="multipart/form-data" style="{{ $card }};gap:16px"
+              x-data="{
+                  schoolId: '{{ old('school_id', $user->school_id) }}',
+                  classes: {{ \Illuminate\Support\Js::from($allClasses) }},
+                  homeroom: '{{ old('homeroom_class_id', $homeroomClassId) }}',
+                  get availableClasses() { return this.classes.filter(c => String(c.school_id) === String(this.schoolId)); },
+                  onSchoolChange() {
+                      if (this.homeroom && ! this.availableClasses.some(c => String(c.id) === String(this.homeroom))) this.homeroom = '';
+                  },
+              }">
             @csrf
             @method('PATCH')
             <h2 style="{{ $h2 }}">{{ __('Butiran akaun') }}</h2>
@@ -58,6 +67,58 @@
                 <input id="email" name="email" type="email" value="{{ old('email', $user->email) }}" required style="{{ $input }}">
                 @error('email')<p style="{{ $err }}">{{ $message }}</p>@enderror
             </div>
+
+            <div style="{{ $field }}">
+                <label for="phone" style="{{ $label }}">{{ __('Nombor telefon') }}</label>
+                <input id="phone" name="phone" type="tel" value="{{ old('phone', $user->phone) }}" placeholder="+60 12-345 6789" style="{{ $input }}">
+                @error('phone')<p style="{{ $err }}">{{ $message }}</p>@enderror
+            </div>
+
+            <div style="{{ $field }}">
+                <label for="position" style="{{ $label }}">{{ __('Jawatan') }}</label>
+                <input id="position" name="position" type="text" value="{{ old('position', $user->position) }}" placeholder="{{ __('Contoh: Guru Kanan Matematik') }}" style="{{ $input }}">
+                @error('position')<p style="{{ $err }}">{{ $message }}</p>@enderror
+            </div>
+
+            <div style="{{ $field }}">
+                <label for="school_id" style="{{ $label }}">{{ __('Sekolah') }}</label>
+                <select id="school_id" name="school_id" style="{{ $input }}" x-model="schoolId" @change="onSchoolChange()">
+                    <option value="">{{ __('Tiada / Belum ditetapkan') }}</option>
+                    @foreach ($schools as $school)
+                        <option value="{{ $school->id }}" @selected((int) old('school_id', $user->school_id) === $school->id)>{{ $school->name }}</option>
+                    @endforeach
+                </select>
+                @error('school_id')<p style="{{ $err }}">{{ $message }}</p>@enderror
+            </div>
+
+            <div style="{{ $field }}">
+                <label for="homeroom_class_id" style="{{ $label }}">{{ __('Kelas guru kelas') }}</label>
+                <select id="homeroom_class_id" name="homeroom_class_id" style="{{ $input }}" x-model="homeroom" x-bind:disabled="! schoolId">
+                    <option value="">{{ __('Bukan guru kelas') }}</option>
+                    <template x-for="c in availableClasses" :key="c.id">
+                        <option :value="c.id" x-text="c.label"></option>
+                    </template>
+                </select>
+                <p style="margin:0;font-size:12px;color:var(--tp-muted)" x-show="! schoolId" x-cloak>{{ __('Pilih sekolah dahulu.') }}</p>
+                @error('homeroom_class_id')<p style="{{ $err }}">{{ $message }}</p>@enderror
+            </div>
+
+            {{-- Subjects taught: accessible multi-select via checkboxes with visible selections. --}}
+            <fieldset style="{{ $field }};border:1.5px solid var(--tp-line-2);border-radius:12px;padding:14px 16px;margin:0">
+                <legend style="{{ $label }};padding:0 6px">{{ __('Subjek diajar') }}</legend>
+                <div style="display:flex;flex-wrap:wrap;gap:10px 18px;margin-top:8px">
+                    @php($chosenSubjects = old('subjects', $selectedSubjectIds))
+                    @foreach ($subjects as $subject)
+                        <label style="display:flex;align-items:center;gap:8px;font-family:'Nunito',sans-serif;font-size:14px;color:var(--tp-ink);cursor:pointer">
+                            <input type="checkbox" name="subjects[]" value="{{ $subject->id }}"
+                                   @checked(in_array($subject->id, $chosenSubjects))
+                                   style="width:18px;height:18px;accent-color:#17907B">
+                            {{ $subject->icon }} {{ $subject->displayName() }}
+                        </label>
+                    @endforeach
+                </div>
+                @error('subjects')<p style="{{ $err }}">{{ $message }}</p>@enderror
+            </fieldset>
 
             <button type="submit" class="wl-primary" style="{{ $primary }}">{{ __('Simpan') }}</button>
         </form>
