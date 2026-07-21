@@ -142,6 +142,36 @@ class AuthController extends Controller
                 'guardian_phone' => ['nullable', 'string', 'max:30', 'regex:/^\+?[0-9\s\-()]{6,20}$/'],
                 'guardian_email' => ['nullable', 'string', 'email', 'max:255'],
             ];
+        } elseif ($user->isTeacher()) {
+            $rules += [
+                'phone' => ['nullable', 'string', 'max:30', 'regex:/^\+?[0-9\s\-()]{6,20}$/'],
+                'position' => ['nullable', 'string', 'max:100'],
+                'school_id' => ['nullable', 'integer', Rule::exists('schools', 'id')],
+                'subjects' => ['nullable', 'array'],
+                'subjects.*' => ['integer', Rule::exists('subjects', 'id')],
+                'homeroom_class_id' => [
+                    'nullable', 'integer',
+                    function (string $attribute, mixed $value, \Closure $fail) use ($request, $user) {
+                        $class = SchoolClass::find($value);
+
+                        if (! $class) {
+                            $fail(__('Kelas tidak sah.'));
+
+                            return;
+                        }
+
+                        if ((int) $class->school_id !== (int) $request->input('school_id')) {
+                            $fail(__('Kelas ini bukan di sekolah yang dipilih.'));
+
+                            return;
+                        }
+
+                        if ($class->homeroom_teacher_id !== null && (int) $class->homeroom_teacher_id !== $user->id) {
+                            $fail(__('Kelas ini sudah mempunyai guru kelas.'));
+                        }
+                    },
+                ],
+            ];
         }
 
         $validated = $request->validate($rules, [
@@ -166,11 +196,21 @@ class AuthController extends Controller
             }
         }
 
-        $user->update([
+        $account = [
             'name' => $validated['name'],
             'username' => $validated['username'],
             'email' => $validated['email'] ?? null,
-        ]);
+        ];
+
+        if ($user->isTeacher()) {
+            $account += [
+                'phone' => $validated['phone'] ?? null,
+                'position' => $validated['position'] ?? null,
+                'school_id' => $validated['school_id'] ?? null,
+            ];
+        }
+
+        $user->update($account);
 
         if ($user->isStudent()) {
             $user->update([
@@ -180,6 +220,9 @@ class AuthController extends Controller
                 'guardian_phone' => $validated['guardian_phone'] ?? null,
                 'guardian_email' => $validated['guardian_email'] ?? null,
             ]);
+        } elseif ($user->isTeacher()) {
+            $user->subjects()->sync($validated['subjects'] ?? []);
+            $this->assignHomeroomClass($user, $validated['homeroom_class_id'] ?? null);
         }
 
         return response()->json([
@@ -223,6 +266,20 @@ class AuthController extends Controller
         $request->user()->currentAccessToken()->delete();
 
         return response()->json(['message' => __('Log keluar berjaya.')]);
+    }
+
+    /** Keep the mobile and web profile flows on the same homeroom source of truth. */
+    private function assignHomeroomClass(User $teacher, ?int $classId): void
+    {
+        $current = $teacher->homeroomClass()->first();
+
+        if ($current && (int) $current->id !== (int) $classId) {
+            $current->update(['homeroom_teacher_id' => null]);
+        }
+
+        if ($classId) {
+            SchoolClass::where('id', $classId)->update(['homeroom_teacher_id' => $teacher->id]);
+        }
     }
 
     /**

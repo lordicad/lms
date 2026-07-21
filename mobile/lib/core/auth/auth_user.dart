@@ -93,6 +93,10 @@ class ProfileUpdate {
     this.guardianName,
     this.guardianPhone,
     this.guardianEmail,
+    this.phone,
+    this.position,
+    this.homeroomClassId,
+    this.subjectIds = const [],
   });
 
   final String name;
@@ -104,6 +108,10 @@ class ProfileUpdate {
   final String? guardianName;
   final String? guardianPhone;
   final String? guardianEmail;
+  final String? phone;
+  final String? position;
+  final int? homeroomClassId;
+  final List<int> subjectIds;
 
   Map<String, dynamic> toJson(UserRole role) {
     final data = <String, dynamic>{
@@ -119,6 +127,14 @@ class ProfileUpdate {
         'guardian_name': guardianName,
         'guardian_phone': guardianPhone,
         'guardian_email': guardianEmail,
+      });
+    } else if (role == UserRole.teacher) {
+      data.addAll({
+        'phone': phone,
+        'position': position,
+        'school_id': schoolId,
+        'homeroom_class_id': homeroomClassId,
+        'subjects': subjectIds,
       });
     }
     return data;

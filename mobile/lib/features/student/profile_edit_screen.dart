@@ -35,12 +35,16 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
   late final TextEditingController _guardianName;
   late final TextEditingController _guardianPhone;
   late final TextEditingController _guardianEmail;
+  late final TextEditingController _phone;
+  late final TextEditingController _position;
 
   ProfileOptions? _options;
   Object? _optionsError;
   int? _schoolId;
   int? _gradeLevel;
   int? _schoolClassId;
+  int? _homeroomClassId;
+  late Set<int> _teacherSubjectIds;
   var _loadingOptions = true;
   var _saving = false;
   var _uploadingAvatar = false;
@@ -63,12 +67,18 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     _guardianEmail = TextEditingController(
       text: widget.user.guardianEmail ?? '',
     );
+    _phone = TextEditingController(text: widget.user.phone ?? '');
+    _position = TextEditingController(text: widget.user.position ?? '');
     _schoolId = widget.user.school?.id;
     _gradeLevel = widget.user.grade?.level;
     _schoolClassId = widget.user.schoolClass?.id;
+    _homeroomClassId = widget.user.homeroomClass?.id;
+    _teacherSubjectIds = widget.user.subjects
+        .map((subject) => subject.id)
+        .toSet();
     _currentUser = widget.user;
-    if (_isStudent) unawaited(_loadOptions());
-    if (!_isStudent) _loadingOptions = false;
+    if (_isStudent || _isTeacher) unawaited(_loadOptions());
+    if (!_isStudent && !_isTeacher) _loadingOptions = false;
   }
 
   @override
@@ -79,6 +89,8 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     _guardianName.dispose();
     _guardianPhone.dispose();
     _guardianEmail.dispose();
+    _phone.dispose();
+    _position.dispose();
     super.dispose();
   }
 
@@ -123,10 +135,22 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
         .toList(growable: false);
   }
 
+  List<SchoolClassInfo> get _teacherClasses {
+    final schoolId = _schoolId;
+    if (schoolId == null) return const [];
+    return (_options?.classes ?? const [])
+        .where((item) => item.schoolId == schoolId)
+        .toList(growable: false);
+  }
+
   void _normaliseSelections() {
     if (_isStudent &&
         !_studentClasses.any((item) => item.id == _schoolClassId)) {
       _schoolClassId = null;
+    }
+    if (_isTeacher &&
+        !_teacherClasses.any((item) => item.id == _homeroomClassId)) {
+      _homeroomClassId = null;
     }
   }
 
@@ -137,7 +161,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
 
   Future<void> _save() async {
     if (!_formKey.currentState!.validate() ||
-        (_isStudent && _options == null)) {
+        ((_isStudent || _isTeacher) && _options == null)) {
       return;
     }
     if (_isStudent && _gradeLevel == null) return;
@@ -155,6 +179,10 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
           guardianName: _clean(_guardianName),
           guardianPhone: _clean(_guardianPhone),
           guardianEmail: _clean(_guardianEmail),
+          phone: _clean(_phone),
+          position: _clean(_position),
+          homeroomClassId: _homeroomClassId,
+          subjectIds: _teacherSubjectIds.toList(growable: false),
         ),
       );
       if (mounted) Navigator.of(context).pop(updated);
@@ -366,7 +394,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
   );
 
   Widget _profileFields() {
-    if (!_isStudent) return const SizedBox.shrink();
+    if (!_isStudent && !_isTeacher) return const SizedBox.shrink();
     if (_loadingOptions) {
       return const Padding(
         padding: EdgeInsets.all(16),
@@ -380,6 +408,8 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
         label: Text('Muat semula pilihan profil: $_optionsError'),
       );
     }
+
+    if (_isTeacher) return _teacherFields();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -511,6 +541,114 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
       ),
     ),
   ];
+
+  Widget _teacherFields() => Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      const Text(
+        'Maklumat guru',
+        style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
+      ),
+      const SizedBox(height: 12),
+      TextFormField(
+        controller: _phone,
+        keyboardType: TextInputType.phone,
+        decoration: const InputDecoration(
+          labelText: 'Nombor telefon',
+          prefixIcon: Icon(Icons.phone_outlined),
+        ),
+        validator: (value) {
+          final phone = value?.trim() ?? '';
+          if (phone.isNotEmpty &&
+              !RegExp(r'^\+?[0-9\s\-()]{6,20}$').hasMatch(phone)) {
+            return 'Sila masukkan nombor telefon yang sah.';
+          }
+          return null;
+        },
+      ),
+      const SizedBox(height: 16),
+      TextFormField(
+        controller: _position,
+        textCapitalization: TextCapitalization.words,
+        maxLength: 100,
+        decoration: const InputDecoration(
+          labelText: 'Jawatan',
+          hintText: 'Contoh: Guru Kanan Matematik',
+          prefixIcon: Icon(Icons.work_outline_rounded),
+        ),
+      ),
+      const SizedBox(height: 6),
+      const Text(
+        'Sekolah dan kelas',
+        style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
+      ),
+      const SizedBox(height: 12),
+      _schoolDropdown(),
+      const SizedBox(height: 16),
+      DropdownButtonFormField<int?>(
+        key: ValueKey('teacher-homeroom-$_homeroomClassId-$_schoolId'),
+        initialValue: _homeroomClassId,
+        isExpanded: true,
+        decoration: const InputDecoration(
+          labelText: 'Kelas guru kelas',
+          prefixIcon: Icon(Icons.groups_outlined),
+        ),
+        items: [
+          const DropdownMenuItem<int?>(
+            value: null,
+            child: Text('Bukan guru kelas'),
+          ),
+          ..._teacherClasses.map(
+            (schoolClass) => DropdownMenuItem<int?>(
+              value: schoolClass.id,
+              child: Text(schoolClass.label, overflow: TextOverflow.ellipsis),
+            ),
+          ),
+        ],
+        onChanged: _schoolId == null
+            ? null
+            : (value) => setState(() => _homeroomClassId = value),
+      ),
+      if (_schoolId == null)
+        const Padding(
+          padding: EdgeInsets.only(top: 7),
+          child: Text(
+            'Pilih sekolah dahulu untuk melihat kelas.',
+            style: TextStyle(fontSize: 12, color: LmsColors.inkMuted),
+          ),
+        ),
+      const SizedBox(height: 22),
+      const Text(
+        'Subjek diajar',
+        style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
+      ),
+      const SizedBox(height: 6),
+      const Text(
+        'Pilih semua subjek yang anda ajar.',
+        style: TextStyle(fontSize: 12, color: LmsColors.inkMuted),
+      ),
+      const SizedBox(height: 10),
+      Wrap(
+        spacing: 8,
+        runSpacing: 8,
+        children: (_options?.subjects ?? const [])
+            .map(
+              (subject) => FilterChip(
+                label: Text(subject.name),
+                selected: _teacherSubjectIds.contains(subject.id),
+                onSelected: (selected) => setState(() {
+                  if (selected) {
+                    _teacherSubjectIds.add(subject.id);
+                  } else {
+                    _teacherSubjectIds.remove(subject.id);
+                  }
+                }),
+              ),
+            )
+            .toList(growable: false),
+      ),
+    ],
+  );
 }
 
 class _AvatarPreview extends StatelessWidget {

@@ -51,11 +51,12 @@ class ProfileTab extends StatelessWidget {
           ),
           child: Column(
             children: [
-              _InfoRow(
-                icon: Icons.school_rounded,
-                label: 'Tahun',
-                value: user.grade?.name ?? '—',
-              ),
+              if (user.role == UserRole.student)
+                _InfoRow(
+                  icon: Icons.school_rounded,
+                  label: 'Tahun',
+                  value: user.grade?.name ?? '—',
+                ),
               if (user.role == UserRole.student && user.school != null) ...[
                 const Divider(height: 1),
                 _InfoRow(
@@ -71,6 +72,50 @@ class ProfileTab extends StatelessWidget {
                   icon: Icons.groups_outlined,
                   label: 'Kelas',
                   value: user.schoolClass!.label,
+                ),
+              ],
+              if (user.role == UserRole.teacher && user.school != null) ...[
+                const Divider(height: 1),
+                _InfoRow(
+                  icon: Icons.account_balance_outlined,
+                  label: 'Sekolah',
+                  value: user.school!.name,
+                ),
+              ],
+              if (user.role == UserRole.teacher && user.position != null) ...[
+                const Divider(height: 1),
+                _InfoRow(
+                  icon: Icons.work_outline_rounded,
+                  label: 'Jawatan',
+                  value: user.position!,
+                ),
+              ],
+              if (user.role == UserRole.teacher && user.phone != null) ...[
+                const Divider(height: 1),
+                _InfoRow(
+                  icon: Icons.phone_outlined,
+                  label: 'Telefon',
+                  value: user.phone!,
+                ),
+              ],
+              if (user.role == UserRole.teacher &&
+                  user.homeroomClass != null) ...[
+                const Divider(height: 1),
+                _InfoRow(
+                  icon: Icons.groups_outlined,
+                  label: 'Guru kelas',
+                  value: user.homeroomClass!.label,
+                ),
+              ],
+              if (user.role == UserRole.teacher &&
+                  user.subjects.isNotEmpty) ...[
+                const Divider(height: 1),
+                _InfoRow(
+                  icon: Icons.menu_book_outlined,
+                  label: 'Subjek',
+                  value: user.subjects
+                      .map((subject) => subject.name)
+                      .join(', '),
                 ),
               ],
               if (user.email != null) ...[
