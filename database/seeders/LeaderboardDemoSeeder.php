@@ -35,7 +35,7 @@ class LeaderboardDemoSeeder extends Seeder
 
     public const DOMAIN = 'moe.edu.my';
 
-    private const POINTS_PER_CORRECT = 20;
+    private const POINTS_PER_CORRECT = 10;   // 10 questions × 10 = a score out of 100
 
     /** Quizzes attempted per rank (top students do more); capped by how many quizzes exist. */
     private const QUIZ_COUNTS = [6, 6, 5, 5, 5, 4, 4, 4, 3, 3, 3, 2];
@@ -102,25 +102,28 @@ class LeaderboardDemoSeeder extends Seeder
 
             $rows = [];
             foreach ($students as $i => $student) {
-                $accuracyPct = max(45, 95 - intdiv($i * 2, 3));            // gentle decline across 100 ranks
+                $baseAccuracy = max(45, 95 - intdiv($i * 2, 3));          // general decline across ranks
                 $attempts = min($quizCount, self::QUIZ_COUNTS[$i] ?? 2);
-                $correctTotal = (int) round($accuracyPct / 100 * $attempts * 10);
-                $tieBreakBonus = self::PER_GRADE - $i;                     // keeps points strictly descending
 
                 for ($a = 0; $a < $attempts; $a++) {
-                    $correct = min(10, intdiv($correctTotal, $attempts) + ($a < $correctTotal % $attempts ? 1 : 0));
+                    // Deterministic per-(student, attempt) variety, so scores and times differ per row.
+                    $vary = (($i * 7 + $a * 13) % 11) - 5;               // -5 .. +5
+                    $correct = max(3, min(10, (int) round(($baseAccuracy + $vary) / 10)));
+                    $duration = 180 + (($i * 17 + $a * 53) % 420);       // 3–10 min per attempt
+
                     $completedAt = $now->copy()->subDays($i)->subMinutes($a * 30 + $i);
 
                     $rows[] = [
-                        'quiz_id' => $quizIds[$a % $quizCount],            // distinct quiz per attempt
+                        'quiz_id' => $quizIds[$a % $quizCount],          // distinct quiz per attempt
                         'student_id' => $student->id,
-                        'score' => $correct * self::POINTS_PER_CORRECT + ($a === 0 ? $tieBreakBonus : 0),
-                        'max_score' => 10 * self::POINTS_PER_CORRECT,
+                        'score' => $correct * self::POINTS_PER_CORRECT,  // 30 .. 100, out of 100
+                        'max_score' => 10 * self::POINTS_PER_CORRECT,    // 100
                         'correct_count' => $correct,
                         'question_count' => 10,
                         'counts_for_ranking' => true,
-                        'started_at' => $completedAt->copy()->subMinutes(8),
+                        'started_at' => $completedAt->copy()->subSeconds($duration),
                         'completed_at' => $completedAt,
+                        'duration_seconds' => $duration,
                         'created_at' => $now,
                         'updated_at' => $now,
                     ];
