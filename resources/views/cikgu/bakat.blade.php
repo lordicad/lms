@@ -58,6 +58,56 @@
         @endforeach
     </div>
 
+    {{-- Pass / fail across all the teacher's quizzes --}}
+    @php
+        $pfTotal = max(1, $passFail['total']);
+        $passFailConfig = [
+            'type' => 'pie',
+            'data' => [
+                'labels' => [__('Lulus'), __('Gagal')],
+                'datasets' => [[
+                    'data' => [$passFail['passed'], $passFail['failed']],
+                    'backgroundColor' => ['#0F7A68', '#C24936'],
+                    'borderWidth' => 0,
+                ]],
+            ],
+            'options' => ['plugins' => ['legend' => ['position' => 'bottom']]],
+        ];
+    @endphp
+    <div class="tp-card" style="padding:22px;margin:20px 0">
+        <h2 class="tp-g" style="font-size:16px;font-weight:800;color:var(--tp-ink);margin-bottom:14px">📝 {{ __('Lulus / Gagal Kuiz') }}</h2>
+
+        @if ($passFail['total'] === 0)
+            <p style="text-align:center;color:var(--tp-muted);padding:30px 0;font-weight:700">{{ __('Belum ada percubaan kuiz selesai lagi.') }}</p>
+        @else
+            <div style="display:flex;flex-wrap:wrap;gap:28px;align-items:center">
+                <div style="flex:0 1 300px;min-width:240px">
+                    <x-chart :config="$passFailConfig" :height="240" :title="__('Lulus lawan gagal')"
+                        :rows="[
+                            ['label' => __('Lulus'), 'value' => $passFail['passed']],
+                            ['label' => __('Gagal'), 'value' => $passFail['failed']],
+                        ]" :columns="[__('Keputusan'), __('Jumlah')]" />
+                </div>
+                <div style="display:flex;flex-direction:column;gap:14px;flex:1;min-width:200px">
+                    <div style="display:flex;align-items:center;gap:12px">
+                        <span style="width:14px;height:14px;border-radius:4px;background:#0F7A68;flex-shrink:0"></span>
+                        <span class="tp-g" style="font-weight:800;font-size:15px;color:var(--tp-ink)">{{ __('Lulus') }}</span>
+                        <span class="tp-g" style="margin-left:auto;font-weight:800;color:#0F7A68">{{ number_format($passFail['passed']) }} <span style="color:var(--tp-muted);font-weight:700">({{ round($passFail['passed'] / $pfTotal * 100) }}%)</span></span>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:12px">
+                        <span style="width:14px;height:14px;border-radius:4px;background:#C24936;flex-shrink:0"></span>
+                        <span class="tp-g" style="font-weight:800;font-size:15px;color:var(--tp-ink)">{{ __('Gagal') }}</span>
+                        <span class="tp-g" style="margin-left:auto;font-weight:800;color:#C24936">{{ number_format($passFail['failed']) }} <span style="color:var(--tp-muted);font-weight:700">({{ round($passFail['failed'] / $pfTotal * 100) }}%)</span></span>
+                    </div>
+                    <div style="border-top:1px solid var(--tp-line);padding-top:12px;display:flex;align-items:center;gap:12px">
+                        <span class="tp-g" style="font-weight:800;font-size:15px;color:var(--tp-ink)">{{ __('Jumlah percubaan selesai') }}</span>
+                        <span class="tp-g" style="margin-left:auto;font-weight:800;color:var(--tp-ink)">{{ number_format($passFail['total']) }}</span>
+                    </div>
+                </div>
+            </div>
+        @endif
+    </div>
+
     {{-- Leaderboards --}}
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start">
         @foreach ($lists as $list)
