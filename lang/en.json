@@ -1129,7 +1129,7 @@
     "Kata laluan sementara": "Temporary password",
     "Log masuk di": "Sign in at",
     "Penting:": "Important:",
-    "Kata laluan di atas adalah sementara. Pada log masuk pertama, anda akan diminta menetapkan kata laluan sendiri. Nama pengguna kekal sama.": "The password above is temporary. At the first sign-in you will be asked to set your own password. The username stays the same.",
+    "Kata laluan di atas adalah sementara. Pada log masuk pertama, anda akan diminta menetapkan kata laluan sendiri.": "The password above is temporary. At the first sign-in you will be asked to set your own password.",
     "Sila jangan kongsi butiran ini dengan sesiapa.": "Please do not share these details with anyone.",
     "Terima kasih,": "Thank you,",
     "Akaun :name berjaya dicipta. Butiran log masuk dihantar ke :to.": "Account :name created. Sign-in details sent to :to.",
@@ -1151,6 +1151,5 @@
     "Nama ini dipaparkan di papan pemuka anda. Anda boleh menukarnya bila-bila masa.": "This name appears on your dashboard. You can change it whenever you like.",
     "Emel log masuk anda tidak boleh diubah. Hubungi pentadbir sekolah jika ia perlu ditukar.": "Your sign-in email cannot be changed. Contact your school administrator if it needs to change.",
     "Nama pengguna hanya boleh mengandungi huruf, nombor, ruang, titik, garis bawah dan sengkang.": "The username may only contain letters, numbers, spaces, dots, underscores and hyphens.",
-    "Anda log masuk dengan emel ini. Hanya kata laluan yang berubah.": "You sign in with this email. Only the password changes.",
-    "Nama paparan anda ialah \":nickname\" — itu yang akan dipaparkan di papan pemuka anda.": "Your display name is \":nickname\" — that is what appears on your dashboard."
+    "Anda log masuk dengan emel ini. Hanya kata laluan yang berubah.": "You sign in with this email. Only the password changes."
 }

@@ -185,6 +185,40 @@ class CredentialDeliveryTest extends TestCase
         $this->assertNull($session->get('new_username'));
     }
 
+    public function test_the_email_links_to_the_login_page(): void
+    {
+        $this->actingAs($this->admin())->post(route('admin.pengguna.store'), [
+            'role' => User::ROLE_TEACHER,
+            'name' => 'Hasyimah Binti Chew',
+            'username' => 'Hasyimah',
+            'email' => 'hasyimah@moe.gov.my',
+            'auto_password' => 1,
+            'is_active' => 1,
+        ]);
+
+        $html = $this->htmlOfSentMail();
+
+        // The Sign In button points at the real login page.
+        $this->assertStringContainsString('href="'.route('login').'"', $html);
+
+        // Neither removed note survives.
+        $this->assertStringNotContainsString('display name', $html);
+        $this->assertStringNotContainsString('username stays', $html);
+    }
+
+    private function htmlOfSentMail(): string
+    {
+        $html = '';
+
+        Mail::assertSent(AccountCredentialsMail::class, function (AccountCredentialsMail $mail) use (&$html) {
+            $html = $mail->render();
+
+            return true;
+        });
+
+        return $html;
+    }
+
     /** Pull the plain password out of the mail that was sent, since it is not flashed anywhere. */
     private function passwordFromSentMail(): ?string
     {
@@ -277,12 +311,10 @@ class CredentialDeliveryTest extends TestCase
         $this->assertTrue($teacher->signsInWithEmail());
         $this->assertSame('rohana@moe.gov.my', $teacher->signInIdentifier());
 
-        // The email tells them to sign in with the address, and names the nickname separately.
-        Mail::assertSent(AccountCredentialsMail::class, function (AccountCredentialsMail $mail) {
-            $html = $mail->render();
-
-            return str_contains($html, 'rohana@moe.gov.my') && str_contains($html, 'Cikgu Ana');
-        });
+        // The email hands over the sign-in address, not the display nickname.
+        $html = $this->htmlOfSentMail();
+        $this->assertStringContainsString('rohana@moe.gov.my', $html);
+        $this->assertStringNotContainsString('Cikgu Ana', $html);
     }
 
     public function test_a_student_signs_in_with_their_email_too(): void

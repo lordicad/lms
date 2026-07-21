@@ -19,15 +19,11 @@
 **{{ __('Kata laluan sementara') }}:** {{ $plainPassword }}
 </x-mail::panel>
 
-@if ($account->signsInWithEmail())
-{{ __('Nama paparan anda ialah ":nickname" — itu yang akan dipaparkan di papan pemuka anda.', ['nickname' => $account->username]) }}
-@endif
-
 <x-mail::button :url="$loginUrl">
 {{ __('Log Masuk') }}
 </x-mail::button>
 
-**{{ __('Penting:') }}** {{ __('Kata laluan di atas adalah sementara. Pada log masuk pertama, anda akan diminta menetapkan kata laluan sendiri. Nama pengguna kekal sama.') }}
+**{{ __('Penting:') }}** {{ __('Kata laluan di atas adalah sementara. Pada log masuk pertama, anda akan diminta menetapkan kata laluan sendiri.') }}
 
 {{ __('Sila jangan kongsi butiran ini dengan sesiapa.') }}
 

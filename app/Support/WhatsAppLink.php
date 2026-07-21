@@ -70,7 +70,7 @@ class WhatsAppLink
             '',
             __('Log masuk di').': '.route('login'),
             '',
-            __('Kata laluan di atas adalah sementara. Pada log masuk pertama, anda akan diminta menetapkan kata laluan sendiri. Nama pengguna kekal sama.'),
+            __('Kata laluan di atas adalah sementara. Pada log masuk pertama, anda akan diminta menetapkan kata laluan sendiri.'),
         ]);
     }
 }
