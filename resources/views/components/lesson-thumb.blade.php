@@ -1,9 +1,10 @@
 @props(['lesson'])
 
 {{--
-    16:9 poster with the house treatment. Priority: uploaded thumbnail, then YouTube hqdefault,
-    then a generated subject-colour card (this build has no ffmpeg, so there is no captured video
-    frame to prefer). The cover is only gently desaturated at rest and eases to full colour + a
+    16:9 poster with the house treatment. Priority: stored thumbnail, then YouTube hqdefault, then
+    a generated subject-colour card. For an upload the stored thumbnail is normally a frame the
+    browser captured at upload time (see cikgu/video/form) — the server has no ffmpeg, so nothing
+    can be extracted here. The cover is only gently desaturated at rest and eases to full colour + a
     1.03 zoom inside its rounded frame on hover (see .thumb-img). Metadata now lives below the
     image (see lesson-card), so there is no scrim. An inset hairline ring keeps a near-white slide
     screenshot from dissolving into a white card. On-image controls (progress, duration, heart)

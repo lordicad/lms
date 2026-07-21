@@ -18,6 +18,8 @@
                   'serverTooBig' => __('Fail terlalu besar untuk server. Sila guna pautan YouTube.'),
                   'uploadFailed' => __('Muat naik gagal (ralat :status). Sila cuba lagi.'),
                   'networkFailed' => __('Muat naik gagal. Sila semak sambungan internet anda dan cuba lagi.'),
+                  'thumbReady' => __('✓ Gambar kecil diambil daripada video anda.'),
+                  'thumbFailed' => __('Gambar kecil tidak dapat diambil daripada video ini. Anda boleh muat naik gambar sendiri.'),
               ],
           ]) }})"
           @submit.prevent="submit($event)">
@@ -98,8 +100,13 @@
             {{-- Thumbnail --}}
             <div class="tp-field" style="border-top:1px solid var(--tp-line);padding-top:16px">
                 <label for="thumbnail" class="tp-label">{{ __('Gambar kecil (pilihan)') }}</label>
-                <input id="thumbnail" name="thumbnail" type="file" accept="image/*" class="tp-file" aria-describedby="thumbnail-help">
-                <p id="thumbnail-help" class="tp-hint">{{ __('Untuk video YouTube, gambar kecil diambil secara automatik jika anda tidak memuat naik.') }}</p>
+                <input id="thumbnail" name="thumbnail" type="file" accept="image/*" class="tp-file"
+                       x-ref="thumbnail" @change="onThumbnailPicked()" aria-describedby="thumbnail-help">
+                <p id="thumbnail-help" class="tp-hint">{{ __('Dibuat secara automatik daripada video anda. Muat naik gambar sendiri untuk menggantikannya.') }}</p>
+                {{-- Live status for the frame we capture from the chosen video file. --}}
+                <p x-show="thumbBusy" x-cloak class="tp-hint" aria-live="polite">⏳ {{ __('Sedang mengambil gambar daripada video…') }}</p>
+                <p x-show="thumbNote" x-cloak class="tp-hint" style="color:#0F7A68;font-weight:700" aria-live="polite" x-text="thumbNote"></p>
+                <p x-show="thumbError" x-cloak class="tp-hint" style="color:#8A6A12" aria-live="polite" x-text="thumbError"></p>
                 @error('thumbnail') <span class="tp-error">{{ $message }}</span> @enderror
             </div>
         </div>
@@ -145,6 +152,9 @@
                 return {
                     source, maxMb, hasVideo, fallbackUrl, labels,
                     uploading: false, progress: 0, sizeError: '', failed: '',
+                    // autoThumb marks the thumbnail input as holding a frame we captured, so a
+                    // teacher's own picture is never overwritten but ours can be replaced.
+                    autoThumb: false, thumbBusy: false, thumbNote: '', thumbError: '',
                     checkSize(event) {
                         this.sizeError = '';
                         const file = event.target.files[0];
@@ -153,7 +163,73 @@
                         if (megabytes > this.maxMb) {
                             this.sizeError = this.labels.tooBig.replace(':size', megabytes.toFixed(1)).replace(':max', this.maxMb);
                             event.target.value = '';
+                            return;
                         }
+                        this.captureThumbnail(file);
+                    },
+
+                    /**
+                     * Grab a still from the chosen video and hand it to the thumbnail input.
+                     *
+                     * Done in the browser because the server has no ffmpeg — and it never needs
+                     * one: the file is already here, and the captured frame rides along in the
+                     * same multipart form as an ordinary image upload.
+                     */
+                    async captureThumbnail(file) {
+                        const input = this.$refs.thumbnail;
+                        const chosenByTeacher = input && input.files.length && ! this.autoThumb;
+                        if (! input || chosenByTeacher) return;
+                        if (typeof DataTransfer === 'undefined' || ! HTMLCanvasElement.prototype.toBlob) return;
+
+                        this.thumbBusy = true; this.thumbNote = ''; this.thumbError = '';
+                        const url = URL.createObjectURL(file);
+                        const video = document.createElement('video');
+                        video.preload = 'auto'; video.muted = true; video.playsInline = true; video.src = url;
+
+                        try {
+                            await this.videoEvent(video, 'loadedmetadata');
+                            // A little way in, never frame zero: openings are often black or a title card.
+                            const duration = isFinite(video.duration) ? video.duration : 0;
+                            video.currentTime = Math.min(Math.max(duration * 0.1, 1), Math.max(duration - 0.1, 0));
+                            await this.videoEvent(video, 'seeked');
+
+                            const scale = Math.min(1, 1280 / (video.videoWidth || 1280));
+                            const canvas = document.createElement('canvas');
+                            canvas.width = Math.max(1, Math.round(video.videoWidth * scale));
+                            canvas.height = Math.max(1, Math.round(video.videoHeight * scale));
+                            canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                            const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/jpeg', 0.82));
+                            if (! blob) throw new Error('frame could not be encoded');
+
+                            const transfer = new DataTransfer();
+                            transfer.items.add(new File([blob], 'auto-thumbnail.jpg', { type: 'image/jpeg' }));
+                            input.files = transfer.files;
+                            this.autoThumb = true;
+                            this.thumbNote = this.labels.thumbReady;
+                        } catch (error) {
+                            // A codec the browser cannot decode, or a seek that never lands. The
+                            // upload still goes ahead; it just falls back to the subject artwork.
+                            this.thumbError = this.labels.thumbFailed;
+                        } finally {
+                            this.thumbBusy = false;
+                            URL.revokeObjectURL(url);
+                        }
+                    },
+
+                    /** Resolve on the given media event, rejecting on error or if it never arrives. */
+                    videoEvent(video, name) {
+                        return new Promise((resolve, reject) => {
+                            const timer = setTimeout(() => reject(new Error('timed out')), 15000);
+                            const done = (fn) => (value) => { clearTimeout(timer); fn(value); };
+                            video.addEventListener(name, done(resolve), { once: true });
+                            video.addEventListener('error', done(reject), { once: true });
+                        });
+                    },
+
+                    /** The teacher picked their own image, so stop treating it as ours. */
+                    onThumbnailPicked() {
+                        this.autoThumb = false; this.thumbNote = ''; this.thumbError = '';
                     },
                     submit(event) {
                         const form = event.target;
