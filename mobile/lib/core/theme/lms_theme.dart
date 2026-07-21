@@ -24,6 +24,29 @@ abstract final class LmsColors {
   static const danger = Color(0xFFB91C1C);
 }
 
+/// Context-aware colours for screens that need to render their own cards.
+/// This lets the older, bespoke WeLearn widgets participate in dark mode
+/// without changing the light design tokens used throughout the app.
+abstract final class LmsPalette {
+  static bool isDark(BuildContext context) =>
+      Theme.of(context).brightness == Brightness.dark;
+
+  static Color surface(BuildContext context) =>
+      isDark(context) ? const Color(0xFF18231B) : LmsColors.surface;
+  static Color surfaceRaised(BuildContext context) =>
+      isDark(context) ? const Color(0xFF203026) : const Color(0xFFFBFCFA);
+  static Color soft(BuildContext context) =>
+      isDark(context) ? const Color(0xFF2A3D2D) : LmsColors.brandSoft;
+  static Color text(BuildContext context) =>
+      isDark(context) ? const Color(0xFFE7F1E5) : LmsColors.ink;
+  static Color muted(BuildContext context) =>
+      isDark(context) ? const Color(0xFFB2C2B2) : LmsColors.inkMuted;
+  static Color faint(BuildContext context) =>
+      isDark(context) ? const Color(0xFF849685) : LmsColors.inkFaint;
+  static Color border(BuildContext context) =>
+      isDark(context) ? const Color(0xFF304735) : LmsColors.border;
+}
+
 ThemeData buildLmsTheme() {
   const scheme = ColorScheme.light(
     primary: LmsColors.brand,
