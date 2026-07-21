@@ -32,7 +32,7 @@
             @endforeach
         </div>
 
-        <x-year-subject-filter :action="route('admin.kandungan.bahan')" :grades="$grades" :subjects="$subjects" />
+        <x-year-subject-filter :action="route('admin.kandungan.bahan')" :grades="$grades" :subjects="$subjects" :filter="$filter" />
 
         @if ($materials->isEmpty())
             <div class="tp-empty">

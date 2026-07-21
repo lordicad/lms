@@ -26,6 +26,9 @@
 
     <div style="display:flex;flex-direction:column;gap:48px">
 
+        {{-- Teacher stats, filter and list are grouped so the gaps between them stay tight. --}}
+        <div style="display:flex;flex-direction:column;gap:16px">
+
         {{-- ============================ Teacher stats ============================ --}}
         <div style="display:flex;flex-direction:column;gap:12px">
             <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:17px;font-weight:800;color:var(--tp-ink)">{{ __('Cikgu') }}</h2>
@@ -46,6 +49,13 @@
         </div>
 
         {{-- Teacher filter — carries the contributor filter through so it is not reset. --}}
+        @php
+            // The Subjek list follows the chosen Tahun: only subjects offered that year (all when none).
+            $availabilityById = \App\Models\Subject::availabilityMap();
+            $visibleSubjects = $gradeLevel
+                ? $subjects->filter(fn ($s) => in_array($gradeLevel, $availabilityById[$s->id] ?? [], true))->values()
+                : $subjects;
+        @endphp
         <form method="GET" action="{{ route('admin.bakat') }}" style="display:flex;align-items:flex-end;gap:14px;flex-wrap:wrap">
             @if ($contribSubject) <input type="hidden" name="p_subjek" value="{{ $contribSubject }}"> @endif
             @if ($contribGrade) <input type="hidden" name="p_tahun" value="{{ $contribGrade }}"> @endif
@@ -63,7 +73,7 @@
                 <label style="font-family:'Geist',sans-serif;font-size:12.5px;font-weight:800;color:var(--tp-muted-2)">{{ __('Subjek') }}</label>
                 <select name="subjek" class="tp-filter-select" style="min-width:220px" onchange="this.form.submit()">
                     <option value="">{{ __('Semua subjek') }}</option>
-                    @foreach ($subjects as $subject)
+                    @foreach ($visibleSubjects as $subject)
                         <option value="{{ $subject->slug }}" @selected($subjectSlug === $subject->slug)>{{ $subject->displayName() }}</option>
                     @endforeach
                 </select>
@@ -127,6 +137,7 @@
                 <div>{{ $teachers->links() }}</div>
             </div>
         @endif
+        </div>{{-- /teacher stats + filter + list group --}}
 
         {{-- ========================= Top contributors ========================= --}}
         <div style="display:flex;flex-direction:column;gap:14px">

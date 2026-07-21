@@ -10,6 +10,7 @@ use App\Models\Quiz;
 use App\Models\Subject;
 use App\Models\User;
 use App\Services\TalentService;
+use App\Support\ContentFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -36,6 +37,11 @@ class AdminTalentController extends Controller
         $gradeLevel = $request->integer('tahun') ?: null;
         $contribSubject = $request->string('p_subjek')->toString() ?: null;
         $contribGrade = $request->integer('p_tahun') ?: null;
+
+        // A Subjek only survives once it is offered in the chosen Tahun, so the filter never keeps a
+        // pair the Subjek dropdown no longer shows (e.g. after switching to a Year without it).
+        $subjectSlug = $this->offeredSubject($subjectSlug, $gradeLevel);
+        $contribSubject = $this->offeredSubject($contribSubject, $contribGrade);
 
         $teachers = $this->teachers($subjectSlug, $gradeLevel);
 
@@ -77,6 +83,26 @@ class AdminTalentController extends Controller
         return back()->with('status', $teacher->is_active
             ? __('Akaun :name telah diaktifkan.', ['name' => $teacher->name])
             : __('Akaun :name telah dinyahaktifkan. Kandungan mereka kekal untuk murid.', ['name' => $teacher->name]));
+    }
+
+    /**
+     * Keep a Subjek slug only when it is actually offered in the given Tahun; drop it otherwise.
+     * A null slug or null level passes through unchanged (an unfiltered dimension).
+     */
+    private function offeredSubject(?string $subjectSlug, ?int $gradeLevel): ?string
+    {
+        if (! $subjectSlug || ! $gradeLevel) {
+            return $subjectSlug;
+        }
+
+        $grade = Grade::where('level', $gradeLevel)->first();
+        $subject = Subject::where('slug', $subjectSlug)->first();
+
+        if ($grade && $subject && ! ContentFilter::isOffered($subject->id, $grade->id)) {
+            return null;
+        }
+
+        return $subjectSlug;
     }
 
     // --- Guru --------------------------------------------------------------------------

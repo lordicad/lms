@@ -99,6 +99,7 @@
                 <span style="font-size:13px;color:var(--tp-muted);max-width:640px;line-height:1.5">{{ __('Tiga murid paling aktif dalam setiap Tahun. Aktiviti = video ditonton + percubaan kuiz + kegemaran. Ia mengukur penyertaan, bukan markah — jadi berbeza daripada papan Ranking yang dilihat murid.') }}</span>
             </div>
 
+            @php($availabilityById = \App\Models\Subject::availabilityMap())
             @foreach ($podiums as $podium)
                 {{-- Visual order 2nd, 1st, 3rd — winner raised in the middle; ranks with no student are dropped. --}}
                 @php($slots = array_values(array_filter([
@@ -106,6 +107,8 @@
                     isset($podium->students[0]) ? [1, $podium->students[0]] : null,
                     isset($podium->students[2]) ? [3, $podium->students[2]] : null,
                 ])))
+                {{-- This podium's Subjek list only offers the subjects taught in its own Tahun. --}}
+                @php($podiumSubjects = $subjects->filter(fn ($s) => in_array($podium->grade->level, $availabilityById[$s->id] ?? [], true))->values())
                 <div style="background:var(--tp-surface);border:1px solid var(--tp-line);border-radius:18px;padding:20px 24px;display:flex;flex-direction:column;gap:14px;box-shadow:0 2px 10px rgba(46,44,80,.04)">
                     <div style="display:flex;align-items:center;gap:12px">
                         <span style="background:#E4EEF9;color:#2E6CA8;border-radius:999px;padding:5px 14px;font-family:'Geist',sans-serif;font-size:12.5px;font-weight:800">{{ $podium->grade->name }}</span>
@@ -119,7 +122,7 @@
                             @endforeach
                             <select name="subjek_{{ $podium->grade->level }}" class="tp-filter-select" style="min-width:170px;min-height:42px;border-radius:11px;font-size:13px" onchange="this.form.submit()">
                                 <option value="">{{ __('Semua subjek') }}</option>
-                                @foreach ($subjects as $subject)
+                                @foreach ($podiumSubjects as $subject)
                                     <option value="{{ $subject->slug }}" @selected($podium->subjectSlug === $subject->slug)>{{ $subject->displayName() }}</option>
                                 @endforeach
                             </select>
