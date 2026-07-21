@@ -141,6 +141,31 @@ class ProfileUpdate {
   }
 }
 
+class StudentProfileStats {
+  const StudentProfileStats({
+    required this.points,
+    required this.rank,
+    required this.quizzes,
+    required this.videos,
+    required this.perfect,
+  });
+
+  final int points;
+  final int? rank;
+  final int quizzes;
+  final int videos;
+  final bool perfect;
+
+  factory StudentProfileStats.fromJson(Map<String, dynamic> json) =>
+      StudentProfileStats(
+        points: _asInt(json['points']),
+        rank: json['rank'] == null ? null : _asInt(json['rank']),
+        quizzes: _asInt(json['quizzes']),
+        videos: _asInt(json['videos']),
+        perfect: json['perfect'] == true,
+      );
+}
+
 class AuthUser {
   const AuthUser({
     required this.id,
@@ -159,6 +184,7 @@ class AuthUser {
     this.position,
     this.subjects = const [],
     this.homeroomClass,
+    this.studentStats,
   });
 
   final int id;
@@ -177,6 +203,7 @@ class AuthUser {
   final String? position;
   final List<SubjectInfo> subjects;
   final SchoolClassInfo? homeroomClass;
+  final StudentProfileStats? studentStats;
 
   AuthUser copyWith({
     String? name,
@@ -201,6 +228,7 @@ class AuthUser {
       position: position,
       subjects: subjects,
       homeroomClass: homeroomClass,
+      studentStats: studentStats,
     );
   }
 
@@ -231,6 +259,7 @@ class AuthUser {
       position: json['position'] as String?,
       subjects: _items(json['subjects'], SubjectInfo.fromJson),
       homeroomClass: _map(json['homeroom_class'], SchoolClassInfo.fromJson),
+      studentStats: _map(json['student_stats'], StudentProfileStats.fromJson),
     );
   }
 }

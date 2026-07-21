@@ -4,11 +4,13 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Grade;
+use App\Models\QuizAttempt;
 use App\Models\School;
 use App\Models\SchoolClass;
 use App\Models\Subject;
 use App\Models\User;
 use App\Support\Uploads;
+use App\Services\LeaderboardService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -299,6 +301,25 @@ class AuthController extends Controller
             'homeroomClass.school',
         ]);
 
+        $studentStats = null;
+        if ($user->isStudent()) {
+            $row = app(LeaderboardService::class)->rowFor($user);
+            $quizzes = QuizAttempt::where('student_id', $user->id)->completed()->count();
+            $videos = $user->lessonViews()->count();
+            $perfect = QuizAttempt::where('student_id', $user->id)
+                ->where('max_score', '>', 0)
+                ->whereColumn('score', 'max_score')
+                ->exists();
+
+            $studentStats = [
+                'points' => $row?->points ?? 0,
+                'rank' => $row?->rank,
+                'quizzes' => $quizzes,
+                'videos' => $videos,
+                'perfect' => $perfect,
+            ];
+        }
+
         return [
             'id' => $user->id,
             'name' => $user->name,
@@ -337,6 +358,7 @@ class AuthController extends Controller
                 'grade_id' => $user->homeroomClass->grade_id,
                 'label' => $user->homeroomClass->label(),
             ],
+            'student_stats' => $studentStats,
         ];
     }
 }

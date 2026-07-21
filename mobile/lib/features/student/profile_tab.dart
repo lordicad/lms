@@ -33,6 +33,10 @@ class ProfileTab extends StatelessWidget {
         Text('Profil saya', style: Theme.of(context).textTheme.headlineMedium),
         const SizedBox(height: 14),
         _ProfileHero(user: user, roleLabel: roleLabel),
+        if (user.role == UserRole.student && user.studentStats != null) ...[
+          const SizedBox(height: 20),
+          _StudentLearningSummary(stats: user.studentStats!),
+        ],
         const SizedBox(height: 24),
         const Text(
           'Maklumat akaun',
@@ -72,6 +76,42 @@ class ProfileTab extends StatelessWidget {
                   icon: Icons.groups_outlined,
                   label: 'Kelas',
                   value: user.schoolClass!.label,
+                ),
+              ],
+              if (user.role == UserRole.student &&
+                  user.schoolClass?.homeroomTeacherName != null) ...[
+                const Divider(height: 1),
+                _InfoRow(
+                  icon: Icons.person_outline_rounded,
+                  label: 'Guru kelas',
+                  value: user.schoolClass!.homeroomTeacherName!,
+                ),
+              ],
+              if (user.role == UserRole.student &&
+                  user.guardianName != null) ...[
+                const Divider(height: 1),
+                _InfoRow(
+                  icon: Icons.family_restroom_outlined,
+                  label: 'Penjaga',
+                  value: user.guardianName!,
+                ),
+              ],
+              if (user.role == UserRole.student &&
+                  user.guardianPhone != null) ...[
+                const Divider(height: 1),
+                _InfoRow(
+                  icon: Icons.phone_outlined,
+                  label: 'Telefon penjaga',
+                  value: user.guardianPhone!,
+                ),
+              ],
+              if (user.role == UserRole.student &&
+                  user.guardianEmail != null) ...[
+                const Divider(height: 1),
+                _InfoRow(
+                  icon: Icons.alternate_email_rounded,
+                  label: 'Emel penjaga',
+                  value: user.guardianEmail!,
                 ),
               ],
               if (user.role == UserRole.teacher && user.school != null) ...[
@@ -202,6 +242,253 @@ class ProfileTab extends StatelessWidget {
         const SnackBar(content: Text('Profil berjaya dikemas kini.')),
       );
     }
+  }
+}
+
+/// The same earned-learning summary shown on the web profile. All values
+/// come from the authenticated user payload, rather than local counters.
+class _StudentLearningSummary extends StatelessWidget {
+  const _StudentLearningSummary({required this.stats});
+
+  final StudentProfileStats stats;
+
+  @override
+  Widget build(BuildContext context) {
+    final badges = [
+      _StudentBadge(
+        icon: Icons.local_fire_department_outlined,
+        title: 'Rajin Belajar',
+        caption: '${stats.quizzes}/5 kuiz selesai',
+        earned: stats.quizzes >= 5,
+        color: const Color(0xFFE78A24),
+      ),
+      _StudentBadge(
+        icon: Icons.gps_fixed_rounded,
+        title: 'Markah Penuh',
+        caption: '100% dalam kuiz',
+        earned: stats.perfect,
+        color: const Color(0xFF397FD6),
+      ),
+      _StudentBadge(
+        icon: Icons.ondemand_video_outlined,
+        title: 'Penonton Setia',
+        caption: '${stats.videos}/25 video ditonton',
+        earned: stats.videos >= 25,
+        color: const Color(0xFF7B5CCB),
+      ),
+      _StudentBadge(
+        icon: Icons.workspace_premium_outlined,
+        title: 'Top 10',
+        caption: 'Capai ranking top 10',
+        earned: stats.rank != null && stats.rank! <= 10,
+        color: const Color(0xFFB37A18),
+      ),
+    ];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Kemajuan pembelajaran',
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w800,
+            color: LmsColors.ink,
+          ),
+        ),
+        const SizedBox(height: 10),
+        LayoutBuilder(
+          builder: (context, constraints) {
+            final wide = constraints.maxWidth >= 580;
+            return GridView.count(
+              crossAxisCount: wide ? 4 : 2,
+              crossAxisSpacing: 10,
+              mainAxisSpacing: 10,
+              childAspectRatio: wide ? 1.22 : 1.75,
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              children: [
+                _StudentStatCard(
+                  icon: Icons.stars_rounded,
+                  label: 'Mata',
+                  value: '${stats.points}',
+                  color: const Color(0xFFB37A18),
+                ),
+                _StudentStatCard(
+                  icon: Icons.quiz_outlined,
+                  label: 'Kuiz selesai',
+                  value: '${stats.quizzes}',
+                  color: const Color(0xFF397FD6),
+                ),
+                _StudentStatCard(
+                  icon: Icons.play_circle_outline_rounded,
+                  label: 'Video ditonton',
+                  value: '${stats.videos}',
+                  color: LmsColors.brandStrong,
+                ),
+                _StudentStatCard(
+                  icon: Icons.emoji_events_outlined,
+                  label: 'Kedudukan',
+                  value: stats.rank == null ? '—' : '#${stats.rank}',
+                  color: const Color(0xFF7B5CCB),
+                ),
+              ],
+            );
+          },
+        ),
+        const SizedBox(height: 20),
+        const Text(
+          'Lencana saya',
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w800,
+            color: LmsColors.ink,
+          ),
+        ),
+        const SizedBox(height: 10),
+        LayoutBuilder(
+          builder: (context, constraints) {
+            final itemWidth = (constraints.maxWidth - 10) / 2;
+            return Wrap(
+              spacing: 10,
+              runSpacing: 10,
+              children: badges
+                  .map((badge) => SizedBox(width: itemWidth, child: badge))
+                  .toList(growable: false),
+            );
+          },
+        ),
+      ],
+    );
+  }
+}
+
+class _StudentStatCard extends StatelessWidget {
+  const _StudentStatCard({
+    required this.icon,
+    required this.label,
+    required this.value,
+    required this.color,
+  });
+
+  final IconData icon;
+  final String label;
+  final String value;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(13),
+      decoration: BoxDecoration(
+        color: LmsColors.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: LmsColors.border),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(7),
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: .12),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, color: color, size: 18),
+          ),
+          Text(
+            value,
+            style: const TextStyle(
+              color: LmsColors.ink,
+              fontSize: 19,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+          Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(fontSize: 10.5, color: LmsColors.inkMuted),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _StudentBadge extends StatelessWidget {
+  const _StudentBadge({
+    required this.icon,
+    required this.title,
+    required this.caption,
+    required this.earned,
+    required this.color,
+  });
+
+  final IconData icon;
+  final String title;
+  final String caption;
+  final bool earned;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    final iconColor = earned ? color : LmsColors.inkMuted;
+    return Opacity(
+      opacity: earned ? 1 : .52,
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: LmsColors.surface,
+          borderRadius: BorderRadius.circular(15),
+          border: Border.all(
+            color: earned ? color.withValues(alpha: .25) : LmsColors.border,
+          ),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: iconColor.withValues(alpha: .12),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, color: iconColor, size: 18),
+            ),
+            const SizedBox(width: 9),
+            Expanded(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 11.5,
+                      fontWeight: FontWeight.w800,
+                      color: LmsColors.ink,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    caption,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 9.5,
+                      color: LmsColors.inkMuted,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 
