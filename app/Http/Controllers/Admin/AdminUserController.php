@@ -32,7 +32,12 @@ class AdminUserController extends Controller
 
     public function index(Request $request): View
     {
-        $role = in_array($request->query('role'), self::MANAGED_ROLES, true) ? $request->query('role') : null;
+        // No `role` in the query string at all means a first visit, which opens on Teacher: the
+        // fourth column carries a different field per role, so a mixed list has to blank it out for
+        // half the rows. Picking "All roles" sends an empty value, which is honoured as "no filter".
+        $role = $request->has('role')
+            ? (in_array($request->query('role'), self::MANAGED_ROLES, true) ? $request->query('role') : null)
+            : User::ROLE_TEACHER;
         $status = in_array($request->query('status'), ['active', 'inactive'], true) ? $request->query('status') : null;
         $search = trim((string) $request->query('q', ''));
 
