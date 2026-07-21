@@ -83,10 +83,11 @@
             <div style="display:flex;flex-wrap:wrap;gap:28px;align-items:center">
                 <div style="flex:0 1 300px;min-width:240px">
                     <x-chart :config="$passFailConfig" :height="240" :title="__('Lulus lawan gagal')"
+                        :table="false"
                         :rows="[
                             ['label' => __('Lulus'), 'value' => $passFail['passed']],
                             ['label' => __('Gagal'), 'value' => $passFail['failed']],
-                        ]" :columns="[__('Keputusan'), __('Jumlah')]" />
+                        ]" />
                 </div>
                 <div style="display:flex;flex-direction:column;gap:14px;flex:1;min-width:200px">
                     <div style="display:flex;align-items:center;gap:12px">

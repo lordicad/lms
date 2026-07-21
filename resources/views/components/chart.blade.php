@@ -6,6 +6,7 @@
     'rows' => [],             // accessible table rows: [['label' => ..., 'value' => ...], ...]
     'columns' => null,        // table headers, e.g. [__('Item'), __('Jumlah')]
     'empty' => null,          // message shown when there is no data
+    'table' => true,          // show the "view data as a table" fallback
 ])
 
 @php
@@ -29,38 +30,40 @@
             </div>
         </div>
 
-        <details class="chart-data" style="margin-top:12px">
-            <summary style="cursor:pointer;font-size:13px;font-weight:700;color:#6C6F87">
-                {{ __('Lihat data sebagai jadual') }}
-            </summary>
+        @if ($table)
+            <details class="chart-data" style="margin-top:12px">
+                <summary style="cursor:pointer;font-size:13px;font-weight:700;color:#6C6F87">
+                    {{ __('Lihat data sebagai jadual') }}
+                </summary>
 
-            <div style="overflow-x:auto;margin-top:8px">
-                @if (filled(trim($slot->toHtml())))
-                    {{ $slot }}
-                @else
-                    <table class="chart-table" style="width:100%;border-collapse:collapse;font-size:14px">
-                        <thead>
-                            <tr>
-                                @foreach ($cols as $col)
-                                    <th scope="col" style="text-align:left;padding:6px 10px;border-bottom:1px solid rgba(120,130,150,0.25)">{{ $col }}</th>
-                                @endforeach
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($rows as $row)
+                <div style="overflow-x:auto;margin-top:8px">
+                    @if (filled(trim($slot->toHtml())))
+                        {{ $slot }}
+                    @else
+                        <table class="chart-table" style="width:100%;border-collapse:collapse;font-size:14px">
+                            <thead>
                                 <tr>
-                                    <td style="padding:6px 10px;border-bottom:1px solid rgba(120,130,150,0.12)">{{ $row['label'] ?? '' }}</td>
-                                    <td style="padding:6px 10px;border-bottom:1px solid rgba(120,130,150,0.12)">{{ $row['value'] ?? '' }}</td>
-                                    @if (isset($row['extra']))
-                                        <td style="padding:6px 10px;border-bottom:1px solid rgba(120,130,150,0.12)">{{ $row['extra'] }}</td>
-                                    @endif
+                                    @foreach ($cols as $col)
+                                        <th scope="col" style="text-align:left;padding:6px 10px;border-bottom:1px solid rgba(120,130,150,0.25)">{{ $col }}</th>
+                                    @endforeach
                                 </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                @endif
-            </div>
-        </details>
+                            </thead>
+                            <tbody>
+                                @foreach ($rows as $row)
+                                    <tr>
+                                        <td style="padding:6px 10px;border-bottom:1px solid rgba(120,130,150,0.12)">{{ $row['label'] ?? '' }}</td>
+                                        <td style="padding:6px 10px;border-bottom:1px solid rgba(120,130,150,0.12)">{{ $row['value'] ?? '' }}</td>
+                                        @if (isset($row['extra']))
+                                            <td style="padding:6px 10px;border-bottom:1px solid rgba(120,130,150,0.12)">{{ $row['extra'] }}</td>
+                                        @endif
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    @endif
+                </div>
+            </details>
+        @endif
     @else
         <x-empty emoji="📊" :title="$empty ?? __('Tiada data untuk dipaparkan lagi.')" />
     @endif
