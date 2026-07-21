@@ -19,16 +19,11 @@ class MaterialController extends Controller
 {
     public function index(Request $request): View
     {
-        $materials = $request->user()->materials()
-            ->with('chapter.subject', 'chapter.grade', 'lesson')
-            ->when($request->filled('subjek'), fn ($q) => $q->whereHas(
-                'chapter.subject',
-                fn ($s) => $s->where('slug', $request->string('subjek')),
-            ))
-            ->when($request->filled('tahun'), fn ($q) => $q->whereHas(
-                'chapter.grade',
-                fn ($g) => $g->where('level', $request->integer('tahun')),
-            ))
+        $filter = \App\Support\ContentFilter::fromRequest($request);
+
+        $materials = $filter->apply(
+            $request->user()->materials()->with('chapter.subject', 'chapter.grade', 'lesson')
+        )
             ->latest('id')
             ->paginate(15)
             ->withQueryString();
@@ -37,6 +32,7 @@ class MaterialController extends Controller
             'materials' => $materials,
             'subjects' => Subject::orderBy('sort_order')->get(),
             'grades' => Grade::orderBy('level')->get(),
+            'filter' => $filter,
         ]);
     }
 

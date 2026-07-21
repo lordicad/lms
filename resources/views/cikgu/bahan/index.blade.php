@@ -3,12 +3,12 @@
     :heading="__('Bahan Bantu Mengajar')"
     :sub="__('Slaid, PDF dan lembaran kerja yang menyokong video anda')">
 
-    <x-cikgu-filters :subjects="$subjects" :grades="$grades" :action="route('cikgu.bahan.index')">
+    <x-year-subject-filter :subjects="$subjects" :grades="$grades" :filter="$filter" with-chapter :action="route('cikgu.bahan.index')">
         <a href="{{ route('cikgu.bahan.create') }}" class="tp-btn" style="margin-left:auto">
             <x-icon name="plus" class="h-4 w-4" />
             {{ __('Bahan Baru') }}
         </a>
-    </x-cikgu-filters>
+    </x-year-subject-filter>
 
     @if ($materials->isEmpty())
         <div class="tp-empty">
