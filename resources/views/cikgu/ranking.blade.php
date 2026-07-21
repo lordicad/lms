@@ -61,11 +61,12 @@
                     <div style="display:grid;grid-template-columns:{{ $cols }};gap:12px;align-items:center;padding:14px 20px;border-bottom:1px solid var(--tp-line)">
                         <span class="tp-g" style="font-size:12px;font-weight:800;color:var(--tp-muted)">#</span>
                         <span class="tp-g" style="font-size:12px;font-weight:800;color:var(--tp-muted)">{{ __('Murid') }}</span>
-                        <span class="tp-g" style="font-size:12px;font-weight:800;color:var(--tp-muted)">{{ __('Tahun') }}</span>
-                        <span class="tp-g" style="font-size:12px;font-weight:800;color:var(--tp-muted)">{{ __('Mata') }}</span>
-                        <span class="tp-g" style="font-size:12px;font-weight:800;color:var(--tp-muted)">{{ __('Betul') }}</span>
-                        <span class="tp-g" style="font-size:12px;font-weight:800;color:var(--tp-muted)">{{ __('Ketepatan') }}</span>
-                        <span class="tp-g" style="font-size:12px;font-weight:800;color:var(--tp-muted)">{{ __('Kuiz') }}</span>
+                        {{-- The five data columns are centred; # and the name stay left so names read normally. --}}
+                        <span class="tp-g" style="font-size:12px;font-weight:800;color:var(--tp-muted);text-align:center">{{ __('Tahun') }}</span>
+                        <span class="tp-g" style="font-size:12px;font-weight:800;color:var(--tp-muted);text-align:center">{{ __('Mata') }}</span>
+                        <span class="tp-g" style="font-size:12px;font-weight:800;color:var(--tp-muted);text-align:center">{{ __('Betul') }}</span>
+                        <span class="tp-g" style="font-size:12px;font-weight:800;color:var(--tp-muted);text-align:center">{{ __('Ketepatan') }}</span>
+                        <span class="tp-g" style="font-size:12px;font-weight:800;color:var(--tp-muted);text-align:center">{{ __('Kuiz') }}</span>
                     </div>
 
                     @foreach ($rows as $row)
@@ -80,11 +81,13 @@
                                 <span style="width:36px;height:36px;border-radius:10px;background:{{ $p[0] }};color:{{ $p[1] }};display:grid;place-items:center;font-family:'Geist',sans-serif;font-weight:800;font-size:12px;flex-shrink:0">{{ $row->student->initials() }}</span>
                                 <span class="tp-g" style="font-weight:800;font-size:14.5px;color:var(--tp-ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $row->student->name }}</span>
                             </div>
-                            <span style="font-size:13.5px;font-weight:700;color:var(--tp-muted-2)">{{ $row->student->grade?->name ?? '-' }}</span>
-                            <span class="tp-g" style="font-weight:800;font-size:15px;color:var(--tp-ink)">{{ $row->points }}</span>
-                            <span style="font-size:13.5px;font-weight:700;color:var(--tp-muted-2)">{{ $row->correct }}/{{ $row->questions }}</span>
-                            <span style="justify-self:start;background:{{ $accBg }};color:{{ $accFg }};border-radius:999px;padding:4px 12px;font-family:'Geist',sans-serif;font-size:12px;font-weight:800">{{ $row->accuracy }}%</span>
-                            <span style="font-size:13.5px;font-weight:700;color:var(--tp-muted-2)">{{ $row->quizzes }}</span>
+                            <span style="font-size:13.5px;font-weight:700;color:var(--tp-muted-2);text-align:center">{{ $row->student->grade?->name ?? '-' }}</span>
+                            <span class="tp-g" style="font-weight:800;font-size:15px;color:var(--tp-ink);text-align:center">{{ $row->points }}</span>
+                            <span style="font-size:13.5px;font-weight:700;color:var(--tp-muted-2);text-align:center">{{ $row->correct }}/{{ $row->questions }}</span>
+                            {{-- justify-self, not text-align: the pill has a background, so it must stay
+                                 sized to its text instead of stretching across the whole column. --}}
+                            <span style="justify-self:center;background:{{ $accBg }};color:{{ $accFg }};border-radius:999px;padding:4px 12px;font-family:'Geist',sans-serif;font-size:12px;font-weight:800">{{ $row->accuracy }}%</span>
+                            <span style="font-size:13.5px;font-weight:700;color:var(--tp-muted-2);text-align:center">{{ $row->quizzes }}</span>
                         </div>
                     @endforeach
                 </div>
