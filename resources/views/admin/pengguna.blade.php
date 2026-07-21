@@ -4,7 +4,9 @@
 
     {{-- When the admin filters to teachers, the "Year" column (a student attribute) becomes "Position". --}}
     @php($teacherView = $role === 'teacher')
-    @php($cols = 'grid-template-columns:minmax(150px,1.7fr) 96px minmax(150px,1.5fr) '.($teacherView ? '130px' : '90px').' 118px 96px')
+    {{-- One geometry for both roles, so switching the Role filter does not shuffle the columns
+         sideways. The fourth column is the widest of the two it has to hold (Jawatan, not Tahun). --}}
+    @php($cols = 'grid-template-columns:minmax(150px,1.7fr) 96px minmax(150px,1.5fr) 130px 118px 96px')
 
     {{-- The success banner is rendered once by <x-flash /> in the admin layout. --}}
     <div style="display:flex;flex-direction:column;gap:18px">
