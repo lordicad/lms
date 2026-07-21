@@ -122,14 +122,16 @@
                     @error('name')<p style="{{ $errStyle }}">{{ $message }}</p>@enderror
                 </div>
                 <div>
-                    <label for="username" style="{{ $labelStyle }}">{{ __('Nama pengguna') }}</label>
+                    <label for="username" style="{{ $labelStyle }}">{{ __('Nama pengguna (nama paparan)') }}</label>
                     <input id="username" name="username" type="text" value="{{ old('username', $user->username) }}" required style="{{ $inputStyle }}">
+                    <span style="font-size:12.5px;color:var(--tp-muted-2)">{{ __('Nama ini dipaparkan di papan pemuka anda. Anda boleh menukarnya bila-bila masa.') }}</span>
                     @error('username')<p style="{{ $errStyle }}">{{ $message }}</p>@enderror
                 </div>
+                {{-- Read-only: email is the sign-in identifier, set by the admin. --}}
                 <div>
-                    <label for="email" style="{{ $labelStyle }}">{{ __('Emel') }} {{ $user->isStudent() ? __('(pilihan)') : '' }}</label>
-                    <input id="email" name="email" type="email" value="{{ old('email', $user->email) }}" style="{{ $inputStyle }}">
-                    @error('email')<p style="{{ $errStyle }}">{{ $message }}</p>@enderror
+                    <label for="email" style="{{ $labelStyle }}">{{ __('E-mel (untuk log masuk)') }}</label>
+                    <input id="email" type="email" value="{{ $user->email }}" readonly disabled style="{{ $inputStyle }};opacity:.65;cursor:not-allowed">
+                    <span style="font-size:12.5px;color:var(--tp-muted-2)">{{ __('Emel log masuk anda tidak boleh diubah. Hubungi pentadbir sekolah jika ia perlu ditukar.') }}</span>
                 </div>
                 @if ($user->isStudent())
                     @php($selectStyle = $inputStyle.';cursor:pointer;-webkit-appearance:none;-moz-appearance:none;appearance:none;background-image:url(&quot;data:image/svg+xml,%3Csvg%20xmlns=\'http://www.w3.org/2000/svg\'%20width=\'24\'%20height=\'24\'%20viewBox=\'0%200%2024%2024\'%20fill=\'none\'%20stroke=\'%232D2F44\'%20stroke-width=\'2.5\'%20stroke-linecap=\'round\'%20stroke-linejoin=\'round\'%3E%3Cpath%20d=\'M6%209l6%206%206-6\'/%3E%3C/svg%3E&quot;);background-repeat:no-repeat;background-position:right 14px center;background-size:12px;padding-right:38px')

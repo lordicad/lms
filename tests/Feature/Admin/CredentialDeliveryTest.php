@@ -55,6 +55,7 @@ class CredentialDeliveryTest extends TestCase
             'role' => User::ROLE_STUDENT,
             'name' => 'Nur Aisyah',
             'username' => 'aisyah',
+            'email' => 'aisyah@moe.gov.my',
             'grade_level' => $grade->level,
             'guardian_name' => 'Puan Salmah',
             'guardian_email' => 'salmah@example.com',
@@ -84,6 +85,7 @@ class CredentialDeliveryTest extends TestCase
             'role' => User::ROLE_STUDENT,
             'name' => 'Harith Danial',
             'username' => 'harith',
+            'email' => 'harith@moe.gov.my',
             'grade_level' => $grade->level,
             'guardian_phone' => '+60 19-876 5432',
             'password' => 'handed-over',
@@ -118,6 +120,7 @@ class CredentialDeliveryTest extends TestCase
     {
         $grade = Grade::factory()->level(3)->create();
         $student = User::factory()->student($grade->level)->create([
+            'email' => 'murid@moe.gov.my',
             'guardian_name' => 'Puan Salmah',
             'guardian_phone' => '012-345 6789',
         ]);
@@ -126,6 +129,7 @@ class CredentialDeliveryTest extends TestCase
             'role' => User::ROLE_STUDENT,
             'name' => $student->name,
             'username' => $student->username,
+            'email' => $student->email,
             'grade_level' => $grade->level,
             'guardian_name' => 'Puan Salmah',
             'guardian_phone' => '012-345 6789',
@@ -266,14 +270,15 @@ class CredentialDeliveryTest extends TestCase
         });
     }
 
-    public function test_a_student_still_signs_in_with_their_username(): void
+    public function test_a_student_signs_in_with_their_email_too(): void
     {
         $grade = Grade::factory()->level(3)->create();
 
         $response = $this->actingAs($this->admin())->post(route('admin.pengguna.store'), [
             'role' => User::ROLE_STUDENT,
             'name' => 'Nur Aisyah',
-            'username' => 'aisyah',
+            'username' => 'Aisyah',
+            'email' => 'aisyah@moe.gov.my',
             'grade_level' => $grade->level,
             'guardian_name' => 'Puan Salmah',
             'guardian_phone' => '012-345 6789',
@@ -281,28 +286,37 @@ class CredentialDeliveryTest extends TestCase
             'is_active' => 1,
         ]);
 
-        $student = User::where('username', 'aisyah')->firstOrFail();
-        $this->assertFalse($student->signsInWithEmail());
-        $this->assertSame('aisyah', $student->signInIdentifier());
-        $this->assertSame('aisyah', $response->getSession()->get('new_username'));
+        $student = User::where('email', 'aisyah@moe.gov.my')->firstOrFail();
+        $this->assertTrue($student->signsInWithEmail());
+        $this->assertSame('aisyah@moe.gov.my', $student->signInIdentifier());
+        $this->assertSame('aisyah@moe.gov.my', $response->getSession()->get('new_username'));
 
-        // The guardian's WhatsApp message carries the username, since the child has no email.
-        $this->assertStringContainsString('aisyah', urldecode($response->getSession()->get('wa_link')));
+        // The guardian is told the child's sign-in email, not the display nickname.
+        $this->assertStringContainsString('aisyah@moe.gov.my', urldecode($response->getSession()->get('wa_link')));
     }
 
-    /** A student types their username to sign in, so it must stay free of spaces. */
-    public function test_a_student_username_may_not_contain_spaces(): void
+    /** Every account signs in with an email, so one is required even for a student. */
+    public function test_an_email_is_required_for_a_student(): void
     {
         $grade = Grade::factory()->level(3)->create();
 
         $this->actingAs($this->admin())->post(route('admin.pengguna.store'), [
             'role' => User::ROLE_STUDENT,
             'name' => 'Nur Aisyah',
-            'username' => 'Nur Aisyah',
+            'username' => 'aisyah',
             'grade_level' => $grade->level,
             'auto_password' => 1,
             'is_active' => 1,
-        ])->assertSessionHasErrors('username');
+        ])->assertSessionHasErrors('email');
+    }
+
+    /** Legacy accounts created before the email rule keep signing in with their username. */
+    public function test_an_account_without_an_email_falls_back_to_its_username(): void
+    {
+        $student = User::factory()->student(3)->create(['email' => null, 'username' => 'lama']);
+
+        $this->assertFalse($student->signsInWithEmail());
+        $this->assertSame('lama', $student->signInIdentifier());
     }
 
     /** A saved account must not be undone just because the mail server refused it. */

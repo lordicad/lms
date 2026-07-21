@@ -55,19 +55,19 @@
             <div class="tp-field">
                 <label for="username" class="tp-label">{{ __('Nama pengguna (nama paparan)') }}</label>
                 <input id="username" name="username" type="text" value="{{ old('username', $user->username) }}" required class="tp-input">
-                {{-- Teachers sign in with their email, so for them this is purely a display name. --}}
-                <span class="tp-hint" x-show="role === 'teacher'">{{ __('Dipaparkan di papan pemuka mereka. Cikgu log masuk menggunakan emel, bukan nama ini.') }}</span>
-                <span class="tp-hint" x-show="role === 'student'" x-cloak>{{ __('Dipaparkan di papan pemuka mereka, dan digunakan untuk log masuk.') }}</span>
+                {{-- Everyone signs in with their email, so this is purely a display name. --}}
+                <span class="tp-hint">{{ __('Dipaparkan di papan pemuka mereka, dan boleh ditukar sendiri. Log masuk menggunakan emel, bukan nama ini.') }}</span>
                 @error('username')<p class="pg-err">{{ $message }}</p>@enderror
             </div>
 
             <div class="tp-field">
+                {{-- Required for both roles now: this is what the account signs in with. --}}
                 <label for="email" class="tp-label">
                     {{ __('Emel') }}
-                    <span x-show="role === 'teacher'" style="font-weight:600;color:var(--tp-muted)">({{ __('diperlukan') }})</span>
-                    <span x-show="role === 'student'" x-cloak style="font-weight:600;color:var(--tp-muted)">({{ __('pilihan') }})</span>
+                    <span style="font-weight:600;color:var(--tp-muted)">({{ __('untuk log masuk') }})</span>
                 </label>
-                <input id="email" name="email" type="email" value="{{ old('email', $user->email) }}" class="tp-input">
+                <input id="email" name="email" type="email" value="{{ old('email', $user->email) }}" required class="tp-input">
+                <span class="tp-hint">{{ __('Pengguna log masuk dengan emel ini dan tidak boleh menukarnya sendiri.') }}</span>
                 @error('email')<p class="pg-err">{{ $message }}</p>@enderror
             </div>
 

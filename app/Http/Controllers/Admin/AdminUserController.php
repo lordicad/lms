@@ -291,9 +291,9 @@ class AdminUserController extends Controller
                 // allowed. Usernames may repeat either way; email is the unique identifier.
                 $isTeacher ? 'regex:/^[\pL\pN ._-]+$/u' : 'regex:/^[a-zA-Z0-9._-]+$/',
             ],
+            // Everyone signs in with their email, so every account needs one — students included.
             'email' => [
-                Rule::requiredIf($isTeacher),
-                'nullable', 'string', 'lowercase', 'email', 'max:255',
+                'required', 'string', 'lowercase', 'email', 'max:255',
                 Rule::unique('users', 'email')->ignore($user?->id),
             ],
             'grade_level' => [
@@ -347,7 +347,7 @@ class AdminUserController extends Controller
                 ? __('Nama pengguna hanya boleh mengandungi huruf, nombor, ruang, titik, garis bawah dan sengkang.')
                 : __('Nama pengguna hanya boleh mengandungi huruf, nombor, titik, garis bawah dan sengkang.'),
             'username.min' => __('Nama pengguna mesti sekurang-kurangnya 3 aksara.'),
-            'email.required' => __('Guru perlu memberikan alamat emel.'),
+            'email.required' => __('Emel diperlukan — ia digunakan untuk log masuk.'),
             'email.unique' => __('Emel ini sudah didaftarkan.'),
             'grade_level.required' => __('Sila pilih Tahun untuk murid.'),
             'password.required' => __('Sila tetapkan kata laluan.'),

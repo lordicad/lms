@@ -57,15 +57,17 @@
             </div>
 
             <div style="{{ $field }}">
-                <label for="username" style="{{ $label }}">{{ __('Nama pengguna') }}</label>
+                <label for="username" style="{{ $label }}">{{ __('Nama pengguna (nama paparan)') }}</label>
                 <input id="username" name="username" type="text" value="{{ old('username', $user->username) }}" required style="{{ $input }}">
+                <span style="font-size:12.5px;color:var(--tp-muted-2)">{{ __('Nama ini dipaparkan di papan pemuka anda. Anda boleh menukarnya bila-bila masa.') }}</span>
                 @error('username')<p style="{{ $err }}">{{ $message }}</p>@enderror
             </div>
 
+            {{-- Read-only: email is the sign-in identifier, set by the admin. --}}
             <div style="{{ $field }}">
-                <label for="email" style="{{ $label }}">{{ __('E-mel') }}</label>
-                <input id="email" name="email" type="email" value="{{ old('email', $user->email) }}" required style="{{ $input }}">
-                @error('email')<p style="{{ $err }}">{{ $message }}</p>@enderror
+                <label for="email" style="{{ $label }}">{{ __('E-mel (untuk log masuk)') }}</label>
+                <input id="email" type="email" value="{{ $user->email }}" readonly disabled style="{{ $input }}opacity:.65;cursor:not-allowed">
+                <span style="font-size:12.5px;color:var(--tp-muted-2)">{{ __('Emel log masuk anda tidak boleh diubah. Hubungi pentadbir sekolah jika ia perlu ditukar.') }}</span>
             </div>
 
             <div style="{{ $field }}">

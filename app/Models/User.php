@@ -92,13 +92,16 @@ class User extends Authenticatable
     /**
      * Whether this account signs in with its email address.
      *
-     * `username` is a display nickname — the dashboard greets people by it, and it is deliberately
-     * not unique. Email is the unique identifier, so a teacher signs in with it. Students are 7 to
-     * 12 and mostly have no email, leaving their username as the only thing they can sign in with.
+     * Email is the sign-in identifier for everyone: the admin sets it, it is unique, and the owner
+     * cannot change it, so it stays stable. `username` is a display nickname the owner is free to
+     * change, which is exactly why it cannot be the thing they sign in with.
+     *
+     * The fallback covers accounts predating that rule, which have no email and would otherwise be
+     * locked out; they keep signing in with their username.
      */
     public function signsInWithEmail(): bool
     {
-        return ! $this->isStudent() && filled($this->email);
+        return filled($this->email);
     }
 
     /** The exact value to type into the sign-in field. */

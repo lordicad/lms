@@ -91,25 +91,22 @@ class ProfileController extends Controller
 
         $rules = [
             'name' => ['required', 'string', 'max:255'],
+            // The display nickname, which the owner is free to change. Spaces are allowed: it is
+            // never typed to sign in — email is — and "Cikgu Ana" should be a valid name to show.
             'username' => [
                 'required', 'string', 'min:3', 'max:30',
-                'regex:/^[a-zA-Z0-9._-]+$/',
+                'regex:/^[\pL\pN ._-]+$/u',
                 // Usernames may repeat; email is the unique identifier.
             ],
-            'email' => [
-                Rule::requiredIf($user->isTeacher()),
-                'nullable', 'string', 'lowercase', 'email', 'max:255',
-                Rule::unique('users', 'email')->ignore($user->id),
-            ],
+            // Email is deliberately absent: it is the sign-in identifier, set by the admin, and
+            // changing it here would let someone change what they sign in with.
             'avatar' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
         ];
 
         $messages = [
             'name.required' => __('Sila isi nama anda.'),
             'username.required' => __('Sila isi nama pengguna.'),
-            'username.regex' => __('Nama pengguna hanya boleh mengandungi huruf, nombor, titik, garis bawah dan sengkang.'),
-            'email.required' => __('Guru perlu memberikan alamat emel.'),
-            'email.unique' => __('Emel ini sudah didaftarkan.'),
+            'username.regex' => __('Nama pengguna hanya boleh mengandungi huruf, nombor, ruang, titik, garis bawah dan sengkang.'),
             'grade_level.required' => __('Sila pilih Tahun anda.'),
             'avatar.max' => __('Gambar profil terlalu besar. Had ialah 2 MB.'),
         ];
@@ -122,10 +119,10 @@ class ProfileController extends Controller
 
         $validated = $request->validate($rules, $messages);
 
+        // Email is not in this list on purpose — see the rules above.
         $user->fill([
             'name' => $validated['name'],
             'username' => $validated['username'],
-            'email' => $validated['email'] ?? null,
         ]);
 
         if ($user->isTeacher()) {
