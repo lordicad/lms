@@ -3,6 +3,16 @@
     :heading="__('Bahan Bantu Mengajar')"
     :sub="__('Slaid, PDF dan lembaran kerja yang menyokong video anda')">
 
+    {{-- Total materials uploaded by this teacher (all-time, not the filtered count). --}}
+    <div class="tp-stat" style="max-width:340px;margin-bottom:18px">
+        <div style="display:flex;align-items:center;gap:10px">
+            <span class="tp-stat-ico" style="background:#DCF2EE">📄</span>
+            <span class="tp-stat-label">{{ __('Bahan Saya') }}</span>
+        </div>
+        <span class="tp-stat-value">{{ number_format($totalMaterials) }}</span>
+        <span style="font-size:12.5px;font-weight:700;color:var(--tp-muted)">{{ __('Bahan pengajaran') }}</span>
+    </div>
+
     <x-year-subject-filter :subjects="$subjects" :grades="$grades" :filter="$filter" with-chapter :action="route('cikgu.bahan.index')">
         <a href="{{ route('cikgu.bahan.create') }}" class="tp-btn" style="margin-left:auto">
             <x-icon name="plus" class="h-4 w-4" />

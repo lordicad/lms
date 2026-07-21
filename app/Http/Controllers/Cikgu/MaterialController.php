@@ -19,10 +19,11 @@ class MaterialController extends Controller
 {
     public function index(Request $request): View
     {
+        $teacher = $request->user();
         $filter = \App\Support\ContentFilter::fromRequest($request);
 
         $materials = $filter->apply(
-            $request->user()->materials()->with('chapter.subject', 'chapter.grade', 'lesson')
+            $teacher->materials()->with('chapter.subject', 'chapter.grade', 'lesson')
         )
             ->latest('id')
             ->paginate(15)
@@ -33,6 +34,8 @@ class MaterialController extends Controller
             'subjects' => Subject::orderBy('sort_order')->get(),
             'grades' => Grade::orderBy('level')->get(),
             'filter' => $filter,
+            // All-time count of materials uploaded by this teacher (not the filtered page count).
+            'totalMaterials' => $teacher->materials()->count(),
         ]);
     }
 

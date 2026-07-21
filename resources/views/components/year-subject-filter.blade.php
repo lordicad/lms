@@ -31,6 +31,10 @@
 
     $chapters = $withChapter ? ($filter?->chaptersForPair() ?? collect()) : collect();
 
+    // Only the subjects offered in the chosen Year (all subjects when no Year is picked), so the
+    // Subject list actually changes as the Year changes rather than greying options out.
+    $visibleSubjects = $filter ? $filter->availableSubjects($subjects) : $subjects;
+
     $reset = $resetUrl ?? $action;
     $hasActiveFilters = $selLevel || $selSubjek || $selBab;
 
@@ -69,7 +73,7 @@
         <select id="ysf-subjek" name="subjek" class="{{ $cls['select'] }}" style="min-width:220px"
                 x-model="subject" @change="onSubjectChange()" x-bind:disabled="subjectDisabled">
             <option value="">{{ __('Semua subjek') }}</option>
-            @foreach ($subjects->groupBy('category') as $category => $group)
+            @foreach ($visibleSubjects->groupBy('category') as $category => $group)
                 <optgroup label="{{ Subject::categoryLabel($category) }}">
                     @foreach ($group as $subject)
                         <option value="{{ $subject->slug }}"

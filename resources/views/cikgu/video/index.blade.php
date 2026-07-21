@@ -3,6 +3,16 @@
     :heading="__('Video')"
     :sub="__('Rakaman kelas yang anda muat naik atau pautkan dari YouTube')">
 
+    {{-- Total videos uploaded by this teacher (all-time, not the filtered count). --}}
+    <div class="tp-stat" style="max-width:340px;margin-bottom:18px">
+        <div style="display:flex;align-items:center;gap:10px">
+            <span class="tp-stat-ico" style="background:#E4EEF9">🎬</span>
+            <span class="tp-stat-label">{{ __('Video Saya') }}</span>
+        </div>
+        <span class="tp-stat-value">{{ number_format($totalVideos) }}</span>
+        <span style="font-size:12.5px;font-weight:700;color:var(--tp-muted)">{{ __('Jumlah tontonan: :count', ['count' => number_format($viewCount)]) }}</span>
+    </div>
+
     <x-year-subject-filter :subjects="$subjects" :grades="$grades" :filter="$filter" with-chapter :action="route('cikgu.video.index')">
         <a href="{{ route('cikgu.video.create') }}" class="tp-btn" style="margin-left:auto">
             <x-icon name="plus" class="h-4 w-4" />

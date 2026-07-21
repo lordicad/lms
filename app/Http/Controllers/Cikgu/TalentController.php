@@ -34,17 +34,27 @@ class TalentController extends Controller
         // Favourites are already computed per lesson by the talent service.
         $topFavourites = $result->lessons->sortByDesc('favourites')->take(5)->values();
 
+        // Pass/fail across every completed attempt on this teacher's quizzes (shared pass rule).
+        $quizIds = $teacher->quizzes()->pluck('id');
+        $totalAttempts = QuizAttempt::whereIn('quiz_id', $quizIds)->completed()->count();
+        $passedAttempts = QuizAttempt::whereIn('quiz_id', $quizIds)->completed()->passed()->count();
+
         return view('cikgu.bakat', [
             'result' => $result,
             'topVideos' => $topVideos,
             'topMaterials' => $topMaterials,
             'topQuizzes' => $topQuizzes,
             'topFavourites' => $topFavourites,
+            'passFail' => [
+                'passed' => $passedAttempts,
+                'failed' => max(0, $totalAttempts - $passedAttempts),
+                'total' => $totalAttempts,
+            ],
             'stats' => [
                 'views' => (int) $teacher->lessons()->sum('views_count'),
                 'favourites' => (int) $result->lessons->sum('favourites'),
                 'downloads' => (int) $teacher->materials()->sum('download_count'),
-                'attempts' => QuizAttempt::whereIn('quiz_id', $teacher->quizzes()->pluck('id'))->completed()->count(),
+                'attempts' => $totalAttempts,
             ],
         ]);
     }
