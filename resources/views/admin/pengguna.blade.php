@@ -2,7 +2,9 @@
                 :heading="__('Pengurusan Pengguna')"
                 :sub="__('Cipta, sunting dan urus akaun cikgu dan murid')">
 
-    @php($cols = 'grid-template-columns:minmax(150px,1.7fr) 96px minmax(150px,1.5fr) 90px 118px 96px')
+    {{-- When the admin filters to teachers, the "Year" column (a student attribute) becomes "Position". --}}
+    @php($teacherView = $role === 'teacher')
+    @php($cols = 'grid-template-columns:minmax(150px,1.7fr) 96px minmax(150px,1.5fr) '.($teacherView ? '130px' : '90px').' 118px 96px')
 
     <div style="display:flex;flex-direction:column;gap:18px">
 
@@ -64,7 +66,7 @@
                 <div style="overflow-x:auto">
                     <div style="min-width:820px">
                         <div style="display:grid;{{ $cols }};gap:12px;padding:14px 20px;border-bottom:1px solid var(--tp-line)">
-                            @foreach (['Nama', 'Peranan', 'Emel', 'Tahun', 'Status', 'Tindakan'] as $h)
+                            @foreach (['Nama', 'Peranan', 'Emel', $teacherView ? 'Jawatan' : 'Tahun', 'Status', 'Tindakan'] as $h)
                                 <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:var(--tp-muted)">{{ __($h) }}</span>
                             @endforeach
                         </div>
@@ -83,7 +85,7 @@
                                 @endif
 
                                 <span style="font-size:13px;font-weight:600;color:var(--tp-muted-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $u->email ?: '—' }}</span>
-                                <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2)">{{ $u->grade?->name ?? '—' }}</span>
+                                <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $teacherView ? ($u->position ?: '—') : ($u->grade?->name ?? '—') }}</span>
 
                                 {{-- Status badge doubles as an activate/deactivate toggle. --}}
                                 <form method="POST" action="{{ route('admin.pengguna.status', $u) }}" style="justify-self:start">
