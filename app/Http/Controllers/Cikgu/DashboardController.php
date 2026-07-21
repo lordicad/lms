@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Cikgu;
 
 use App\Http\Controllers\Controller;
+use App\Models\Favourite;
 use App\Models\QuizAttempt;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -16,6 +17,15 @@ class DashboardController extends Controller
         $teacher = $request->user();
 
         $quizIds = $teacher->quizzes()->pluck('id');
+        $lessonIds = $teacher->lessons()->pluck('id');
+
+        // Engagement summary (same figures as the Talent page): views, favourites, downloads, attempts.
+        $stats = [
+            'views' => (int) $teacher->lessons()->sum('views_count'),
+            'favourites' => Favourite::whereIn('lesson_id', $lessonIds)->count(),
+            'downloads' => (int) $teacher->materials()->sum('download_count'),
+            'attempts' => QuizAttempt::whereIn('quiz_id', $quizIds)->completed()->count(),
+        ];
 
         // Newest videos, for the "Video Terbaru Saya" panel.
         $recentLessons = $teacher->lessons()
@@ -32,12 +42,17 @@ class DashboardController extends Controller
             ->take(3)
             ->get();
 
+        // The four engagement summary cards (built here to avoid a Blade @php block).
+        $summary = [
+            ['icon' => '👁', 'tint' => '#E4EEF9', 'label' => __('Jumlah tontonan video'), 'value' => number_format($stats['views'])],
+            ['icon' => '❤️', 'tint' => '#FBE4ED', 'label' => __('Video digemari'), 'value' => number_format($stats['favourites'])],
+            ['icon' => '⬇️', 'tint' => '#DCF2EE', 'label' => __('Bahan dimuat turun'), 'value' => number_format($stats['downloads'])],
+            ['icon' => '📝', 'tint' => '#FEF0CE', 'label' => __('Percubaan kuiz'), 'value' => number_format($stats['attempts'])],
+        ];
+
         return view('cikgu.dashboard', [
-            'lessonCount' => $teacher->lessons()->count(),
-            'materialCount' => $teacher->materials()->count(),
-            'quizCount' => $teacher->quizzes()->count(),
-            'attemptCount' => QuizAttempt::whereIn('quiz_id', $quizIds)->completed()->count(),
-            'viewCount' => (int) $teacher->lessons()->sum('views_count'),
+            'stats' => $stats,
+            'summary' => $summary,
             'totalStudents' => User::where('role', User::ROLE_STUDENT)->count(),
             'recentLessons' => $recentLessons,
             'recentQuizzes' => $recentQuizzes,
