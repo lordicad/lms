@@ -3,6 +3,16 @@
     :heading="__('Kuiz Saya')"
     :sub="__('Kuiz interaktif yang menanda sendiri, dan kuiz bercetak')">
 
+    {{-- Total quizzes created by this teacher (all-time, not the filtered count). --}}
+    <div class="tp-stat" style="max-width:340px;margin-bottom:18px">
+        <div style="display:flex;align-items:center;gap:10px">
+            <span class="tp-stat-ico" style="background:#FEF0CE">📝</span>
+            <span class="tp-stat-label">{{ __('Kuiz Saya') }}</span>
+        </div>
+        <span class="tp-stat-value">{{ number_format($totalQuizzes) }}</span>
+        <span style="font-size:12.5px;font-weight:700;color:var(--tp-muted)">{{ __('Fail & interaktif') }}</span>
+    </div>
+
     <x-year-subject-filter :subjects="$subjects" :grades="$grades" :filter="$filter" with-chapter :action="route('cikgu.kuiz.index')">
         <a href="{{ route('cikgu.kuiz.mod') }}" class="tp-btn" style="margin-left:auto">
             <x-icon name="plus" class="h-4 w-4" />

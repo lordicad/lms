@@ -17,10 +17,11 @@ class QuizController extends Controller
 {
     public function index(Request $request): View
     {
+        $teacher = $request->user();
         $filter = \App\Support\ContentFilter::fromRequest($request);
 
         $quizzes = $filter->apply(
-            $request->user()->quizzes()
+            $teacher->quizzes()
                 ->with('chapter.subject', 'chapter.grade', 'questions.options')
                 ->withCount(['questions', 'attempts as completed_attempts_count' => fn ($q) => $q->whereNotNull('completed_at')])
         )
@@ -33,6 +34,8 @@ class QuizController extends Controller
             'subjects' => Subject::orderBy('sort_order')->get(),
             'grades' => Grade::orderBy('level')->get(),
             'filter' => $filter,
+            // All-time count of quizzes created by this teacher (not the filtered page count).
+            'totalQuizzes' => $teacher->quizzes()->count(),
         ]);
     }
 
