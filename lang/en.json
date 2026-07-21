@@ -1093,5 +1093,14 @@
     "sumbangan": "contributions",
     ":count kuiz": ":count quizzes",
     ":count mata": ":count pts",
-    "purata": "avg"
+    "purata": "avg",
+    "Lihat Semua Penyumbang": "View All Contributors",
+    "Laporan bulanan menggunakan nombor yang sama seperti halaman ini.": "The monthly report uses the same numbers shown on this page.",
+    "Tempoh ini hanya mengubah carta di bawah.": "This period only changes the chart below.",
+    "Jumlah acara": "Total events",
+    "Baharu dalam 7 hari lalu": "New in the last 7 days",
+    "Carta aktiviti platform untuk tempoh :period": "Platform activity chart for the :period period",
+    "{1}:count akaun cikgu dinyahaktifkan|[2,*]:count akaun cikgu dinyahaktifkan": "{1}:count teacher account deactivated|[2,*]:count teacher accounts deactivated",
+    "{1}:count video belum diterbitkan|[2,*]:count video belum diterbitkan": "{1}:count video not yet published|[2,*]:count videos not yet published",
+    "{1}:count cikgu belum menyumbang kandungan|[2,*]:count cikgu belum menyumbang kandungan": "{1}:count teacher has not contributed content|[2,*]:count teachers have not contributed content"
 }
