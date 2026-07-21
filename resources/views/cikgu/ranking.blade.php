@@ -91,6 +91,9 @@
             </div>
         </div>
 
-        <span style="font-size:13px;color:var(--tp-muted)">{{ __(':count murid dalam senarai ini.', ['count' => $rows->count()]) }}</span>
+        {{-- total(), not count(): count() would only report the rows on this page. --}}
+        <span style="font-size:13px;color:var(--tp-muted)">{{ __(':count murid dalam senarai ini.', ['count' => $rows->total()]) }}</span>
+
+        <div>{{ $rows->links() }}</div>
     @endif
 </x-cikgu-layout>

@@ -8,10 +8,15 @@ use App\Models\Quiz;
 use App\Models\Subject;
 use App\Services\LeaderboardService;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\Paginator;
 use Illuminate\View\View;
 
 class TeacherRankingController extends Controller
 {
+    /** Fifty to a page: enough to scan a whole year group at once without an endless scroll. */
+    private const PER_PAGE = 50;
+
     /**
      * The full table, not just the top 10, filterable by Tahun, Subjek and a single quiz.
      * Reads from the same LeaderboardService the students' /ranking uses, so the two views
@@ -31,10 +36,22 @@ class TeacherRankingController extends Controller
             ? Quiz::find($request->integer('kuiz'))
             : null;
 
-        $rows = $leaderboard->ranking(
+        $ranked = $leaderboard->ranking(
             gradeId: $grade?->id,
             subjectId: $subject?->id,
             quizId: $quiz?->id,
+        );
+
+        // Rank is stamped across the whole ranked set before this slice, so page two carries on at
+        // 51 rather than restarting — the number is the student's real position, not a row counter.
+        $page = Paginator::resolveCurrentPage();
+        $rows = new LengthAwarePaginator(
+            $ranked->forPage($page, self::PER_PAGE)->values(),
+            $ranked->count(),
+            self::PER_PAGE,
+            $page,
+            // Keeps Tahun / Subjek / Kuiz on the page links, so paging never drops the filter.
+            ['path' => Paginator::resolveCurrentPath(), 'query' => $request->query()],
         );
 
         // Quiz filter options follow the Tahun and Subjek already picked.
