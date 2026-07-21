@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:toastification/toastification.dart';
 
 import 'core/auth/auth_repository.dart';
 import 'core/auth/auth_user.dart';
@@ -109,21 +110,23 @@ class _LmsMobileAppState extends State<LmsMobileApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'LMS MOE',
-      debugShowCheckedModeBanner: false,
-      theme: buildLmsTheme(),
-      home: _initialising
-          ? _SplashScreen(onPresented: _startSessionRestore)
-          : _user == null
-          ? LoginScreen(auth: _auth, onSignedIn: _signedIn)
-          : _RoleHome(
-              user: _user!,
-              onSignOut: _signOut,
-              loadProfileOptions: _loadProfileOptions,
-              onUpdateProfile: _updateProfile,
-              onUpdateAvatar: _updateAvatar,
-            ),
+    return ToastificationWrapper(
+      child: MaterialApp(
+        title: 'LMS MOE',
+        debugShowCheckedModeBanner: false,
+        theme: buildLmsTheme(),
+        home: _initialising
+            ? _SplashScreen(onPresented: _startSessionRestore)
+            : _user == null
+            ? LoginScreen(auth: _auth, onSignedIn: _signedIn)
+            : _RoleHome(
+                user: _user!,
+                onSignOut: _signOut,
+                loadProfileOptions: _loadProfileOptions,
+                onUpdateProfile: _updateProfile,
+                onUpdateAvatar: _updateAvatar,
+              ),
+      ),
     );
   }
 }

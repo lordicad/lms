@@ -1,5 +1,6 @@
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:video_player/video_player.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -7,6 +8,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../core/content/content_models.dart';
 import '../../core/content/content_repository.dart';
 import '../../core/theme/lms_theme.dart';
+import '../../core/widgets/app_feedback.dart';
 import 'widgets/content_widgets.dart';
 
 /// Watch a single lesson. Plays YouTube (via youtube_player_flutter) or an uploaded mp4
@@ -128,9 +130,21 @@ class _WatchScreenState extends State<WatchScreen> {
     });
     try {
       final result = await widget.repository.toggleFavourite(widget.lessonId);
-      if (mounted) setState(() => _favourited = result);
+      if (!mounted) return;
+      setState(() => _favourited = result);
+      AppFeedback.success(
+        result ? 'Disimpan ke Kegemaran' : 'Dikeluarkan dari Kegemaran',
+        description: result
+            ? 'Video ini boleh dibuka semula daripada Kandungan Disimpan.'
+            : 'Anda boleh simpan semula pada bila-bila masa.',
+      );
     } catch (_) {
-      if (mounted) setState(() => _favourited = !_favourited); // revert
+      if (!mounted) return;
+      setState(() => _favourited = !_favourited); // revert
+      AppFeedback.error(
+        'Tidak dapat mengemas kini Kegemaran',
+        description: 'Sila cuba sekali lagi.',
+      );
     } finally {
       if (mounted) setState(() => _favSaving = false);
     }
@@ -264,10 +278,23 @@ class _WatchScreenState extends State<WatchScreen> {
           IconButton(
             tooltip: 'Kegemaran',
             onPressed: _favSaving ? null : _toggleFavourite,
-            icon: Icon(
-              _favourited ? Icons.favorite : Icons.favorite_border,
-              color: _favourited ? LmsColors.danger : null,
-            ),
+            icon:
+                Icon(
+                      _favourited ? Icons.favorite : Icons.favorite_border,
+                      color: _favourited ? LmsColors.danger : null,
+                    )
+                    .animate(key: ValueKey('favourite-$_favourited'))
+                    .scale(
+                      begin: const Offset(0.8, 0.8),
+                      end: const Offset(1.14, 1.14),
+                      duration: const Duration(milliseconds: 180),
+                      curve: Curves.easeOutBack,
+                    )
+                    .then()
+                    .scale(
+                      end: const Offset(1, 1),
+                      duration: const Duration(milliseconds: 150),
+                    ),
           ),
         ],
       ),

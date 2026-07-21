@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../core/teacher/teacher_models.dart';
 import '../../core/teacher/teacher_repository.dart';
 import '../../core/theme/lms_theme.dart';
+import '../../core/widgets/app_feedback.dart';
 import '../student/widgets/content_widgets.dart';
 
 /// Add or edit a YouTube video: pick Subject -> Tahun -> Bab, then title, description and
@@ -102,9 +103,8 @@ class _VideoFormScreenState extends State<VideoFormScreen> {
     }
   }
 
-  void _snack(String message) => ScaffoldMessenger.of(
-    context,
-  ).showSnackBar(SnackBar(content: Text(message)));
+  void _snack(String message) =>
+      AppFeedback.error('Tidak dapat diteruskan', description: message);
 
   Future<void> _save() async {
     final title = _titleCtrl.text.trim();
@@ -135,10 +135,11 @@ class _VideoFormScreenState extends State<VideoFormScreen> {
         );
       }
       if (!mounted) return;
-      _snack(
-        video == null
-            ? 'Video berjaya disimpan.'
-            : 'Video berjaya dikemas kini.',
+      AppFeedback.success(
+        video == null ? 'Video berjaya disimpan' : 'Video berjaya dikemas kini',
+        description: video == null
+            ? 'Video kini tersedia dalam Kandungan.'
+            : 'Perubahan video telah diterapkan.',
       );
       Navigator.of(context).pop(true);
     } catch (e) {

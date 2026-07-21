@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../core/teacher/teacher_models.dart';
 import '../../core/teacher/teacher_repository.dart';
 import '../../core/theme/lms_theme.dart';
+import '../../core/widgets/app_feedback.dart';
 import '../student/widgets/content_widgets.dart';
 import 'chapters_manage_tab.dart';
 import 'material_form_screen.dart';
@@ -132,33 +133,43 @@ class _ContentHubTabState extends State<ContentHubTab> {
 
   Future<void> _togglePublishVideo(int id) async {
     try {
-      await widget.repository.togglePublishVideo(id);
+      final published = await widget.repository.togglePublishVideo(id);
       if (mounted) {
         setState(() {
           _videos = widget.repository.videos();
         });
+        AppFeedback.success(
+          published ? 'Video diterbitkan' : 'Video disembunyikan',
+          description: published
+              ? 'Murid kini boleh melihat video ini.'
+              : 'Video ini tidak lagi dipaparkan kepada murid.',
+        );
       }
     } catch (e) {
-      if (mounted)
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('$e')));
+      if (mounted) {
+        AppFeedback.error('Tidak dapat mengemas kini video', description: '$e');
+      }
     }
   }
 
   Future<void> _togglePublishQuiz(int id) async {
     try {
-      await widget.repository.togglePublishQuiz(id);
+      final published = await widget.repository.togglePublishQuiz(id);
       if (mounted) {
         setState(() {
           _quizzes = widget.repository.quizzes();
         });
+        AppFeedback.success(
+          published ? 'Kuiz diterbitkan' : 'Kuiz disembunyikan',
+          description: published
+              ? 'Murid kini boleh menjawab kuiz ini.'
+              : 'Kuiz ini tidak lagi dipaparkan kepada murid.',
+        );
       }
     } catch (e) {
-      if (mounted)
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('$e')));
+      if (mounted) {
+        AppFeedback.error('Tidak dapat mengemas kini kuiz', description: '$e');
+      }
     }
   }
 
@@ -192,12 +203,15 @@ class _ContentHubTabState extends State<ContentHubTab> {
         setState(() {
           _videos = widget.repository.videos();
         });
+        AppFeedback.success(
+          'Video dipadam',
+          description: 'Video telah dikeluarkan daripada Kandungan.',
+        );
       }
     } catch (e) {
-      if (mounted)
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('$e')));
+      if (mounted) {
+        AppFeedback.error('Tidak dapat memadam video', description: '$e');
+      }
     }
   }
 
@@ -209,12 +223,15 @@ class _ContentHubTabState extends State<ContentHubTab> {
         setState(() {
           _materials = widget.repository.materials();
         });
+        AppFeedback.success(
+          'Bahan dipadam',
+          description: 'Bahan telah dikeluarkan daripada Kandungan.',
+        );
       }
     } catch (e) {
-      if (mounted)
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('$e')));
+      if (mounted) {
+        AppFeedback.error('Tidak dapat memadam bahan', description: '$e');
+      }
     }
   }
 
@@ -226,12 +243,15 @@ class _ContentHubTabState extends State<ContentHubTab> {
         setState(() {
           _quizzes = widget.repository.quizzes();
         });
+        AppFeedback.success(
+          'Kuiz dipadam',
+          description: 'Kuiz telah dikeluarkan daripada Kandungan.',
+        );
       }
     } catch (e) {
-      if (mounted)
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('$e')));
+      if (mounted) {
+        AppFeedback.error('Tidak dapat memadam kuiz', description: '$e');
+      }
     }
   }
 

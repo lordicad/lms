@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../core/content/content_models.dart';
 import '../../core/content/content_repository.dart';
 import '../../core/theme/lms_theme.dart';
+import '../../core/widgets/app_feedback.dart';
 import 'quiz_result_screen.dart';
 
 /// Answer an interactive quiz: single (radio) or multiple (checkbox) questions, then submit.
@@ -72,15 +73,17 @@ class _QuizTakeScreenState extends State<QuizTakeScreen> {
         payload,
       );
       if (!mounted) return;
+      AppFeedback.success(
+        result.isCelebration ? 'Hebat, kuiz selesai!' : 'Kuiz berjaya dihantar',
+        description: 'Markah anda: ${result.score}/${result.maxScore}.',
+      );
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (_) => QuizResultScreen(result: result)),
       );
     } catch (e) {
       if (mounted) {
         setState(() => _submitting = false);
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('$e')));
+        AppFeedback.error('Kuiz tidak dapat dihantar', description: '$e');
       }
     }
   }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../core/teacher/teacher_models.dart';
 import '../../core/teacher/teacher_repository.dart';
 import '../../core/theme/lms_theme.dart';
+import '../../core/widgets/app_feedback.dart';
 import '../student/widgets/content_widgets.dart';
 
 /// Mobile-first builder for an interactive multiple-choice quiz.
@@ -247,8 +248,11 @@ class _QuizBuilderScreenState extends State<QuizBuilderScreen> {
         );
       }
       if (!mounted) return;
-      _snack(
-        _isEditing ? 'Kuiz berjaya dikemas kini.' : 'Kuiz berjaya disimpan.',
+      AppFeedback.success(
+        _isEditing ? 'Kuiz berjaya dikemas kini' : 'Kuiz berjaya dicipta',
+        description: _isEditing
+            ? 'Perubahan kuiz telah diterapkan.'
+            : 'Kuiz kini tersedia dalam Kandungan.',
       );
       Navigator.of(context).pop(true);
     } catch (error) {

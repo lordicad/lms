@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../core/content/content_models.dart';
 import '../../core/theme/lms_theme.dart';
@@ -19,7 +20,15 @@ class QuizResultScreen extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
         children: [
-          _ScoreHeader(result: result),
+          _ScoreHeader(result: result)
+              .animate()
+              .fadeIn(duration: const Duration(milliseconds: 320))
+              .slideY(
+                begin: 0.08,
+                end: 0,
+                duration: const Duration(milliseconds: 360),
+                curve: Curves.easeOutCubic,
+              ),
           if (!result.countsForRanking) ...[
             const SizedBox(height: 12),
             const _Banner(
@@ -34,7 +43,15 @@ class QuizResultScreen extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           ...result.questions.asMap().entries.map(
-            (e) => _ReviewCard(index: e.key + 1, question: e.value),
+            (e) => _ReviewCard(index: e.key + 1, question: e.value)
+                .animate(delay: Duration(milliseconds: 90 + (e.key * 55)))
+                .fadeIn(duration: const Duration(milliseconds: 260))
+                .slideX(
+                  begin: 0.04,
+                  end: 0,
+                  duration: const Duration(milliseconds: 280),
+                  curve: Curves.easeOutCubic,
+                ),
           ),
         ],
       ),

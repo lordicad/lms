@@ -4,6 +4,7 @@ import '../../core/platform/native_file_picker.dart';
 import '../../core/teacher/teacher_models.dart';
 import '../../core/teacher/teacher_repository.dart';
 import '../../core/theme/lms_theme.dart';
+import '../../core/widgets/app_feedback.dart';
 import '../student/widgets/content_widgets.dart';
 
 /// Upload or edit a teacher-owned learning material.
@@ -48,9 +49,8 @@ class _MaterialFormScreenState extends State<MaterialFormScreen> {
     super.dispose();
   }
 
-  void _snack(String message) => ScaffoldMessenger.of(
-    context,
-  ).showSnackBar(SnackBar(content: Text(message)));
+  void _snack(String message) =>
+      AppFeedback.error('Tidak dapat diteruskan', description: message);
 
   Future<void> _loadOptions() async {
     setState(() => _optionsError = null);
@@ -132,10 +132,13 @@ class _MaterialFormScreenState extends State<MaterialFormScreen> {
         );
       }
       if (!mounted) return;
-      _snack(
+      AppFeedback.success(
         material == null
-            ? 'Bahan berjaya dimuat naik.'
-            : 'Bahan berjaya dikemas kini.',
+            ? 'Bahan berjaya dimuat naik'
+            : 'Bahan berjaya dikemas kini',
+        description: material == null
+            ? 'Bahan kini tersedia dalam Kandungan.'
+            : 'Perubahan bahan telah diterapkan.',
       );
       Navigator.of(context).pop(true);
     } catch (error) {
