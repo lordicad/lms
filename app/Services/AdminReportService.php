@@ -27,14 +27,25 @@ class AdminReportService
         '12m' => '12 bulan lalu',
     ];
 
-    /** All-time platform totals for the four summary cards. */
+    /**
+     * All-time platform totals for the four summary cards, each paired with a `*_new` count: how
+     * many of that record were created in the last 7 days. The cards show that as a "+N" trend, so
+     * it is a real delta over a fixed window, not a projection.
+     */
     public function totals(): array
     {
+        $since = Carbon::now()->subDays(7);
+
         return [
             'students' => User::where('role', User::ROLE_STUDENT)->count(),
             'teachers' => User::where('role', User::ROLE_TEACHER)->count(),
             'videos' => Lesson::count(),
             'quizzes' => Quiz::count(),
+
+            'students_new' => User::where('role', User::ROLE_STUDENT)->where('created_at', '>=', $since)->count(),
+            'teachers_new' => User::where('role', User::ROLE_TEACHER)->where('created_at', '>=', $since)->count(),
+            'videos_new' => Lesson::where('created_at', '>=', $since)->count(),
+            'quizzes_new' => Quiz::where('created_at', '>=', $since)->count(),
         ];
     }
 
@@ -202,7 +213,10 @@ class AdminReportService
      * platform is entirely tidy a single "all clear" item is returned. Shared by the dashboard and
      * the exports so the report matches the page.
      *
-     * @return array<int, array{icon:string,bg:string,title:string,desc:string}>
+     * Each item carries the page that resolves it, so the dashboard can link straight there rather
+     * than naming a screen the admin then has to go find. The all-clear item has no destination.
+     *
+     * @return array<int, array{icon:string,bg:string,fg:string,title:string,desc:string,url:?string}>
      */
     public function pending(): array
     {
@@ -218,33 +232,37 @@ class AdminReportService
 
         if ($inactiveTeachers > 0) {
             $items[] = [
-                'icon' => '🚫', 'bg' => '#FDE7E0',
+                'icon' => 'userx', 'bg' => '#FDE7E0', 'fg' => '#C24936',
                 'title' => trans_choice('{1}:count akaun cikgu dinyahaktifkan|[2,*]:count akaun cikgu dinyahaktifkan', $inactiveTeachers, ['count' => $inactiveTeachers]),
                 'desc' => __('Kandungan mereka kekal untuk murid. Semak di halaman Cikgu.'),
+                'url' => route('admin.bakat'),
             ];
         }
 
         if ($draftVideos > 0) {
             $items[] = [
-                'icon' => '📼', 'bg' => '#FEF0CE',
+                'icon' => 'video', 'bg' => '#FEF0CE', 'fg' => '#8A6A12',
                 'title' => trans_choice('{1}:count video belum diterbitkan|[2,*]:count video belum diterbitkan', $draftVideos, ['count' => $draftVideos]),
                 'desc' => __('Draf yang belum kelihatan kepada murid.'),
+                'url' => route('admin.kandungan.video'),
             ];
         }
 
         if ($silentTeachers > 0) {
             $items[] = [
-                'icon' => '🧑‍🏫', 'bg' => '#E4EEF9',
+                'icon' => 'teachers', 'bg' => '#E4EEF9', 'fg' => '#2E6CA8',
                 'title' => trans_choice('{1}:count cikgu belum menyumbang kandungan|[2,*]:count cikgu belum menyumbang kandungan', $silentTeachers, ['count' => $silentTeachers]),
                 'desc' => __('Belum memuat naik sebarang video, bahan atau kuiz.'),
+                'url' => route('admin.bakat'),
             ];
         }
 
         if ($items === []) {
             $items[] = [
-                'icon' => '✅', 'bg' => '#DCF2EE',
+                'icon' => 'check', 'bg' => '#DCF2EE', 'fg' => '#0F7A68',
                 'title' => __('Tiada tindakan menunggu'),
                 'desc' => __('Semua cikgu aktif dan menyumbang. Platform teratur.'),
+                'url' => null,
             ];
         }
 
