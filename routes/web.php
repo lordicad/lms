@@ -205,8 +205,6 @@ Route::middleware(['auth', 'role:admin'])
         Route::delete('pengguna/{user}', [AdminUserController::class, 'destroy'])->name('pengguna.destroy');
         Route::post('pengguna/{user}/status', [AdminUserController::class, 'toggleStatus'])->name('pengguna.status');
 
-        Route::view('tetapan', 'admin.tetapan')->name('tetapan');
-
         // Admin's own profile, in the admin shell (the shared profile.* endpoints do the saving).
         Route::view('profil', 'admin.profil')->name('profil');
 

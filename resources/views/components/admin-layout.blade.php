@@ -26,7 +26,6 @@
         ['label' => __('Kandungan'), 'icon' => 'content',  'route' => 'admin.kandungan.video', 'active' => request()->routeIs('admin.kandungan.*')],
         ['label' => __('Cikgu'),     'icon' => 'teachers', 'route' => 'admin.bakat',          'active' => request()->routeIs('admin.bakat*', 'admin.guru.*')],
         ['label' => __('Murid'),     'icon' => 'students', 'route' => 'admin.murid',          'active' => request()->routeIs('admin.murid')],
-        ['label' => __('Tetapan'),   'icon' => 'settings', 'route' => 'admin.tetapan',        'active' => request()->routeIs('admin.tetapan')],
     ];
 @endphp
 
