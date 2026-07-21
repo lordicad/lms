@@ -297,9 +297,11 @@ class AdminUserController extends Controller
             ],
             // Typing a password is optional: with auto_password on, one is generated instead.
             'auto_password' => ['nullable', 'boolean'],
+            // No 'confirmed' rule: the form has a single password box. Auto-generate is the normal
+            // path, and a mistyped one is fixed by resetting, which re-sends the details anyway.
             'password' => [
                 $creating && ! $request->boolean('auto_password') ? 'required' : 'nullable',
-                'confirmed', Password::min(6),
+                Password::min(6),
             ],
             'is_active' => ['nullable', 'boolean'],
 
@@ -346,7 +348,6 @@ class AdminUserController extends Controller
             'email.unique' => __('Emel ini sudah didaftarkan.'),
             'grade_level.required' => __('Sila pilih Tahun untuk murid.'),
             'password.required' => __('Sila tetapkan kata laluan.'),
-            'password.confirmed' => __('Pengesahan kata laluan tidak sepadan.'),
         ]);
     }
 

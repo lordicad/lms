@@ -174,31 +174,30 @@
                 </div>
             @endif
 
-            {{-- Auto-generate is the default for a new account: it saves the admin inventing one,
-                 and the result is readable enough to pass on by phone or on paper. --}}
-            <label style="display:flex;align-items:center;gap:10px;cursor:pointer">
-                <input type="checkbox" name="auto_password" value="1" x-model="autoPassword"
-                       style="width:20px;height:20px;accent-color:#17907B">
-                <span style="font-family:'Geist',sans-serif;font-size:13.5px;font-weight:700;color:var(--tp-ink)">
-                    {{ $editing ? __('Jana kata laluan baharu secara automatik') : __('Jana kata laluan secara automatik') }}
-                </span>
-            </label>
-
-            <p class="tp-hint" x-show="autoPassword" style="margin:-6px 0 0">
-                {{ __('Kata laluan akan dijana dan dipaparkan sekali selepas disimpan, serta dihantar kepada pengguna atau penjaga.') }}
-            </p>
-
+            {{-- The stored password is a one-way hash, so there is nothing to display back: the
+                 dots only signal that one is set. Whether the owner has chosen their own, and when,
+                 is what the status band above actually answers. --}}
             <div class="tp-field" x-show="! autoPassword" x-cloak>
-                <label for="password" class="tp-label">{{ $editing ? __('Set semula kata laluan') : __('Kata laluan') }}</label>
-                <input id="password" name="password" type="password" class="tp-input" autocomplete="new-password">
+                <label for="password" class="tp-label">{{ __('Kata laluan') }}</label>
+                <input id="password" name="password" type="password" class="tp-input" autocomplete="new-password"
+                       @if ($editing) placeholder="••••••••" @endif>
                 @if ($editing)<span class="tp-hint">{{ __('Biarkan kosong untuk mengekalkan kata laluan semasa. Jika diisi, pengguna perlu menetapkan kata laluan sendiri semula pada log masuk seterusnya.') }}</span>@endif
                 @error('password')<p class="pg-err">{{ $message }}</p>@enderror
             </div>
 
-            <div class="tp-field" x-show="! autoPassword" x-cloak>
-                <label for="password_confirmation" class="tp-label">{{ __('Sahkan kata laluan') }}</label>
-                <input id="password_confirmation" name="password_confirmation" type="password" class="tp-input" autocomplete="new-password">
-            </div>
+            {{-- Ticked by default on a new account: it saves the admin inventing a password, and
+                 the generated one is readable enough to pass on by phone or on paper. --}}
+            <label style="display:flex;align-items:center;gap:10px;cursor:pointer">
+                <input type="checkbox" name="auto_password" value="1" x-model="autoPassword"
+                       style="width:20px;height:20px;accent-color:#17907B">
+                <span style="font-family:'Geist',sans-serif;font-size:13.5px;font-weight:700;color:var(--tp-ink)">
+                    {{ $editing ? __('Set semula kata laluan') : __('Jana kata laluan secara automatik') }}
+                </span>
+            </label>
+
+            <p class="tp-hint" x-show="autoPassword" style="margin:-6px 0 0">
+                {{ __('Kata laluan baharu akan dijana dan dihantar kepada pengguna atau penjaga.') }}
+            </p>
 
             <label style="display:flex;align-items:center;gap:10px;cursor:pointer">
                 <input type="checkbox" name="is_active" value="1" @checked(old('is_active', $user->is_active ?? true)) style="width:20px;height:20px;accent-color:#17907B">
