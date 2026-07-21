@@ -147,10 +147,11 @@ Route::middleware(['auth', 'role:teacher'])
         Route::put('kuiz/{quiz}/soalan', [QuizBuilderController::class, 'update'])->name('kuiz.soalan.simpan');
         Route::get('kuiz/{quiz}/statistik', QuizStatsController::class)->name('kuiz.statistik');
 
-        // Adding a Bab happens inline on the index page, so there is no separate create screen.
+        // Chapters: read-only index + a per-chapter show (the teacher's own content in that Bab).
+        // The management endpoints stay registered but are no longer surfaced in the UI.
         Route::resource('bab', ChapterController::class)
             ->parameters(['bab' => 'chapter'])
-            ->only(['index', 'store', 'edit', 'update', 'destroy']);
+            ->only(['index', 'show', 'store', 'edit', 'update', 'destroy']);
 
         Route::get('notifikasi', [NotificationController::class, 'index'])->name('notifikasi');
         Route::post('notifikasi/baca', [NotificationController::class, 'markRead'])->name('notifikasi.baca');

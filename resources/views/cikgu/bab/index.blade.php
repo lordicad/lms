@@ -84,6 +84,8 @@
                                     <span class="tp-meta">📝 {{ $chapter->quizzes_count }}</span>
                                 </div>
                             </div>
+
+                            <a href="{{ route('cikgu.bab.show', $chapter) }}" class="tp-btn-ghost" style="flex-shrink:0">👁 {{ __('Lihat') }}</a>
                         </div>
                     @endforeach
                 </div>

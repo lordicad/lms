@@ -32,11 +32,19 @@ class ChapterController extends Controller
             ? $grades->firstWhere('level', $request->integer('tahun'))
             : $grades->first();
 
+        $teacher = $request->user();
+
+        // Counts are scoped to the signed-in teacher, so a card's numbers match what the Bab's
+        // View page shows (only that teacher's own content).
         $chapters = ($subject && $grade)
             ? Chapter::where('subject_id', $subject->id)
                 ->where('grade_id', $grade->id)
                 ->ordered()
-                ->withCount(['lessons', 'materials', 'quizzes'])
+                ->withCount([
+                    'lessons as lessons_count' => fn ($q) => $q->where('teacher_id', $teacher->id),
+                    'materials as materials_count' => fn ($q) => $q->where('teacher_id', $teacher->id),
+                    'quizzes as quizzes_count' => fn ($q) => $q->where('teacher_id', $teacher->id),
+                ])
                 ->get()
             : collect();
 
@@ -56,6 +64,42 @@ class ChapterController extends Controller
             'isOffered' => $isOffered,
             'availability' => Subject::availabilityMap(),
             'nextNumber' => ($chapters->max('number') ?? 0) + 1,
+        ]);
+    }
+
+    /**
+     * A single Bab: everything the signed-in teacher has uploaded into it, grouped into Videos,
+     * Materials and Quizzes. Other teachers' content is never shown — ownership is enforced here on
+     * the server, not just by hiding a button.
+     */
+    public function show(Request $request, Chapter $chapter): View
+    {
+        $chapter->load('subject', 'grade');
+        $teacher = $request->user();
+
+        $lessons = $chapter->lessons()
+            ->where('teacher_id', $teacher->id)
+            ->latest('id')
+            ->get();
+
+        $materials = $chapter->materials()
+            ->where('teacher_id', $teacher->id)
+            ->latest('id')
+            ->get();
+
+        $quizzes = $chapter->quizzes()
+            ->where('teacher_id', $teacher->id)
+            ->withCount(['questions', 'completedAttempts as completed_attempts_count'])
+            ->latest('id')
+            ->get();
+
+        return view('cikgu.bab.show', [
+            'chapter' => $chapter,
+            'subject' => $chapter->subject,
+            'grade' => $chapter->grade,
+            'lessons' => $lessons,
+            'materials' => $materials,
+            'quizzes' => $quizzes,
         ]);
     }
 
