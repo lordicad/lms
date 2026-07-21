@@ -43,10 +43,11 @@ class LessonController extends Controller
 
     public function index(Request $request): View
     {
+        $teacher = $request->user();
         $filter = \App\Support\ContentFilter::fromRequest($request);
 
         $lessons = $filter->apply(
-            $request->user()->lessons()->with('chapter.subject', 'chapter.grade')
+            $teacher->lessons()->with('chapter.subject', 'chapter.grade')
         )
             ->latest('id')
             ->paginate(12)
@@ -57,6 +58,9 @@ class LessonController extends Controller
             'subjects' => Subject::orderBy('sort_order')->get(),
             'grades' => Grade::orderBy('level')->get(),
             'filter' => $filter,
+            // All-time totals for this teacher (not the filtered page count).
+            'totalVideos' => $teacher->lessons()->count(),
+            'viewCount' => (int) $teacher->lessons()->sum('views_count'),
         ]);
     }
 
