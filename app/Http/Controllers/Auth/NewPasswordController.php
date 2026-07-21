@@ -48,8 +48,11 @@ class NewPasswordController extends Controller
         $status = Password::reset(
             $request->only('email', 'password', 'password_confirmation', 'token'),
             function (User $user) use ($request) {
+                // password_changed_at is stamped here too: a reset link proves the owner chose
+                // this password, so they should not also be held on the first-password screen.
                 $user->forceFill([
                     'password' => Hash::make($request->password),
+                    'password_changed_at' => now(),
                     'remember_token' => Str::random(60),
                 ])->save();
 

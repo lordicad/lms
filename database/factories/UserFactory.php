@@ -29,10 +29,19 @@ class UserFactory extends Factory
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
+            // An established account by default: it owns its password, so the first-password
+            // screen does not hold it. Use ->adminIssued() for a freshly handed-over account.
+            'password_changed_at' => now(),
             'role' => User::ROLE_STUDENT,
             'grade_id' => null,
             'remember_token' => Str::random(10),
         ];
+    }
+
+    /** Created by an admin and not yet opened by its owner — still on the handed-over password. */
+    public function adminIssued(): static
+    {
+        return $this->state(fn () => ['password_changed_at' => null]);
     }
 
     public function teacher(): static

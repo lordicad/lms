@@ -152,10 +152,28 @@
 
             <div style="height:1px;background:var(--tp-line);margin:2px 0"></div>
 
+            {{-- Password status. The password itself is stored as a one-way hash and cannot be read
+                 back by anyone, so what is shown is whether the owner has chosen their own yet. --}}
+            @if ($editing)
+                @php($ownsPassword = $user->password_changed_at !== null)
+                <div style="border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:3px;{{ $ownsPassword ? 'background:#DCF2EE;border:1px solid rgba(15,122,104,.25)' : 'background:#FEF0CE;border:1px solid rgba(138,106,18,.25)' }}">
+                    <span style="font-family:'Geist',sans-serif;font-size:13px;font-weight:800;color:{{ $ownsPassword ? '#0F7A68' : '#8A6A12' }}">
+                        {{ $ownsPassword ? '✓ '.__('Kata laluan sendiri') : '⏳ '.__('Masih guna kata laluan yang anda beri') }}
+                    </span>
+                    <span style="font-size:12.5px;color:var(--tp-muted-2)">
+                        @if ($ownsPassword)
+                            {{ __('Ditetapkan sendiri oleh pengguna pada :date.', ['date' => $user->password_changed_at->translatedFormat('j F Y, g:ia')]) }}
+                        @else
+                            {{ __('Pengguna akan diminta menetapkan kata laluan sendiri pada log masuk seterusnya.') }}
+                        @endif
+                    </span>
+                </div>
+            @endif
+
             <div class="tp-field">
-                <label for="password" class="tp-label">{{ __('Kata laluan') }}</label>
+                <label for="password" class="tp-label">{{ $editing ? __('Set semula kata laluan') : __('Kata laluan') }}</label>
                 <input id="password" name="password" type="password" class="tp-input" autocomplete="new-password" @unless ($editing) required @endunless>
-                @if ($editing)<span class="tp-hint">{{ __('Biarkan kosong untuk mengekalkan kata laluan semasa.') }}</span>@endif
+                @if ($editing)<span class="tp-hint">{{ __('Biarkan kosong untuk mengekalkan kata laluan semasa. Jika diisi, pengguna perlu menetapkan kata laluan sendiri semula pada log masuk seterusnya.') }}</span>@endif
                 @error('password')<p class="pg-err">{{ $message }}</p>@enderror
             </div>
 

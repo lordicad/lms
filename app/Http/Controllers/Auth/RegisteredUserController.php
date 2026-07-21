@@ -92,6 +92,9 @@ class RegisteredUserController extends Controller
             'grade_id' => $grade?->id,
         ]);
 
+        // Self-registered: they picked this password themselves, so there is nothing to replace.
+        $user->markPasswordChanged();
+
         event(new Registered($user));
 
         Auth::login($user);

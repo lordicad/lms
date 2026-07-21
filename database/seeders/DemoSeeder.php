@@ -34,6 +34,10 @@ class DemoSeeder extends Seeder
             ],
         );
 
+        // Demo accounts exist to be signed into directly, so they are not sent to the
+        // first-password screen the way a real admin-created account would be.
+        $teacher->markPasswordChanged();
+
         $students = [
             ['username' => 'aisyah', 'name' => 'Nur Aisyah Rahim', 'level' => 3],
             ['username' => 'harith', 'name' => 'Muhammad Harith Danial', 'level' => 3],
@@ -55,6 +59,8 @@ class DemoSeeder extends Seeder
                     'grade_id' => $grade->id,
                 ],
             );
+
+            $studentModels[$student['username']]->markPasswordChanged();
         }
 
         // Sains is a Tahun 5–6 subject under Kurikulum 2027, but the demo students are Tahun 3.

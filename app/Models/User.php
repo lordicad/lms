@@ -60,6 +60,7 @@ class User extends Authenticatable
             'school_class_id' => 'integer',
             'is_active' => 'boolean',
             'email_verified_at' => 'datetime',
+            'password_changed_at' => 'datetime',
             'password' => 'hashed',
         ];
     }
@@ -86,6 +87,23 @@ class User extends Authenticatable
     public function isStudent(): bool
     {
         return $this->role === self::ROLE_STUDENT;
+    }
+
+    /**
+     * Teacher and student accounts are created by an admin, who picks the first password and hands
+     * it over — so until the owner replaces it, someone else knows it. A null `password_changed_at`
+     * means exactly that, and sends them to the change screen before they can use the system.
+     * Admins set up their own accounts, so they are not asked.
+     */
+    public function mustChangePassword(): bool
+    {
+        return $this->password_changed_at === null && ! $this->isAdmin();
+    }
+
+    /** Record that the owner has chosen this password themselves. */
+    public function markPasswordChanged(): void
+    {
+        $this->forceFill(['password_changed_at' => now()])->save();
     }
 
     public function grade(): BelongsTo

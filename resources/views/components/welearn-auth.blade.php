@@ -1,6 +1,8 @@
 @props([
     'active' => 'login',   // which tab is highlighted: 'login' | 'register'
     'title' => null,
+    'tabs' => true,        // the Log Masuk / Daftar pair — off for pages reached while signed in
+    'back' => true,        // the "back to home" link, likewise
 ])
 
 {{--
@@ -237,18 +239,23 @@
         </div>
 
         <div class="wla-card">
-            {{-- Tabs: real navigation between the two routes, so each keeps its own POST/validation --}}
-            <div class="wla-tabs">
-                <a href="{{ route('login') }}" class="wla-tab {{ $active === 'login' ? 'is-active' : '' }}"
-                   @if ($active === 'login') aria-current="page" @endif>{{ __('Log Masuk') }}</a>
-                <a href="{{ route('register') }}" class="wla-tab {{ $active === 'register' ? 'is-active' : '' }}"
-                   @if ($active === 'register') aria-current="page" @endif>{{ __('Daftar') }}</a>
-            </div>
+            @if ($tabs)
+                {{-- Tabs: real navigation between the two routes, so each keeps its own POST/validation --}}
+                <div class="wla-tabs">
+                    <a href="{{ route('login') }}" class="wla-tab {{ $active === 'login' ? 'is-active' : '' }}"
+                       @if ($active === 'login') aria-current="page" @endif>{{ __('Log Masuk') }}</a>
+                    <a href="{{ route('register') }}" class="wla-tab {{ $active === 'register' ? 'is-active' : '' }}"
+                       @if ($active === 'register') aria-current="page" @endif>{{ __('Daftar') }}</a>
+                </div>
+            @endif
 
             {{ $slot }}
         </div>
 
-        <a href="{{ url('/') }}" class="wla-back">← {{ __('Kembali ke halaman utama') }}</a>
+        @if ($back)
+            <a href="{{ url('/') }}" class="wla-back">← {{ __('Kembali ke halaman utama') }}</a>
+        @endif
+        {{ $footer ?? '' }}
     </main>
 </div>
 </body>

@@ -81,6 +81,8 @@ class LeaderboardDemoSeeder extends Seeder
                     'username' => $handle,
                     'email' => "{$handle}@".self::DOMAIN,
                     'password' => $password,
+                    // Demo fill accounts: stamped so they are not sent to the first-password screen.
+                    'password_changed_at' => $now,
                     'role' => User::ROLE_STUDENT,
                     'is_active' => true,
                     'grade_id' => $grade->id,

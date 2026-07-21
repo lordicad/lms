@@ -23,9 +23,14 @@ class PasswordController extends Controller
             'password.confirmed' => __('Kata laluan tidak sama. Sila semak semula.'),
         ]);
 
-        $request->user()->update([
+        $user = $request->user();
+
+        $user->update([
             'password' => $validated['password'],   // hashed by the model cast
         ]);
+
+        // They chose this one themselves, so the account no longer counts as admin-issued.
+        $user->markPasswordChanged();
 
         return back()->with('status', __('Kata laluan berjaya ditukar.'));
     }

@@ -73,6 +73,8 @@ class AdminUserController extends Controller
         $user->role = $data['role'];
         $this->fill($user, $data);
         $user->password = Hash::make($data['password']);
+        // Admin-issued: left null so the owner is asked to choose their own at first sign-in.
+        $user->password_changed_at = null;
         $user->save();
         $this->syncSubjects($user, $data);
 
@@ -119,8 +121,11 @@ class AdminUserController extends Controller
 
         $this->fill($user, $data);
 
+        // Setting a password here is a reset: the admin now knows it, so the owner is asked to
+        // replace it at their next sign-in, exactly as when the account was first created.
         if (! empty($data['password'])) {
             $user->password = Hash::make($data['password']);
+            $user->password_changed_at = null;
         }
 
         $user->save();

@@ -1102,5 +1102,20 @@
     "Carta aktiviti platform untuk tempoh :period": "Platform activity chart for the :period period",
     "{1}:count akaun cikgu dinyahaktifkan|[2,*]:count akaun cikgu dinyahaktifkan": "{1}:count teacher account deactivated|[2,*]:count teacher accounts deactivated",
     "{1}:count video belum diterbitkan|[2,*]:count video belum diterbitkan": "{1}:count video not yet published|[2,*]:count videos not yet published",
-    "{1}:count cikgu belum menyumbang kandungan|[2,*]:count cikgu belum menyumbang kandungan": "{1}:count teacher has not contributed content|[2,*]:count teachers have not contributed content"
+    "{1}:count cikgu belum menyumbang kandungan|[2,*]:count cikgu belum menyumbang kandungan": "{1}:count teacher has not contributed content|[2,*]:count teachers have not contributed content",
+
+    "Tetapkan Kata Laluan": "Set Your Password",
+    "Sahkan kata laluan baharu": "Confirm new password",
+    "Simpan & Teruskan": "Save & Continue",
+    "Selamat datang, :name!": "Welcome, :name!",
+    "Ini kali pertama anda log masuk. Sila tetapkan kata laluan anda sendiri sebelum meneruskan.": "This is your first sign-in. Please set your own password before continuing.",
+    "Nama pengguna anda kekal sama. Hanya kata laluan yang berubah.": "Your username stays the same. Only the password changes.",
+    "Kata laluan anda telah ditetapkan. Gunakan kata laluan baharu ini pada kali seterusnya.": "Your password has been set. Use this new password next time.",
+    "Sila tetapkan kata laluan baharu anda dahulu.": "Please set your new password first.",
+    "Kata laluan sendiri": "Own password",
+    "Masih guna kata laluan yang anda beri": "Still using the password you issued",
+    "Ditetapkan sendiri oleh pengguna pada :date.": "Set by the user themselves on :date.",
+    "Pengguna akan diminta menetapkan kata laluan sendiri pada log masuk seterusnya.": "The user will be asked to set their own password at their next sign-in.",
+    "Set semula kata laluan": "Reset password",
+    "Biarkan kosong untuk mengekalkan kata laluan semasa. Jika diisi, pengguna perlu menetapkan kata laluan sendiri semula pada log masuk seterusnya.": "Leave blank to keep the current password. If filled, the user must set their own password again at their next sign-in."
 }

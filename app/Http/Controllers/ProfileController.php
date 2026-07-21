@@ -267,7 +267,11 @@ class ProfileController extends Controller
             'password.confirmed' => __('Pengesahan kata laluan baharu tidak sepadan.'),
         ]);
 
-        $request->user()->update(['password' => Hash::make($validated['password'])]);
+        $user = $request->user();
+        $user->update(['password' => Hash::make($validated['password'])]);
+
+        // Chosen by the owner, so the account is no longer on an admin-issued password.
+        $user->markPasswordChanged();
 
         return back()->with('status', __('Kata laluan berjaya dikemas kini.'));
     }
