@@ -22,7 +22,6 @@
                     </div>
                     @if ($user->email)<span style="font-size:13px;color:var(--wl-muted)">{{ $user->email }}</span>@endif
                 </div>
-                <a href="#akaun" class="wl-btn-secondary" style="min-height:44px;display:inline-flex;align-items:center;border-radius:12px;border:1.5px solid var(--wl-line-2);background:var(--wl-surface);color:var(--wl-ink);font-family:'Geist',sans-serif;font-weight:800;font-size:13.5px;padding:0 18px;flex-shrink:0;text-decoration:none">✏️&nbsp; {{ __('Sunting') }}</a>
             </div>
 
             {{-- Stats --}}
@@ -88,7 +87,7 @@
         {{-- Account info form. Collapsed by default: it is a long form, and most visits to this
              page are only a look at the profile. It opens itself when the last save came back with
              errors, so a validation message is never left hidden behind a closed panel. --}}
-        <section id="akaun" style="{{ $cardStyle }};scroll-margin-top:24px"
+        <section style="{{ $cardStyle }}"
                  x-data="{ open: @js($errors->getBag('default')->any()) }">
             <button type="button" @click="open = ! open"
                     :aria-expanded="open ? 'true' : 'false'" aria-controls="akaun-panel"
