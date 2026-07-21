@@ -7,6 +7,24 @@ import '../../core/theme/lms_theme.dart';
 import '../../core/widgets/lms_logo.dart';
 import 'profile_edit_screen.dart';
 
+String _profileCopy(BuildContext context, String bm) {
+  const english = {
+    'Tahun': 'Year',
+    'Sekolah': 'School',
+    'Kelas': 'Class',
+    'Guru kelas': 'Homeroom teacher',
+    'Penjaga': 'Guardian',
+    'Telefon penjaga': 'Guardian phone',
+    'Emel penjaga': 'Guardian email',
+    'Jawatan': 'Position',
+    'Telefon': 'Phone',
+    'Subjek': 'Subjects',
+    'Emel': 'Email',
+    'Peranan': 'Role',
+  };
+  return context.copy(bm: bm, en: english[bm] ?? bm);
+}
+
 /// The student's profile: identity, Tahun, and a confirmed sign-out.
 class ProfileTab extends StatelessWidget {
   const ProfileTab({
@@ -71,14 +89,14 @@ class ProfileTab extends StatelessWidget {
               if (user.role == UserRole.student)
                 _InfoRow(
                   icon: Icons.school_rounded,
-                  label: 'Tahun',
+                  label: _profileCopy(context, 'Tahun'),
                   value: user.grade?.name ?? '—',
                 ),
               if (user.role == UserRole.student && user.school != null) ...[
                 const Divider(height: 1),
                 _InfoRow(
                   icon: Icons.account_balance_outlined,
-                  label: 'Sekolah',
+                  label: _profileCopy(context, 'Sekolah'),
                   value: user.school!.name,
                 ),
               ],
@@ -87,7 +105,7 @@ class ProfileTab extends StatelessWidget {
                 const Divider(height: 1),
                 _InfoRow(
                   icon: Icons.groups_outlined,
-                  label: 'Kelas',
+                  label: _profileCopy(context, 'Kelas'),
                   value: user.schoolClass!.label,
                 ),
               ],
@@ -96,7 +114,7 @@ class ProfileTab extends StatelessWidget {
                 const Divider(height: 1),
                 _InfoRow(
                   icon: Icons.person_outline_rounded,
-                  label: 'Guru kelas',
+                  label: _profileCopy(context, 'Guru kelas'),
                   value: user.schoolClass!.homeroomTeacherName!,
                 ),
               ],
@@ -105,7 +123,7 @@ class ProfileTab extends StatelessWidget {
                 const Divider(height: 1),
                 _InfoRow(
                   icon: Icons.family_restroom_outlined,
-                  label: 'Penjaga',
+                  label: _profileCopy(context, 'Penjaga'),
                   value: user.guardianName!,
                 ),
               ],
@@ -114,7 +132,7 @@ class ProfileTab extends StatelessWidget {
                 const Divider(height: 1),
                 _InfoRow(
                   icon: Icons.phone_outlined,
-                  label: 'Telefon penjaga',
+                  label: _profileCopy(context, 'Telefon penjaga'),
                   value: user.guardianPhone!,
                 ),
               ],
@@ -123,7 +141,7 @@ class ProfileTab extends StatelessWidget {
                 const Divider(height: 1),
                 _InfoRow(
                   icon: Icons.alternate_email_rounded,
-                  label: 'Emel penjaga',
+                  label: _profileCopy(context, 'Emel penjaga'),
                   value: user.guardianEmail!,
                 ),
               ],
@@ -131,7 +149,7 @@ class ProfileTab extends StatelessWidget {
                 const Divider(height: 1),
                 _InfoRow(
                   icon: Icons.account_balance_outlined,
-                  label: 'Sekolah',
+                  label: _profileCopy(context, 'Sekolah'),
                   value: user.school!.name,
                 ),
               ],
@@ -139,7 +157,7 @@ class ProfileTab extends StatelessWidget {
                 const Divider(height: 1),
                 _InfoRow(
                   icon: Icons.work_outline_rounded,
-                  label: 'Jawatan',
+                  label: _profileCopy(context, 'Jawatan'),
                   value: user.position!,
                 ),
               ],
@@ -147,7 +165,7 @@ class ProfileTab extends StatelessWidget {
                 const Divider(height: 1),
                 _InfoRow(
                   icon: Icons.phone_outlined,
-                  label: 'Telefon',
+                  label: _profileCopy(context, 'Telefon'),
                   value: user.phone!,
                 ),
               ],
@@ -156,7 +174,7 @@ class ProfileTab extends StatelessWidget {
                 const Divider(height: 1),
                 _InfoRow(
                   icon: Icons.groups_outlined,
-                  label: 'Guru kelas',
+                  label: _profileCopy(context, 'Guru kelas'),
                   value: user.homeroomClass!.label,
                 ),
               ],
@@ -165,7 +183,7 @@ class ProfileTab extends StatelessWidget {
                 const Divider(height: 1),
                 _InfoRow(
                   icon: Icons.menu_book_outlined,
-                  label: 'Subjek',
+                  label: _profileCopy(context, 'Subjek'),
                   value: user.subjects
                       .map((subject) => subject.name)
                       .join(', '),
@@ -175,14 +193,14 @@ class ProfileTab extends StatelessWidget {
                 const Divider(height: 1),
                 _InfoRow(
                   icon: Icons.mail_outline_rounded,
-                  label: 'Emel',
+                  label: _profileCopy(context, 'Emel'),
                   value: user.email!,
                 ),
               ],
               const Divider(height: 1),
               _InfoRow(
                 icon: Icons.badge_outlined,
-                label: 'Peranan',
+                label: _profileCopy(context, 'Peranan'),
                 value: roleLabel,
               ),
             ],
@@ -243,13 +261,15 @@ class ProfileTab extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Paparan & bahasa',
+                Text(
+                  selectedLanguage == AppLanguage.en
+                      ? 'Display & language'
+                      : 'Paparan & bahasa',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
                 ),
                 const SizedBox(height: 16),
-                const Text(
-                  'Tema',
+                Text(
+                  selectedLanguage == AppLanguage.en ? 'Theme' : 'Tema',
                   style: TextStyle(fontWeight: FontWeight.w800),
                 ),
                 const SizedBox(height: 6),
@@ -275,8 +295,8 @@ class ProfileTab extends StatelessWidget {
                   showSelectedIcon: false,
                 ),
                 const SizedBox(height: 20),
-                const Text(
-                  'Bahasa',
+                Text(
+                  selectedLanguage == AppLanguage.en ? 'Language' : 'Bahasa',
                   style: TextStyle(fontWeight: FontWeight.w800),
                 ),
                 const SizedBox(height: 6),
@@ -406,8 +426,8 @@ class _StudentLearningSummary extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Kemajuan pembelajaran',
+        Text(
+          context.copy(bm: 'Kemajuan pembelajaran', en: 'Learning progress'),
           style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w800,
@@ -455,8 +475,8 @@ class _StudentLearningSummary extends StatelessWidget {
           },
         ),
         const SizedBox(height: 20),
-        const Text(
-          'Lencana saya',
+        Text(
+          context.copy(bm: 'Lencana saya', en: 'My badges'),
           style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w800,

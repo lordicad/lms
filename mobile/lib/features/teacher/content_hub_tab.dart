@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/teacher/teacher_models.dart';
 import '../../core/teacher/teacher_repository.dart';
+import '../../core/settings/app_settings.dart';
 import '../../core/theme/lms_theme.dart';
 import '../../core/widgets/app_feedback.dart';
 import '../../core/widgets/loading_skeleton.dart';
@@ -78,11 +79,23 @@ class _ContentHubTabState extends State<ContentHubTab> {
                     borderRadius: BorderRadius.circular(13),
                   ),
                   child: SegmentedButton<int>(
-                    segments: const [
-                      ButtonSegment(value: 0, label: Text('Video')),
-                      ButtonSegment(value: 1, label: Text('Bahan')),
-                      ButtonSegment(value: 2, label: Text('Kuiz')),
-                      ButtonSegment(value: 3, label: Text('Bab')),
+                    segments: [
+                      ButtonSegment(
+                        value: 0,
+                        label: Text(context.copy(bm: 'Video', en: 'Videos')),
+                      ),
+                      ButtonSegment(
+                        value: 1,
+                        label: Text(context.copy(bm: 'Bahan', en: 'Materials')),
+                      ),
+                      ButtonSegment(
+                        value: 2,
+                        label: Text(context.copy(bm: 'Kuiz', en: 'Quizzes')),
+                      ),
+                      ButtonSegment(
+                        value: 3,
+                        label: Text(context.copy(bm: 'Bab', en: 'Chapters')),
+                      ),
                     ],
                     selected: {_segment},
                     onSelectionChanged: (s) => _select(s.first),
@@ -119,7 +132,7 @@ class _ContentHubTabState extends State<ContentHubTab> {
                   border: Border.all(color: LmsPalette.border(context)),
                 ),
                 child: IconButton(
-                  tooltip: 'Muat semula',
+                  tooltip: context.copy(bm: 'Muat semula', en: 'Refresh'),
                   onPressed: _segment == 3 ? null : _reloadCurrent,
                   icon: const Icon(Icons.refresh_rounded),
                 ),
@@ -358,7 +371,9 @@ class _StatusChip extends StatelessWidget {
         borderRadius: BorderRadius.circular(999),
       ),
       child: Text(
-        published ? 'Diterbitkan' : 'Draf',
+        published
+            ? context.copy(bm: 'Diterbitkan', en: 'Published')
+            : context.copy(bm: 'Draf', en: 'Draft'),
         style: TextStyle(
           fontSize: 10.5,
           fontWeight: FontWeight.w800,
@@ -394,17 +409,23 @@ class _VideosList extends StatelessWidget {
         if (snap.hasError) {
           return StateMessage(
             icon: Icons.wifi_off_outlined,
-            title: 'Tidak dapat memuatkan',
+            title: context.copy(
+              bm: 'Tidak dapat memuatkan',
+              en: 'Unable to load',
+            ),
             subtitle: '${snap.error}',
             onRetry: onReload,
           );
         }
         final items = snap.data!;
         if (items.isEmpty) {
-          return const StateMessage(
+          return StateMessage(
             icon: Icons.video_library_outlined,
-            title: 'Belum ada video',
-            subtitle: 'Video yang anda tambah akan disenaraikan di sini.',
+            title: context.copy(bm: 'Belum ada video', en: 'No videos yet'),
+            subtitle: context.copy(
+              bm: 'Video yang anda tambah akan disenaraikan di sini.',
+              en: 'Videos you add will be listed here.',
+            ),
           );
         }
         return ListView.separated(
@@ -419,7 +440,7 @@ class _VideosList extends StatelessWidget {
               subtitle: [
                 if (v.subjectName != null) v.subjectName!,
                 if (v.chapterLabel != null) v.chapterLabel!,
-                '${v.views} tontonan',
+                context.copy(bm: '${v.views} tontonan', en: '${v.views} views'),
                 v.ownershipLabel,
               ].join(' · '),
               published: v.published,
@@ -457,17 +478,23 @@ class _MaterialsList extends StatelessWidget {
         if (snap.hasError) {
           return StateMessage(
             icon: Icons.wifi_off_outlined,
-            title: 'Tidak dapat memuatkan',
+            title: context.copy(
+              bm: 'Tidak dapat memuatkan',
+              en: 'Unable to load',
+            ),
             subtitle: '${snap.error}',
             onRetry: onReload,
           );
         }
         final items = snap.data!;
         if (items.isEmpty) {
-          return const StateMessage(
+          return StateMessage(
             icon: Icons.description_outlined,
-            title: 'Belum ada bahan',
-            subtitle: 'Bahan yang anda muat naik akan disenaraikan di sini.',
+            title: context.copy(bm: 'Belum ada bahan', en: 'No materials yet'),
+            subtitle: context.copy(
+              bm: 'Bahan yang anda muat naik akan disenaraikan di sini.',
+              en: 'Materials you upload will be listed here.',
+            ),
           );
         }
         return ListView.separated(
@@ -522,17 +549,23 @@ class _QuizzesList extends StatelessWidget {
         if (snap.hasError) {
           return StateMessage(
             icon: Icons.wifi_off_outlined,
-            title: 'Tidak dapat memuatkan',
+            title: context.copy(
+              bm: 'Tidak dapat memuatkan',
+              en: 'Unable to load',
+            ),
             subtitle: '${snap.error}',
             onRetry: onReload,
           );
         }
         final items = snap.data!;
         if (items.isEmpty) {
-          return const StateMessage(
+          return StateMessage(
             icon: Icons.quiz_outlined,
-            title: 'Belum ada kuiz',
-            subtitle: 'Kuiz yang anda cipta akan disenaraikan di sini.',
+            title: context.copy(bm: 'Belum ada kuiz', en: 'No quizzes yet'),
+            subtitle: context.copy(
+              bm: 'Kuiz yang anda cipta akan disenaraikan di sini.',
+              en: 'Quizzes you create will be listed here.',
+            ),
           );
         }
         return ListView.separated(
@@ -547,8 +580,15 @@ class _QuizzesList extends StatelessWidget {
               subtitle: [
                 if (q.subjectName != null) q.subjectName!,
                 if (q.chapterLabel != null) q.chapterLabel!,
-                if (!q.isFile) '${q.questionCount} soalan',
-                '${q.attempts} percubaan',
+                if (!q.isFile)
+                  context.copy(
+                    bm: '${q.questionCount} soalan',
+                    en: '${q.questionCount} questions',
+                  ),
+                context.copy(
+                  bm: '${q.attempts} percubaan',
+                  en: '${q.attempts} attempts',
+                ),
               ].join(' · '),
               published: q.published,
               onEdit: q.isFile ? null : () => onEdit(q),

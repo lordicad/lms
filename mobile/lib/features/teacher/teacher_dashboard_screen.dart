@@ -90,7 +90,7 @@ class _TeacherDashboardScreenState extends State<TeacherDashboardScreen> {
               language: widget.language,
               onThemeModeChanged: widget.onThemeModeChanged,
               onLanguageChanged: widget.onLanguageChanged,
-              roleLabel: 'Guru',
+              roleLabel: context.copy(bm: 'Guru', en: 'Teacher'),
             ),
           ),
         ],
@@ -133,12 +133,15 @@ class _TeacherDashboardScreenState extends State<TeacherDashboardScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Kandungan saya',
+                      context.copy(bm: 'Kandungan saya', en: 'My content'),
                       style: Theme.of(context).textTheme.headlineMedium,
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      'Urus video, bahan dan kuiz anda.',
+                      context.copy(
+                        bm: 'Urus video, bahan dan kuiz anda.',
+                        en: 'Manage your videos, materials and quizzes.',
+                      ),
                       style: TextStyle(
                         fontSize: 11.5,
                         color: LmsPalette.muted(context),
@@ -334,9 +337,12 @@ class _DashboardTabState extends State<_DashboardTab> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
-                                'Portal Cikgu',
-                                style: TextStyle(
+                              Text(
+                                context.copy(
+                                  bm: 'Portal Cikgu',
+                                  en: 'Teacher portal',
+                                ),
+                                style: const TextStyle(
                                   fontSize: 11.5,
                                   fontWeight: FontWeight.w700,
                                   color: Color(0xFFC8DDC5),
@@ -378,7 +384,7 @@ class _DashboardTabState extends State<_DashboardTab> {
                                 color: LmsColors.accent,
                                 borderRadius: BorderRadius.circular(13),
                               ),
-                              child: const Row(
+                              child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Icon(
@@ -388,7 +394,7 @@ class _DashboardTabState extends State<_DashboardTab> {
                                   ),
                                   SizedBox(width: 4),
                                   Text(
-                                    'Tambah',
+                                    context.copy(bm: 'Tambah', en: 'Add'),
                                     style: TextStyle(
                                       fontSize: 12,
                                       fontWeight: FontWeight.w800,
@@ -432,25 +438,37 @@ class _DashboardTabState extends State<_DashboardTab> {
                             _StatCard(
                               icon: Icons.visibility_outlined,
                               value: '${s.views}',
-                              label: 'Tontonan video',
+                              label: context.copy(
+                                bm: 'Tontonan video',
+                                en: 'Video views',
+                              ),
                               tint: const Color(0xFFE7EFFD),
                             ),
                             _StatCard(
                               icon: Icons.favorite_border_rounded,
                               value: '${s.favourites}',
-                              label: 'Video digemari',
+                              label: context.copy(
+                                bm: 'Video digemari',
+                                en: 'Video likes',
+                              ),
                               tint: const Color(0xFFFBE4ED),
                             ),
                             _StatCard(
                               icon: Icons.file_download_outlined,
                               value: '${s.downloads}',
-                              label: 'Bahan dimuat turun',
+                              label: context.copy(
+                                bm: 'Bahan dimuat turun',
+                                en: 'Downloads',
+                              ),
                               tint: const Color(0xFFDCF2EE),
                             ),
                             _StatCard(
                               icon: Icons.quiz_outlined,
                               value: '${s.attempts}',
-                              label: 'Percubaan kuiz',
+                              label: context.copy(
+                                bm: 'Percubaan kuiz',
+                                en: 'Quiz attempts',
+                              ),
                               tint: const Color(0xFFFFF0D9),
                             ),
                           ],
@@ -460,7 +478,12 @@ class _DashboardTabState extends State<_DashboardTab> {
                       _PassFailCard(data: data.passFail),
                       if (data.leaderboards.isNotEmpty) ...[
                         const SizedBox(height: 22),
-                        const _Heading('Kandungan paling mendapat sambutan'),
+                        _Heading(
+                          context.copy(
+                            bm: 'Kandungan paling mendapat sambutan',
+                            en: 'Top-performing content',
+                          ),
+                        ),
                         const SizedBox(height: 10),
                         for (final board in data.leaderboards)
                           _DashboardLeaderboard(board: board),
@@ -472,7 +495,9 @@ class _DashboardTabState extends State<_DashboardTab> {
                             child: OutlinedButton.icon(
                               onPressed: _openTalent,
                               icon: const Icon(Icons.insights_outlined),
-                              label: const Text('Bakat'),
+                              label: Text(
+                                context.copy(bm: 'Bakat', en: 'Insights'),
+                              ),
                               style: OutlinedButton.styleFrom(
                                 minimumSize: const Size.fromHeight(48),
                                 foregroundColor: actionColor,
@@ -500,7 +525,9 @@ class _DashboardTabState extends State<_DashboardTab> {
                         ],
                       ),
                       const SizedBox(height: 22),
-                      const _Heading('Aksi pantas'),
+                      _Heading(
+                        context.copy(bm: 'Aksi pantas', en: 'Quick actions'),
+                      ),
                       const SizedBox(height: 10),
                       Row(
                         children: [
@@ -530,14 +557,24 @@ class _DashboardTabState extends State<_DashboardTab> {
                         ],
                       ),
                       const SizedBox(height: 22),
-                      const _Heading('Aktiviti terkini'),
+                      _Heading(
+                        context.copy(
+                          bm: 'Aktiviti terkini',
+                          en: 'Recent activity',
+                        ),
+                      ),
                       const SizedBox(height: 10),
                       if (data.recentAttempts.isEmpty)
-                        const StateMessage(
+                        StateMessage(
                           icon: Icons.inbox_outlined,
-                          title: 'Belum ada aktiviti',
-                          subtitle:
-                              'Percubaan kuiz murid akan dipaparkan di sini.',
+                          title: context.copy(
+                            bm: 'Belum ada aktiviti',
+                            en: 'No activity yet',
+                          ),
+                          subtitle: context.copy(
+                            bm: 'Percubaan kuiz murid akan dipaparkan di sini.',
+                            en: 'Student quiz attempts will appear here.',
+                          ),
                         )
                       else
                         ...data.recentAttempts.map(
@@ -640,12 +677,32 @@ class _DashboardLeaderboard extends StatelessWidget {
     _ => Icons.insights_outlined,
   };
 
-  String get _metric => switch (board.kind) {
-    'views' => 'tontonan',
-    'favourites' => 'suka',
-    'downloads' => 'muat turun',
-    'attempts' => 'cubaan',
+  String _metric(BuildContext context) => switch (board.kind) {
+    'views' => context.copy(bm: 'tontonan', en: 'views'),
+    'favourites' => context.copy(bm: 'suka', en: 'likes'),
+    'downloads' => context.copy(bm: 'muat turun', en: 'downloads'),
+    'attempts' => context.copy(bm: 'cubaan', en: 'attempts'),
     _ => '',
+  };
+
+  String _title(BuildContext context) => switch (board.kind) {
+    'views' => context.copy(
+      bm: 'Video paling ditonton',
+      en: 'Most viewed videos',
+    ),
+    'favourites' => context.copy(
+      bm: 'Video paling digemari',
+      en: 'Most liked videos',
+    ),
+    'downloads' => context.copy(
+      bm: 'Bahan paling dimuat turun',
+      en: 'Most downloaded materials',
+    ),
+    'attempts' => context.copy(
+      bm: 'Kuiz paling dicuba',
+      en: 'Most attempted quizzes',
+    ),
+    _ => board.title,
   };
 
   @override
@@ -675,7 +732,7 @@ class _DashboardLeaderboard extends StatelessWidget {
                 const SizedBox(width: 9),
                 Expanded(
                   child: Text(
-                    board.title,
+                    _title(context),
                     style: TextStyle(
                       fontSize: 13.5,
                       fontWeight: FontWeight.w800,
@@ -690,7 +747,7 @@ class _DashboardLeaderboard extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.fromLTRB(14, 2, 14, 15),
               child: Text(
-                'Belum ada data.',
+                context.copy(bm: 'Belum ada data.', en: 'No data yet.'),
                 style: TextStyle(
                   fontSize: 12,
                   color: LmsPalette.muted(context),
@@ -702,7 +759,7 @@ class _DashboardLeaderboard extends StatelessWidget {
               _DashboardLeaderboardItem(
                 item: board.items[index],
                 rank: index + 1,
-                metric: _metric,
+                metric: _metric(context),
               ),
         ],
       ),
@@ -818,7 +875,10 @@ class _PassFailCard extends StatelessWidget {
             SizedBox(width: 12),
             Expanded(
               child: Text(
-                'Belum ada percubaan kuiz selesai lagi.',
+                context.copy(
+                  bm: 'Belum ada percubaan kuiz selesai lagi.',
+                  en: 'No completed quiz attempts yet.',
+                ),
                 style: TextStyle(color: LmsPalette.muted(context)),
               ),
             ),
@@ -839,7 +899,7 @@ class _PassFailCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Lulus / Gagal Kuiz',
+            context.copy(bm: 'Lulus / Gagal Kuiz', en: 'Quiz pass / fail'),
             style: TextStyle(
               fontWeight: FontWeight.w800,
               color: LmsPalette.text(context),
@@ -871,18 +931,21 @@ class _PassFailCard extends StatelessWidget {
             children: [
               _PassFailLabel(
                 color: LmsColors.brand,
-                label: 'Lulus',
+                label: context.copy(bm: 'Lulus', en: 'Passed'),
                 value: '${data.passed} ($passedPercent%)',
               ),
               const SizedBox(width: 18),
               _PassFailLabel(
                 color: LmsColors.danger,
-                label: 'Gagal',
+                label: context.copy(bm: 'Gagal', en: 'Failed'),
                 value: '${data.failed} (${100 - passedPercent}%)',
               ),
               const Spacer(),
               Text(
-                '${data.total} kuiz',
+                context.copy(
+                  bm: '${data.total} kuiz',
+                  en: '${data.total} quizzes',
+                ),
                 style: TextStyle(
                   fontSize: 11.5,
                   color: LmsPalette.muted(context),

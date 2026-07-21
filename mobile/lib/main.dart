@@ -133,28 +133,31 @@ class _LmsMobileAppState extends State<LmsMobileApp> {
 
   @override
   Widget build(BuildContext context) {
-    return ToastificationWrapper(
-      child: MaterialApp(
-        title: 'LMS MOE',
-        debugShowCheckedModeBanner: false,
-        theme: buildLmsTheme(),
-        darkTheme: buildLmsDarkTheme(),
-        themeMode: _themeMode,
-        home: _initialising
-            ? _SplashScreen(onPresented: _startSessionRestore)
-            : _user == null
-            ? LoginScreen(auth: _auth, onSignedIn: _signedIn)
-            : _RoleHome(
-                user: _user!,
-                onSignOut: _signOut,
-                loadProfileOptions: _loadProfileOptions,
-                onUpdateProfile: _updateProfile,
-                onUpdateAvatar: _updateAvatar,
-                themeMode: _themeMode,
-                language: _language,
-                onThemeModeChanged: _setThemeMode,
-                onLanguageChanged: _setLanguage,
-              ),
+    return AppLanguageScope(
+      language: _language,
+      child: ToastificationWrapper(
+        child: MaterialApp(
+          title: 'LMS MOE',
+          debugShowCheckedModeBanner: false,
+          theme: buildLmsTheme(),
+          darkTheme: buildLmsDarkTheme(),
+          themeMode: _themeMode,
+          home: _initialising
+              ? _SplashScreen(onPresented: _startSessionRestore)
+              : _user == null
+              ? LoginScreen(auth: _auth, onSignedIn: _signedIn)
+              : _RoleHome(
+                  user: _user!,
+                  onSignOut: _signOut,
+                  loadProfileOptions: _loadProfileOptions,
+                  onUpdateProfile: _updateProfile,
+                  onUpdateAvatar: _updateAvatar,
+                  themeMode: _themeMode,
+                  language: _language,
+                  onThemeModeChanged: _setThemeMode,
+                  onLanguageChanged: _setLanguage,
+                ),
+        ),
       ),
     );
   }

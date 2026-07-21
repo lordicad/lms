@@ -197,6 +197,7 @@ class _StudentShellState extends State<StudentShell> {
               language: widget.language,
               onThemeModeChanged: widget.onThemeModeChanged,
               onLanguageChanged: widget.onLanguageChanged,
+              roleLabel: context.copy(bm: 'Murid', en: 'Student'),
             ),
           ),
         ),

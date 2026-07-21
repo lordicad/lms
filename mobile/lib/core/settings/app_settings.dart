@@ -8,6 +8,36 @@ extension AppLanguageLabel on AppLanguage {
   String get shortLabel => this == AppLanguage.bm ? 'BM' : 'EN';
 }
 
+/// Lightweight app-local translation scope. Content titles remain in the
+/// language supplied by the teacher, while the application chrome switches
+/// consistently between Bahasa Melayu and English.
+class AppLanguageScope extends InheritedWidget {
+  const AppLanguageScope({
+    super.key,
+    required this.language,
+    required super.child,
+  });
+
+  final AppLanguage language;
+
+  static AppLanguage of(BuildContext context) =>
+      context
+          .dependOnInheritedWidgetOfExactType<AppLanguageScope>()
+          ?.language ??
+      AppLanguage.bm;
+
+  @override
+  bool updateShouldNotify(AppLanguageScope oldWidget) =>
+      language != oldWidget.language;
+}
+
+extension AppLanguageCopy on BuildContext {
+  AppLanguage get appLanguage => AppLanguageScope.of(this);
+
+  String copy({required String bm, required String en}) =>
+      appLanguage == AppLanguage.en ? en : bm;
+}
+
 /// Keeps the two device-only display preferences outside the user account.
 /// They therefore work before sign-in and do not alter the web profile.
 class AppSettings {
