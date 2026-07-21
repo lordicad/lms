@@ -9,7 +9,7 @@
 
         {{-- Dependent Year -> Subject filter (brief §3.1). Defaults to the student's active Tahun. --}}
         <div class="mb-6">
-            <x-year-subject-filter variant="student" :all-years="false"
+            <x-year-subject-filter variant="student" :all-years="false" with-chapter
                 :action="route('simpanan.index')" :grades="$grades" :subjects="$subjects" :filter="$filter" />
         </div>
 
