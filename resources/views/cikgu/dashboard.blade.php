@@ -72,4 +72,62 @@
             @endforelse
         </div>
     </div>
+
+    {{-- Talent signals: pass/fail + content leaderboards (same as the Bakat page). --}}
+    <div class="tp-card" style="padding:22px;margin-top:22px">
+        <h2 class="tp-g" style="font-size:16px;font-weight:800;color:var(--tp-ink);margin-bottom:14px">📝 {{ __('Lulus / Gagal Kuiz') }}</h2>
+
+        @if ($passFail['total'] === 0)
+            <p style="text-align:center;color:var(--tp-muted);padding:30px 0;font-weight:700">{{ __('Belum ada percubaan kuiz selesai lagi.') }}</p>
+        @else
+            <div style="display:flex;flex-wrap:wrap;gap:28px;align-items:center">
+                <div style="flex:0 1 300px;min-width:240px">
+                    <x-chart :config="$passFailConfig" :height="240" :title="__('Lulus lawan gagal')" :table="false"
+                        :rows="[['label' => __('Lulus'), 'value' => $passFail['passed']], ['label' => __('Gagal'), 'value' => $passFail['failed']]]" />
+                </div>
+                <div style="display:flex;flex-direction:column;gap:14px;flex:1;min-width:200px">
+                    <div style="display:flex;align-items:center;gap:12px">
+                        <span style="width:14px;height:14px;border-radius:4px;background:#0F7A68;flex-shrink:0"></span>
+                        <span class="tp-g" style="font-weight:800;font-size:15px;color:var(--tp-ink)">{{ __('Lulus') }}</span>
+                        <span class="tp-g" style="margin-left:auto;font-weight:800;color:#0F7A68">{{ number_format($passFail['passed']) }} <span style="color:var(--tp-muted);font-weight:700">({{ round($passFail['passed'] / max(1, $passFail['total']) * 100) }}%)</span></span>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:12px">
+                        <span style="width:14px;height:14px;border-radius:4px;background:#C24936;flex-shrink:0"></span>
+                        <span class="tp-g" style="font-weight:800;font-size:15px;color:var(--tp-ink)">{{ __('Gagal') }}</span>
+                        <span class="tp-g" style="margin-left:auto;font-weight:800;color:#C24936">{{ number_format($passFail['failed']) }} <span style="color:var(--tp-muted);font-weight:700">({{ round($passFail['failed'] / max(1, $passFail['total']) * 100) }}%)</span></span>
+                    </div>
+                    <div style="border-top:1px solid var(--tp-line);padding-top:12px;display:flex;align-items:center;gap:12px">
+                        <span class="tp-g" style="font-weight:800;font-size:15px;color:var(--tp-ink)">{{ __('Jumlah percubaan selesai') }}</span>
+                        <span class="tp-g" style="margin-left:auto;font-weight:800;color:var(--tp-ink)">{{ number_format($passFail['total']) }}</span>
+                    </div>
+                </div>
+            </div>
+        @endif
+    </div>
+
+    {{-- Content leaderboards --}}
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;align-items:start;margin-top:20px">
+        @foreach ($lists as $list)
+            <div class="tp-card" style="overflow:hidden">
+                <div style="padding:18px 22px;border-bottom:1px solid var(--tp-line);display:flex;flex-direction:column;gap:2px">
+                    <h2 class="tp-g" style="font-size:16px;font-weight:800;color:var(--tp-ink)">{{ $list['icon'] }} {{ $list['title'] }}</h2>
+                    <span style="font-size:12.5px;color:var(--tp-muted)">{{ $list['sub'] }}</span>
+                </div>
+
+                @forelse ($list['items'] as $i => $item)
+                    <div style="display:flex;align-items:center;gap:14px;padding:13px 22px;border-bottom:1px solid var(--tp-line)">
+                        <span style="font-size:14px;width:22px;text-align:center;flex-shrink:0">{{ ['🥇', '🥈', '🥉'][$i] ?? $i + 1 }}</span>
+                        <span style="width:36px;height:36px;border-radius:10px;background:rgb({{ $item['subject']->rgb }} / .14);display:grid;place-items:center;font-size:14px;flex-shrink:0">{{ $item['subject']->icon ?? '🎬' }}</span>
+                        <div style="display:flex;flex-direction:column;gap:1px;min-width:0;flex:1">
+                            <span class="tp-g" style="font-weight:800;font-size:14px;color:var(--tp-ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $item['title'] }}</span>
+                            <span style="font-size:12px;color:var(--tp-muted)">{{ $item['detail'] }}</span>
+                        </div>
+                        <span class="tp-g" style="font-weight:800;font-size:14.5px;color:var(--tp-ink);flex-shrink:0">{{ $item['value'] }}</span>
+                    </div>
+                @empty
+                    <div style="padding:22px;text-align:center;color:var(--tp-muted);font-size:13.5px">{{ __('Belum ada data.') }}</div>
+                @endforelse
+            </div>
+        @endforeach
+    </div>
 </x-cikgu-layout>

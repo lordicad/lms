@@ -158,8 +158,8 @@ Route::middleware(['auth', 'role:teacher'])
 
         Route::get('ranking', TeacherRankingController::class)->name('ranking');
 
-        // The teacher's own talent signal (four sub-scores + headline + per-lesson breakdown).
-        Route::get('bakat', TalentController::class)->name('bakat');
+        // The talent signals now live on the Home dashboard; keep the name so old links redirect there.
+        Route::get('bakat', fn () => redirect()->route('cikgu.dashboard'))->name('bakat');
     });
 
 /*
