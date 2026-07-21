@@ -66,7 +66,7 @@
                                 <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2);text-align:center">{{ $lesson->created_at->translatedFormat('j M Y') }}</span>
                                 <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2);text-align:center">{{ number_format($lesson->favourites_count) }}</span>
                                 {{-- justify-self, not text-align: a button sizes to its label rather than the column. --}}
-                                <button type="button" class="tp-linkbtn" style="justify-self:center"
+                                <button type="button" class="tp-linkbtn" style="justify-self:center;white-space:nowrap"
                                         @click="open(@js([
                                             'title' => $lesson->title,
                                             'kindLabel' => $lesson->isYoutube() ? 'YouTube' : __('Video'),

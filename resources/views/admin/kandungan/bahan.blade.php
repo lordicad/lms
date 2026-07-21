@@ -1,5 +1,7 @@
 @php
-    $cols = 'grid-template-columns:minmax(0,2fr) 1.3fr .8fr .8fr 1.2fr 1fr 1.4fr;gap:12px;align-items:center';
+    // The last column carries two buttons side by side ("View" and "Download"), so it needs more
+    // room than the single-button Action column on the Video and Quiz tabs.
+    $cols = 'grid-template-columns:minmax(0,2fr) 1.3fr .8fr .8fr 1.2fr 1fr 2fr;gap:12px;align-items:center';
     $stats = [
         ['icon' => '📁', 'label' => __('Jumlah bahan'), 'value' => $totalCount],
         ['icon' => '📕', 'label' => 'PDF',              'value' => $pdfCount],
@@ -64,7 +66,9 @@
                                 <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2);text-align:center">{{ number_format($material->download_count) }}</span>
                                 <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2);text-align:center">📄 {{ strtoupper($material->extension()) }} <span style="font-size:11.5px;color:var(--tp-muted)">{{ $material->humanSize() }}</span></span>
                                 <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2);text-align:center">{{ $material->created_at->translatedFormat('j M Y') }}</span>
-                                <div style="display:flex;justify-content:center;gap:4px">
+                                {{-- nowrap keeps each label on one line: without it the icon and its
+                                     word stack vertically as soon as the column tightens. --}}
+                                <div style="display:flex;justify-content:center;gap:8px;white-space:nowrap">
                                     <button type="button" class="tp-linkbtn"
                                             @click="open(@js([
                                                 'title' => $material->title,

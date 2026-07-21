@@ -70,7 +70,7 @@
                                 <span style="text-align:center;font-size:13px;font-weight:800;color:{{ $hasAttempts ? '#0F7A68' : '#8B8AA3' }}">{{ $hasAttempts ? number_format($quiz->pass_count) : '—' }}</span>
                                 <span style="text-align:center;font-size:13px;font-weight:800;color:{{ $hasAttempts ? '#C24936' : '#8B8AA3' }}">{{ $hasAttempts ? number_format($quiz->attempts_count - $quiz->pass_count) : '—' }}</span>
                                 <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2);text-align:center">{{ $quiz->created_at->translatedFormat('j M Y') }}</span>
-                                <button type="button" class="tp-linkbtn" style="justify-self:center"
+                                <button type="button" class="tp-linkbtn" style="justify-self:center;white-space:nowrap"
                                         @click="open(@js([
                                             'title' => $quiz->title,
                                             'subtitle' => collect([$quiz->teacher?->name, $quiz->chapter->subject->displayName(), $quiz->chapter->grade->name])->filter()->implode(' · '),
