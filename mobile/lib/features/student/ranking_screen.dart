@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../core/content/content_models.dart';
 import '../../core/content/content_repository.dart';
 import '../../core/theme/lms_theme.dart';
+import '../../core/widgets/loading_skeleton.dart';
 import 'widgets/content_widgets.dart';
 
 /// Student leaderboard for their Tahun. Top 10 with medals for the top three, and the
@@ -37,7 +38,7 @@ class _RankingScreenState extends State<RankingScreen> {
         future: _future,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+            return const ContentListSkeleton(count: 8);
           }
           if (snapshot.hasError) {
             return StateMessage(

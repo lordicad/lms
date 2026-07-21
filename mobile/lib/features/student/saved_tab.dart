@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/content/content_models.dart';
 import '../../core/content/content_repository.dart';
+import '../../core/widgets/loading_skeleton.dart';
 import 'watch_screen.dart';
 import 'widgets/content_widgets.dart';
 
@@ -48,7 +49,7 @@ class _SavedTabState extends State<SavedTab> {
       future: _future,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
+          return const ContentListSkeleton(count: 3);
         }
         if (snapshot.hasError) {
           return StateMessage(

@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../../core/auth/auth_user.dart';
 import '../../core/content/content_repository.dart';
 import '../../core/platform/native_file_picker.dart';
+import '../../core/widgets/role_tutorial.dart';
 import '../../shared/widgets/app_header.dart';
 import 'dashboard_tab.dart';
 import 'offline_tab.dart';
@@ -44,6 +47,9 @@ class _StudentShellState extends State<StudentShell> {
   void initState() {
     super.initState();
     _activeGrade = widget.user.grade?.level;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      unawaited(RoleTutorial.showForNewUser(context, widget.user));
+    });
   }
 
   @override

@@ -4,6 +4,7 @@ import '../../core/teacher/teacher_models.dart';
 import '../../core/teacher/teacher_repository.dart';
 import '../../core/theme/lms_theme.dart';
 import '../../core/widgets/app_feedback.dart';
+import '../../core/widgets/loading_skeleton.dart';
 import '../student/widgets/content_widgets.dart';
 import 'chapters_manage_tab.dart';
 import 'material_form_screen.dart';
@@ -384,7 +385,7 @@ class _VideosList extends StatelessWidget {
       future: future,
       builder: (context, snap) {
         if (snap.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
+          return const ContentListSkeleton(count: 4);
         }
         if (snap.hasError) {
           return StateMessage(
@@ -447,7 +448,7 @@ class _MaterialsList extends StatelessWidget {
       future: future,
       builder: (context, snap) {
         if (snap.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
+          return const ContentListSkeleton(count: 4);
         }
         if (snap.hasError) {
           return StateMessage(
@@ -512,7 +513,7 @@ class _QuizzesList extends StatelessWidget {
       future: future,
       builder: (context, snap) {
         if (snap.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
+          return const ContentListSkeleton(count: 4);
         }
         if (snap.hasError) {
           return StateMessage(

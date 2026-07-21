@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../core/content/content_models.dart';
 import '../../core/content/content_repository.dart';
 import '../../core/theme/lms_theme.dart';
+import '../../core/widgets/loading_skeleton.dart';
 import 'quiz_intro_screen.dart';
 import 'widgets/content_widgets.dart';
 
@@ -62,7 +63,7 @@ class _QuizzesTabState extends State<QuizzesTab> {
       future: _future,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
+          return const ContentListSkeleton(count: 3);
         }
         if (snapshot.hasError) {
           return StateMessage(

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../core/content/content_models.dart';
 import '../../core/content/content_repository.dart';
 import '../../core/theme/lms_theme.dart';
+import '../../core/widgets/loading_skeleton.dart';
 import 'widgets/content_widgets.dart';
 
 /// Flutter equivalent of the web Simpanan Offline page. Downloads are delegated to
@@ -63,7 +64,7 @@ class _OfflineTabState extends State<OfflineTab> {
       future: _future,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
+          return const ContentListSkeleton(count: 4);
         }
         if (snapshot.hasError) {
           return StateMessage(

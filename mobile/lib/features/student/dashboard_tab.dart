@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../core/content/content_models.dart';
 import '../../core/content/content_repository.dart';
 import '../../core/theme/lms_theme.dart';
+import '../../core/widgets/loading_skeleton.dart';
 import 'subject_chapters_screen.dart';
 import 'watch_screen.dart';
 import 'widgets/content_widgets.dart';
@@ -92,7 +93,7 @@ class _DashboardTabState extends State<DashboardTab> {
       future: _future,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
+          return const StudentDashboardSkeleton();
         }
         if (snapshot.hasError) {
           return StateMessage(
@@ -186,7 +187,8 @@ class _DashboardTabState extends State<DashboardTab> {
               ],
               if (data.subjects.isNotEmpty) ...[
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  // Keeps the section baseline aligned with the WeLearn logo.
+                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
                   child: SectionTitle(
                     'Subjek ${data.grade!.name}',
                     trailing: GestureDetector(

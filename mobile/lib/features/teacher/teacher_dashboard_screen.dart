@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../../core/auth/auth_user.dart';
@@ -6,6 +8,8 @@ import '../../core/teacher/teacher_repository.dart';
 import '../../core/platform/native_file_picker.dart';
 import '../../core/theme/lms_theme.dart';
 import '../../core/widgets/lms_logo.dart';
+import '../../core/widgets/loading_skeleton.dart';
+import '../../core/widgets/role_tutorial.dart';
 import '../student/profile_tab.dart';
 import '../student/widgets/content_widgets.dart';
 import 'content_hub_tab.dart';
@@ -43,6 +47,14 @@ class _TeacherDashboardScreenState extends State<TeacherDashboardScreen> {
   final TeacherRepository _repository = TeacherRepository();
   int _index = 0;
   int _contentVersion = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      unawaited(RoleTutorial.showForNewUser(context, widget.user));
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -238,7 +250,7 @@ class _DashboardTabState extends State<_DashboardTab> {
       future: _future,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
+          return const TeacherDashboardSkeleton();
         }
         if (snapshot.hasError) {
           return SafeArea(
