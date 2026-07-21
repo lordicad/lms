@@ -11,7 +11,7 @@
         .pg-err { margin:0;font-size:12.5px;font-weight:700;color:#C24936; }
     </style>
 
-    <div class="pg-form" style="max-width:640px"
+    <div class="pg-form" style="max-width:640px;margin-left:auto;margin-right:auto;width:100%"
          x-data="{
              role: '{{ old('role', $user->role ?: 'teacher') }}',
              schoolId: '{{ old('school_id', $user->school_id) }}',
