@@ -23,7 +23,6 @@
     $subjectData = $subjects->map(fn ($subject) => [
         'id' => $subject->id,
         'name' => $subject->displayName(),
-        'icon' => $subject->icon,
         'levels' => array_values($availability[$subject->id] ?? []),
     ])->values();
 
@@ -63,7 +62,7 @@
         <select id="subject_id" name="subject_id" class="tp-select" x-model.number="subject" @change="onSubjectChange()" required>
             <option value="">{{ __('Pilih subjek') }}</option>
             <template x-for="option in availableSubjects" :key="option.id">
-                <option :value="option.id" x-text="`${option.icon} ${option.name}`"></option>
+                <option :value="option.id" x-text="option.name"></option>
             </template>
         </select>
     </div>
