@@ -42,8 +42,12 @@
 
                     <div style="display:flex;flex-direction:column;gap:6px;min-width:0;flex:1">
                         <a href="{{ route('video.show', $lesson) }}" class="tp-g" style="font-weight:800;font-size:15.5px;color:var(--tp-ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $lesson->title }}</a>
+                        {{-- Subject on its own line, with the rest of the detail beneath it: the
+                             coloured chip is what the eye picks out when scanning the list. --}}
                         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
                             <span class="tp-tag" style="background:rgb({{ $subject->rgb }} / .14);color:rgb({{ $subject->rgb }})">{{ $subject->name }}</span>
+                        </div>
+                        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
                             <span class="tp-meta">{{ $lesson->chapter->grade->name }}</span>
                             <span class="tp-meta">Bab {{ $lesson->chapter->number }}</span>
                             <span class="tp-tag-neutral">{{ $lesson->isYoutube() ? 'YouTube' : __('Muat naik') }}</span>
