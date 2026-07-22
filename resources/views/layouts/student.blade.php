@@ -160,8 +160,10 @@
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
             </a>
 
-            <button title="{{ __('Notifikasi') }}" class="wl-icbtn"
-                    style="width:48px;height:48px;border-radius:50%;border:1px solid var(--wl-line-2);background:var(--wl-surface);cursor:pointer;font-size:17px">🔔</button>
+            {{-- Nothing creates a notification for a student yet, so the panel opens on its empty
+                 state. Was an emoji on a button that did nothing when clicked. --}}
+            <x-notif-bell trigger-class="wl-icbtn"
+                          trigger-style="width:48px;height:48px;border-radius:50%;border:1px solid var(--wl-line-2);background:var(--wl-surface);cursor:pointer;display:grid;place-items:center;color:#4A5A52" />
         </div>
 
         <x-flash />

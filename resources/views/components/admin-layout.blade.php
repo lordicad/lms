@@ -140,7 +140,6 @@
         }
         .tp-iconbtn:hover { background:var(--tp-chip); }
         .tp-iconbtn svg { width:19px; height:19px; }
-        .tp-dot { position:absolute; top:9px; right:10px; width:8px; height:8px; border-radius:50%; background:#EB5E5A; border:2px solid #fff; }
 
         /* Cards */
         .tp-card { background:var(--tp-surface); border:1px solid var(--tp-line); border-radius:18px; box-shadow:var(--tp-shadow); }
@@ -271,10 +270,10 @@
                 <x-icon :name="$isDark ? 'sun' : 'moon'" class="h-[19px] w-[19px]" />
             </a>
 
-            <button type="button" class="tp-iconbtn" title="{{ __('Notifikasi') }}">
-                <x-icon name="bell" class="h-[19px] w-[19px]" />
-                <span class="tp-dot"></span>
-            </button>
+            {{-- Nothing creates a notification for an admin yet, so the panel opens on its empty
+                 state. The red dot that used to sit here was hard-coded on: it reported unread
+                 items that could not exist. --}}
+            <x-notif-bell />
         </div>
 
         <x-flash />
