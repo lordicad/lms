@@ -11,6 +11,7 @@ use App\Models\Subject;
 use App\Models\User;
 use App\Services\TalentService;
 use App\Support\ContentFilter;
+use App\Support\SchoolScope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -49,9 +50,9 @@ class AdminTalentController extends Controller
             // Guru
             'teachers' => $teachers,
             'subjectsByTeacher' => $this->subjectsByTeacher($teachers->pluck('id')->all()),
-            'totalTeachers' => User::where('role', User::ROLE_TEACHER)->count(),
-            'activeCount' => User::where('role', User::ROLE_TEACHER)->where('is_active', true)->count(),
-            'inactiveCount' => User::where('role', User::ROLE_TEACHER)->where('is_active', false)->count(),
+            'totalTeachers' => SchoolScope::users(User::where('role', User::ROLE_TEACHER))->count(),
+            'activeCount' => SchoolScope::users(User::where('role', User::ROLE_TEACHER))->where('is_active', true)->count(),
+            'inactiveCount' => SchoolScope::users(User::where('role', User::ROLE_TEACHER))->where('is_active', false)->count(),
             'subjectSlug' => $subjectSlug,
             'gradeLevel' => $gradeLevel,
 
@@ -62,8 +63,8 @@ class AdminTalentController extends Controller
 
             // Kandungan terbaik (library-wide: it answers "what is working best", not
             // "what is working best in Tahun 3", so it deliberately ignores both filters)
-            'topVideo' => Lesson::published()->with('chapter.subject')->orderByDesc('views_count')->first(),
-            'topMaterial' => Material::with('chapter.subject')->orderByDesc('download_count')->first(),
+            'topVideo' => SchoolScope::content(Lesson::published())->with('chapter.subject')->orderByDesc('views_count')->first(),
+            'topMaterial' => SchoolScope::content(Material::query())->with('chapter.subject')->orderByDesc('download_count')->first(),
             'topQuiz' => $this->topQuiz(),
 
             'subjects' => Subject::orderBy('sort_order')->get(),
@@ -77,6 +78,9 @@ class AdminTalentController extends Controller
     public function toggleStatus(Request $request, User $teacher): RedirectResponse
     {
         abort_unless($teacher->isTeacher(), 404);
+
+        // A teacher at another school is not this admin's to see or change.
+        abort_unless(SchoolScope::allows($teacher->school_id), 404);
 
         $teacher->update(['is_active' => ! $teacher->is_active]);
 
@@ -125,7 +129,7 @@ class AdminTalentController extends Controller
                 fn (Builder $g) => $g->where('level', $gradeLevel),
             ));
 
-        return User::where('role', User::ROLE_TEACHER)
+        return SchoolScope::users(User::where('role', User::ROLE_TEACHER))
             ->when($subjectSlug || $gradeLevel, fn (Builder $q) => $q->where(
                 fn (Builder $sub) => $sub
                     ->whereHas('lessons', $scope)
@@ -198,7 +202,7 @@ class AdminTalentController extends Controller
 
         $published = fn (Builder $query): Builder => $scope($query->where('is_published', true));
 
-        $rows = User::where('role', User::ROLE_TEACHER)
+        $rows = SchoolScope::users(User::where('role', User::ROLE_TEACHER))
             ->withCount([
                 'lessons as published_videos' => $published,
                 'materials as published_materials' => $scope,
@@ -226,7 +230,7 @@ class AdminTalentController extends Controller
 
     private function topQuiz(): ?Quiz
     {
-        return Quiz::with('chapter.subject')
+        return SchoolScope::content(Quiz::query())->with('chapter.subject')
             ->withCount([
                 'attempts as attempt_total' => fn (Builder $q) => $q->completed(),
                 'attempts as pass_total' => fn (Builder $q) => $q->completed()->passed(),
@@ -241,6 +245,9 @@ class AdminTalentController extends Controller
     public function show(User $teacher, TalentService $talent): View
     {
         abort_unless($teacher->isTeacher(), 404);
+
+        // A teacher at another school is not this admin's to see or change.
+        abort_unless(SchoolScope::allows($teacher->school_id), 404);
 
         return view('admin.bakat-show', [
             'result' => $talent->forTeacher($teacher),

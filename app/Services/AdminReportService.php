@@ -8,6 +8,7 @@ use App\Models\Material;
 use App\Models\Quiz;
 use App\Models\QuizAttempt;
 use App\Models\User;
+use App\Support\SchoolScope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -37,15 +38,15 @@ class AdminReportService
         $since = Carbon::now()->subDays(7);
 
         return [
-            'students' => User::where('role', User::ROLE_STUDENT)->count(),
-            'teachers' => User::where('role', User::ROLE_TEACHER)->count(),
-            'videos' => Lesson::count(),
-            'quizzes' => Quiz::count(),
+            'students' => SchoolScope::users(User::where('role', User::ROLE_STUDENT))->count(),
+            'teachers' => SchoolScope::users(User::where('role', User::ROLE_TEACHER))->count(),
+            'videos' => SchoolScope::content(Lesson::query())->count(),
+            'quizzes' => SchoolScope::content(Quiz::query())->count(),
 
-            'students_new' => User::where('role', User::ROLE_STUDENT)->where('created_at', '>=', $since)->count(),
-            'teachers_new' => User::where('role', User::ROLE_TEACHER)->where('created_at', '>=', $since)->count(),
-            'videos_new' => Lesson::where('created_at', '>=', $since)->count(),
-            'quizzes_new' => Quiz::where('created_at', '>=', $since)->count(),
+            'students_new' => SchoolScope::users(User::where('role', User::ROLE_STUDENT))->where('created_at', '>=', $since)->count(),
+            'teachers_new' => SchoolScope::users(User::where('role', User::ROLE_TEACHER))->where('created_at', '>=', $since)->count(),
+            'videos_new' => SchoolScope::content(Lesson::query())->where('created_at', '>=', $since)->count(),
+            'quizzes_new' => SchoolScope::content(Quiz::query())->where('created_at', '>=', $since)->count(),
         ];
     }
 
@@ -58,7 +59,7 @@ class AdminReportService
      */
     public function contributors(): Collection
     {
-        return User::where('role', User::ROLE_TEACHER)
+        return SchoolScope::users(User::where('role', User::ROLE_TEACHER))
             ->withCount(['lessons', 'materials', 'quizzes'])
             ->with('school:id,name')
             ->get()
@@ -88,13 +89,13 @@ class AdminReportService
      */
     public function topContent(): array
     {
-        $video = Lesson::with('teacher:id,name')
+        $video = SchoolScope::content(Lesson::query())->with('teacher:id,name')
             ->orderByDesc('views_count')->orderBy('id')->first();
 
-        $material = Material::with('teacher:id,name')
+        $material = SchoolScope::content(Material::query())->with('teacher:id,name')
             ->orderByDesc('download_count')->orderBy('id')->first();
 
-        $quiz = Quiz::with('teacher:id,name')
+        $quiz = SchoolScope::content(Quiz::query())->with('teacher:id,name')
             ->withCount(['completedAttempts as completed_count'])
             ->orderByDesc('completed_count')->orderBy('id')->first();
 
@@ -125,12 +126,12 @@ class AdminReportService
         $start = Carbon::parse($keys[0]);   // first bucket (a date, or the first of a month)
 
         $views = $this->bucketed(LessonView::query(), 'created_at', $keys, $monthly, $start);
-        $completed = $this->bucketed(QuizAttempt::query()->completed(), 'completed_at', $keys, $monthly, $start);
-        $passed = $this->bucketed(QuizAttempt::query()->completed()->passed(), 'completed_at', $keys, $monthly, $start);
+        $completed = $this->bucketed(SchoolScope::content(QuizAttempt::query(), 'quiz.teacher')->completed(), 'completed_at', $keys, $monthly, $start);
+        $passed = $this->bucketed(SchoolScope::content(QuizAttempt::query(), 'quiz.teacher')->completed()->passed(), 'completed_at', $keys, $monthly, $start);
 
-        $lessons = $this->bucketed(Lesson::query(), 'created_at', $keys, $monthly, $start);
-        $materials = $this->bucketed(Material::query(), 'created_at', $keys, $monthly, $start);
-        $quizzes = $this->bucketed(Quiz::query(), 'created_at', $keys, $monthly, $start);
+        $lessons = $this->bucketed(SchoolScope::content(Lesson::query()), 'created_at', $keys, $monthly, $start);
+        $materials = $this->bucketed(SchoolScope::content(Material::query()), 'created_at', $keys, $monthly, $start);
+        $quizzes = $this->bucketed(SchoolScope::content(Quiz::query()), 'created_at', $keys, $monthly, $start);
         $uploads = array_map(fn ($i) => $lessons[$i] + $materials[$i] + $quizzes[$i], array_keys($keys));
 
         return [
@@ -202,7 +203,7 @@ class AdminReportService
      */
     public function recentRegistrationsQuery(): Builder
     {
-        return User::whereIn('role', [User::ROLE_STUDENT, User::ROLE_TEACHER])
+        return SchoolScope::users(User::whereIn('role', [User::ROLE_STUDENT, User::ROLE_TEACHER]))
             ->where('created_at', '>=', Carbon::now()->subDays(7))
             ->with('grade')
             ->latest('created_at');
@@ -220,9 +221,9 @@ class AdminReportService
      */
     public function pending(): array
     {
-        $inactiveTeachers = User::where('role', User::ROLE_TEACHER)->where('is_active', false)->count();
-        $draftVideos = Lesson::where('is_published', false)->count();
-        $silentTeachers = User::where('role', User::ROLE_TEACHER)
+        $inactiveTeachers = SchoolScope::users(User::where('role', User::ROLE_TEACHER))->where('is_active', false)->count();
+        $draftVideos = SchoolScope::content(Lesson::query())->where('is_published', false)->count();
+        $silentTeachers = SchoolScope::users(User::where('role', User::ROLE_TEACHER))
             ->whereDoesntHave('lessons')
             ->whereDoesntHave('materials')
             ->whereDoesntHave('quizzes')

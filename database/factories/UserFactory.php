@@ -34,6 +34,11 @@ class UserFactory extends Factory
             'password_changed_at' => now(),
             'role' => User::ROLE_STUDENT,
             'grade_id' => null,
+            // Everyone lands in one shared school unless a test says otherwise, because admin pages
+            // are scoped to a school: without this an admin and the accounts under test would sit in
+            // different schools and every list would come back empty. Tests that are actually about
+            // isolation pass school_id explicitly, so they still put people in different schools.
+            'school_id' => fn () => School::query()->value('id') ?? School::factory()->create()->id,
             'remember_token' => Str::random(10),
         ];
     }

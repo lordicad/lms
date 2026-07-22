@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Lesson;
 use App\Models\User;
+use App\Support\SchoolScope;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -30,7 +31,9 @@ class TalentService
     /** Every teacher, scored and normalised, sorted by headline desc. Powers the admin dashboard. */
     public function cohort(): Collection
     {
-        $raws = User::where('role', User::ROLE_TEACHER)
+        // Scoped to the signed-in admin's school, so the export carries their own cohort and each
+        // teacher is normalised against their peers rather than against every school at once.
+        $raws = SchoolScope::users(User::where('role', User::ROLE_TEACHER))
             ->orderBy('id')
             ->get()
             ->map(fn (User $teacher) => $this->rawFor($teacher));

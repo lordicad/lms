@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Grade;
 use App\Models\Subject;
 use App\Models\User;
+use App\Support\SchoolScope;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -28,7 +29,7 @@ class AdminStudentController extends Controller
 
         return view('admin.murid', [
             // Counts are deliberately unfiltered — they describe the school, not the table.
-            'totalStudents' => User::where('role', User::ROLE_STUDENT)->count(),
+            'totalStudents' => SchoolScope::users(User::where('role', User::ROLE_STUDENT))->count(),
             'countsByGrade' => $this->countsByGrade(),
 
             'students' => $this->students($gradeLevel),
@@ -48,7 +49,7 @@ class AdminStudentController extends Controller
      */
     private function countsByGrade(): Collection
     {
-        return User::query()
+        return SchoolScope::users(User::query())
             ->where('users.role', User::ROLE_STUDENT)
             ->join('grades', 'grades.id', '=', 'users.grade_id')
             ->groupBy('grades.level')
@@ -62,7 +63,7 @@ class AdminStudentController extends Controller
      */
     private function students(?int $gradeLevel): LengthAwarePaginator
     {
-        return User::where('role', User::ROLE_STUDENT)
+        return SchoolScope::users(User::where('role', User::ROLE_STUDENT))
             ->with('grade')
             ->when($gradeLevel, fn (Builder $q) => $q->whereHas(
                 'grade',
@@ -102,7 +103,7 @@ class AdminStudentController extends Controller
                 ));
             };
 
-            $students = User::where('role', User::ROLE_STUDENT)
+            $students = SchoolScope::users(User::where('role', User::ROLE_STUDENT))
                 ->where('grade_id', $grade->id)
                 ->withCount([
                     'lessonViews as videos' => $through('lesson'),

@@ -16,6 +16,18 @@ class DashboardTest extends TestCase
 {
     use RefreshDatabase;
 
+    /**
+     * The report service reads its figures for the signed-in admin's school, so these need an admin
+     * present even when calling it directly — otherwise the scope has no school and returns nothing.
+     * The factory puts everyone in the same school, so the teachers below are this admin's own.
+     */
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->actingAs(User::factory()->admin()->create());
+    }
+
     public function test_contributor_ranking_uses_the_formula_and_deterministic_tie_breaks(): void
     {
         $chapter = Chapter::factory()->create();

@@ -10,6 +10,7 @@ use App\Models\Quiz;
 use App\Models\QuizAttempt;
 use App\Models\Subject;
 use App\Support\ContentFilter;
+use App\Support\SchoolScope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -25,7 +26,7 @@ class AdminContentController extends Controller
         $filter = ContentFilter::fromRequest($request);
         // Rebuilt per call: the summary counts each need their own query, and reusing one
         // builder would stack their wheres on top of each other.
-        $filtered = fn (): Builder => $filter->apply(Lesson::query());
+        $filtered = fn (): Builder => $filter->apply(SchoolScope::content(Lesson::query()));
 
         $lessons = $filtered()
             ->with('chapter.subject', 'chapter.grade', 'teacher')
@@ -48,7 +49,7 @@ class AdminContentController extends Controller
     public function material(Request $request): View
     {
         $filter = ContentFilter::fromRequest($request);
-        $filtered = fn (): Builder => $filter->apply(Material::query());
+        $filtered = fn (): Builder => $filter->apply(SchoolScope::content(Material::query()));
 
         $materials = $filtered()
             ->with('chapter.subject', 'chapter.grade', 'teacher')
@@ -76,7 +77,7 @@ class AdminContentController extends Controller
     public function quiz(Request $request): View
     {
         $filter = ContentFilter::fromRequest($request);
-        $filtered = fn (): Builder => $filter->apply(Quiz::query());
+        $filtered = fn (): Builder => $filter->apply(SchoolScope::content(Quiz::query()));
 
         $quizzes = $filtered()
             ->with([
@@ -100,7 +101,7 @@ class AdminContentController extends Controller
         // included: this reports usage, not standings.
         $attempts = fn (): Builder => QuizAttempt::query()
             ->completed()
-            ->whereHas('quiz', fn (Builder $q) => $filter->apply($q));
+            ->whereHas('quiz', fn (Builder $q) => $filter->apply(SchoolScope::content($q)));
 
         $totalAttempts = $attempts()->count();
         $passCount = $attempts()->passed()->count();

@@ -9,6 +9,7 @@ use App\Models\School;
 use App\Models\SchoolClass;
 use App\Models\Subject;
 use App\Models\User;
+use App\Support\SchoolScope;
 use App\Support\TemporaryPassword;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -40,7 +41,7 @@ class AdminUserController extends Controller
         $status = in_array($request->query('status'), ['active', 'inactive'], true) ? $request->query('status') : null;
         $search = trim((string) $request->query('q', ''));
 
-        $users = User::query()
+        $users = SchoolScope::users(User::query())
             ->whereIn('role', self::MANAGED_ROLES)
             ->with('grade')
             ->when($role, fn ($q) => $q->where('role', $role))
@@ -60,9 +61,9 @@ class AdminUserController extends Controller
             'status' => $status,
             'search' => $search,
             'counts' => [
-                'teacher' => User::where('role', User::ROLE_TEACHER)->count(),
-                'student' => User::where('role', User::ROLE_STUDENT)->count(),
-                'inactive' => User::whereIn('role', self::MANAGED_ROLES)->where('is_active', false)->count(),
+                'teacher' => SchoolScope::users(User::where('role', User::ROLE_TEACHER))->count(),
+                'student' => SchoolScope::users(User::where('role', User::ROLE_STUDENT))->count(),
+                'inactive' => SchoolScope::users(User::whereIn('role', self::MANAGED_ROLES))->where('is_active', false)->count(),
             ],
         ]);
     }
@@ -185,11 +186,17 @@ class AdminUserController extends Controller
      */
     private function formLists(): array
     {
+        // Only the admin's own school and its classes are offered. The save forces the school
+        // regardless, so this keeps the form honest about the one choice actually available.
+        $schoolId = SchoolScope::currentSchoolId();
+
         return [
             'grades' => Grade::orderBy('level')->get(),
-            'schools' => School::orderBy('name')->get(),
+            'schools' => School::when($schoolId, fn ($q) => $q->where('id', $schoolId))->orderBy('name')->get(),
             'subjects' => Subject::orderBy('sort_order')->get(),
-            'allClasses' => SchoolClass::active()->with('grade')->orderBy('grade_id')->orderBy('name')
+            'allClasses' => SchoolClass::active()->with('grade')
+                ->when($schoolId, fn ($q) => $q->where('school_id', $schoolId))
+                ->orderBy('grade_id')->orderBy('name')
                 ->get()
                 ->map(fn (SchoolClass $c) => [
                     'id' => $c->id,
@@ -262,6 +269,10 @@ class AdminUserController extends Controller
     private function ensureManaged(User $user): void
     {
         abort_unless(in_array($user->role, self::MANAGED_ROLES, true), 404);
+
+        // An admin oversees one school, so a record from another one does not exist as far as they
+        // are concerned. 404 rather than 403: it does not confirm the account is there at all.
+        abort_unless(SchoolScope::allows($user->school_id), 404);
     }
 
     /**
@@ -365,7 +376,8 @@ class AdminUserController extends Controller
         $user->email = $isTeacher ? $data['email'] : ($data['email'] ?? null);
         $user->grade_id = $isTeacher ? null : Grade::where('level', $data['grade_level'])->value('id');
         $user->is_active = (bool) ($data['is_active'] ?? false);
-        $user->school_id = $data['school_id'] ?? null;
+        // Forced, not taken from the form: an admin creates accounts for their own school only.
+        $user->school_id = SchoolScope::currentSchoolId() ?? ($data['school_id'] ?? null);
 
         if ($isTeacher) {
             $user->phone = $data['phone'] ?? null;
