@@ -258,6 +258,14 @@ class TeacherApi {
     );
   }
 
+  Future<YoutubeChannelsData> youtubeChannels(String token) async {
+    final json = await _get(token, '/teacher/youtube/channels');
+    return YoutubeChannelsData.fromJson(json);
+  }
+
+  Future<void> disconnectYoutube(String token, int id) =>
+      _delete(token, '/teacher/youtube/$id');
+
   Future<Map<String, dynamic>> _get(String token, String path) async {
     final response = await _http.get(
       Uri.parse('$baseUrl$path'),

@@ -4,6 +4,7 @@ import '../../core/teacher/teacher_models.dart';
 import '../../core/teacher/teacher_repository.dart';
 import '../../core/theme/lms_theme.dart';
 import '../student/widgets/content_widgets.dart';
+import 'youtube_connect_screen.dart';
 
 /// Read-only engagement overview for a teacher's own content.
 class TeacherTalentScreen extends StatefulWidget {
@@ -29,7 +30,24 @@ class _TeacherTalentScreenState extends State<TeacherTalentScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Bakat Kandungan')),
+      appBar: AppBar(
+        title: const Text('Bakat Kandungan'),
+        actions: [
+          IconButton(
+            tooltip: 'Sambung YouTube',
+            icon: const Icon(Icons.smart_display_outlined),
+            onPressed: () async {
+              await Navigator.of(context).push<void>(
+                MaterialPageRoute(
+                  builder: (_) => YoutubeConnectScreen(repository: widget.repository),
+                ),
+              );
+              // Attribution may have changed, so the signal is refetched.
+              _reload();
+            },
+          ),
+        ],
+      ),
       body: FutureBuilder<TeacherTalentData>(
         future: _future,
         builder: (context, snapshot) {

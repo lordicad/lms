@@ -17,6 +17,7 @@ use App\Http\Controllers\Api\Teacher\QuizController as TeacherQuizController;
 use App\Http\Controllers\Api\Teacher\RankingController as TeacherRankingController;
 use App\Http\Controllers\Api\Teacher\TalentController as TeacherTalentController;
 use App\Http\Controllers\Api\Teacher\VideoController as TeacherVideoController;
+use App\Http\Controllers\Api\Teacher\YoutubeController as TeacherYoutubeController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -81,6 +82,11 @@ Route::middleware('auth:sanctum')->prefix('teacher')->group(function () {
     Route::get('notifications', [TeacherNotificationController::class, 'index']);
     Route::post('notifications/read', [TeacherNotificationController::class, 'markRead']);
     Route::get('talent', TeacherTalentController::class);
+
+    // Connecting runs through the web OAuth flow (see YoutubeController); mobile only
+    // lists and disconnects.
+    Route::get('youtube/channels', [TeacherYoutubeController::class, 'index']);
+    Route::delete('youtube/{channel}', [TeacherYoutubeController::class, 'destroy']);
     Route::get('ranking', TeacherRankingController::class);
 
     Route::get('content/videos', [TeacherContentController::class, 'videos']);

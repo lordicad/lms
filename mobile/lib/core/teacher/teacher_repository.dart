@@ -203,4 +203,10 @@ class TeacherRepository {
 
   Future<TeacherQuizStats> quizStats(int id) async =>
       _api.quizStats(await _token(), id);
+
+  Future<YoutubeChannelsData> youtubeChannels() async =>
+      _api.youtubeChannels(await _token());
+
+  Future<void> disconnectYoutube(int id) async =>
+      _api.disconnectYoutube(await _token(), id);
 }

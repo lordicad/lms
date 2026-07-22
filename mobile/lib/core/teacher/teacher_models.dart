@@ -776,3 +776,50 @@ class ChaptersData {
     chapters: _mapList(j['chapters'], TeacherChapter.fromJson),
   );
 }
+
+// --- YouTube channel ownership ---
+
+class YoutubeChannelItem {
+  const YoutubeChannelItem({
+    required this.id,
+    required this.channelId,
+    required this.title,
+    required this.thumbnailUrl,
+    required this.verifiedAt,
+  });
+
+  final int id;
+  final String channelId;
+  final String title;
+  final String? thumbnailUrl;
+  final String? verifiedAt;
+
+  factory YoutubeChannelItem.fromJson(Map<String, dynamic> j) => YoutubeChannelItem(
+    id: _int(j['id']),
+    channelId: _str(j['channel_id']),
+    title: _str(j['title']),
+    thumbnailUrl: _strOrNull(j['thumbnail_url']),
+    verifiedAt: _strOrNull(j['verified_at']),
+  );
+}
+
+class YoutubeChannelsData {
+  const YoutubeChannelsData({
+    required this.configured,
+    required this.connectUrl,
+    required this.channels,
+  });
+
+  final bool configured;
+
+  /// The web OAuth entry point; the app opens it in a browser so the existing web flow
+  /// performs the consent, channel read, storage and re-attribution.
+  final String connectUrl;
+  final List<YoutubeChannelItem> channels;
+
+  factory YoutubeChannelsData.fromJson(Map<String, dynamic> j) => YoutubeChannelsData(
+    configured: _bool(j['configured']),
+    connectUrl: _str(j['connect_url']),
+    channels: _mapList(j['channels'], YoutubeChannelItem.fromJson),
+  );
+}
