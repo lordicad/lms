@@ -319,7 +319,11 @@ class AdminUserController extends Controller
             'position' => ['nullable', 'string', 'max:100'],
             'subjects' => ['nullable', 'array'],
             'subjects.*' => ['integer', Rule::exists('subjects', 'id')],
+            // Required for students: a student without a class also has no homeroom teacher, and
+            // nothing else in the app can give them one — the profiles cannot set it and the only
+            // other filler is ProfileBackfillSeeder.
             'school_class_id' => [
+                Rule::requiredIf(! $isTeacher),
                 'nullable', 'integer',
                 function (string $attr, mixed $value, \Closure $fail) use ($request, $isTeacher) {
                     $class = SchoolClass::find($value);
@@ -328,7 +332,12 @@ class AdminUserController extends Controller
 
                         return;
                     }
-                    if ((int) $class->school_id !== (int) $request->input('school_id')) {
+                    // The school the account will actually get: a school-scoped admin's own school
+                    // overrides whatever the form posted (see fill()). Validating against the
+                    // posted value instead would reject a class that is in their school.
+                    $schoolId = SchoolScope::currentSchoolId() ?? $request->input('school_id');
+
+                    if ((int) $class->school_id !== (int) $schoolId) {
                         $fail(__('Kelas ini bukan di sekolah yang dipilih.'));
 
                         return;
@@ -361,6 +370,7 @@ class AdminUserController extends Controller
             'email.required' => __('Emel diperlukan — ia digunakan untuk log masuk.'),
             'email.unique' => __('Emel ini sudah didaftarkan.'),
             'grade_level.required' => __('Sila pilih Tahun untuk murid.'),
+            'school_class_id.required' => __('Sila pilih kelas untuk murid. Pilih sekolah dan tahun dahulu jika senarai kosong.'),
             'password.required' => __('Sila tetapkan kata laluan.'),
             'guardian_email.required' => __('Sila isi e-mel penjaga — butiran log masuk murid dihantar ke alamat ini.'),
         ]);

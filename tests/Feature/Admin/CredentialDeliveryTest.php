@@ -4,6 +4,7 @@ namespace Tests\Feature\Admin;
 
 use App\Mail\AccountCredentialsMail;
 use App\Models\Grade;
+use App\Models\SchoolClass;
 use App\Models\User;
 use App\Support\TemporaryPassword;
 use App\Support\WhatsAppLink;
@@ -28,6 +29,22 @@ class CredentialDeliveryTest extends TestCase
         return User::factory()->admin()->create();
     }
 
+    /**
+     * A class in the admin's own school: a student account cannot be created without one.
+     *
+     * @return array{0: Grade, 1: SchoolClass}
+     */
+    private function gradeAndClass(User $admin, int $level = 3): array
+    {
+        $grade = Grade::firstWhere('level', $level) ?? Grade::factory()->level($level)->create();
+        $class = SchoolClass::factory()->create([
+            'school_id' => $admin->school_id,
+            'grade_id' => $grade->id,
+        ]);
+
+        return [$grade, $class];
+    }
+
     public function test_a_new_teacher_is_emailed_their_own_sign_in_details(): void
     {
         $this->actingAs($this->admin())->post(route('admin.pengguna.store'), [
@@ -49,10 +66,12 @@ class CredentialDeliveryTest extends TestCase
 
     public function test_a_new_students_details_go_to_the_guardian_email(): void
     {
-        $grade = Grade::factory()->level(3)->create();
+        $admin = $this->admin();
+        [$grade, $class] = $this->gradeAndClass($admin);
 
-        $response = $this->actingAs($this->admin())->post(route('admin.pengguna.store'), [
+        $response = $this->actingAs($admin)->post(route('admin.pengguna.store'), [
             'role' => User::ROLE_STUDENT,
+            'school_class_id' => $class->id,
             'name' => 'Nur Aisyah',
             'username' => 'aisyah',
             'email' => 'aisyah@moe.gov.my',
@@ -97,15 +116,18 @@ class CredentialDeliveryTest extends TestCase
 
     public function test_a_reset_on_a_student_emails_the_guardian_again(): void
     {
-        $grade = Grade::factory()->level(3)->create();
+        $admin = $this->admin();
+        [$grade, $class] = $this->gradeAndClass($admin);
         $student = User::factory()->student($grade->level)->create([
             'email' => 'murid@moe.gov.my',
             'guardian_name' => 'Puan Salmah',
             'guardian_email' => 'salmah@example.com',
+            'school_id' => $admin->school_id,
         ]);
 
-        $this->actingAs($this->admin())->put(route('admin.pengguna.update', $student), [
+        $this->actingAs($admin)->put(route('admin.pengguna.update', $student), [
             'role' => User::ROLE_STUDENT,
+            'school_class_id' => $class->id,
             'name' => $student->name,
             'username' => $student->username,
             'email' => $student->email,
@@ -296,10 +318,12 @@ class CredentialDeliveryTest extends TestCase
 
     public function test_a_student_signs_in_with_their_email_too(): void
     {
-        $grade = Grade::factory()->level(3)->create();
+        $admin = $this->admin();
+        [$grade, $class] = $this->gradeAndClass($admin);
 
-        $this->actingAs($this->admin())->post(route('admin.pengguna.store'), [
+        $this->actingAs($admin)->post(route('admin.pengguna.store'), [
             'role' => User::ROLE_STUDENT,
+            'school_class_id' => $class->id,
             'name' => 'Nur Aisyah',
             'username' => 'Aisyah',
             'email' => 'aisyah@moe.gov.my',

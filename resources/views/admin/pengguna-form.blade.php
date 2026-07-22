@@ -129,13 +129,18 @@
             <template x-if="role === 'student'">
                 <div style="display:flex;flex-direction:column;gap:16px">
                     <div class="tp-field">
-                        <label for="school_class_id" class="tp-label">{{ __('Kelas') }}</label>
-                        <select id="school_class_id" name="school_class_id" class="tp-filter-select" style="width:100%" x-model="schoolClass" x-bind:disabled="! schoolId || ! gradeLevel">
-                            <option value="">{{ __('Tiada / Belum ditetapkan') }}</option>
+                        <label for="school_class_id" class="tp-label">{{ __('Kelas') }} <span aria-hidden="true" style="color:#C24936">*</span></label>
+                        <select id="school_class_id" name="school_class_id" class="tp-filter-select" style="width:100%" x-model="schoolClass" x-bind:disabled="! schoolId || ! gradeLevel" required>
+                            <option value="">{{ __('Sila pilih kelas') }}</option>
                             <template x-for="c in availableClasses" :key="c.id">
                                 <option :value="c.id" x-text="c.label"></option>
                             </template>
                         </select>
+                        {{-- A student with no class has no homeroom teacher either, and nothing in
+                             the app can give them one afterwards, so the two cases where the list
+                             cannot help are called out rather than left as an empty dropdown. --}}
+                        <p class="tp-hint" x-show="! schoolId || ! gradeLevel" x-cloak>{{ __('Pilih sekolah dan tahun dahulu.') }}</p>
+                        <p class="tp-hint" x-show="schoolId && gradeLevel && availableClasses.length === 0" x-cloak style="color:#C24936">{{ __('Tiada kelas untuk sekolah dan tahun ini. Cipta kelas itu dahulu.') }}</p>
                         @error('school_class_id')<p class="pg-err">{{ $message }}</p>@enderror
                     </div>
                     <div class="tp-field">
