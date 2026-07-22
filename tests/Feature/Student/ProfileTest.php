@@ -56,6 +56,21 @@ class ProfileTest extends TestCase
             ->assertSee(__('Belum ditetapkan'));
     }
 
+    /** The stat tiles use the shared icon set, not emoji, which render differently per platform. */
+    public function test_the_stat_cards_use_icons_rather_than_emoji(): void
+    {
+        $html = $this->actingAs($this->student())->get(route('profile.edit'))->getContent();
+
+        // The badge rosettes below still carry their own emoji, and one of them is 🎬 — so this
+        // checks the three the stat cards do not share with anything else on the page.
+        foreach (['⭐', '📝', '🏆'] as $emoji) {
+            $this->assertStringNotContainsString($emoji, $html, "the stat cards still render {$emoji}");
+        }
+
+        $this->assertStringContainsString(__('Jumlah mata'), $html);
+        $this->assertGreaterThanOrEqual(4, substr_count($html, '<svg'), 'the stat icons are missing');
+    }
+
     public function test_a_student_can_change_their_username(): void
     {
         $student = $this->student();

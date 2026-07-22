@@ -32,22 +32,22 @@
             {{-- Stats --}}
             <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px">
                 <div style="background:#DCF2EE;border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:4px">
-                    <span style="font-size:20px">⭐</span>
+                    <x-icon name="star" class="h-6 w-6" style="color:#0F7A68" />
                     <span style="font-family:'Geist',sans-serif;font-size:22px;font-weight:800;color:#0F7A68">{{ number_format($stats['points']) }}</span>
                     <span style="font-size:12.5px;font-weight:700;color:#0F7A68">{{ __('Jumlah mata') }}</span>
                 </div>
                 <div style="background:#FEF0CE;border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:4px">
-                    <span style="font-size:20px">📝</span>
+                    <x-icon name="quiz" class="h-6 w-6" style="color:#8A6A12" />
                     <span style="font-family:'Geist',sans-serif;font-size:22px;font-weight:800;color:#8A6A12">{{ $stats['quizzes'] }}</span>
                     <span style="font-size:12.5px;font-weight:700;color:#8A6A12">{{ __('Kuiz selesai') }}</span>
                 </div>
                 <div style="background:#E4EEF9;border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:4px">
-                    <span style="font-size:20px">🎬</span>
+                    <x-icon name="video" class="h-6 w-6" style="color:#2E6CA8" />
                     <span style="font-family:'Geist',sans-serif;font-size:22px;font-weight:800;color:#2E6CA8">{{ $stats['videos'] }}</span>
                     <span style="font-size:12.5px;font-weight:700;color:#2E6CA8">{{ __('Video ditonton') }}</span>
                 </div>
                 <div style="background:#FBE4ED;border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:4px">
-                    <span style="font-size:20px">🏆</span>
+                    <x-icon name="trophy" class="h-6 w-6" style="color:#B84A75" />
                     <span style="font-family:'Geist',sans-serif;font-size:22px;font-weight:800;color:#B84A75">{{ $stats['rank'] ? '#'.$stats['rank'] : '—' }}</span>
                     <span style="font-size:12.5px;font-weight:700;color:#B84A75">Ranking</span>
                 </div>

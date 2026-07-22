@@ -135,7 +135,7 @@
         <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
             <form method="GET" action="{{ route('cari.index') }}" role="search"
                   style="display:flex;align-items:center;gap:10px;background:var(--wl-surface);border:1px solid var(--wl-line-2);border-radius:999px;padding:0 18px;min-height:48px;flex:0 1 380px;min-width:220px;margin-right:auto">
-                <span style="color:var(--wl-muted);font-size:15px">🔍</span>
+                <x-icon name="search" class="h-[18px] w-[18px]" style="color:var(--wl-muted);flex-shrink:0" />
                 <input type="search" name="q" value="{{ request('q') }}" placeholder="{{ __('Cari video...') }}" aria-label="{{ __('Cari video') }}"
                        style="border:none;background:transparent;font-family:'Nunito',sans-serif;font-size:14.5px;color:var(--wl-body);width:100%;min-height:44px">
             </form>
