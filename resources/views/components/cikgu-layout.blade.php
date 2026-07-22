@@ -122,7 +122,7 @@
         .tp-logout:hover { background:#FDE7E0; }
 
         /* Main + header */
-        .tp-main { padding:28px 40px 48px; display:flex; flex-direction:column; gap:24px; min-width:0; max-width:1240px; width:100%; margin:0 auto; }
+        .tp-main { padding:28px 40px 48px; display:flex; flex-direction:column; gap:24px; min-width:0; max-width:clamp(1240px, 78vw, 1440px); width:100%; margin:0 auto; }
         .tp-head { display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
         .tp-h1  { font-family:'Geist',sans-serif; font-size:24px; font-weight:800; letter-spacing:-.01em; color:var(--tp-ink); }
         .tp-hsub{ font-size:14px; color:var(--tp-muted); }
