@@ -338,8 +338,9 @@ class TeacherApi {
       final errors = map['errors'];
       if (errors is Map && errors.values.isNotEmpty) {
         final first = errors.values.first;
-        if (first is List && first.isNotEmpty)
+        if (first is List && first.isNotEmpty) {
           throw ApiException(first.first.toString());
+        }
       }
       throw ApiException((map['message'] as String?) ?? 'Tindakan gagal.');
     }

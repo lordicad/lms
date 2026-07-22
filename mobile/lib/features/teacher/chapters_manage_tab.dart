@@ -116,10 +116,11 @@ class _ChaptersManageTabState extends State<ChaptersManageTab> {
       }
       _reloadChapters();
     } catch (e) {
-      if (mounted)
+      if (mounted) {
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text('$e')));
+      }
     }
   }
 
@@ -148,10 +149,11 @@ class _ChaptersManageTabState extends State<ChaptersManageTab> {
       await widget.repository.deleteChapter(chapter.id);
       _reloadChapters();
     } catch (e) {
-      if (mounted)
+      if (mounted) {
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text('$e')));
+      }
     }
   }
 
@@ -167,8 +169,9 @@ class _ChaptersManageTabState extends State<ChaptersManageTab> {
     }
 
     final options = _options;
-    if (options == null)
+    if (options == null) {
       return const Center(child: CircularProgressIndicator());
+    }
 
     return Column(
       children: [

@@ -104,7 +104,7 @@ class ContentApi {
   }) async {
     await _post(token, '/student/lessons/$lessonId/progress', {
       'position_seconds': positionSeconds,
-      if (durationSeconds != null) 'duration_seconds': durationSeconds,
+      'duration_seconds': ?durationSeconds,
     });
   }
 

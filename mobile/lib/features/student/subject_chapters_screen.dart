@@ -176,8 +176,9 @@ class _ChapterCard extends StatelessWidget {
 
   String _summary(ChapterListItem c) {
     final parts = <String>[];
-    if (c.lessonsCount > 0)
+    if (c.lessonsCount > 0) {
       parts.add('${c.watchedCount}/${c.lessonsCount} video');
+    }
     if (c.materialsCount > 0) parts.add('${c.materialsCount} bahan');
     if (c.quizzesCount > 0) parts.add('${c.quizzesCount} kuiz');
     return parts.isEmpty ? 'Belum ada kandungan' : parts.join(' · ');

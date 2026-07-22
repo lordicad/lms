@@ -18,7 +18,7 @@ class SectionTitle extends StatelessWidget {
         Expanded(
           child: Text(text, style: Theme.of(context).textTheme.titleLarge),
         ),
-        if (trailing != null) trailing!,
+        ?trailing,
       ],
     );
   }
@@ -284,10 +284,12 @@ IconData subjectIcon(SubjectCard subject) {
   if (has('islam') || has('agama')) return Icons.mosque_rounded;
   if (has('sejarah')) return Icons.history_edu_rounded;
   if (has('seni') || has('lukis')) return Icons.palette_rounded;
-  if (has('jasmani') || has('kesihatan') || has('pj'))
+  if (has('jasmani') || has('kesihatan') || has('pj')) {
     return Icons.fitness_center_rounded;
-  if (has('reka bentuk') || has('teknologi') || has('rbt'))
+  }
+  if (has('reka bentuk') || has('teknologi') || has('rbt')) {
     return Icons.build_rounded;
+  }
   if (has('muzik')) return Icons.music_note_rounded;
   if (has('moral')) return Icons.volunteer_activism_rounded;
   return Icons.menu_book_rounded; // Bahasa Melayu and default
