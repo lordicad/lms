@@ -338,6 +338,7 @@ class ProfileTab extends StatelessWidget {
   }
 
   Future<void> _confirmSignOut(BuildContext context) async {
+    final navigator = Navigator.of(context);
     final go = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -359,7 +360,14 @@ class ProfileTab extends StatelessWidget {
         ],
       ),
     );
-    if (go == true) await onSignOut();
+    if (go != true || !context.mounted) return;
+
+    if (navigator.canPop()) {
+      navigator.pop();
+      await Future<void>.delayed(Duration.zero);
+    }
+
+    await onSignOut();
   }
 
   Future<void> _openEditProfile(BuildContext context) async {
