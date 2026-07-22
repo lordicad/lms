@@ -161,7 +161,7 @@
                     <div>
                         <span style="{{ $labelStyle }}">{{ __('Guru kelas') }}</span>
                         <span style="{{ $lockedStyle }}">{{ $homeroomTeacher?->name ?: __('Belum ditetapkan') }}</span>
-                        <p style="{{ $noteStyle }}">{{ __('Ditentukan oleh kelas yang dipilih.') }}</p>
+                        <p style="{{ $noteStyle }}">{{ __('Ditentukan oleh kelas anda.') }}</p>
                     </div>
 
                     <div>
