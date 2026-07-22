@@ -117,6 +117,9 @@
             @endforelse
         </tbody>
     </table>
+    @if ($registrationsTotal > $registrationsShown)
+        <p class="muted">{{ __('Menunjukkan :shown daripada :total pendaftaran. Senarai penuh ada di halaman Pengguna.', ['shown' => $registrationsShown, 'total' => number_format($registrationsTotal)]) }}</p>
+    @endif
 
     {{-- Pending oversight --}}
     <h2>{{ __('Tindakan Menunggu') }}</h2>

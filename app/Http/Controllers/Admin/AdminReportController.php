@@ -15,6 +15,9 @@ use Illuminate\Support\Carbon;
  */
 class AdminReportController extends Controller
 {
+    /** Most recent registrations listed by name; the rest are covered by the total beneath. */
+    private const MAX_REGISTRATION_ROWS = 25;
+
     public function pdf(Request $request, AdminReportService $report): Response
     {
         $data = $this->reportData($request, $report);
@@ -42,7 +45,13 @@ class AdminReportController extends Controller
             'contributors' => $report->contributors()->take(3),
             'topContent' => $report->topContent(),
             'activity' => $report->platformActivity($period),
-            'registrations' => $report->recentRegistrationsQuery()->get(),
+            // Capped, because it is the one unbounded section: a school that onboarded its whole
+            // roll in a week put every account in this table, and rendering hundreds of rows took
+            // the PDF over PHP's memory limit. A report wants the recent ones and a total, not a
+            // register — the full list is on the Users page.
+            'registrations' => $report->recentRegistrationsQuery()->limit(self::MAX_REGISTRATION_ROWS)->get(),
+            'registrationsTotal' => $report->recentRegistrationsQuery()->count(),
+            'registrationsShown' => self::MAX_REGISTRATION_ROWS,
             'pending' => $report->pending(),
         ];
     }
