@@ -6,7 +6,8 @@
 ])
 
 {{--
-    Subject -> Tahun -> Bab, three dependent dropdowns.
+    Tahun -> Subject -> Bab, three dependent dropdowns, in the same order as the filters on the
+    listing pages so the two never read differently.
 
     Subject and Tahun filter each other using the Kurikulum 2027 availability map embedded below
     (@js, no extra endpoint): picking Sains leaves only Tahun 5–6 selectable, and vice versa. The
@@ -46,23 +47,23 @@
      style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px">
 
     <div class="tp-field">
-        <label for="subject_id" class="tp-label">{{ __('Subjek') }}</label>
-
-        <select id="subject_id" name="subject_id" class="tp-select" x-model.number="subject" @change="onSubjectChange()" required>
-            <option value="">{{ __('Pilih subjek') }}</option>
-            <template x-for="option in availableSubjects" :key="option.id">
-                <option :value="option.id" x-text="`${option.icon} ${option.name}`"></option>
-            </template>
-        </select>
-    </div>
-
-    <div class="tp-field">
         <label for="grade_id" class="tp-label">{{ __('Tahun') }}</label>
 
         <select id="grade_id" name="grade_id" class="tp-select" x-model.number="grade" @change="onGradeChange()" required>
             <option value="">{{ __('Pilih tahun') }}</option>
             <template x-for="option in availableGrades" :key="option.id">
                 <option :value="option.id" x-text="option.name"></option>
+            </template>
+        </select>
+    </div>
+
+    <div class="tp-field">
+        <label for="subject_id" class="tp-label">{{ __('Subjek') }}</label>
+
+        <select id="subject_id" name="subject_id" class="tp-select" x-model.number="subject" @change="onSubjectChange()" required>
+            <option value="">{{ __('Pilih subjek') }}</option>
+            <template x-for="option in availableSubjects" :key="option.id">
+                <option :value="option.id" x-text="`${option.icon} ${option.name}`"></option>
             </template>
         </select>
     </div>
