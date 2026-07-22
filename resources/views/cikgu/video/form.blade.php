@@ -257,9 +257,9 @@
 
     @push('scripts')
         <script>
-            function videoForm({ source, maxMb, hasVideo, fallbackUrl, labels }) {
+            function videoForm({ source, maxMb, maxAttachmentMb, maxAttachments, allowedExtensions, hasVideo, fallbackUrl, labels }) {
                 return {
-                    source, maxMb, hasVideo, fallbackUrl, labels,
+                    source, maxMb, maxAttachmentMb, maxAttachments, allowedExtensions, hasVideo, fallbackUrl, labels,
                     uploading: false, progress: 0, sizeError: '', failed: '',
                     // autoThumb marks the thumbnail input as holding a frame we captured, so a
                     // teacher's own picture is never overwritten but ours can be replaced.

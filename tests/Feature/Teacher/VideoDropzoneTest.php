@@ -46,6 +46,39 @@ class VideoDropzoneTest extends TestCase
         $this->assertStringContainsString('x-ref="video"', $html);
     }
 
+    /**
+     * Every value handed to videoForm() must actually be destructured by it.
+     *
+     * The component takes a fixed list of keys, so adding one to the payload without adding it to
+     * the signature leaves it undefined at runtime — and the failure is silent. That is exactly how
+     * dropping a PDF stopped working: allowedExtensions never arrived, so isAllowedAttachment()
+     * called .includes() on undefined and the file went nowhere.
+     *
+     * PHPUnit cannot run the JavaScript, but it can check that the two lists agree.
+     */
+    public function test_every_value_passed_to_the_component_is_read_by_it(): void
+    {
+        $html = $this->form();
+
+        // @js() renders as JSON.parse('...') with the quotes escaped as \u0022, so the inner
+        // string is decoded once to get back the JSON text and again to get the payload.
+        $this->assertSame(1, preg_match("/videoForm\\(JSON\\.parse\\('(.*?)'\\)\\)/s", $html, $call));
+
+        $payload = json_decode(json_decode('"'.$call[1].'"'), true);
+        $this->assertIsArray($payload, 'the x-data payload did not decode');
+
+        $this->assertSame(1, preg_match('/function videoForm\(\{([^}]*)\}\)/', $html, $signature));
+        $destructured = array_map('trim', explode(',', $signature[1]));
+
+        foreach (array_keys($payload) as $key) {
+            $this->assertContains(
+                $key,
+                $destructured,
+                "videoForm() is given \"{$key}\" but never destructures it, so it is undefined at runtime",
+            );
+        }
+    }
+
     /** Hidden, but present, named and still accepting the same formats. */
     public function test_the_real_file_input_survives(): void
     {
