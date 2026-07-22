@@ -24,10 +24,11 @@ class DashboardOrderTest extends TestCase
         $passFail = strpos($html, 'Lulus / Gagal Kuiz');
 
         $this->assertNotFalse($leaderboards, 'the leaderboards should render');
-        $this->assertLessThan($passFail, $leaderboards, 'leaderboards should precede the pass/fail chart');
-        // Pass/fail sits directly after them, ahead of the summary and the recent lists.
-        $this->assertLessThan($summary, $passFail, 'pass/fail should precede the summary cards');
+
+        // The whole running order, pinned: leaderboards, pass/fail, recent lists, summary cards.
+        $this->assertLessThan($passFail, $leaderboards, 'leaderboards should come first');
         $this->assertLessThan($recentVideos, $passFail, 'pass/fail should precede the recent lists');
+        $this->assertLessThan($summary, $recentVideos, 'the recent lists should precede the summary cards');
 
         // All four are still present, in their usual order among themselves.
         foreach (['Video Paling Ditonton', 'Video Paling Digemari', 'Bahan Paling Dimuat Turun', 'Kuiz Paling Dicuba'] as $title) {

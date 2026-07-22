@@ -66,19 +66,6 @@
         @endif
     </div>
 
-    {{-- Engagement summary (same figures as the Talent page). --}}
-    <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px">
-        @foreach ($summary as $s)
-            <div class="tp-stat">
-                <div style="display:flex;align-items:center;gap:10px">
-                    <span class="tp-stat-ico" style="background:{{ $s['tint'] }}">{{ $s['icon'] }}</span>
-                    <span class="tp-stat-label">{{ $s['label'] }}</span>
-                </div>
-                <span class="tp-stat-value">{{ $s['value'] }}</span>
-            </div>
-        @endforeach
-    </div>
-
     <div style="display:flex;flex-direction:column;gap:20px;min-width:0">
         {{-- Recent videos --}}
         <div class="tp-card" style="overflow:hidden">
@@ -132,6 +119,19 @@
                 <div style="padding:28px 22px;text-align:center;color:var(--tp-muted);font-size:14px">{{ __('Belum ada kuiz. Cipta kuiz pertama anda.') }}</div>
             @endforelse
         </div>
+    </div>
+
+    {{-- Engagement summary (same figures as the Talent page). --}}
+    <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px">
+        @foreach ($summary as $s)
+            <div class="tp-stat">
+                <div style="display:flex;align-items:center;gap:10px">
+                    <span class="tp-stat-ico" style="background:{{ $s['tint'] }}">{{ $s['icon'] }}</span>
+                    <span class="tp-stat-label">{{ $s['label'] }}</span>
+                </div>
+                <span class="tp-stat-value">{{ $s['value'] }}</span>
+            </div>
+        @endforeach
     </div>
 
 
