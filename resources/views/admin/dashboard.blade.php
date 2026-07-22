@@ -331,9 +331,9 @@
                     <template x-for="s in segs" :key="s.key">
                         <div class="dash-leg" :style="'background:' + (hover === s.i ? s.tint : 'transparent')"
                              @mouseenter="hover = s.i" @mouseleave="hover = null">
-                            <span style="width:11px;height:11px;border-radius:4px;flex-shrink:0" :style="'background:' + s.color"></span>
+                            <span style="width:11px;height:11px;border-radius:4px;flex-shrink:0" :style="{ background: s.color }"></span>
                             <span style="font-size:13px;font-weight:700;color:var(--d-label);flex:1" x-text="s.label"></span>
-                            <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:14px;font-variant-numeric:tabular-nums" :style="'color:' + s.color" x-text="fmt(s.val)"></span>
+                            <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:14px;font-variant-numeric:tabular-nums" :style="{ color: s.color }" x-text="fmt(s.val)"></span>
                             <span style="font-size:11.5px;font-weight:700;color:var(--d-micro);width:40px;text-align:right" x-text="s.pct + '%'"></span>
                         </div>
                     </template>

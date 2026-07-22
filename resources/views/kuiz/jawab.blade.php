@@ -22,7 +22,11 @@
         <div style="display:flex;align-items:center;gap:16px">
             <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:22px;font-weight:800;letter-spacing:-.01em;color:var(--wl-ink);flex:1;min-width:0">{{ $quiz->title }}</h2>
             @if ($secondsLeft !== null)
-                <span :style="secondsLeft < 60 ? 'background:#FDE7E0;color:#C24936' : 'background:#FEF0CE;color:#8A6A12'"
+                {{-- Object syntax, or the binding would replace the static style outright and the
+                     badge would lose its pill shape and padding. --}}
+                <span :style="secondsLeft < 60
+                        ? { background: '#FDE7E0', color: '#C24936' }
+                        : { background: '#FEF0CE', color: '#8A6A12' }"
                       style="display:flex;align-items:center;gap:6px;border-radius:999px;padding:8px 16px;font-family:'Geist',sans-serif;font-weight:800;font-size:14.5px">🕐 <span x-text="clock()">{{ gmdate('i:s', $secondsLeft) }}</span></span>
             @endif
         </div>
@@ -33,7 +37,7 @@
                 <span style="font-size:13px;font-weight:700;color:var(--wl-muted)" x-text="answeredCount() + ' ' + labels.answered">0 {{ __('dijawab') }}</span>
             </div>
             <div style="height:8px;border-radius:999px;background:#DCEAF8;overflow:hidden">
-                <div style="height:100%;border-radius:999px;background:#17907B;transition:width .25s ease-out" :style="`width:${((current + 1) / total) * 100}%`"></div>
+                <div style="height:100%;border-radius:999px;background:#17907B;transition:width .25s ease-out" :style="{ width: ((current + 1) / total) * 100 + '%' }"></div>
             </div>
         </div>
 

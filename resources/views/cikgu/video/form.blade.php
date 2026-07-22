@@ -157,7 +157,10 @@
                 <span x-text="progress + '%'">0%</span>
             </div>
             <div style="height:12px;width:100%;overflow:hidden;border-radius:999px;background:var(--tp-line)" role="progressbar" :aria-valuenow="progress" aria-valuemin="0" aria-valuemax="100">
-                <div style="height:100%;border-radius:999px;background:#17907B;transition:width .15s" :style="`width: ${progress}%`"></div>
+                {{-- Object syntax, not a string: Alpine applies a string :style with setAttribute,
+                     which would replace the whole style attribute and leave the fill with no height
+                     and no colour — a bar that tracks progress perfectly and is invisible doing it. --}}
+                <div style="height:100%;border-radius:999px;background:#17907B;transition:width .15s" :style="{ width: progress + '%' }"></div>
             </div>
             <p class="tp-hint">{{ __('Jangan tutup halaman ini sehingga selesai.') }}</p>
         </div>

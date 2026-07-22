@@ -96,7 +96,7 @@
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
                      stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"
                      style="flex-shrink:0;color:var(--wl-muted);transition:transform .15s"
-                     :style="open ? 'transform:rotate(180deg)' : ''"><path d="M6 9l6 6 6-6"/></svg>
+                     :style="{ transform: open ? 'rotate(180deg)' : 'none' }"><path d="M6 9l6 6 6-6"/></svg>
             </button>
             <div id="akaun-panel" x-show="open" x-cloak>
             <form method="POST" action="{{ route('profile.update') }}" enctype="multipart/form-data" style="display:flex;flex-direction:column;gap:18px;margin-top:14px"
@@ -231,7 +231,7 @@
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
                      stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"
                      style="flex-shrink:0;color:var(--wl-muted);transition:transform .15s"
-                     :style="open ? 'transform:rotate(180deg)' : ''"><path d="M6 9l6 6 6-6"/></svg>
+                     :style="{ transform: open ? 'rotate(180deg)' : 'none' }"><path d="M6 9l6 6 6-6"/></svg>
             </button>
             <div id="kata-laluan-panel" x-show="open" x-cloak>
             <form method="POST" action="{{ route('password.update') }}" style="display:flex;flex-direction:column;gap:18px;margin-top:14px">
