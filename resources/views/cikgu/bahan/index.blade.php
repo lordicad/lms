@@ -59,7 +59,7 @@
                     </a>
 
                     <form method="POST" action="{{ route('cikgu.bahan.destroy', $material) }}" style="flex-shrink:0"
-                          onsubmit='return confirm(@js(__("Padam bahan \":title\"? Fail juga akan dipadam.", ["title" => $material->title])))'>
+                          onsubmit="return confirm(@js(__("Padam bahan \":title\"? Fail juga akan dipadam.", ["title" => $material->title])))">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="tp-icon-action tp-icon-danger" title="{{ __('Padam') }}">

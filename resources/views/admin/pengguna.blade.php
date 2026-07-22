@@ -102,7 +102,7 @@
                                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
                                     </a>
                                     <form method="POST" action="{{ route('admin.pengguna.destroy', $u) }}"
-                                          onsubmit='return confirm(@js(__("Padam akaun \":name\"? Tindakan ini kekal. Jika ini akaun cikgu, semua video, bahan dan kuiz mereka turut dipadam.", ["name" => $u->name])))'>
+                                          onsubmit="return confirm(@js(__("Padam akaun \":name\"? Tindakan ini kekal. Jika ini akaun cikgu, semua video, bahan dan kuiz mereka turut dipadam.", ["name" => $u->name])))">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" title="{{ __('Padam') }}"

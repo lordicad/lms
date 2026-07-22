@@ -46,7 +46,7 @@
                     </span>
 
                     <form method="POST" action="{{ route('oauth.youtube.disconnect', $channel) }}"
-                          onsubmit='return confirm(@js(__("Putuskan sambungan channel ini? Video YouTube dari channel ini tidak akan lagi dikira untuk skor bakat anda.")))'>
+                          onsubmit="return confirm(@js(__("Putuskan sambungan channel ini? Video YouTube dari channel ini tidak akan lagi dikira untuk skor bakat anda.")))">
                         @csrf
                         @method('DELETE')
 

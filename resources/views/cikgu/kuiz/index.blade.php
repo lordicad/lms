@@ -91,7 +91,7 @@
                     </a>
 
                     <form method="POST" action="{{ route('cikgu.kuiz.destroy', $quiz) }}" style="flex-shrink:0"
-                          onsubmit='return confirm(@js(__("Padam kuiz \":title\"? Semua soalan dan percubaan murid akan dipadam sekali. Tindakan ini tidak boleh dibatalkan.", ["title" => $quiz->title])))'>
+                          onsubmit="return confirm(@js(__("Padam kuiz \":title\"? Semua soalan dan percubaan murid akan dipadam sekali. Tindakan ini tidak boleh dibatalkan.", ["title" => $quiz->title])))">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="tp-icon-action tp-icon-danger" title="{{ __('Padam') }}">

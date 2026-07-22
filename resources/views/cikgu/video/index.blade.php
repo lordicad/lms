@@ -70,7 +70,7 @@
                     </a>
 
                     <form method="POST" action="{{ route('cikgu.video.destroy', $lesson) }}" style="flex-shrink:0"
-                          onsubmit='return confirm(@js(__("Padam video \":title\"? Fail video juga akan dipadam. Tindakan ini tidak boleh dibatalkan.", ["title" => $lesson->title])))'>
+                          onsubmit="return confirm(@js(__("Padam video \":title\"? Fail video juga akan dipadam. Tindakan ini tidak boleh dibatalkan.", ["title" => $lesson->title])))">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="tp-icon-action tp-icon-danger" title="{{ __('Padam') }}">

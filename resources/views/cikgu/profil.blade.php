@@ -153,7 +153,7 @@
                                 <span style="display:block;font-size:12px;color:var(--tp-muted)">{{ __('Disahkan :date', ['date' => $channel->verified_at->translatedFormat('d M Y')]) }}</span>
                             </span>
                             <form method="POST" action="{{ route('oauth.youtube.disconnect', $channel) }}" style="flex-shrink:0"
-                                  onsubmit='return confirm(@js(__("Putuskan sambungan saluran ini? Video YouTube dari saluran ini tidak akan lagi dikira untuk skor bakat anda.")))'>
+                                  onsubmit="return confirm(@js(__("Putuskan sambungan saluran ini? Video YouTube dari saluran ini tidak akan lagi dikira untuk skor bakat anda.")))">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" style="min-height:38px;border:1.5px solid var(--tp-line-2);cursor:pointer;border-radius:10px;background:var(--tp-surface);color:#C24936;font-family:'Geist',sans-serif;font-weight:800;font-size:13px;padding:0 14px">{{ __('Putuskan') }}</button>

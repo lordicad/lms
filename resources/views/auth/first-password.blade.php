@@ -51,7 +51,7 @@
 
     <x-slot:footer>
         {{-- The only way out while the account is held, so it must not be a link back into the app. --}}
-        <form method="POST" action="{{ route('logout') }}" onsubmit='return confirm(@js(__("Log keluar daripada akaun anda?")))' style="text-align:center;margin-top:18px">
+        <form method="POST" action="{{ route('logout') }}" onsubmit="return confirm(@js(__("Log keluar daripada akaun anda?")))" style="text-align:center;margin-top:18px">
             @csrf
             <button type="submit" class="wla-back" style="background:none;border:none;cursor:pointer;font:inherit">
                 {{ __('Log Keluar') }}
