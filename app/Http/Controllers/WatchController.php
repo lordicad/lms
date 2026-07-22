@@ -19,10 +19,19 @@ class WatchController extends Controller
         $quizzes = $lesson->chapter
             ->quizzes()
             ->published()
+            ->withCount('questions')
             ->orderBy('id')
             ->get();
 
         $user = $request->user();
+
+        // The chapter playlist beside the player: every published lesson in this Bab, in the
+        // same id order previous/nextInChapter walk, with this student's watched set so the
+        // list can tick without one query per row.
+        $playlist = $lesson->chapter->lessons()->published()->orderBy('id')->get();
+        $watchedIds = $user->isStudent()
+            ? LessonView::where('student_id', $user->id)->whereIn('lesson_id', $playlist->modelKeys())->pluck('lesson_id')->all()
+            : [];
 
         return view('belajar.tonton', [
             'lesson' => $lesson,
@@ -33,6 +42,8 @@ class WatchController extends Controller
             'quizzes' => $quizzes,
             'previous' => $lesson->previousInChapter(),
             'next' => $lesson->nextInChapter(),
+            'playlist' => $playlist,
+            'watchedIds' => $watchedIds,
             // Progress + favourite are student-only concerns; a teacher previewing gets neither.
             'progress' => $user->isStudent() ? $lesson->progressFor($user) : null,
             'favourited' => $user->isStudent() && $lesson->isFavouritedBy($user),
