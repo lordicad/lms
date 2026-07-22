@@ -3,51 +3,16 @@
     :heading="__('Bab')"
     :sub="__('Bab dikongsi oleh semua guru mengikut sukatan Kurikulum 2027.')">
 
-    @php
-        $slugLevels = $subjects->mapWithKeys(fn ($option) => [
-            $option->slug => array_values($availability[$option->id] ?? []),
-        ]);
-    @endphp
-
     <div style="display:flex;flex-direction:column;gap:18px;max-width:860px">
-        {{-- Pick a Subject and Tahun. --}}
-        <form method="GET" action="{{ route('cikgu.bab.index') }}"
-              class="tp-toolbar"
-              x-ref="form"
-              x-data="babFilter({
-                  subject: @js($subject?->slug),
-                  grade: {{ $grade?->level ?? 'null' }},
-                  availability: @js($slugLevels),
-              })">
-            <div class="tp-field">
-                <label for="subjek" class="tp-label">{{ __('Subjek') }}</label>
-                <select id="subjek" name="subjek" class="tp-filter-select" style="min-width:220px"
-                        x-model="subject" @change="onSubjectChange()">
-                    @foreach ($subjects as $option)
-                        <option value="{{ $option->slug }}" @selected($subject?->id === $option->id)>
-                            {{ $option->icon }} {{ $option->displayName() }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
-
-            <div class="tp-field">
-                <label for="tahun" class="tp-label">{{ __('Tahun') }}</label>
-                <select id="tahun" name="tahun" class="tp-filter-select" style="min-width:150px"
-                        x-model.number="grade" @change="$refs.form.submit()">
-                    @foreach ($grades as $option)
-                        <option value="{{ $option->level }}" @selected($grade?->id === $option->id)
-                                :disabled="! levelAvailable({{ $option->level }})">
-                            {{ $option->name }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
-
-            <noscript>
-                <button type="submit" class="tp-btn-ghost">{{ __('Papar') }}</button>
-            </noscript>
-        </form>
+        {{-- The shared Tahun -> Subjek filter, same as the Video, Bahan and Kuiz pages: the Subjek
+             list holds only the subjects that Tahun actually offers. A Tahun is always chosen here,
+             so there is no "Semua tahun" — a Bab list needs a definite Subject and Year. --}}
+        <x-year-subject-filter
+            :action="route('cikgu.bab.index')"
+            :grades="$grades"
+            :subjects="$subjects"
+            :filter="$filter"
+            :all-years="false" />
 
         @if ($subject && $grade)
             <h2 class="tp-g" style="font-size:17px;font-weight:800;color:var(--tp-ink)">{{ $subject->name }}. {{ $grade->name }}</h2>
@@ -93,25 +58,4 @@
         @endif
     </div>
 
-    @push('scripts')
-        <script>
-            function babFilter({ subject, grade, availability }) {
-                return {
-                    subject, grade, availability,
-                    levelAvailable(level) {
-                        return (this.availability[this.subject] ?? []).includes(level);
-                    },
-                    onSubjectChange() {
-                        const levels = this.availability[this.subject] ?? [];
-                        if (! levels.includes(this.grade)) {
-                            this.grade = levels[0] ?? null;
-                            this.$nextTick(() => this.$refs.form.submit());
-                        } else {
-                            this.$refs.form.submit();
-                        }
-                    },
-                };
-            }
-        </script>
-    @endpush
 </x-cikgu-layout>

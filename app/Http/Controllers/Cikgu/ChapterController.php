@@ -7,6 +7,7 @@ use App\Models\Chapter;
 use App\Models\Grade;
 use App\Models\Subject;
 use App\Rules\ValidSubjectGradeCombo;
+use App\Support\ContentFilter;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -24,13 +25,21 @@ class ChapterController extends Controller
         $subjects = Subject::orderBy('sort_order')->get();
         $grades = Grade::orderBy('level')->get();
 
-        $subject = $request->filled('subjek')
-            ? $subjects->firstWhere('slug', $request->string('subjek')->toString())
-            : $subjects->first();
+        $availability = Subject::availabilityMap();
 
         $grade = $request->filled('tahun')
             ? $grades->firstWhere('level', $request->integer('tahun'))
             : $grades->first();
+
+        // Not every Tahun offers every Subjek, so the default is the first subject actually taught
+        // in the chosen year rather than the first in the list. A subject named outright is kept as
+        // asked for, even when the year does not offer it, so an old pair stays reachable and the
+        // page can explain itself below.
+        $subject = $request->filled('subjek')
+            ? $subjects->firstWhere('slug', $request->string('subjek')->toString())
+            : ($grade
+                ? $subjects->first(fn ($s) => in_array($grade->level, $availability[$s->id] ?? [], true))
+                : null) ?? $subjects->first();
 
         $teacher = $request->user();
 
@@ -62,7 +71,10 @@ class ChapterController extends Controller
             'grade' => $grade,
             'chapters' => $chapters,
             'isOffered' => $isOffered,
-            'availability' => Subject::availabilityMap(),
+            // Drives the shared Year -> Subject filter, so this page narrows its Subjek list by the
+            // chosen Tahun exactly as the Video, Bahan and Kuiz pages do.
+            'filter' => new ContentFilter($grade, $subject),
+            'availability' => $availability,
             'nextNumber' => ($chapters->max('number') ?? 0) + 1,
         ]);
     }

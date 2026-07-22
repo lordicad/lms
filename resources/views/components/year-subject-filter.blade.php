@@ -35,6 +35,12 @@
     // Subject list actually changes as the Year changes rather than greying options out.
     $visibleSubjects = $filter ? $filter->availableSubjects($subjects) : $subjects;
 
+    // A pair someone has deliberately opened stays visible even when the Year does not offer it —
+    // otherwise the dropdown would show a different subject than the page below is describing.
+    if ($filter?->subject && ! $visibleSubjects->contains('id', $filter->subject->id)) {
+        $visibleSubjects = $visibleSubjects->concat([$filter->subject])->values();
+    }
+
     $reset = $resetUrl ?? $action;
     $hasActiveFilters = $selLevel || $selSubjek || $selBab;
 
