@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:video_player/video_player.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/content/content_models.dart';
 import '../../core/content/content_repository.dart';
@@ -147,6 +146,25 @@ class _WatchScreenState extends State<WatchScreen> {
       );
     } finally {
       if (mounted) setState(() => _favSaving = false);
+    }
+  }
+
+  Future<void> _openMaterial(MaterialItem material) async {
+    try {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Menyediakan bahan untuk dibuka...')),
+      );
+      await widget.repository.openMaterial(
+        url: material.downloadUrl,
+        fileName: material.fileName.isEmpty
+            ? '${material.title}.${material.extension}'
+            : material.fileName,
+      );
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Tidak dapat membuka bahan: $error')),
+      );
     }
   }
 
@@ -361,7 +379,12 @@ class _WatchScreenState extends State<WatchScreen> {
                   const SizedBox(height: 24),
                   const SectionTitle('Bahan sokongan'),
                   const SizedBox(height: 8),
-                  ...lesson.materials.map((m) => _MaterialRow(material: m)),
+                  ...lesson.materials.map(
+                    (m) => _MaterialRow(
+                      material: m,
+                      onOpen: () => _openMaterial(m),
+                    ),
+                  ),
                 ],
                 const SizedBox(height: 24),
                 Row(
@@ -396,15 +419,9 @@ class _WatchScreenState extends State<WatchScreen> {
 }
 
 class _MaterialRow extends StatelessWidget {
-  const _MaterialRow({required this.material});
+  const _MaterialRow({required this.material, required this.onOpen});
   final MaterialItem material;
-
-  Future<void> _open() async {
-    final uri = Uri.tryParse(material.downloadUrl);
-    if (uri != null) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-    }
-  }
+  final VoidCallback onOpen;
 
   @override
   Widget build(BuildContext context) {
@@ -412,7 +429,7 @@ class _MaterialRow extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: InkWell(
-        onTap: _open,
+        onTap: onOpen,
         borderRadius: BorderRadius.circular(13),
         child: Container(
           decoration: BoxDecoration(

@@ -61,6 +61,25 @@ class _ChapterScreenState extends State<ChapterScreen> {
     _reload(); // attempt counts may have changed
   }
 
+  Future<void> _openMaterial(MaterialItem material) async {
+    try {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Menyediakan bahan untuk dibuka...')),
+      );
+      await widget.repository.openMaterial(
+        url: material.downloadUrl,
+        fileName: material.fileName.isEmpty
+            ? '${material.title}.${material.extension}'
+            : material.fileName,
+      );
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Tidak dapat membuka bahan: $error')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -120,7 +139,12 @@ class _ChapterScreenState extends State<ChapterScreen> {
               if (data.materials.isNotEmpty) ...[
                 const SectionTitle('Bahan'),
                 const SizedBox(height: 8),
-                ...data.materials.map((m) => _MaterialTile(material: m)),
+                ...data.materials.map(
+                  (m) => _MaterialTile(
+                    material: m,
+                    onTap: () => _openMaterial(m),
+                  ),
+                ),
                 const SizedBox(height: 20),
               ],
               if (data.quizzes.isNotEmpty) ...[
@@ -139,8 +163,9 @@ class _ChapterScreenState extends State<ChapterScreen> {
 }
 
 class _MaterialTile extends StatelessWidget {
-  const _MaterialTile({required this.material});
+  const _MaterialTile({required this.material, required this.onTap});
   final MaterialItem material;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -151,6 +176,8 @@ class _MaterialTile extends StatelessWidget {
         material.title,
         style: Theme.of(context).textTheme.titleMedium,
       ),
+      trailing: const Icon(Icons.open_in_new_rounded, size: 20),
+      onTap: onTap,
       subtitle: Text(
         '${material.extension.toUpperCase()} · ${material.humanSize}',
       ),

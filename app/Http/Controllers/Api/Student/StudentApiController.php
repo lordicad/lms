@@ -83,6 +83,7 @@ abstract class StudentApiController extends Controller
             'extension' => $material->extension(),
             'human_size' => $material->humanSize(),
             'download_url' => route('muat-turun.bahan', $material),
+            'file_name' => $material->original_name,
         ];
     }
 

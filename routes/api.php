@@ -105,6 +105,7 @@ Route::middleware('auth:sanctum')->prefix('teacher')->group(function () {
     Route::put('videos/{lesson}', [TeacherVideoController::class, 'update']);
 
     Route::post('materials', [TeacherMaterialController::class, 'store']);
+    Route::get('materials/{material}/download', [TeacherMaterialController::class, 'download']);
     // Multipart uploads arrive reliably as POST on PHP; the action is still an update because
     // the material id is explicit and ownership is checked in the controller.
     Route::post('materials/{material}', [TeacherMaterialController::class, 'update']);

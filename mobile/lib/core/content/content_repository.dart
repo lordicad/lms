@@ -1,6 +1,7 @@
 import '../api/api_client.dart' show ApiException;
 import '../auth/token_store.dart';
 import '../platform/native_download.dart';
+import '../platform/authenticated_file_opener.dart';
 import 'content_api.dart';
 import 'content_models.dart';
 
@@ -66,6 +67,15 @@ class ContentRepository {
     required String url,
     required String fileName,
   }) async => NativeDownload.enqueue(
+    url: url,
+    token: await _token(),
+    fileName: fileName,
+  );
+
+  Future<void> openMaterial({
+    required String url,
+    required String fileName,
+  }) async => AuthenticatedFileOpener.open(
     url: url,
     token: await _token(),
     fileName: fileName,

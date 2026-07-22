@@ -295,6 +295,17 @@ class _ContentHubTabState extends State<ContentHubTab> {
     }
   }
 
+  Future<void> _openMaterial(TeacherMaterial material) async {
+    try {
+      AppFeedback.info('Menyediakan bahan untuk dibuka...');
+      await widget.repository.openMaterial(material);
+    } catch (e) {
+      if (mounted) {
+        AppFeedback.error('Tidak dapat membuka bahan', description: '$e');
+      }
+    }
+  }
+
   Future<void> _editQuiz(TeacherQuiz quiz) async {
     final updated = await Navigator.of(context).push<bool>(
       MaterialPageRoute(
@@ -328,6 +339,7 @@ class _ContentHubTabState extends State<ContentHubTab> {
           }),
           onDelete: _deleteMaterial,
           onEdit: _editMaterial,
+          onOpen: _openMaterial,
         );
       case 2:
         return _QuizzesList(
@@ -478,11 +490,13 @@ class _MaterialsList extends StatelessWidget {
     required this.onReload,
     required this.onDelete,
     required this.onEdit,
+    required this.onOpen,
   });
   final Future<List<TeacherMaterial>> future;
   final VoidCallback onReload;
   final void Function(int id) onDelete;
   final void Function(TeacherMaterial material) onEdit;
+  final void Function(TeacherMaterial material) onOpen;
 
   @override
   Widget build(BuildContext context) {
@@ -536,6 +550,7 @@ class _MaterialsList extends StatelessWidget {
                 m.extension.toUpperCase(),
                 if (m.humanSize.isNotEmpty) m.humanSize,
               ].join(' · '),
+              onOpen: () => onOpen(m),
               onEdit: () => onEdit(m),
               onDelete: () => onDelete(m.id),
             );
@@ -644,6 +659,7 @@ class _ContentCard extends StatelessWidget {
     this.onStats,
     this.onTogglePublish,
     this.onDelete,
+    this.onOpen,
   });
 
   final IconData icon;
@@ -654,6 +670,7 @@ class _ContentCard extends StatelessWidget {
   final VoidCallback? onStats;
   final VoidCallback? onTogglePublish;
   final VoidCallback? onDelete;
+  final VoidCallback? onOpen;
 
   @override
   Widget build(BuildContext context) {
@@ -715,7 +732,8 @@ class _ContentCard extends StatelessWidget {
           if (onEdit != null ||
               onStats != null ||
               onTogglePublish != null ||
-              onDelete != null)
+              onDelete != null ||
+              onOpen != null)
             PopupMenuButton<String>(
               icon: Icon(Icons.more_vert, color: LmsPalette.faint(context)),
               tooltip: 'Tindakan',
@@ -724,8 +742,20 @@ class _ContentCard extends StatelessWidget {
                 if (value == 'stats') onStats?.call();
                 if (value == 'toggle') onTogglePublish?.call();
                 if (value == 'delete') onDelete?.call();
+                if (value == 'open') onOpen?.call();
               },
               itemBuilder: (_) => [
+                if (onOpen != null)
+                  const PopupMenuItem(
+                    value: 'open',
+                    child: Row(
+                      children: [
+                        Icon(Icons.open_in_new_rounded, size: 18),
+                        SizedBox(width: 10),
+                        Text('Buka bahan'),
+                      ],
+                    ),
+                  ),
                 if (onEdit != null)
                   const PopupMenuItem(
                     value: 'edit',

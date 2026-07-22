@@ -1,6 +1,7 @@
 import '../api/api_client.dart' show ApiException;
 import '../auth/token_store.dart';
 import '../platform/native_file_picker.dart';
+import '../platform/authenticated_file_opener.dart';
 import 'teacher_api.dart';
 import 'teacher_models.dart';
 
@@ -47,6 +48,15 @@ class TeacherRepository {
 
   Future<List<TeacherMaterial>> materials() async =>
       _api.materials(await _token());
+
+  Future<void> openMaterial(TeacherMaterial material) async =>
+      AuthenticatedFileOpener.open(
+        url: material.downloadUrl,
+        token: await _token(),
+        fileName: material.fileName.isEmpty
+            ? '${material.title}.${material.extension}'
+            : material.fileName,
+      );
 
   Future<List<TeacherQuiz>> quizzes() async => _api.quizzes(await _token());
 

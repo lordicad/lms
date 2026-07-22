@@ -419,6 +419,39 @@ class _DashboardTabState extends State<_DashboardTab> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      // The web dashboard now leads with the four content
+                      // leaderboards, followed by the quiz outcome summary.
+                      if (data.leaderboards.isNotEmpty) ...[
+                        _Heading(
+                          context.copy(
+                            bm: 'Kandungan paling mendapat sambutan',
+                            en: 'Top-performing content',
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        LayoutBuilder(
+                          builder: (context, constraints) => GridView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: data.leaderboards.length,
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount:
+                                      constraints.maxWidth >= 600 ? 2 : 1,
+                                  mainAxisSpacing: 10,
+                                  crossAxisSpacing: 10,
+                                  mainAxisExtent:
+                                      constraints.maxWidth >= 600 ? 178 : 172,
+                                ),
+                            itemBuilder: (_, index) => _DashboardLeaderboard(
+                              board: data.leaderboards[index],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        _PassFailCard(data: data.passFail),
+                        const SizedBox(height: 16),
+                      ],
                       LayoutBuilder(
                         builder: (context, constraints) => GridView(
                           shrinkWrap: true,
@@ -474,20 +507,6 @@ class _DashboardTabState extends State<_DashboardTab> {
                           ],
                         ),
                       ),
-                      const SizedBox(height: 12),
-                      _PassFailCard(data: data.passFail),
-                      if (data.leaderboards.isNotEmpty) ...[
-                        const SizedBox(height: 22),
-                        _Heading(
-                          context.copy(
-                            bm: 'Kandungan paling mendapat sambutan',
-                            en: 'Top-performing content',
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        for (final board in data.leaderboards)
-                          _DashboardLeaderboard(board: board),
-                      ],
                       const SizedBox(height: 12),
                       Row(
                         children: [
@@ -708,7 +727,7 @@ class _DashboardLeaderboard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 10),
+      margin: EdgeInsets.zero,
       decoration: BoxDecoration(
         color: LmsPalette.surface(context),
         border: Border.all(color: LmsPalette.border(context)),

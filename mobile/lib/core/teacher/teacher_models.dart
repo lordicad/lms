@@ -438,6 +438,8 @@ class TeacherMaterial {
     required this.gradeName,
     required this.extension,
     required this.humanSize,
+    required this.downloadUrl,
+    required this.fileName,
   });
 
   final int id;
@@ -451,6 +453,8 @@ class TeacherMaterial {
   final String? gradeName;
   final String extension;
   final String humanSize;
+  final String downloadUrl;
+  final String fileName;
 
   factory TeacherMaterial.fromJson(Map<String, dynamic> j) => TeacherMaterial(
     id: _int(j['id']),
@@ -466,6 +470,8 @@ class TeacherMaterial {
     gradeName: _strOrNull(j['grade_name']),
     extension: _str(j['extension']),
     humanSize: _str(j['human_size']),
+    downloadUrl: _str(j['download_url']),
+    fileName: _str(j['file_name']),
   );
 }
 

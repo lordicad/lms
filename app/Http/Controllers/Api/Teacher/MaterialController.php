@@ -10,10 +10,25 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /** Mobile upload and editing for teacher-owned learning materials. */
 class MaterialController extends Controller
 {
+    /** Download a teacher-owned material for the mobile file viewer. */
+    public function download(Request $request, Material $material): StreamedResponse|JsonResponse
+    {
+        $teacher = $this->teacher($request);
+        if (! $teacher || $material->teacher_id !== $teacher->id) {
+            return $this->forbidden();
+        }
+
+        $disk = Storage::disk('uploads');
+        abort_unless($material->file_path && $disk->exists($material->file_path), 404);
+
+        return $disk->download($material->file_path, $material->original_name ?: $material->title);
+    }
+
     public function store(Request $request): JsonResponse
     {
         $teacher = $this->teacher($request);

@@ -75,6 +75,8 @@ class ContentController extends Controller
                 'grade_name' => $m->chapter?->grade?->name,
                 'extension' => $m->extension(),
                 'human_size' => $m->humanSize(),
+                'file_name' => $m->original_name,
+                'download_url' => url("/api/teacher/materials/{$m->id}/download"),
             ])->all(),
         ]);
     }
