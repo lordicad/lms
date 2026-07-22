@@ -58,7 +58,7 @@
                                         class="wl-btn-secondary"
                                         style="min-height:46px;cursor:pointer;border-radius:12px;border:1.5px solid var(--wl-line-3);background:var(--wl-surface);color:var(--wl-ink);font-family:'Geist',sans-serif;font-weight:700;font-size:14.5px;padding:0 18px;display:inline-flex;align-items:center;gap:6px">
                                     <span x-text="fav ? '♥' : '♡'" :style="fav ? 'color:#EB5E5A' : ''"></span>
-                                    <span>{{ __('Favourite') }}</span>
+                                    <span>{{ __('Gemari') }}</span>
                                 </button>
                             </div>
                         </div>

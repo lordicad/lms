@@ -4,14 +4,14 @@
     'title' => null,          // accessible name for the canvas
     'height' => 280,
     'rows' => [],             // accessible table rows: [['label' => ..., 'value' => ...], ...]
-    'columns' => null,        // table headers, e.g. [__('Item'), __('Jumlah')]
+    'columns' => null,        // table headers, e.g. [__('Perkara'), __('Jumlah')]
     'empty' => null,          // message shown when there is no data
     'table' => true,          // show the "view data as a table" fallback
 ])
 
 @php
     $chartId = $id ?? 'chart-'.\Illuminate\Support\Str::random(6);
-    $cols = $columns ?? [__('Item'), __('Jumlah')];
+    $cols = $columns ?? [__('Perkara'), __('Jumlah')];
     $hasData = ! empty($rows) || filled(trim($slot->toHtml()));
 @endphp
 

@@ -53,7 +53,7 @@
                 ['icon' => '🔥', 'name' => __('Rajin Belajar'), 'desc' => __('5 kuiz selesai'), 'got' => $stats['quizzes'] >= 5, 'tint' => '#FEF0CE', 'ring' => '#E8A33D', 'ribbon' => '#F3B94C'],
                 ['icon' => '🎯', 'name' => __('Markah Penuh'), 'desc' => __('100% dalam kuiz'), 'got' => $stats['perfect'], 'tint' => '#FBE4ED', 'ring' => '#D96A96', 'ribbon' => '#E886AC'],
                 ['icon' => '🎬', 'name' => __('Penonton Setia'), 'desc' => __('25 video ditonton'), 'got' => $stats['videos'] >= 25, 'tint' => '#E9E4F9', 'ring' => '#8A6FD0', 'ribbon' => '#A48CE0'],
-                ['icon' => '🚀', 'name' => __('Top 10'), 'desc' => __('Capai ranking top 10'), 'got' => $stats['rank'] && $stats['rank'] <= 10, 'tint' => '#EDEDF1', 'ring' => '#B9B8C6', 'ribbon' => '#C9C8D4'],
+                ['icon' => '🚀', 'name' => __('10 Teratas'), 'desc' => __('Capai ranking top 10'), 'got' => $stats['rank'] && $stats['rank'] <= 10, 'tint' => '#EDEDF1', 'ring' => '#B9B8C6', 'ribbon' => '#C9C8D4'],
             ])
             <div style="display:flex;flex-direction:column;gap:12px">
                 <h3 style="margin:0;font-family:'Geist',sans-serif;font-size:17px;font-weight:800;color:var(--wl-ink)">{{ __('Lencana Saya') }}</h3>

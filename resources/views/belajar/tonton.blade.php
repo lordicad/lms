@@ -53,7 +53,7 @@
                                 :aria-pressed="fav ? 'true' : 'false'"
                                 style="flex-shrink:0;min-height:46px;cursor:pointer;border-radius:12px;border:1.5px solid var(--wl-line-2);background:var(--wl-surface);font-family:'Geist',sans-serif;font-weight:800;font-size:14px;padding:0 18px;display:flex;align-items:center;gap:8px;color:var(--wl-ink)">
                             <span x-text="fav ? '♥' : '♡'" :style="fav ? 'color:#EB5E5A;font-size:16px' : 'color:var(--wl-muted-2);font-size:16px'"></span>
-                            <span>{{ __('Favourite') }}</span>
+                            <span>{{ __('Gemari') }}</span>
                         </button>
                     @endif
                 </div>
