@@ -20,6 +20,7 @@
                   'networkFailed' => __('Muat naik gagal. Sila semak sambungan internet anda dan cuba lagi.'),
                   'thumbReady' => __('✓ Gambar kecil diambil daripada video anda.'),
                   'thumbFailed' => __('Gambar kecil tidak dapat diambil daripada video ini. Anda boleh muat naik gambar sendiri.'),
+                  'notVideo' => __('Fail itu bukan video. Sila seret fail MP4 atau WEBM.'),
               ],
           ]) }})"
           @submit.prevent="submit($event)">
@@ -83,8 +84,37 @@
             {{-- Upload --}}
             <div id="panel-upload" role="tabpanel" aria-labelledby="tab-upload" x-show="source === 'upload'" x-cloak class="tp-field">
                 <label for="video" class="tp-label">{{ __('Fail video') }}</label>
+
+                {{-- Drop target that also opens the picker, so a file can be dragged in or chosen.
+                     The real input stays in the page (screen-reader reachable, and still what gets
+                     submitted); the zone is only a nicer way to reach it. --}}
+                <div class="tp-dropzone" :class="dragging && 'is-dragging'"
+                     role="button" tabindex="0" aria-controls="video"
+                     @click="$refs.video.click()"
+                     @keydown.enter.prevent="$refs.video.click()"
+                     @keydown.space.prevent="$refs.video.click()"
+                     @dragover.prevent="dragging = true"
+                     @dragenter.prevent="dragging = true"
+                     @dragleave.prevent="dragging = false"
+                     @drop.prevent="onDrop($event)">
+                    <span style="font-size:26px" aria-hidden="true">⬆️</span>
+
+                    <template x-if="! fileName">
+                        <span class="tp-g" style="font-weight:800;font-size:14.5px;color:var(--tp-ink)">{{ __('Seret fail video ke sini') }}</span>
+                    </template>
+                    <template x-if="fileName">
+                        <span class="tp-g" style="font-weight:800;font-size:14.5px;color:var(--tp-ink);word-break:break-all" x-text="fileName"></span>
+                    </template>
+
+                    <span class="tp-hint" x-text="fileName ? fileSize : @js(__('atau'))"></span>
+
+                    <span class="tp-btn-outline" style="min-height:38px;padding:0 16px;font-size:13px;pointer-events:none">
+                        <span x-text="fileName ? @js(__('Tukar Fail')) : @js(__('Pilih Fail'))"></span>
+                    </span>
+                </div>
+
                 <input id="video" name="video" type="file" accept=".mp4,.webm,video/mp4,video/webm"
-                       x-ref="video" @change="checkSize($event)" class="tp-file" aria-describedby="video-help" @error('video') aria-invalid="true" @enderror>
+                       x-ref="video" @change="onVideoChosen($event)" class="sr-only" aria-describedby="video-help" @error('video') aria-invalid="true" @enderror>
                 <p id="video-help" class="tp-hint">
                     {{ __('Format MP4 atau WEBM. Had saiz :max MB.', ['max' => config('lms.video_max_mb')]) }}
                     @if ($editing && $lesson->video_path) {{ __('Biarkan kosong untuk mengekalkan video sedia ada.') }} @endif
@@ -155,6 +185,44 @@
                     // autoThumb marks the thumbnail input as holding a frame we captured, so a
                     // teacher's own picture is never overwritten but ours can be replaced.
                     autoThumb: false, thumbBusy: false, thumbNote: '', thumbError: '',
+                    dragging: false, fileName: '', fileSize: '',
+
+                    /**
+                     * A file dropped on the zone is handed to the real input, so the form submits
+                     * exactly what it always did.
+                     *
+                     * Assigning .files does NOT fire a change event, so the size check and the
+                     * thumbnail capture would silently never run for a dropped file. Dispatching it
+                     * keeps drag-and-drop and Choose File on the same path.
+                     */
+                    onDrop(event) {
+                        this.dragging = false;
+
+                        const file = event.dataTransfer?.files?.[0];
+                        if (! file || typeof DataTransfer === 'undefined') return;
+
+                        if (! /^video\//.test(file.type) && ! /\.(mp4|webm)$/i.test(file.name)) {
+                            this.sizeError = this.labels.notVideo;
+                            return;
+                        }
+
+                        const transfer = new DataTransfer();
+                        transfer.items.add(file);
+                        this.$refs.video.files = transfer.files;
+                        this.$refs.video.dispatchEvent(new Event('change', { bubbles: true }));
+                    },
+
+                    /** Runs for both routes: validates, names the file, and captures the thumbnail. */
+                    onVideoChosen(event) {
+                        this.checkSize(event);
+
+                        // checkSize clears the input when the file is too large, so read it back
+                        // rather than trusting what was picked.
+                        const file = event.target.files?.[0] ?? null;
+                        this.fileName = file ? file.name : '';
+                        this.fileSize = file ? (file.size / (1024 * 1024)).toFixed(1) + ' MB' : '';
+                    },
+
                     checkSize(event) {
                         this.sizeError = '';
                         const file = event.target.files[0];

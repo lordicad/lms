@@ -235,7 +235,13 @@
         .tp-check-off { width:24px; height:24px; border-radius:7px; flex-shrink:0; display:grid; place-items:center; margin-top:2px; background:var(--tp-surface); border:2px solid rgba(46,44,80,.25); }
         .tp-toggle { min-height:48px; cursor:pointer; border-radius:12px; font-family:'Geist',sans-serif; font-weight:800; font-size:14px; display:inline-flex; align-items:center; justify-content:center; gap:8px; flex:1; transition:all .15s; border:1.5px solid var(--tp-line-2); background:var(--tp-surface); color:#28293F; }
         .tp-toggle.is-on { border:none; background:var(--tp-teal); color:#fff; }
-        .tp-dropzone { border:2px dashed rgba(46,44,80,.18); border-radius:14px; padding:36px; display:flex; flex-direction:column; align-items:center; gap:8px; text-align:center; background:var(--tp-surface-2); }
+        .tp-dropzone { border:2px dashed rgba(46,44,80,.18); border-radius:14px; padding:36px; display:flex; flex-direction:column; align-items:center; gap:8px; text-align:center; background:var(--tp-surface-2); cursor:pointer; transition:border-color .15s, background .15s; }
+        .tp-dropzone:hover { border-color:var(--tp-teal); }
+        /* Without this, crossing onto a child fires dragleave and the highlight flickers. */
+        .tp-dropzone > * { pointer-events:none; }
+        /* While a file is held over it, so it is obvious the drop will land. */
+        .tp-dropzone.is-dragging { border-color:var(--tp-teal); background:var(--tp-active-bg); }
+        .tp-dropzone:focus-visible { outline:none; border-color:var(--tp-teal); box-shadow:0 0 0 3px rgba(43,179,155,.2); }
         .tp-checkrow { background:var(--tp-surface); border:1px solid var(--tp-line); border-radius:18px; padding:20px 24px; display:flex; align-items:flex-start; gap:14px; box-shadow:var(--tp-shadow); cursor:pointer; }
         .tp-typecard { background:var(--tp-surface); border:1px solid var(--tp-line); border-radius:18px; padding:26px; display:flex; flex-direction:column; gap:14px; box-shadow:var(--tp-shadow); cursor:pointer; text-decoration:none; }
         .tp-typecard:hover { box-shadow:var(--tp-shadow-lift); transform:translateY(-2px); }
