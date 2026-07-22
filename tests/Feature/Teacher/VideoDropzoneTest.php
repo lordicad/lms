@@ -32,12 +32,17 @@ class VideoDropzoneTest extends TestCase
         $this->assertStringContainsString('dragging', $html);
     }
 
-    /** Dragging is the new way in; clicking the zone must still reach the picker. */
+    /**
+     * Dragging is one way in; clicking the zone must still reach a picker. It opens the shared
+     * picker rather than the video input directly, because the zone now takes attachments too and
+     * take() is what sorts them into the right input.
+     */
     public function test_the_zone_still_opens_the_file_picker(): void
     {
         $html = $this->form();
 
-        $this->assertStringContainsString('@click="$refs.video.click()"', $html);
+        $this->assertStringContainsString('@click="$refs.picker.click()"', $html);
+        $this->assertStringContainsString('x-ref="picker"', $html);
         $this->assertStringContainsString('x-ref="video"', $html);
     }
 
@@ -59,10 +64,13 @@ class VideoDropzoneTest extends TestCase
     {
         $html = $this->form();
 
-        foreach (['Seret fail video ke sini', 'Pilih Fail', 'Tukar Fail'] as $label) {
-            $this->assertStringContainsString($label, $html, "the drop zone is missing: {$label}");
+        foreach (['Seret & lepaskan fail di sini', 'Tambah Fail', 'Nama paparan (untuk pelajar)'] as $label) {
+            $this->assertStringContainsString(e($label), $html, "the drop zone is missing: {$label}");
         }
 
-        $this->assertStringContainsString('notVideo', $html, 'onDrop() reads labels.notVideo, which is not defined');
+        // take() reports these by name when a file is the wrong type, too big, or one too many.
+        foreach (['badType', 'attachmentTooBig', 'tooManyFiles'] as $key) {
+            $this->assertStringContainsString($key, $html, "take() reads labels.{$key}, which is not defined");
+        }
     }
 }

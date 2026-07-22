@@ -11,6 +11,9 @@ use Illuminate\Validation\Validator;
 
 class LessonRequest extends FormRequest
 {
+    /** Enough for a lesson's handouts without letting one submission carry a whole term's files. */
+    public const MAX_ATTACHMENTS = 10;
+
     public function authorize(): bool
     {
         return $this->user()?->isTeacher() ?? false;
@@ -52,6 +55,18 @@ class LessonRequest extends FormRequest
                 'max:4096',
             ],
 
+            // Attachments ride along with the video and become Materials on the same lesson. Each
+            // one carries an optional display name, paired to the file by position, so both arrays
+            // are validated with the same bounds.
+            'attachments' => ['nullable', 'array', 'max:'.self::MAX_ATTACHMENTS],
+            'attachments.*' => [
+                'file',
+                'mimes:'.implode(',', config('lms.material_mimes')),
+                'max:'.(config('lms.material_max_mb') * 1024),
+            ],
+            'attachment_titles' => ['nullable', 'array', 'max:'.self::MAX_ATTACHMENTS],
+            'attachment_titles.*' => ['nullable', 'string', 'max:100'],
+
             'is_published' => ['boolean'],
         ];
     }
@@ -74,6 +89,10 @@ class LessonRequest extends FormRequest
             'youtube_url.required' => __('Sila tampal pautan YouTube.'),
             'thumbnail.image' => __('Gambar kecil mesti fail imej.'),
             'thumbnail.max' => __('Gambar kecil terlalu besar. Had ialah 4 MB.'),
+            'attachments.max' => __('Terlalu banyak lampiran. Had ialah :max fail.', ['max' => self::MAX_ATTACHMENTS]),
+            'attachments.*.mimes' => __('Format lampiran tidak dibenarkan. Guna PDF, PowerPoint, Word, Excel atau imej.'),
+            'attachments.*.max' => __('Lampiran terlalu besar. Had ialah :max MB setiap fail.', ['max' => config('lms.material_max_mb')]),
+            'attachment_titles.*.max' => __('Nama paparan terlalu panjang. Had ialah 100 aksara.'),
         ];
     }
 
