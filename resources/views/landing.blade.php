@@ -55,7 +55,7 @@
         img, svg { display: block; }
         @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; scroll-behavior: auto; } }
 
-        .wl-wrap { max-width: 1080px; margin: 0 auto; padding-left: 24px; padding-right: 24px; }
+        .wl-wrap { max-width: clamp(1080px, 68vw, 1280px); margin: 0 auto; padding-left: 24px; padding-right: 24px; }
         .wl-skip { position: absolute; left: -9999px; top: 0; background: var(--brand); color: #fff; padding: 10px 16px; border-radius: 10px; z-index: 100; font-weight: 700; }
         .wl-skip:focus { left: 16px; top: 12px; }
 
