@@ -113,7 +113,7 @@
             padding: 48px 32px; gap: 24px;
         }
         .wla-topbar { width: 100%; max-width: 440px; display: flex; justify-content: flex-end; align-items: center; gap: 10px; }
-        .wla-pills { display: flex; background: var(--pill-track); border-radius: 999px; padding: 3px; font-family: 'Geist', sans-serif; font-size: 13px; font-weight: 700; }
+        .wla-pills { display: flex; background: var(--pill-track); border: 1px solid var(--line-strong); border-radius: 999px; padding: 3px; font-family: 'Geist', sans-serif; font-size: 13px; font-weight: 700; }
         .wla-pill {
             min-width: 30px; min-height: 22px; display: inline-flex; align-items: center; justify-content: center;
             border: none; cursor: pointer; border-radius: 999px; padding: 5px 10px;
@@ -122,7 +122,7 @@
         }
         .wla-pill.is-active { background: var(--brand); color: #fff; }
         .wla-iconbtn {
-            width: 44px; height: 44px; border-radius: 14px; border: 1px solid var(--line-strong);
+            width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line-strong);
             background: var(--surface); cursor: pointer; display: grid; place-items: center;
             color: var(--muted); transition: background .15s, transform .1s;
         }

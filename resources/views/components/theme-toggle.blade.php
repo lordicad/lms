@@ -15,7 +15,7 @@
    aria-pressed="{{ $isDark ? 'true' : 'false' }}"
    aria-label="{{ $label }}"
    title="{{ $label }}"
-   {{ $attributes->merge(['class' => 'inline-flex min-h-[44px] min-w-[44px] shrink-0 items-center justify-center rounded-control border border-line bg-surface text-ink-2 transition-colors duration-150 ease-smooth hover:bg-surface-2 hover:text-ink']) }}>
+   {{ $attributes->merge(['class' => 'inline-flex min-h-[44px] min-w-[44px] shrink-0 items-center justify-center rounded-full border border-line bg-surface text-ink-2 transition-colors duration-150 ease-smooth hover:bg-surface-2 hover:text-ink']) }}>
     <x-icon :name="$isDark ? 'sun' : 'moon'" class="h-5 w-5" />
     <span class="sr-only">{{ $label }}</span>
 </a>

@@ -148,7 +148,7 @@
                 @endforeach
             </select>
 
-            <div style="display:flex;background:var(--wl-chip);border-radius:999px;padding:3px;font-family:'Geist',sans-serif;font-size:12.5px;font-weight:700">
+            <div style="display:flex;background:var(--wl-chip);border:1px solid var(--wl-line-2);border-radius:999px;padding:3px;font-family:'Geist',sans-serif;font-size:12.5px;font-weight:700">
                 @foreach (['ms' => 'BM', 'en' => 'EN'] as $code => $lbl)
                     <a href="{{ route('locale.switch', $code) }}" @if ($current === $code) aria-current="true" @endif
                        style="min-width:40px;min-height:34px;border-radius:999px;padding:5px 12px;font-family:'Geist',sans-serif;font-size:12.5px;font-weight:800;text-decoration:none;display:flex;align-items:center;justify-content:center;{{ $current === $code ? 'background:#17907B;color:#fff' : 'background:transparent;color:var(--wl-muted-2)' }}">{{ $lbl }}</a>
@@ -156,7 +156,7 @@
             </div>
 
             <a href="{{ route('theme.switch', $isDark ? 'light' : 'dark') }}" title="{{ __('Mod Malam') }}" class="wl-icbtn"
-               style="width:48px;height:48px;border-radius:14px;border:1px solid var(--wl-line-2);background:var(--wl-surface);display:grid;place-items:center;color:#4A5A52;text-decoration:none">
+               style="width:48px;height:48px;border-radius:50%;border:1px solid var(--wl-line-2);background:var(--wl-surface);display:grid;place-items:center;color:#4A5A52;text-decoration:none">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
             </a>
 

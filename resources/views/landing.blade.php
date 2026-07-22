@@ -77,11 +77,11 @@
         .wl-actions { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
 
         /* Language pill (server-rendered, still a real toggle) */
-        .wl-langpill { display: flex; background: var(--brand-soft); border-radius: 999px; padding: 3px; font-family: 'Geist', sans-serif; font-size: 13px; font-weight: 700; }
+        .wl-langpill { display: flex; background: var(--brand-soft); border: 1px solid var(--line-strong); border-radius: 999px; padding: 3px; font-family: 'Geist', sans-serif; font-size: 13px; font-weight: 700; }
         .wl-langpill a { min-width: 44px; min-height: 36px; display: inline-flex; align-items: center; justify-content: center; border-radius: 999px; padding: 6px 14px; color: var(--brand-ink); transition: background .15s, color .15s; }
         .wl-langpill a[aria-current="true"] { background: var(--brand); color: #fff; }
 
-        .wl-iconbtn { width: 40px; height: 40px; flex-shrink: 0; border-radius: 12px; border: 1px solid var(--line-strong); background: var(--surface); color: var(--muted); cursor: pointer; display: grid; place-items: center; transition: background .15s; }
+        .wl-iconbtn { width: 40px; height: 40px; flex-shrink: 0; border-radius: 50%; border: 1px solid var(--line-strong); background: var(--surface); color: var(--muted); cursor: pointer; display: grid; place-items: center; transition: background .15s; }
         .wl-iconbtn:hover { background: var(--brand-soft); color: var(--brand-ink); }
         .wl-iconbtn svg { width: 20px; height: 20px; }
 

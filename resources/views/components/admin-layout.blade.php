@@ -127,7 +127,7 @@
         .tp-head { display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
         .tp-h1  { font-family:'Geist',sans-serif; font-size:24px; font-weight:800; letter-spacing:-.01em; color:var(--tp-ink); }
         .tp-hsub{ font-size:14px; color:var(--tp-muted); }
-        .tp-langbar { display:flex; align-items:center; background:var(--tp-chip); border-radius:999px; padding:4px; }
+        .tp-langbar { display:flex; align-items:center; background:var(--tp-chip); border:1px solid var(--tp-line-3); border-radius:999px; padding:4px; }
         .tp-pill {
             min-height:38px; display:inline-flex; align-items:center; border:none; cursor:pointer;
             border-radius:999px; padding:0 16px; font-family:'Geist',sans-serif; font-weight:800;
@@ -135,7 +135,7 @@
         }
         .tp-pill.is-on { background:var(--tp-teal); color:#fff; }
         .tp-iconbtn {
-            width:46px; height:46px; border-radius:12px; border:1px solid var(--tp-line-3);
+            width:46px; height:46px; border-radius:50%; border:1px solid var(--tp-line-3);
             background:var(--tp-surface); cursor:pointer; display:grid; place-items:center; color:var(--tp-icon); position:relative;
         }
         .tp-iconbtn:hover { background:var(--tp-chip); }
