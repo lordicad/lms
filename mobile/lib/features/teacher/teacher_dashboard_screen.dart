@@ -225,7 +225,10 @@ class _DashboardTabState extends State<_DashboardTab> {
               onTap: () => Navigator.pop(ctx, true),
             ),
             ListTile(
-              leading: const Icon(Icons.description_outlined, color: LmsColors.brand),
+              leading: const Icon(
+                Icons.description_outlined,
+                color: LmsColors.brand,
+              ),
               title: const Text('Kuiz fail'),
               subtitle: const Text('Muat naik PDF/DOC untuk murid muat turun.'),
               onTap: () => Navigator.pop(ctx, false),
@@ -462,23 +465,39 @@ class _DashboardTabState extends State<_DashboardTab> {
                         ),
                         const SizedBox(height: 10),
                         LayoutBuilder(
-                          builder: (context, constraints) => GridView.builder(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemCount: data.leaderboards.length,
-                            gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount:
-                                      constraints.maxWidth >= 600 ? 2 : 1,
-                                  mainAxisSpacing: 10,
-                                  crossAxisSpacing: 10,
-                                  mainAxisExtent:
-                                      constraints.maxWidth >= 600 ? 178 : 172,
-                                ),
-                            itemBuilder: (_, index) => _DashboardLeaderboard(
-                              board: data.leaderboards[index],
-                            ),
-                          ),
+                          builder: (context, constraints) {
+                            var maxRows = 0;
+                            for (final board in data.leaderboards) {
+                              final rows = board.items.length > 5
+                                  ? 5
+                                  : board.items.length;
+                              if (rows > maxRows) maxRows = rows;
+                            }
+                            final rowHeight = constraints.maxWidth >= 600
+                                ? 50.0
+                                : 48.0;
+                            final emptySpace = maxRows == 0 ? 22.0 : 0.0;
+                            final leaderboardHeight =
+                                58.0 + (maxRows * rowHeight) + emptySpace;
+
+                            return GridView.builder(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: data.leaderboards.length,
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: constraints.maxWidth >= 600
+                                        ? 2
+                                        : 1,
+                                    mainAxisSpacing: 10,
+                                    crossAxisSpacing: 10,
+                                    mainAxisExtent: leaderboardHeight,
+                                  ),
+                              itemBuilder: (_, index) => _DashboardLeaderboard(
+                                board: data.leaderboards[index],
+                              ),
+                            );
+                          },
                         ),
                         const SizedBox(height: 12),
                         _PassFailCard(data: data.passFail),
@@ -806,7 +825,11 @@ class _DashboardLeaderboard extends StatelessWidget {
               ),
             )
           else
-            for (var index = 0; index < board.items.length; index++)
+            for (
+              var index = 0;
+              index < (board.items.length > 5 ? 5 : board.items.length);
+              index++
+            )
               _DashboardLeaderboardItem(
                 item: board.items[index],
                 rank: index + 1,

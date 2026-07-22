@@ -448,6 +448,7 @@ class _VideosList extends StatelessWidget {
             final v = items[i];
             return _ContentCard(
               icon: Icons.play_circle_outline,
+              thumbnailUrl: v.thumbnailUrl,
               title: v.title,
               subtitle: [
                 if (v.subjectName != null) v.subjectName!,
@@ -654,6 +655,7 @@ class _ContentCard extends StatelessWidget {
     required this.icon,
     required this.title,
     required this.subtitle,
+    this.thumbnailUrl,
     this.published,
     this.onEdit,
     this.onStats,
@@ -665,6 +667,7 @@ class _ContentCard extends StatelessWidget {
   final IconData icon;
   final String title;
   final String subtitle;
+  final String? thumbnailUrl;
   final bool? published;
   final VoidCallback? onEdit;
   final VoidCallback? onStats;
@@ -690,14 +693,7 @@ class _ContentCard extends StatelessWidget {
       padding: const EdgeInsets.all(14),
       child: Row(
         children: [
-          Container(
-            decoration: BoxDecoration(
-              color: LmsPalette.soft(context),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            padding: const EdgeInsets.all(11),
-            child: Icon(icon, color: LmsColors.brand),
-          ),
+          _ContentLeading(icon: icon, thumbnailUrl: thumbnailUrl),
           const SizedBox(width: 14),
           Expanded(
             child: Column(
@@ -817,6 +813,29 @@ class _ContentCard extends StatelessWidget {
             ),
         ],
       ),
+    );
+  }
+}
+
+class _ContentLeading extends StatelessWidget {
+  const _ContentLeading({required this.icon, this.thumbnailUrl});
+
+  final IconData icon;
+  final String? thumbnailUrl;
+
+  @override
+  Widget build(BuildContext context) {
+    if (thumbnailUrl != null && thumbnailUrl!.isNotEmpty) {
+      return SizedBox(width: 72, child: LessonThumbnail(url: thumbnailUrl));
+    }
+
+    return Container(
+      decoration: BoxDecoration(
+        color: LmsPalette.soft(context),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      padding: const EdgeInsets.all(11),
+      child: Icon(icon, color: LmsColors.brand),
     );
   }
 }
