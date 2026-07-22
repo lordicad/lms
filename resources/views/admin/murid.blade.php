@@ -35,7 +35,10 @@
 
             {{-- Tahun then Kelas: a class belongs to a year, so the Kelas list follows the Tahun on
                  screen the same way Subjek follows Tahun elsewhere. --}}
-            <form method="GET" action="{{ route('admin.murid') }}" style="display:flex;align-items:flex-end;gap:14px;flex-wrap:wrap;align-self:flex-start">
+            {{-- Full width, like the Cikgu filter: align-self:flex-start shrank the form to its
+                 contents, which was right when it held one dropdown but left the search box unable
+                 to grow past its min-width. --}}
+            <form method="GET" action="{{ route('admin.murid') }}" style="display:flex;align-items:flex-end;gap:14px;flex-wrap:wrap">
                 @foreach ($podiums as $podium)
                     @if ($podium->subjectSlug)
                         <input type="hidden" name="subjek_{{ $podium->grade->level }}" value="{{ $podium->subjectSlug }}">
