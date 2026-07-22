@@ -4,14 +4,17 @@
         $card = "background:var(--tp-surface);border:1px solid var(--tp-line);border-radius:18px;padding:24px;display:flex;flex-direction:column;box-shadow:0 2px 10px rgba(46,44,80,.04)";
         $h2 = "margin:0;font-family:'Geist',sans-serif;font-size:17px;font-weight:800;color:var(--tp-ink)";
         $label = "font-family:'Geist',sans-serif;font-size:12.5px;font-weight:800;color:var(--tp-muted-2)";
-        $input = "min-height:46px;border:1.5px solid var(--tp-line-2);border-radius:12px;padding:0 14px;background:var(--tp-input);font-family:'Nunito',sans-serif;font-size:14.5px;color:var(--tp-ink);box-sizing:border-box;width:100%";
+        // Trailing semicolon matters: these get concatenated below, and "width:100%display:flex"
+        // is one invalid declaration that takes both properties down with it.
+        $input = "min-height:46px;border:1.5px solid var(--tp-line-2);border-radius:12px;padding:0 14px;background:var(--tp-input);font-family:'Nunito',sans-serif;font-size:14.5px;color:var(--tp-ink);box-sizing:border-box;width:100%;";
         $field = "display:flex;flex-direction:column;gap:6px";
         $primary = "align-self:flex-start;min-height:46px;border:none;cursor:pointer;border-radius:12px;background:#17907B;color:#fff;font-family:'Geist',sans-serif;font-weight:800;font-size:14px;padding:0 22px";
         $err = "margin:0;font-size:12.5px;font-weight:700;color:#C24936";
-        // Admin-maintained fields: same box as an input so the form still reads as one list, but
-        // visibly inert. Rendered as text rather than a disabled <input> — there is nothing to
-        // submit, and a real input invites tabbing into it.
-        $locked = $input."display:flex;align-items:center;background:var(--tp-surface-2);color:var(--tp-muted-2);opacity:.8";
+        // Admin-maintained fields. Styled exactly like an input — same box, same ink — because the
+        // teacher still needs to read these; they are simply not theirs to edit. Rendered as text
+        // rather than a disabled <input>: there is nothing to submit, and a real input invites
+        // tabbing into it. The flex centring is what puts the value on the box's midline.
+        $locked = $input."display:flex;align-items:center;cursor:default";
         $note = "font-size:12.5px;color:var(--tp-muted-2)";
     @endphp
 
@@ -65,9 +68,9 @@
 
             {{-- Read-only: email is the sign-in identifier, set by the admin. --}}
             <div style="{{ $field }}">
-                <label for="email" style="{{ $label }}">{{ __('E-mel (untuk log masuk)') }}</label>
-                <input id="email" type="email" value="{{ $user->email }}" readonly disabled style="{{ $input }}opacity:.65;cursor:not-allowed">
-                <span style="font-size:12.5px;color:var(--tp-muted-2)">{{ __('Emel log masuk anda tidak boleh diubah. Hubungi pentadbir sekolah jika ia perlu ditukar.') }}</span>
+                <span style="{{ $label }}">{{ __('E-mel (untuk log masuk)') }}</span>
+                <span style="{{ $locked }}">{{ $user->email }}</span>
+                <span style="{{ $note }}">{{ __('Emel log masuk anda tidak boleh diubah. Hubungi pentadbir sekolah jika ia perlu ditukar.') }}</span>
             </div>
 
             <div style="{{ $field }}">

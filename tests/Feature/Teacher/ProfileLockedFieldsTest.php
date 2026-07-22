@@ -118,6 +118,28 @@ class ProfileLockedFieldsTest extends TestCase
     }
 
     /**
+     * The read-only rows build their style by concatenating onto the shared $input string. Miss the
+     * separating semicolon and you get "width:100%display:flex" — one invalid declaration that
+     * takes both properties with it, so the value loses its centring and the box its width. Nothing
+     * warns; it just looks slightly wrong.
+     */
+    public function test_the_read_only_rows_render_valid_css(): void
+    {
+        $html = $this->actingAs($this->teacher())->get(route('profile.edit'))->getContent();
+
+        preg_match_all('/style="([^"]*)"/', $html, $styles);
+
+        foreach ($styles[1] as $style) {
+            $this->assertDoesNotMatchRegularExpression(
+                // The digit is required: without it "place-items:" reads as em + "s" + ":".
+                '/\d(%|px|em|rem|fr|vh|vw)[a-z-]+\s*:/',
+                $style,
+                "a declaration ran into the next one, so both are dropped: {$style}",
+            );
+        }
+    }
+
+    /**
      * The mobile app posts to its own endpoint with its own copy of these rules. It is the same
      * form, so it has to enforce the same thing — otherwise the web lock is only a suggestion.
      */
