@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Grade;
+use App\Models\SchoolClass;
 use App\Models\Subject;
 use App\Models\User;
 use App\Support\SchoolScope;
@@ -27,13 +28,29 @@ class AdminStudentController extends Controller
         $grades = Grade::orderBy('level')->get();
         $gradeLevel = $request->integer('tahun') ?: null;
 
+        // Classes belong to a school and a year, so the list follows both: the admin's own school,
+        // and the Tahun on screen. A class from a year that is no longer selected is dropped rather
+        // than left filtering invisibly.
+        $classes = SchoolClass::query()
+            ->when(SchoolScope::currentSchoolId(), fn ($q, $id) => $q->where('school_id', $id))
+            ->when($gradeLevel, fn ($q) => $q->whereHas('grade', fn ($g) => $g->where('level', $gradeLevel)))
+            ->with('grade')
+            ->orderBy('grade_id')
+            ->orderBy('name')
+            ->get();
+
+        $classId = $request->integer('kelas') ?: null;
+        $classId = $classes->contains('id', $classId) ? $classId : null;
+
         return view('admin.murid', [
             // Counts are deliberately unfiltered — they describe the school, not the table.
             'totalStudents' => SchoolScope::users(User::where('role', User::ROLE_STUDENT))->count(),
             'countsByGrade' => $this->countsByGrade(),
 
-            'students' => $this->students($gradeLevel),
+            'students' => $this->students($gradeLevel, $classId),
             'gradeLevel' => $gradeLevel,
+            'classes' => $classes,
+            'classId' => $classId,
 
             'podiums' => $this->podiums($grades, $request),
 
@@ -61,14 +78,15 @@ class AdminStudentController extends Controller
      * The roster. Passes are counted at the reporting threshold and fails are the remainder, so the
      * two always add up to the attempts column rather than drifting from it.
      */
-    private function students(?int $gradeLevel): LengthAwarePaginator
+    private function students(?int $gradeLevel, ?int $classId = null): LengthAwarePaginator
     {
         return SchoolScope::users(User::where('role', User::ROLE_STUDENT))
-            ->with('grade')
+            ->with('grade', 'schoolClass')
             ->when($gradeLevel, fn (Builder $q) => $q->whereHas(
                 'grade',
                 fn (Builder $g) => $g->where('level', $gradeLevel),
             ))
+            ->when($classId, fn (Builder $q) => $q->where('school_class_id', $classId))
             ->withCount([
                 'lessonViews as videos_viewed',
                 'attempts as attempts_count' => fn (Builder $q) => $q->completed(),
