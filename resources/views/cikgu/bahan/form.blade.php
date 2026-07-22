@@ -46,26 +46,43 @@
         {{-- File --}}
         <div class="tp-panelform">
             <h2 class="tp-g" style="font-size:17px;font-weight:800;color:var(--tp-ink)">{{ __('Fail') }}</h2>
-            <div class="tp-field">
-                <label for="title" class="tp-label">{{ __('Tajuk') }}</label>
-                <input id="title" name="title" type="text" value="{{ old('title', $material->title) }}" required class="tp-input" @error('title') aria-invalid="true" @enderror>
-                @error('title') <span class="tp-error">{{ $message }}</span> @enderror
-            </div>
-            <div class="tp-field">
-                <label for="file" class="tp-label">{{ __('Fail bahan') }}</label>
-                <input id="file" name="file" type="file" accept=".pdf,.ppt,.pptx,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg" class="tp-file" aria-describedby="file-help" @error('file') aria-invalid="true" @enderror>
-                <p id="file-help" class="tp-hint">
-                    {{ __('PDF, PowerPoint, Word, Excel atau imej.') }} {{ __('Had saiz :max MB.', ['max' => config('lms.material_max_mb')]) }}
-                    @if ($editing) {{ __('Biarkan kosong untuk mengekalkan fail sedia ada.') }} @endif
-                </p>
-                @error('file') <span class="tp-error">{{ $message }}</span> @enderror
-                @if ($editing)
+
+            @if ($editing)
+                {{-- Editing replaces the one file this material points at, so it stays single. --}}
+                <div class="tp-field">
+                    <label for="title" class="tp-label">{{ __('Tajuk') }}</label>
+                    <input id="title" name="title" type="text" value="{{ old('title', $material->title) }}" required class="tp-input" @error('title') aria-invalid="true" @enderror>
+                    @error('title') <span class="tp-error">{{ $message }}</span> @enderror
+                </div>
+                <div class="tp-field">
+                    <label for="file" class="tp-label">{{ __('Fail bahan') }}</label>
+                    <input id="file" name="file" type="file" accept=".pdf,.ppt,.pptx,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg" class="tp-file" aria-describedby="file-help" @error('file') aria-invalid="true" @enderror>
+                    <p id="file-help" class="tp-hint">
+                        {{ __('PDF, PowerPoint, Word, Excel atau imej.') }} {{ __('Had saiz :max MB.', ['max' => config('lms.material_max_mb')]) }}
+                        {{ __('Biarkan kosong untuk mengekalkan fail sedia ada.') }}
+                    </p>
+                    @error('file') <span class="tp-error">{{ $message }}</span> @enderror
                     <p style="display:flex;align-items:center;gap:8px;background:var(--tp-input);border-radius:12px;padding:12px 14px;font-size:13.5px;color:var(--tp-muted-2);margin:6px 0 0">
                         <span style="font-size:18px">{{ $material->icon() }}</span>
                         {{ __('Fail semasa:') }} {{ $material->original_name }} ({{ $material->humanSize() }})
                     </p>
-                @endif
-            </div>
+                </div>
+            @else
+                <x-file-dropzone
+                    name="files[]"
+                    title-name="titles[]"
+                    :extensions="config('lms.material_mimes')"
+                    :accept="collect(config('lms.material_mimes'))->map(fn ($e) => '.'.$e)->implode(',')"
+                    :max-mb="config('lms.material_max_mb')"
+                    :max-files="\App\Http\Requests\MaterialRequest::MAX_FILES"
+                    :hint="__('PDF, PowerPoint, Word, Excel atau imej. Had saiz :max MB setiap fail.', ['max' => config('lms.material_max_mb')])"
+                    :title-label="__('Tajuk (untuk pelajar)')" />
+
+                @error('files') <span class="tp-error">{{ $message }}</span> @enderror
+                @foreach ($errors->get('files.*') as $messages)
+                    <span class="tp-error">{{ $messages[0] }}</span>
+                @endforeach
+            @endif
         </div>
 
         <div style="display:flex;gap:12px">

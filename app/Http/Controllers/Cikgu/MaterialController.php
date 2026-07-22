@@ -70,22 +70,35 @@ class MaterialController extends Controller
     {
         $this->authorize('create', Material::class);
 
-        $file = $request->file('file');
+        $titles = $request->input('titles', []);
+        $files = $request->file('files', []);
+        $chapterId = $request->integer('chapter_id');
+        $lessonId = $request->input('lesson_id') ?: null;
 
-        $material = Material::create([
-            'chapter_id' => $request->integer('chapter_id'),
-            'lesson_id' => $request->input('lesson_id') ?: null,
-            'teacher_id' => $request->user()->id,
-            'title' => $request->input('title'),
-            'file_path' => Uploads::store($file, 'materials'),
-            'original_name' => $file->getClientOriginalName(),
-            'mime_type' => $file->getClientMimeType(),
-            'size_kb' => Uploads::sizeKb($file),
-        ]);
+        $created = [];
 
-        return redirect()
-            ->route('cikgu.bahan.index')
-            ->with('status', __('Bahan ":title" berjaya dimuat naik.', ['title' => $material->title]));
+        foreach ($files as $index => $file) {
+            // The title is paired to its file by position; blank falls back to the file's own
+            // name with the extension dropped, which is what a teacher would have typed.
+            $given = trim((string) ($titles[$index] ?? ''));
+
+            $created[] = Material::create([
+                'chapter_id' => $chapterId,
+                'lesson_id' => $lessonId,
+                'teacher_id' => $request->user()->id,
+                'title' => $given !== '' ? $given : pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME),
+                'file_path' => Uploads::store($file, 'materials'),
+                'original_name' => $file->getClientOriginalName(),
+                'mime_type' => $file->getClientMimeType(),
+                'size_kb' => Uploads::sizeKb($file),
+            ]);
+        }
+
+        $status = count($created) === 1
+            ? __('Bahan ":title" berjaya dimuat naik.', ['title' => $created[0]->title])
+            : __(':count bahan berjaya dimuat naik.', ['count' => count($created)]);
+
+        return redirect()->route('cikgu.bahan.index')->with('status', $status);
     }
 
     public function edit(Request $request, Material $material): View
