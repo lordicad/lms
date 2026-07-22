@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Cikgu;
 
 use App\Http\Controllers\Controller;
 use App\Models\Favourite;
+use App\Models\LessonView;
 use App\Models\QuizAttempt;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -43,11 +44,47 @@ class DashboardController extends Controller
             ->get();
 
         // The four engagement summary cards (built here to avoid a Blade @php block).
+        // Week on week, from the tables that timestamp each row. Materials are the exception:
+        // they carry an aggregate download_count and nothing dated, so that card shows the total
+        // with no trend rather than a made-up one.
+        $since = now()->subDays(7);
+
         $summary = [
-            ['icon' => '👁', 'tint' => '#E4EEF9', 'label' => __('Jumlah tontonan video'), 'value' => number_format($stats['views'])],
-            ['icon' => '❤️', 'tint' => '#FBE4ED', 'label' => __('Video digemari'), 'value' => number_format($stats['favourites'])],
-            ['icon' => '⬇️', 'tint' => '#DCF2EE', 'label' => __('Bahan dimuat turun'), 'value' => number_format($stats['downloads'])],
-            ['icon' => '📝', 'tint' => '#FEF0CE', 'label' => __('Percubaan kuiz'), 'value' => number_format($stats['attempts'])],
+            [
+                'icon' => 'eye', 'tint' => '#E4EEF9', 'ink' => '#2E6CA8',
+                'label' => __('Jumlah tontonan video'), 'value' => number_format($stats['views']),
+                'trend' => $this->weekTrend(
+                    LessonView::whereIn('lesson_id', $lessonIds),
+                    'created_at',
+                    $since,
+                    $stats['views'],
+                ),
+            ],
+            [
+                'icon' => 'heart', 'tint' => '#FBE4ED', 'ink' => '#B84A75',
+                'label' => __('Video digemari'), 'value' => number_format($stats['favourites']),
+                'trend' => $this->weekTrend(
+                    Favourite::whereIn('lesson_id', $lessonIds),
+                    'created_at',
+                    $since,
+                    $stats['favourites'],
+                ),
+            ],
+            [
+                'icon' => 'download', 'tint' => '#DCF2EE', 'ink' => '#0F7A68',
+                'label' => __('Bahan dimuat turun'), 'value' => number_format($stats['downloads']),
+                'trend' => null,   // nothing records when a download happened
+            ],
+            [
+                'icon' => 'quiz', 'tint' => '#FEF0CE', 'ink' => '#8A6A12',
+                'label' => __('Percubaan kuiz'), 'value' => number_format($stats['attempts']),
+                'trend' => $this->weekTrend(
+                    QuizAttempt::whereIn('quiz_id', $quizIds)->completed(),
+                    'completed_at',
+                    $since,
+                    $stats['attempts'],
+                ),
+            ],
         ];
 
         // Pass/fail across all completed attempts on this teacher's quizzes (shared pass rule).
@@ -86,13 +123,17 @@ class DashboardController extends Controller
         ];
 
         $lists = [
-            ['icon' => '🎬', 'title' => __('Video Paling Ditonton'), 'sub' => __('Tontonan pada video anda'),
+            ['title' => __('Video Paling Ditonton'), 'sub' => __('Tontonan pada video anda'),
+                'empty' => __('Tontonan pada video anda akan dipaparkan di sini.'),
                 'items' => $topVideos->map(fn ($l) => $mapItem($l, $l->views_count))],
-            ['icon' => '❤️', 'title' => __('Video Paling Digemari'), 'sub' => __('Murid menandakan ♥ pada video anda'),
+            ['title' => __('Video Paling Digemari'), 'sub' => __('Murid menandakan ♥ pada video anda'),
+                'empty' => __('Video yang digemari murid akan dipaparkan di sini.'),
                 'items' => $topFavourites->map(fn ($l) => $mapItem($l, $l->fav_total))],
-            ['icon' => '📄', 'title' => __('Bahan Paling Dimuat Turun'), 'sub' => __('Muat turun pada bahan anda'),
+            ['title' => __('Bahan Paling Dimuat Turun'), 'sub' => __('Muat turun pada bahan anda'),
+                'empty' => __('Bahan yang dimuat turun murid akan dipaparkan di sini.'),
                 'items' => $topMaterials->map(fn ($m) => $mapItem($m, $m->download_count))],
-            ['icon' => '📝', 'title' => __('Kuiz Paling Dicuba'), 'sub' => __('Percubaan murid pada kuiz anda'),
+            ['title' => __('Kuiz Paling Dicuba'), 'sub' => __('Percubaan murid pada kuiz anda'),
+                'empty' => __('Percubaan murid pada kuiz anda akan dipaparkan di sini.'),
                 'items' => $topQuizzes->map(fn ($q) => $mapItem($q, $q->completed_attempts_count))],
         ];
 
@@ -106,5 +147,30 @@ class DashboardController extends Controller
             'recentLessons' => $recentLessons,
             'recentQuizzes' => $recentQuizzes,
         ]);
+    }
+
+    /**
+     * How much of the running total arrived in the last seven days.
+     *
+     * Expressed against the total rather than against the previous week: a teacher with 3 views
+     * last week and 6 this week is better served by "6 of your 9 views came this week" than by
+     * "+100%", which reads as a milestone on numbers that small.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder<*>  $query
+     * @return array{count: int, percent: int}|null
+     */
+    private function weekTrend($query, string $column, \Carbon\CarbonInterface $since, int $total): ?array
+    {
+        if ($total < 1) {
+            return null;
+        }
+
+        $recent = (clone $query)->where($column, '>=', $since)->count();
+
+        if ($recent < 1) {
+            return null;
+        }
+
+        return ['count' => $recent, 'percent' => (int) round($recent / $total * 100)];
     }
 }
