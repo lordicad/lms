@@ -25,6 +25,9 @@
 <html lang="{{ $current }}" @class(['theme-dark' => $isDark])>
 <head>
     <meta charset="utf-8">
+    {{-- Tab icon. One 196px PNG serves the browser tab and the phone home screen alike. --}}
+    <link rel="icon" type="image/png" href="{{ asset('images/welearn1.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('images/welearn1.png') }}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ $title ? $title.' | WeLearn' : 'WeLearn' }}</title>
 

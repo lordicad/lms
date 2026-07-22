@@ -2,6 +2,9 @@
 <html lang="{{ app()->getLocale() }}" @class(['theme-dark' => ($theme ?? 'light') === 'dark'])>
 <head>
     <meta charset="utf-8">
+    {{-- Tab icon. One 196px PNG serves the browser tab and the phone home screen alike. --}}
+    <link rel="icon" type="image/png" href="{{ asset('images/welearn1.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('images/welearn1.png') }}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <title>{{ isset($title) ? $title.' | '.config('app.name') : config('app.name') }}</title>
