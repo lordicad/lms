@@ -36,10 +36,13 @@ class TeacherRankingController extends Controller
             ? Quiz::find($request->integer('kuiz'))
             : null;
 
+        // Scoped to this teacher's own quizzes: the board answers "how are my students doing on
+        // the work I set", not "who is top of the whole platform".
         $ranked = $leaderboard->ranking(
             gradeId: $grade?->id,
             subjectId: $subject?->id,
             quizId: $quiz?->id,
+            teacherId: $request->user()->id,
         );
 
         // Rank is stamped across the whole ranked set before this slice, so page two carries on at
@@ -54,8 +57,10 @@ class TeacherRankingController extends Controller
             ['path' => Paginator::resolveCurrentPath(), 'query' => $request->query()],
         );
 
-        // Quiz filter options follow the Tahun and Subjek already picked.
+        // Quiz filter options follow the Tahun and Subjek already picked — and only ever list the
+        // teacher's own quizzes, so the dropdown cannot offer one the board would show nothing for.
         $quizzes = Quiz::query()
+            ->where('teacher_id', $request->user()->id)
             ->where('type', Quiz::TYPE_INTERACTIVE)
             ->when($grade, fn ($q) => $q->whereHas('chapter', fn ($c) => $c->where('grade_id', $grade->id)))
             ->when($subject, fn ($q) => $q->whereHas('chapter', fn ($c) => $c->where('subject_id', $subject->id)))

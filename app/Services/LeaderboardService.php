@@ -26,6 +26,10 @@ class LeaderboardService
         ?int $subjectId = null,
         ?int $quizId = null,
         ?int $limit = null,
+        // Restricts the board to attempts on one teacher's own quizzes. The student-facing board
+        // leaves this null and stays platform-wide; a teacher's board sets it, so the standings
+        // describe the work they actually set rather than every quiz in the system.
+        ?int $teacherId = null,
     ): Collection {
         $rows = DB::table('quiz_attempts')
             ->join('users', 'users.id', '=', 'quiz_attempts.student_id')
@@ -37,6 +41,7 @@ class LeaderboardService
             ->when($gradeId, fn ($q) => $q->where('users.grade_id', $gradeId))
             ->when($subjectId, fn ($q) => $q->where('chapters.subject_id', $subjectId))
             ->when($quizId, fn ($q) => $q->where('quizzes.id', $quizId))
+            ->when($teacherId, fn ($q) => $q->where('quizzes.teacher_id', $teacherId))
             ->groupBy('users.id')
             ->select([
                 'users.id as student_id',

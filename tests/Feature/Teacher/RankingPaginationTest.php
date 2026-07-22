@@ -13,11 +13,22 @@ class RankingPaginationTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** Ranked students, each scoring a little less than the one before so the order is fixed. */
+    private User $teacher;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->teacher = User::factory()->teacher()->create();
+    }
+
+    /**
+     * Ranked students, each scoring a little less than the one before so the order is fixed.
+     * The quiz belongs to $this->teacher: the board only counts a teacher's own quizzes.
+     */
     private function seedRankedStudents(int $count): Quiz
     {
         $chapter = Chapter::factory()->create();
-        $quiz = Quiz::factory()->for($chapter)->create();
+        $quiz = Quiz::factory()->for($chapter)->create(['teacher_id' => $this->teacher->id]);
 
         for ($i = 0; $i < $count; $i++) {
             $student = User::factory()->student(3)->create(['email' => "murid{$i}@moe.gov.my"]);
@@ -35,7 +46,7 @@ class RankingPaginationTest extends TestCase
     {
         $this->seedRankedStudents(60);
 
-        $rows = $this->actingAs(User::factory()->teacher()->create())
+        $rows = $this->actingAs($this->teacher)
             ->get(route('cikgu.ranking'))
             ->assertOk()
             ->viewData('rows');
@@ -51,7 +62,7 @@ class RankingPaginationTest extends TestCase
     {
         $this->seedRankedStudents(60);
 
-        $rows = $this->actingAs(User::factory()->teacher()->create())
+        $rows = $this->actingAs($this->teacher)
             ->get(route('cikgu.ranking', ['page' => 2]))
             ->assertOk()
             ->viewData('rows');
@@ -65,7 +76,7 @@ class RankingPaginationTest extends TestCase
     {
         $this->seedRankedStudents(60);
 
-        $html = $this->actingAs(User::factory()->teacher()->create())
+        $html = $this->actingAs($this->teacher)
             ->get(route('cikgu.ranking', ['tahun' => 3]))
             ->assertOk()
             ->getContent();

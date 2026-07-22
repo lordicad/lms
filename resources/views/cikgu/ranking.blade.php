@@ -1,7 +1,7 @@
 <x-cikgu-layout
     :title="__('Ranking Murid')"
     :heading="__('Ranking Murid')"
-    :sub="__('Ranking penuh semua murid. Mata hanya daripada percubaan pertama setiap kuiz, jadi latihan ulangan tidak menaikkan ranking.')">
+    :sub="__('Murid yang menjawab kuiz anda. Mata hanya daripada percubaan pertama setiap kuiz, jadi latihan ulangan tidak menaikkan ranking.')">
 
     @php
         $palette = [['#DCF2EE','#0F7A68'],['#E4EEF9','#2E6CA8'],['#FBE4ED','#B84A75'],['#FEF0CE','#8A6A12'],['#FDE7E0','#C24936']];

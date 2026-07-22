@@ -34,15 +34,18 @@ class RankingController extends Controller
         $subjectId = $filters['subject_id'] ?? null;
         $quizId = $filters['quiz_id'] ?? null;
 
+        // Same scope as the web page: this teacher's own quizzes only.
         $rows = $leaderboard->ranking(
             gradeId: $gradeId,
             subjectId: $subjectId,
             quizId: $quizId,
+            teacherId: $request->user()->id,
         );
 
         // Keep the quiz dropdown aligned with the two broader filters, exactly
         // like the web Cikgu ranking page.
         $quizzes = Quiz::query()
+            ->where('teacher_id', $request->user()->id)
             ->where('type', Quiz::TYPE_INTERACTIVE)
             ->when($gradeId, fn ($query) => $query->whereHas(
                 'chapter',
