@@ -221,8 +221,16 @@
         .tp-thumb { border-radius:10px; overflow:hidden; display:grid; place-items:center; color:rgba(66,118,174,.8); flex-shrink:0; }
         .tp-empty { background:var(--tp-surface); border:1px dashed rgba(46,44,80,.2); border-radius:20px; padding:56px 24px; display:flex; flex-direction:column; align-items:center; gap:10px; text-align:center; }
         .tp-panelform { background:var(--tp-surface); border:1px solid var(--tp-line); border-radius:18px; padding:24px; display:flex; flex-direction:column; gap:16px; box-shadow:var(--tp-shadow); }
-        .tp-back { align-self:flex-start; display:flex; align-items:center; gap:8px; border:none; background:transparent; cursor:pointer; font-family:'Geist',sans-serif; font-size:14px; font-weight:800; color:#6C6F87; padding:2px 0; }
-        .tp-back:hover { color:var(--tp-teal); }
+        /* An outlined button rather than plain text, matching the back links on the admin side —
+           going back looks and behaves the same wherever you are, and it reads as something to
+           press instead of drifting into the heading above it. */
+        .tp-back {
+            align-self:flex-start; display:inline-flex; align-items:center; gap:8px;
+            min-height:40px; cursor:pointer; border-radius:11px; border:1.5px solid var(--tp-teal);
+            background:var(--tp-surface); color:var(--tp-teal);
+            font-family:'Geist',sans-serif; font-weight:800; font-size:13px; padding:0 14px;
+        }
+        .tp-back:hover { background:var(--tp-active-bg); color:var(--tp-teal); }
         .tp-check { width:24px; height:24px; border-radius:7px; flex-shrink:0; display:grid; place-items:center; font-size:14px; margin-top:2px; background:var(--tp-teal); color:#fff; border:2px solid var(--tp-teal); }
         .tp-check-off { width:24px; height:24px; border-radius:7px; flex-shrink:0; display:grid; place-items:center; margin-top:2px; background:var(--tp-surface); border:2px solid rgba(46,44,80,.25); }
         .tp-toggle { min-height:48px; cursor:pointer; border-radius:12px; font-family:'Geist',sans-serif; font-weight:800; font-size:14px; display:inline-flex; align-items:center; justify-content:center; gap:8px; flex:1; transition:all .15s; border:1.5px solid var(--tp-line-2); background:var(--tp-surface); color:#28293F; }
