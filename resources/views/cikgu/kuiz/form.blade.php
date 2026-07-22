@@ -81,7 +81,15 @@
             {{-- File only --}}
             <div x-show="type === 'file'" x-cloak class="tp-field">
                 <label for="file" class="tp-label">{{ __('Fail kuiz') }}</label>
-                <input id="file" name="file" type="file" accept=".pdf,.doc,.docx" class="tp-file" aria-describedby="quiz-file-help" @error('file') aria-invalid="true" @enderror>
+                <x-file-dropzone name="file" accept=".pdf,.doc,.docx"
+                                 aria-describedby="quiz-file-help" :aria-invalid="$errors->has('file') ? 'true' : null">
+                    @if ($editing && $quiz->file_path)
+                        <x-slot:current>
+                            <span style="font-size:18px">📝</span>
+                            {{ __('Fail semasa:') }} {{ $quiz->original_name }}
+                        </x-slot:current>
+                    @endif
+                </x-file-dropzone>
                 <p id="quiz-file-help" class="tp-hint">
                     {{ __('PDF, DOC atau DOCX. Had saiz :size MB.', ['size' => config('lms.quiz_file_max_mb')]) }}
                     @if ($editing && $quiz->file_path) {{ __('Biarkan kosong untuk mengekalkan fail sedia ada (:name).', ['name' => $quiz->original_name]) }} @endif
