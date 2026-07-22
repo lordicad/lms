@@ -59,6 +59,13 @@
         <form method="GET" action="{{ route('admin.bakat') }}" style="display:flex;align-items:flex-end;gap:14px;flex-wrap:wrap">
             @if ($contribSubject) <input type="hidden" name="p_subjek" value="{{ $contribSubject }}"> @endif
             @if ($contribGrade) <input type="hidden" name="p_tahun" value="{{ $contribGrade }}"> @endif
+
+            <div style="display:flex;flex-direction:column;gap:6px;flex:1;min-width:220px">
+                <label for="cari-cikgu" style="font-family:'Geist',sans-serif;font-size:12.5px;font-weight:800;color:var(--tp-muted-2)">{{ __('Cari') }}</label>
+                <input id="cari-cikgu" type="search" name="q" value="{{ $search }}"
+                       placeholder="{{ __('Nama atau emel cikgu') }}" class="tp-input">
+            </div>
+
             {{-- Order: Tahun before Subjek (brief §1). --}}
             <div style="display:flex;flex-direction:column;gap:6px">
                 <label style="font-family:'Geist',sans-serif;font-size:12.5px;font-weight:800;color:var(--tp-muted-2)">{{ __('Tahun') }}</label>
@@ -79,7 +86,7 @@
                 </select>
             </div>
             <noscript><button type="submit" class="tp-btn-ghost">{{ __('Tapis') }}</button></noscript>
-            @if ($subjectSlug || $gradeLevel)
+            @if ($subjectSlug || $gradeLevel || $search !== '')
                 <a href="{{ route('admin.bakat', array_filter(['p_subjek' => $contribSubject, 'p_tahun' => $contribGrade])) }}" class="tp-btn-ghost">{{ __('Kosongkan') }}</a>
             @endif
         </form>

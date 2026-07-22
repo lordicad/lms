@@ -42,15 +42,18 @@ class AdminStudentController extends Controller
         $classId = $request->integer('kelas') ?: null;
         $classId = $classes->contains('id', $classId) ? $classId : null;
 
+        $search = trim((string) $request->query('q', ''));
+
         return view('admin.murid', [
             // Counts are deliberately unfiltered — they describe the school, not the table.
             'totalStudents' => SchoolScope::users(User::where('role', User::ROLE_STUDENT))->count(),
             'countsByGrade' => $this->countsByGrade(),
 
-            'students' => $this->students($gradeLevel, $classId),
+            'students' => $this->students($gradeLevel, $classId, $search),
             'gradeLevel' => $gradeLevel,
             'classes' => $classes,
             'classId' => $classId,
+            'search' => $search,
 
             'podiums' => $this->podiums($grades, $request),
 
@@ -78,10 +81,17 @@ class AdminStudentController extends Controller
      * The roster. Passes are counted at the reporting threshold and fails are the remainder, so the
      * two always add up to the attempts column rather than drifting from it.
      */
-    private function students(?int $gradeLevel, ?int $classId = null): LengthAwarePaginator
+    private function students(?int $gradeLevel, ?int $classId = null, string $search = ''): LengthAwarePaginator
     {
         return SchoolScope::users(User::where('role', User::ROLE_STUDENT))
             ->with('grade', 'schoolClass')
+            // Name, nickname or sign-in address — whichever the admin happens to have to hand.
+            ->when($search !== '', fn (Builder $q) => $q->where(
+                fn (Builder $w) => $w
+                    ->where('name', 'like', "%{$search}%")
+                    ->orWhere('username', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%"),
+            ))
             ->when($gradeLevel, fn (Builder $q) => $q->whereHas(
                 'grade',
                 fn (Builder $g) => $g->where('level', $gradeLevel),

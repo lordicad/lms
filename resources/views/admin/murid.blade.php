@@ -42,6 +42,12 @@
                     @endif
                 @endforeach
 
+                <div style="display:flex;flex-direction:column;gap:6px;flex:1;min-width:220px">
+                    <label for="cari-murid" style="font-family:'Geist',sans-serif;font-size:12.5px;font-weight:800;color:var(--tp-muted-2)">{{ __('Cari') }}</label>
+                    <input id="cari-murid" type="search" name="q" value="{{ $search }}"
+                           placeholder="{{ __('Nama, nama pengguna atau emel') }}" class="tp-input">
+                </div>
+
                 <div style="display:flex;flex-direction:column;gap:6px">
                     <label for="filter-tahun" style="font-family:'Geist',sans-serif;font-size:12.5px;font-weight:800;color:var(--tp-muted-2)">{{ __('Tahun') }}</label>
                     <select id="filter-tahun" name="tahun" class="tp-filter-select" style="min-width:150px" onchange="this.form.submit()">
@@ -66,7 +72,7 @@
 
                 <noscript><button type="submit" class="tp-btn-ghost">{{ __('Tapis') }}</button></noscript>
 
-                @if ($gradeLevel || $classId)
+                @if ($gradeLevel || $classId || $search !== '')
                     <a href="{{ route('admin.murid') }}" style="min-height:46px;display:inline-flex;align-items:center;font-family:'Geist',sans-serif;font-weight:800;font-size:13.5px;color:var(--tp-muted-2);text-decoration:none">{{ __('Kosongkan') }}</a>
                 @endif
             </form>

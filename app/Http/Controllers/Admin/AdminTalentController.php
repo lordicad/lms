@@ -44,7 +44,8 @@ class AdminTalentController extends Controller
         $subjectSlug = $this->offeredSubject($subjectSlug, $gradeLevel);
         $contribSubject = $this->offeredSubject($contribSubject, $contribGrade);
 
-        $teachers = $this->teachers($subjectSlug, $gradeLevel);
+        $search = trim((string) $request->query('q', ''));
+        $teachers = $this->teachers($subjectSlug, $gradeLevel, $search);
 
         return view('admin.bakat', [
             // Guru
@@ -55,6 +56,7 @@ class AdminTalentController extends Controller
             'inactiveCount' => SchoolScope::users(User::where('role', User::ROLE_TEACHER))->where('is_active', false)->count(),
             'subjectSlug' => $subjectSlug,
             'gradeLevel' => $gradeLevel,
+            'search' => $search,
 
             // Penyumbang teratas
             'contributors' => $this->contributors($contribSubject, $contribGrade),
@@ -117,7 +119,7 @@ class AdminTalentController extends Controller
      * through all three content types, and the counts are scoped the same way to stay consistent
      * with it.
      */
-    private function teachers(?string $subjectSlug, ?int $gradeLevel)
+    private function teachers(?string $subjectSlug, ?int $gradeLevel, string $search = '')
     {
         $scope = fn (Builder $query): Builder => $query
             ->when($subjectSlug, fn (Builder $q) => $q->whereHas(
@@ -130,6 +132,12 @@ class AdminTalentController extends Controller
             ));
 
         return SchoolScope::users(User::where('role', User::ROLE_TEACHER))
+            // Name or email: the two ways an admin refers to a colleague.
+            ->when($search !== '', fn (Builder $q) => $q->where(
+                fn (Builder $w) => $w
+                    ->where('name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%"),
+            ))
             ->when($subjectSlug || $gradeLevel, fn (Builder $q) => $q->where(
                 fn (Builder $sub) => $sub
                     ->whereHas('lessons', $scope)
