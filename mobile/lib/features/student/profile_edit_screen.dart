@@ -52,7 +52,6 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
 
   bool get _isStudent => widget.user.role == UserRole.student;
   bool get _isTeacher => widget.user.role == UserRole.teacher;
-  bool get _emailRequired => _isTeacher;
 
   @override
   void initState() {
@@ -374,21 +373,13 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
         controller: _email,
         keyboardType: TextInputType.emailAddress,
         autocorrect: false,
-        decoration: InputDecoration(
-          labelText: _emailRequired ? 'Emel' : 'Emel (pilihan)',
-          prefixIcon: const Icon(Icons.mail_outline_rounded),
+        readOnly: true,
+        decoration: const InputDecoration(
+          labelText: 'E-mel log masuk',
+          prefixIcon: Icon(Icons.mail_outline_rounded),
+          helperText:
+              'E-mel log masuk tidak boleh diubah. Hubungi pentadbir jika perlu.',
         ),
-        validator: (value) {
-          final email = value?.trim() ?? '';
-          if (_emailRequired && email.isEmpty) {
-            return 'Guru perlu memberikan alamat emel.';
-          }
-          if (email.isNotEmpty &&
-              !RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(email)) {
-            return 'Sila masukkan emel yang sah.';
-          }
-          return null;
-        },
       ),
     ],
   );

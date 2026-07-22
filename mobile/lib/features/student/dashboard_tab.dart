@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/content/content_models.dart';
 import '../../core/content/content_repository.dart';
+import '../../core/settings/app_settings.dart';
 import '../../core/theme/lms_theme.dart';
 import '../../core/widgets/loading_skeleton.dart';
 import 'subject_chapters_screen.dart';
@@ -14,11 +15,13 @@ class DashboardTab extends StatefulWidget {
   const DashboardTab({
     super.key,
     required this.repository,
+    required this.username,
     this.grade,
     this.onSeeAllSubjects,
   });
 
   final ContentRepository repository;
+  final String username;
   final int? grade;
   final VoidCallback? onSeeAllSubjects;
 
@@ -127,6 +130,32 @@ class _DashboardTabState extends State<DashboardTab> {
             physics: const AlwaysScrollableScrollPhysics(),
             padding: const EdgeInsets.only(bottom: 32),
             children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 14, 20, 4),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      context.copy(
+                        bm: 'Selamat datang, ${widget.username}',
+                        en: 'Welcome, ${widget.username}',
+                      ),
+                      style: Theme.of(context).textTheme.headlineMedium,
+                    ),
+                    const SizedBox(height: 3),
+                    Text(
+                      context.copy(
+                        bm: 'Ringkasan pembelajaran anda pada hari ini',
+                        en: 'Your learning summary for today',
+                      ),
+                      style: const TextStyle(
+                        fontSize: 12.5,
+                        color: LmsColors.inkMuted,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
               if (data.hero != null) ...[
                 Padding(
                   padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),

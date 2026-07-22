@@ -118,6 +118,24 @@ class ApiClient {
     return AuthUser.fromJson(body['user'] as Map<String, dynamic>);
   }
 
+  Future<AuthUser> updateFirstPassword({
+    required String token,
+    required String password,
+    required String confirmation,
+  }) async {
+    final response = await _http.post(
+      Uri.parse('$baseUrl/auth/first-password'),
+      headers: {..._authHeaders(token), 'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'password': password,
+        'password_confirmation': confirmation,
+      }),
+    );
+    final body = _decode(response);
+    _throwIfUnsuccessful(response, body);
+    return AuthUser.fromJson(body['user'] as Map<String, dynamic>);
+  }
+
   Future<void> logout(String token) async {
     final response = await _http.post(
       Uri.parse('$baseUrl/auth/logout'),

@@ -185,6 +185,7 @@ class AuthUser {
     this.subjects = const [],
     this.homeroomClass,
     this.studentStats,
+    this.mustChangePassword = false,
   });
 
   final int id;
@@ -204,6 +205,7 @@ class AuthUser {
   final List<SubjectInfo> subjects;
   final SchoolClassInfo? homeroomClass;
   final StudentProfileStats? studentStats;
+  final bool mustChangePassword;
 
   AuthUser copyWith({
     String? name,
@@ -229,6 +231,7 @@ class AuthUser {
       subjects: subjects,
       homeroomClass: homeroomClass,
       studentStats: studentStats,
+      mustChangePassword: mustChangePassword,
     );
   }
 
@@ -260,6 +263,7 @@ class AuthUser {
       subjects: _items(json['subjects'], SubjectInfo.fromJson),
       homeroomClass: _map(json['homeroom_class'], SchoolClassInfo.fromJson),
       studentStats: _map(json['student_stats'], StudentProfileStats.fromJson),
+      mustChangePassword: json['must_change_password'] == true,
     );
   }
 }

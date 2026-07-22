@@ -37,6 +37,7 @@ Route::prefix('auth')->group(function () {
         Route::get('profile/options', [AuthController::class, 'profileOptions']);
         Route::patch('profile', [AuthController::class, 'updateProfile']);
         Route::post('profile/avatar', [AuthController::class, 'updateAvatar']);
+        Route::post('first-password', [AuthController::class, 'updateFirstPassword']);
         Route::post('logout', [AuthController::class, 'logout']);
     });
 });

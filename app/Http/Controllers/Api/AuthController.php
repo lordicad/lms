@@ -16,6 +16,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\ValidationException;
 
 /**
@@ -35,9 +36,11 @@ class AuthController extends Controller
             'device_name' => ['required', 'string'],
         ]);
 
-        $field = filter_var($validated['login'], FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
-
-        $user = User::where($field, $validated['login'])->first();
+        $login = mb_strtolower(trim($validated['login']));
+        // New accounts use the stable email identifier just like the web app.
+        // Username remains a fallback only for older accounts without an email.
+        $user = User::where('email', $login)->first()
+            ?? User::whereNull('email')->where('username', $validated['login'])->first();
 
         if (! $user || ! Hash::check($validated['password'], $user->password)) {
             throw ValidationException::withMessages([
@@ -128,11 +131,6 @@ class AuthController extends Controller
                 'required', 'string', 'min:3', 'max:30',
                 'regex:/^[a-zA-Z0-9._-]+$/',
             ],
-            'email' => [
-                Rule::requiredIf($user->isTeacher()),
-                'nullable', 'string', 'lowercase', 'email', 'max:255',
-                Rule::unique('users', 'email')->ignore($user->id),
-            ],
         ];
 
         if ($user->isStudent()) {
@@ -180,8 +178,6 @@ class AuthController extends Controller
             'name.required' => __('Sila isi nama anda.'),
             'username.required' => __('Sila isi nama pengguna.'),
             'username.regex' => __('Nama pengguna hanya boleh mengandungi huruf, nombor, titik, garis bawah dan sengkang.'),
-            'email.required' => __('Guru perlu memberikan alamat emel.'),
-            'email.unique' => __('Emel ini sudah didaftarkan.'),
             'grade_level.required' => __('Sila pilih Tahun anda.'),
         ]);
 
@@ -201,7 +197,6 @@ class AuthController extends Controller
         $account = [
             'name' => $validated['name'],
             'username' => $validated['username'],
-            'email' => $validated['email'] ?? null,
         ];
 
         if ($user->isTeacher()) {
@@ -257,6 +252,29 @@ class AuthController extends Controller
         if ($oldAvatar) {
             Storage::disk('uploads')->delete($oldAvatar);
         }
+
+        return response()->json([
+            'user' => $this->userPayload($user->fresh() ?? $user),
+        ]);
+    }
+
+    /** Set the private password required on an admin-created account's first mobile sign-in. */
+    public function updateFirstPassword(Request $request): JsonResponse
+    {
+        /** @var User $user */
+        $user = $request->user();
+
+        $validated = $request->validate([
+            'password' => ['required', 'string', 'confirmed', Password::min(6)],
+        ], [
+            'password.required' => __('Sila masukkan kata laluan baharu.'),
+            'password.min' => __('Kata laluan mesti sekurang-kurangnya 6 aksara.'),
+            'password.confirmed' => __('Pengesahan kata laluan tidak sepadan.'),
+        ]);
+
+        $user->password = $validated['password'];
+        $user->save();
+        $user->markPasswordChanged();
 
         return response()->json([
             'user' => $this->userPayload($user->fresh() ?? $user),
@@ -327,6 +345,7 @@ class AuthController extends Controller
             'email' => $user->email,
             'avatar_url' => $user->avatarUrl(),
             'role' => $user->role,
+            'must_change_password' => $user->mustChangePassword(),
             'grade' => $user->grade === null ? null : [
                 'id' => $user->grade->id,
                 'level' => $user->grade->level,

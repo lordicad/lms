@@ -118,6 +118,24 @@ class AuthRepository {
     );
   }
 
+  Future<AuthUser> updateFirstPassword({
+    required String password,
+    required String confirmation,
+  }) async {
+    if (usePreviewAuthentication) {
+      throw const ApiException('Ciri ini tidak tersedia dalam pratonton.');
+    }
+    final token = await _tokenStore.read();
+    if (token == null) {
+      throw const ApiException('Sesi anda telah tamat. Sila log masuk semula.');
+    }
+    return _api.updateFirstPassword(
+      token: token,
+      password: password,
+      confirmation: confirmation,
+    );
+  }
+
   String get _deviceName {
     if (Platform.isAndroid) {
       return 'Android LMS MOE';

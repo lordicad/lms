@@ -46,7 +46,7 @@ void main() {
     );
 
     expect(find.text('Log Masuk'), findsNWidgets(2));
-    expect(find.text('Nama pengguna atau emel'), findsOneWidget);
+    expect(find.text('E-mel log masuk'), findsOneWidget);
     expect(find.text('Kata laluan'), findsOneWidget);
   });
 

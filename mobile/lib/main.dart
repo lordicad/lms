@@ -10,6 +10,7 @@ import 'core/settings/app_settings.dart';
 import 'core/theme/lms_theme.dart';
 import 'core/widgets/lms_logo.dart';
 import 'features/auth/login_screen.dart';
+import 'features/auth/first_password_screen.dart';
 import 'features/student/student_shell.dart';
 import 'features/teacher/teacher_dashboard_screen.dart';
 
@@ -131,6 +132,18 @@ class _LmsMobileAppState extends State<LmsMobileApp> {
     return updated;
   }
 
+  Future<AuthUser> _updateFirstPassword(
+    String password,
+    String confirmation,
+  ) async {
+    final updated = await _auth.updateFirstPassword(
+      password: password,
+      confirmation: confirmation,
+    );
+    if (mounted) setState(() => _user = updated);
+    return updated;
+  }
+
   @override
   Widget build(BuildContext context) {
     return AppLanguageScope(
@@ -146,6 +159,12 @@ class _LmsMobileAppState extends State<LmsMobileApp> {
               ? _SplashScreen(onPresented: _startSessionRestore)
               : _user == null
               ? LoginScreen(auth: _auth, onSignedIn: _signedIn)
+              : _user!.mustChangePassword
+              ? FirstPasswordScreen(
+                  user: _user!,
+                  onSave: _updateFirstPassword,
+                  onSignOut: _signOut,
+                )
               : _RoleHome(
                   user: _user!,
                   onSignOut: _signOut,

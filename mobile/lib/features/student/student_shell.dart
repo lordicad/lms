@@ -71,6 +71,7 @@ class _StudentShellState extends State<StudentShell> {
     final tabs = [
       DashboardTab(
         repository: _repository,
+        username: widget.user.username,
         grade: _activeGrade,
         onSeeAllSubjects: () => setState(() => _index = 1),
       ),

@@ -105,12 +105,12 @@ class _LoginScreenState extends State<LoginScreen> {
                           textInputAction: TextInputAction.next,
                           autofillHints: const [AutofillHints.username],
                           decoration: const InputDecoration(
-                            labelText: 'Nama pengguna atau emel',
-                            hintText: 'Contoh: nur.aisyah',
+                            labelText: 'E-mel log masuk',
+                            hintText: 'Contoh: nama@sekolah.edu.my',
                           ),
                           validator: (value) =>
                               value == null || value.trim().isEmpty
-                              ? 'Sila isi nama pengguna atau emel.'
+                              ? 'Sila isi e-mel log masuk.'
                               : null,
                         ),
                         const SizedBox(height: 16),
@@ -160,7 +160,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         const SizedBox(height: 16),
                         const Text(
-                          'Murid boleh menggunakan nama pengguna sahaja. Akaun guru boleh menggunakan nama pengguna atau emel.',
+                          'Gunakan e-mel yang didaftarkan oleh pentadbir. Akaun lama tanpa e-mel masih boleh menggunakan nama pengguna.',
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 12,
