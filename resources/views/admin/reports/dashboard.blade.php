@@ -1,7 +1,5 @@
-@php($forWord = $forWord ?? false)
-{{-- The PDF gets a full styled HTML document; the Word (PhpWord) path receives a plain fragment,
-     because PhpWord's HTML reader parses XML and rejects a DOCTYPE/<head>/<style> block. --}}
-@unless ($forWord)
+{{-- Rendered to PDF by dompdf, so this is a complete styled HTML document. Not a browser page:
+     it is never served directly, and carries no favicon or app assets. --}}
 <!DOCTYPE html>
 <html lang="{{ app()->getLocale() }}">
 <head>
@@ -20,7 +18,6 @@
     </style>
 </head>
 <body>
-@endunless
     <h1>{{ __('Laporan Papan Pemuka WeLearn') }}</h1>
     <p class="muted">{{ __('Dijana pada :date (:tz)', ['date' => $generatedAt->translatedFormat('j F Y, g:i A'), 'tz' => $timezone]) }}</p>
     <p class="muted">{{ __('Tempoh laporan (Aktiviti Platform):') }} <strong>{{ __($periodLabel) }}</strong></p>
@@ -144,7 +141,5 @@
             <tr><td>{{ __('Jumlah kuiz') }}</td><td class="num">{{ $totals['quizzes'] }}</td></tr>
         </tbody>
     </table>
-@unless ($forWord)
 </body>
 </html>
-@endunless

@@ -135,11 +135,9 @@
         {{-- ===================== Export toolbar ===================== --}}
         <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:var(--tp-surface);border:1px solid var(--dl);border-radius:14px;padding:12px 16px;box-shadow:var(--tp-shadow)">
             <span style="font-size:12.5px;font-weight:700;color:var(--tp-muted);flex:1;min-width:180px">{{ __('Laporan bulanan menggunakan nombor yang sama seperti halaman ini.') }}</span>
-            @foreach ([['pdf', __('Jana PDF'), route('admin.laporan.pdf', ['period' => $period])], ['quiz', __('Jana Word'), route('admin.laporan.word', ['period' => $period])]] as [$icon, $label, $href])
-                <a href="{{ $href }}" class="dash-export" style="display:inline-flex;align-items:center;gap:8px;min-height:42px;border-radius:11px;border:1.5px solid var(--dl-2);background:var(--tp-surface);color:var(--tp-ink);font-family:'Geist',sans-serif;font-weight:800;font-size:13px;padding:0 15px">
-                    <span style="display:block;width:18px;height:18px">{!! $ic($icon, 18) !!}</span>{{ $label }}
-                </a>
-            @endforeach
+            <a href="{{ route('admin.laporan.pdf', ['period' => $period]) }}" class="dash-export" style="display:inline-flex;align-items:center;gap:8px;min-height:42px;border-radius:11px;border:1.5px solid var(--dl-2);background:var(--tp-surface);color:var(--tp-ink);font-family:'Geist',sans-serif;font-weight:800;font-size:13px;padding:0 15px">
+                <span style="display:block;width:18px;height:18px">{!! $ic('pdf', 18) !!}</span>{{ __('Jana PDF') }}
+            </a>
         </div>
 
         {{-- ===================== 1. Summary totals ===================== --}}

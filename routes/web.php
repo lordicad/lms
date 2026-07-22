@@ -194,7 +194,6 @@ Route::middleware(['auth', 'role:admin'])
 
         // Server-side dashboard reports (brief §4.6). Read-only; never increments analytics counters.
         Route::get('laporan/pdf', [AdminReportController::class, 'pdf'])->name('laporan.pdf');
-        Route::get('laporan/word', [AdminReportController::class, 'word'])->name('laporan.word');
 
         // Pengguna — CRUD for teacher and student accounts.
         Route::get('pengguna', [AdminUserController::class, 'index'])->name('pengguna');

@@ -25,20 +25,6 @@ class ReportExportTest extends TestCase
         $this->assertStringContainsString('30d', $response->headers->get('content-disposition'));
     }
 
-    public function test_word_export_downloads_with_the_docx_mime_type(): void
-    {
-        $admin = User::factory()->admin()->create();
-
-        $response = $this->actingAs($admin)->get(route('admin.laporan.word', ['period' => '7d']));
-
-        $response->assertOk();
-        $this->assertStringContainsString(
-            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-            $response->headers->get('content-type'),
-        );
-        $this->assertStringContainsString('.docx', $response->headers->get('content-disposition'));
-    }
-
     public function test_an_invalid_period_falls_back_to_the_allow_listed_default(): void
     {
         $admin = User::factory()->admin()->create();
@@ -54,7 +40,7 @@ class ReportExportTest extends TestCase
         // The role middleware bounces a non-admin to their own home rather than serving the file.
         $this->actingAs($teacher)->get(route('admin.laporan.pdf'))
             ->assertRedirect($teacher->homeRoute());
-        $this->actingAs($student)->get(route('admin.laporan.word'))
+        $this->actingAs($student)->get(route('admin.laporan.pdf'))
             ->assertRedirect($student->homeRoute());
     }
 

@@ -8,13 +8,10 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
-use PhpOffice\PhpWord\PhpWord;
-use PhpOffice\PhpWord\Shared\Html;
-use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
- * Server-side Admin dashboard reports (brief §4.6). Both formats render the same data the Home page
- * shows for the selected Platform Activity period. Read-only: they never touch analytics counters.
+ * Server-side Admin dashboard report (brief §4.6). Renders the same data the Home page shows for
+ * the selected Platform Activity period. Read-only: it never touches analytics counters.
  */
 class AdminReportController extends Controller
 {
@@ -25,27 +22,6 @@ class AdminReportController extends Controller
         $pdf = Pdf::loadView('admin.reports.dashboard', $data)->setPaper('a4');
 
         return $pdf->download($this->filename($data['period'], 'pdf'));
-    }
-
-    public function word(Request $request, AdminReportService $report): StreamedResponse
-    {
-        $data = $this->reportData($request, $report);
-
-        // Render the same report view to HTML, then convert to a real .docx with semantic headings
-        // and tables — never an HTML/text file renamed to .docx.
-        $html = view('admin.reports.dashboard', array_merge($data, ['forWord' => true]))->render();
-
-        $word = new PhpWord;
-        $section = $word->addSection();
-        Html::addHtml($section, $html, false, false);
-
-        $filename = $this->filename($data['period'], 'docx');
-
-        return response()->streamDownload(function () use ($word) {
-            $word->save('php://output', 'Word2007');
-        }, $filename, [
-            'Content-Type' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-        ]);
     }
 
     /**
