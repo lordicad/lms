@@ -165,17 +165,19 @@ class ProfileLockedFieldsTest extends TestCase
         $this->assertEmpty($teacher->subjects);
     }
 
-    /** Students are unaffected: they still name themselves. */
-    public function test_a_student_can_still_change_their_name(): void
+    /**
+     * The admin is the one exception: nobody above them can set their name, so they keep it.
+     * Students are locked the same way teachers are — see Tests\Feature\Student\ProfileTest.
+     */
+    public function test_an_admin_can_still_change_their_own_name(): void
     {
-        $student = User::factory()->student(3)->create(['name' => 'Original']);
+        $admin = User::factory()->admin()->create(['name' => 'Original']);
 
-        $this->actingAs($student)->patch(route('profile.update'), [
+        $this->actingAs($admin)->patch(route('profile.update'), [
             'name' => 'Nama Baharu',
-            'username' => $student->username,
-            'grade_level' => 3,
-        ])->assertRedirect();
+            'username' => $admin->username,
+        ])->assertRedirect()->assertSessionHasNoErrors();
 
-        $this->assertSame('Nama Baharu', $student->fresh()->name);
+        $this->assertSame('Nama Baharu', $admin->fresh()->name);
     }
 }

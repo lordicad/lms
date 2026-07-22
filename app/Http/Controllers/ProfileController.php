@@ -2,10 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Grade;
 use App\Models\QuizAttempt;
-use App\Models\School;
-use App\Models\SchoolClass;
 use App\Services\LeaderboardService;
 use App\Support\Uploads;
 use Illuminate\Http\RedirectResponse;
@@ -13,7 +10,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\View\View;
 
@@ -53,26 +49,12 @@ class ProfileController extends Controller
             return view('cikgu.profil', ['user' => $user]);
         }
 
-        // All active classes, for the student's School -> Class pickers, which depend on each other
-        // client-side.
-        $allClasses = SchoolClass::active()->with('grade', 'homeroomTeacher:id,name')
-            ->orderBy('grade_id')->orderBy('name')
-            ->get()
-            ->map(fn (SchoolClass $c) => [
-                'id' => $c->id,
-                'school_id' => $c->school_id,
-                'grade_id' => $c->grade_id,
-                'label' => $c->label(),
-                'homeroom' => $c->homeroomTeacher?->name,
-            ])->values();
-
+        // Students see their school record too rather than picking it, so the class/school/year
+        // lists the pickers needed are gone — only the student's own relations are read.
         $user->load('school', 'schoolClass.grade');
 
         return view('profil.edit', [
             'user' => $user,
-            'grades' => Grade::orderBy('level')->get(),
-            'schools' => School::orderBy('name')->get(),
-            'allClasses' => $allClasses,
             'homeroomTeacher' => $user->homeroomTeacher(),
             'stats' => $stats,
         ]);
@@ -99,22 +81,21 @@ class ProfileController extends Controller
             'name.required' => __('Sila isi nama anda.'),
             'username.required' => __('Sila isi nama pengguna.'),
             'username.regex' => __('Nama pengguna hanya boleh mengandungi huruf, nombor, ruang, titik, garis bawah dan sengkang.'),
-            'grade_level.required' => __('Sila pilih Tahun anda.'),
             'avatar.max' => __('Gambar profil terlalu besar. Had ialah 2 MB.'),
         ];
 
-        // A teacher edits only their display name, photo and phone number. Everything else on their
-        // profile — legal name, position, school, homeroom class, subjects taught — is school
-        // record kept by the admin, so those keys are never validated and never assigned here.
-        // Leaving them out of the rules is what enforces it: a hand-crafted POST carrying
-        // school_id has nothing to bind to.
-        if (! $user->isTeacher()) {
+        // Teachers and students edit their display name and photo, and a teacher their phone
+        // number. Everything else on those profiles — legal name, school, year, class, position,
+        // subjects, guardian contacts — is school record kept by the admin, so those keys are
+        // never validated and never assigned here. Leaving them out of the rules is what enforces
+        // it: a hand-crafted POST carrying school_id has nothing to bind to.
+        //
+        // The admin is the exception on name, having nobody above them to set it.
+        if ($user->isAdmin()) {
             $rules['name'] = ['required', 'string', 'max:255'];
         }
 
-        if ($user->isStudent()) {
-            $rules += $this->studentRules($request);
-        } elseif ($user->isTeacher()) {
+        if ($user->isTeacher()) {
             $rules += $this->teacherRules();
         }
 
@@ -123,22 +104,12 @@ class ProfileController extends Controller
         // Email is not in this list on purpose — see the rules above.
         $user->username = $validated['username'];
 
-        if (! $user->isTeacher()) {
+        if ($user->isAdmin()) {
             $user->name = $validated['name'];
         }
 
         if ($user->isTeacher()) {
             $user->phone = $validated['phone'] ?? null;
-        }
-
-        if ($user->isStudent()) {
-            $user->grade_id = Grade::where('level', $validated['grade_level'])->value('id');
-            $user->school_id = $validated['school_id'] ?? null;
-            // A class is only kept when it matches the submitted School + Year (validated below).
-            $user->school_class_id = $validated['school_class_id'] ?? null;
-            $user->guardian_name = $validated['guardian_name'] ?? null;
-            $user->guardian_phone = $validated['guardian_phone'] ?? null;
-            $user->guardian_email = $validated['guardian_email'] ?? null;
         }
 
         $oldAvatar = $user->avatar;
@@ -168,39 +139,6 @@ class ProfileController extends Controller
     {
         return [
             'phone' => ['nullable', 'string', 'max:30', 'regex:/^\+?[0-9\s\-()]{6,20}$/'],
-        ];
-    }
-
-    /**
-     * @return array<string, array<int, mixed>>
-     */
-    private function studentRules(Request $request): array
-    {
-        return [
-            'grade_level' => ['required', 'integer', Rule::exists('grades', 'level')],
-            'school_id' => ['nullable', 'integer', Rule::exists('schools', 'id')],
-            'school_class_id' => [
-                'nullable', 'integer',
-                function (string $attribute, mixed $value, \Closure $fail) use ($request) {
-                    $class = SchoolClass::find($value);
-
-                    if (! $class) {
-                        $fail(__('Kelas tidak sah.'));
-
-                        return;
-                    }
-
-                    $gradeId = Grade::where('level', $request->integer('grade_level'))->value('id');
-
-                    if ((int) $class->school_id !== (int) $request->input('school_id')
-                        || (int) $class->grade_id !== (int) $gradeId) {
-                        $fail(__('Kelas ini tidak sepadan dengan sekolah dan tahun yang dipilih.'));
-                    }
-                },
-            ],
-            'guardian_name' => ['nullable', 'string', 'max:255'],
-            'guardian_phone' => ['nullable', 'string', 'max:30', 'regex:/^\+?[0-9\s\-()]{6,20}$/'],
-            'guardian_email' => ['nullable', 'string', 'email', 'max:255'],
         ];
     }
 

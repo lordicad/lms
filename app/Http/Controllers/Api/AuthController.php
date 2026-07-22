@@ -15,7 +15,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\ValidationException;
 
@@ -132,23 +131,15 @@ class AuthController extends Controller
             ],
         ];
 
-        // Mirrors ProfileController::update() — a teacher edits only their display name, photo and
-        // phone number. This endpoint is the same form for the mobile app, so leaving the school
-        // record editable here would be a way around the web lock rather than a second opinion.
-        if (! $user->isTeacher()) {
+        // Mirrors ProfileController::update() — teachers and students edit only their display
+        // name, photo and (teachers) phone number. This endpoint is the same form for the mobile
+        // app, so leaving the school record editable here would be a way around the web lock
+        // rather than a second opinion.
+        if ($user->isAdmin()) {
             $rules['name'] = ['required', 'string', 'max:255'];
         }
 
-        if ($user->isStudent()) {
-            $rules += [
-                'grade_level' => ['required', 'integer', Rule::exists('grades', 'level')],
-                'school_id' => ['nullable', 'integer', Rule::exists('schools', 'id')],
-                'school_class_id' => ['nullable', 'integer', Rule::exists('school_classes', 'id')],
-                'guardian_name' => ['nullable', 'string', 'max:255'],
-                'guardian_phone' => ['nullable', 'string', 'max:30', 'regex:/^\+?[0-9\s\-()]{6,20}$/'],
-                'guardian_email' => ['nullable', 'string', 'email', 'max:255'],
-            ];
-        } elseif ($user->isTeacher()) {
+        if ($user->isTeacher()) {
             $rules += [
                 'phone' => ['nullable', 'string', 'max:30', 'regex:/^\+?[0-9\s\-()]{6,20}$/'],
             ];
@@ -161,38 +152,15 @@ class AuthController extends Controller
             'grade_level.required' => __('Sila pilih Tahun anda.'),
         ]);
 
-        $studentClass = null;
-        if ($user->isStudent() && ! empty($validated['school_class_id'])) {
-            $studentClass = SchoolClass::find($validated['school_class_id']);
-            $gradeId = Grade::where('level', $validated['grade_level'])->value('id');
-            if (! $studentClass
-                || (int) $studentClass->school_id !== (int) ($validated['school_id'] ?? 0)
-                || (int) $studentClass->grade_id !== (int) $gradeId) {
-                throw ValidationException::withMessages([
-                    'school_class_id' => [__('Kelas tidak sepadan dengan sekolah dan tahun yang dipilih.')],
-                ]);
-            }
-        }
-
         $account = ['username' => $validated['username']];
 
         if ($user->isTeacher()) {
             $account['phone'] = $validated['phone'] ?? null;
-        } else {
+        } elseif ($user->isAdmin()) {
             $account['name'] = $validated['name'];
         }
 
         $user->update($account);
-
-        if ($user->isStudent()) {
-            $user->update([
-                'grade_id' => Grade::where('level', $validated['grade_level'])->value('id'),
-                'school_class_id' => $studentClass?->id,
-                'guardian_name' => $validated['guardian_name'] ?? null,
-                'guardian_phone' => $validated['guardian_phone'] ?? null,
-                'guardian_email' => $validated['guardian_email'] ?? null,
-            ]);
-        }
 
         return response()->json([
             'user' => $this->userPayload($user->fresh() ?? $user),

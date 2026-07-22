@@ -5,6 +5,11 @@
         $inputStyle = 'min-height:48px;width:100%;border:1px solid var(--wl-line-3);border-radius:12px;padding:0 16px;font-family:\'Nunito\',sans-serif;font-size:15px;color:var(--wl-body);background:var(--wl-surface);box-sizing:border-box';
         $errStyle = 'margin:6px 0 0;font-weight:700;font-size:13px;color:#C24936';
         $h2Style = 'margin:0 0 6px;font-family:\'Geist\',sans-serif;font-size:20px;font-weight:800;color:var(--wl-ink)';
+        // Admin-maintained rows: the same box and the same ink as an input, because the student
+        // still needs to read these — they are simply not theirs to edit. The leading semicolon
+        // matters, $inputStyle above ends without one.
+        $lockedStyle = $inputStyle.';display:flex;align-items:center;cursor:default';
+        $noteStyle = 'margin:6px 0 0;font-size:12.5px;color:var(--wl-muted)';
     @endphp
 
     {{-- Centred within the main content box. --}}
@@ -99,20 +104,7 @@
                      :style="{ transform: open ? 'rotate(180deg)' : 'none' }"><path d="M6 9l6 6 6-6"/></svg>
             </button>
             <div id="akaun-panel" x-show="open" x-cloak>
-            <form method="POST" action="{{ route('profile.update') }}" enctype="multipart/form-data" style="display:flex;flex-direction:column;gap:18px;margin-top:14px"
-                  @if ($user->isStudent())
-                  x-data="{
-                      schoolId: '{{ old('school_id', $user->school_id) }}',
-                      gradeLevel: '{{ old('grade_level', $user->grade?->level) }}',
-                      schoolClass: '{{ old('school_class_id', $user->school_class_id) }}',
-                      classes: {{ \Illuminate\Support\Js::from($allClasses) }},
-                      gradeMap: {{ \Illuminate\Support\Js::from($grades->pluck('id', 'level')) }},
-                      get gradeId() { return this.gradeMap[this.gradeLevel] ?? null; },
-                      get availableClasses() { return this.classes.filter(c => String(c.school_id) === String(this.schoolId) && String(c.grade_id) === String(this.gradeId)); },
-                      get homeroomName() { const c = this.classes.find(x => String(x.id) === String(this.schoolClass)); return (c && c.homeroom) ? c.homeroom : ''; },
-                      onContextChange() { if (this.schoolClass && ! this.availableClasses.some(c => String(c.id) === String(this.schoolClass))) this.schoolClass = ''; },
-                  }"
-                  @endif>
+            <form method="POST" action="{{ route('profile.update') }}" enctype="multipart/form-data" style="display:flex;flex-direction:column;gap:18px;margin-top:14px">
                 @csrf
                 @method('PATCH')
                 <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
@@ -128,9 +120,14 @@
                     </div>
                 </div>
                 <div>
-                    <label for="name" style="{{ $labelStyle }}">{{ __('Nama penuh') }}</label>
-                    <input id="name" name="name" type="text" value="{{ old('name', $user->name) }}" required style="{{ $inputStyle }}">
-                    @error('name')<p style="{{ $errStyle }}">{{ $message }}</p>@enderror
+                    @if ($user->isAdmin())
+                        <label for="name" style="{{ $labelStyle }}">{{ __('Nama penuh') }}</label>
+                        <input id="name" name="name" type="text" value="{{ old('name', $user->name) }}" required style="{{ $inputStyle }}">
+                        @error('name')<p style="{{ $errStyle }}">{{ $message }}</p>@enderror
+                    @else
+                        <span style="{{ $labelStyle }}">{{ __('Nama penuh') }}</span>
+                        <span style="{{ $lockedStyle }}">{{ $user->name }}</span>
+                    @endif
                 </div>
                 <div>
                     <label for="username" style="{{ $labelStyle }}">{{ __('Nama pengguna (nama paparan)') }}</label>
@@ -140,76 +137,49 @@
                 </div>
                 {{-- Read-only: email is the sign-in identifier, set by the admin. --}}
                 <div>
-                    <label for="email" style="{{ $labelStyle }}">{{ __('E-mel (untuk log masuk)') }}</label>
-                    <input id="email" type="email" value="{{ $user->email }}" readonly disabled style="{{ $inputStyle }};opacity:.65;cursor:not-allowed">
-                    <span style="font-size:12.5px;color:var(--tp-muted-2)">{{ __('Emel log masuk anda tidak boleh diubah. Hubungi pentadbir sekolah jika ia perlu ditukar.') }}</span>
+                    <span style="{{ $labelStyle }}">{{ __('E-mel (untuk log masuk)') }}</span>
+                    <span style="{{ $lockedStyle }}">{{ $user->email }}</span>
+                    <p style="{{ $noteStyle }}">{{ __('Emel log masuk anda tidak boleh diubah. Hubungi pentadbir sekolah jika ia perlu ditukar.') }}</p>
                 </div>
                 @if ($user->isStudent())
-                    @php($selectStyle = $inputStyle.';cursor:pointer;-webkit-appearance:none;-moz-appearance:none;appearance:none;background-image:url(&quot;data:image/svg+xml,%3Csvg%20xmlns=\'http://www.w3.org/2000/svg\'%20width=\'24\'%20height=\'24\'%20viewBox=\'0%200%2024%2024\'%20fill=\'none\'%20stroke=\'%232D2F44\'%20stroke-width=\'2.5\'%20stroke-linecap=\'round\'%20stroke-linejoin=\'round\'%3E%3Cpath%20d=\'M6%209l6%206%206-6\'/%3E%3C/svg%3E&quot;);background-repeat:no-repeat;background-position:right 14px center;background-size:12px;padding-right:38px')
-
-                    {{-- School --}}
+                    {{-- School record. Kept by the admin, shown here so the student can check it. --}}
                     <div>
-                        <label for="school_id" style="{{ $labelStyle }}">{{ __('Sekolah') }}</label>
-                        <select id="school_id" name="school_id" style="{{ $selectStyle }}" x-model="schoolId" @change="onContextChange()">
-                            <option value="">{{ __('Tiada / Belum ditetapkan') }}</option>
-                            @foreach ($schools as $school)
-                                <option value="{{ $school->id }}" @selected((int) old('school_id', $user->school_id) === $school->id)>{{ $school->name }}</option>
-                            @endforeach
-                        </select>
-                        @error('school_id')<p style="{{ $errStyle }}">{{ $message }}</p>@enderror
+                        <span style="{{ $labelStyle }}">{{ __('Sekolah') }}</span>
+                        <span style="{{ $lockedStyle }}">{{ $user->school?->name ?: __('Belum ditetapkan') }}</span>
                     </div>
 
-                    {{-- Year (Tahun) --}}
                     <div>
-                        <label for="grade_level" style="{{ $labelStyle }}">{{ __('Tahun') }}</label>
-                        <select id="grade_level" name="grade_level" style="{{ $selectStyle }}" x-model="gradeLevel" @change="onContextChange()">
-                            <option value="">{{ __('Sila pilih Tahun') }}</option>
-                            @foreach ($grades as $grade)
-                                <option value="{{ $grade->level }}" @selected(old('grade_level', $user->grade?->level) == $grade->level)>{{ $grade->name }}</option>
-                            @endforeach
-                        </select>
-                        @error('grade_level')<p style="{{ $errStyle }}">{{ $message }}</p>@enderror
+                        <span style="{{ $labelStyle }}">{{ __('Tahun') }}</span>
+                        <span style="{{ $lockedStyle }}">{{ $user->grade?->name ?: __('Belum ditetapkan') }}</span>
                     </div>
 
-                    {{-- Class — depends on School + Year --}}
                     <div>
-                        <label for="school_class_id" style="{{ $labelStyle }}">{{ __('Kelas') }}</label>
-                        <select id="school_class_id" name="school_class_id" style="{{ $selectStyle }}"
-                                x-model="schoolClass" x-bind:disabled="! schoolId || ! gradeLevel">
-                            <option value="">{{ __('Tiada / Belum ditetapkan') }}</option>
-                            <template x-for="c in availableClasses" :key="c.id">
-                                <option :value="c.id" x-text="c.label"></option>
-                            </template>
-                        </select>
-                        <p style="margin:6px 0 0;font-size:12.5px;color:var(--wl-muted)" x-show="! schoolId || ! gradeLevel" x-cloak>{{ __('Pilih sekolah dan tahun dahulu.') }}</p>
-                        @error('school_class_id')<p style="{{ $errStyle }}">{{ $message }}</p>@enderror
+                        <span style="{{ $labelStyle }}">{{ __('Kelas') }}</span>
+                        <span style="{{ $lockedStyle }}">{{ $user->schoolClass?->label() ?: __('Belum ditetapkan') }}</span>
                     </div>
 
-                    {{-- Homeroom teacher — derived read-only from the chosen class --}}
                     <div>
-                        <label style="{{ $labelStyle }}">{{ __('Guru kelas') }}</label>
-                        <p style="{{ $inputStyle }};display:flex;align-items:center;background:var(--wl-surface-2, #F1F3F6);color:var(--wl-muted)">
-                            <span x-text="homeroomName || '{{ $homeroomTeacher?->name ?? __('Belum ditetapkan') }}'"></span>
-                        </p>
-                        <p style="margin:6px 0 0;font-size:12.5px;color:var(--wl-muted)">{{ __('Ditentukan oleh kelas yang dipilih.') }}</p>
+                        <span style="{{ $labelStyle }}">{{ __('Guru kelas') }}</span>
+                        <span style="{{ $lockedStyle }}">{{ $homeroomTeacher?->name ?: __('Belum ditetapkan') }}</span>
+                        <p style="{{ $noteStyle }}">{{ __('Ditentukan oleh kelas yang dipilih.') }}</p>
                     </div>
 
-                    {{-- Guardian details --}}
                     <div>
-                        <label for="guardian_name" style="{{ $labelStyle }}">{{ __('Nama penjaga') }}</label>
-                        <input id="guardian_name" name="guardian_name" type="text" value="{{ old('guardian_name', $user->guardian_name) }}" style="{{ $inputStyle }}">
-                        @error('guardian_name')<p style="{{ $errStyle }}">{{ $message }}</p>@enderror
+                        <span style="{{ $labelStyle }}">{{ __('Nama penjaga') }}</span>
+                        <span style="{{ $lockedStyle }}">{{ $user->guardian_name ?: __('Belum ditetapkan') }}</span>
                     </div>
+
                     <div>
-                        <label for="guardian_phone" style="{{ $labelStyle }}">{{ __('Nombor telefon penjaga') }}</label>
-                        <input id="guardian_phone" name="guardian_phone" type="tel" value="{{ old('guardian_phone', $user->guardian_phone) }}" placeholder="+60 12-345 6789" style="{{ $inputStyle }}">
-                        @error('guardian_phone')<p style="{{ $errStyle }}">{{ $message }}</p>@enderror
+                        <span style="{{ $labelStyle }}">{{ __('Nombor telefon penjaga') }}</span>
+                        <span style="{{ $lockedStyle }}">{{ $user->guardian_phone ?: __('Belum ditetapkan') }}</span>
                     </div>
+
                     <div>
-                        <label for="guardian_email" style="{{ $labelStyle }}">{{ __('E-mel penjaga') }}</label>
-                        <input id="guardian_email" name="guardian_email" type="email" value="{{ old('guardian_email', $user->guardian_email) }}" style="{{ $inputStyle }}">
-                        @error('guardian_email')<p style="{{ $errStyle }}">{{ $message }}</p>@enderror
+                        <span style="{{ $labelStyle }}">{{ __('E-mel penjaga') }}</span>
+                        <span style="{{ $lockedStyle }}">{{ $user->guardian_email ?: __('Belum ditetapkan') }}</span>
                     </div>
+
+                    <p style="margin:0;{{ $noteStyle }}">{{ __('Butiran sekolah di atas diselenggara oleh pentadbir. Hubungi mereka jika ada yang perlu ditukar.') }}</p>
                 @endif
                 <button type="submit" class="wl-btn-primary" style="align-self:flex-start;min-height:48px;border:none;cursor:pointer;border-radius:13px;background:#17907B;color:#fff;font-family:'Geist',sans-serif;font-weight:800;font-size:15px;padding:0 24px">{{ __('Simpan') }}</button>
             </form>
