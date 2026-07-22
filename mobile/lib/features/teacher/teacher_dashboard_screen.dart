@@ -446,11 +446,12 @@ class _DashboardTabState extends State<_DashboardTab> {
                   ],
                 ),
               ),
-              // Everything below is pulled up to overlap the header's lower edge.
+              // Keep dashboard content below the forest header so section
+              // labels remain readable across tablet/phone heights.
               Transform.translate(
-                offset: const Offset(0, -34),
+                offset: Offset.zero,
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
+                  padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -474,11 +475,11 @@ class _DashboardTabState extends State<_DashboardTab> {
                               if (rows > maxRows) maxRows = rows;
                             }
                             final rowHeight = constraints.maxWidth >= 600
-                                ? 50.0
-                                : 48.0;
-                            final emptySpace = maxRows == 0 ? 22.0 : 0.0;
+                                ? 58.0
+                                : 56.0;
+                            final emptySpace = maxRows == 0 ? 34.0 : 0.0;
                             final leaderboardHeight =
-                                58.0 + (maxRows * rowHeight) + emptySpace;
+                                82.0 + (maxRows * rowHeight) + emptySpace;
 
                             return GridView.builder(
                               shrinkWrap: true,
