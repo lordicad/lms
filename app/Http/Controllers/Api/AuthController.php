@@ -126,12 +126,18 @@ class AuthController extends Controller
         $user = $request->user();
 
         $rules = [
-            'name' => ['required', 'string', 'max:255'],
             'username' => [
                 'required', 'string', 'min:3', 'max:30',
                 'regex:/^[a-zA-Z0-9._-]+$/',
             ],
         ];
+
+        // Mirrors ProfileController::update() — a teacher edits only their display name, photo and
+        // phone number. This endpoint is the same form for the mobile app, so leaving the school
+        // record editable here would be a way around the web lock rather than a second opinion.
+        if (! $user->isTeacher()) {
+            $rules['name'] = ['required', 'string', 'max:255'];
+        }
 
         if ($user->isStudent()) {
             $rules += [
@@ -145,32 +151,6 @@ class AuthController extends Controller
         } elseif ($user->isTeacher()) {
             $rules += [
                 'phone' => ['nullable', 'string', 'max:30', 'regex:/^\+?[0-9\s\-()]{6,20}$/'],
-                'position' => ['nullable', 'string', 'max:100'],
-                'school_id' => ['nullable', 'integer', Rule::exists('schools', 'id')],
-                'subjects' => ['nullable', 'array'],
-                'subjects.*' => ['integer', Rule::exists('subjects', 'id')],
-                'homeroom_class_id' => [
-                    'nullable', 'integer',
-                    function (string $attribute, mixed $value, \Closure $fail) use ($request, $user) {
-                        $class = SchoolClass::find($value);
-
-                        if (! $class) {
-                            $fail(__('Kelas tidak sah.'));
-
-                            return;
-                        }
-
-                        if ((int) $class->school_id !== (int) $request->input('school_id')) {
-                            $fail(__('Kelas ini bukan di sekolah yang dipilih.'));
-
-                            return;
-                        }
-
-                        if ($class->homeroom_teacher_id !== null && (int) $class->homeroom_teacher_id !== $user->id) {
-                            $fail(__('Kelas ini sudah mempunyai guru kelas.'));
-                        }
-                    },
-                ],
             ];
         }
 
@@ -194,17 +174,12 @@ class AuthController extends Controller
             }
         }
 
-        $account = [
-            'name' => $validated['name'],
-            'username' => $validated['username'],
-        ];
+        $account = ['username' => $validated['username']];
 
         if ($user->isTeacher()) {
-            $account += [
-                'phone' => $validated['phone'] ?? null,
-                'position' => $validated['position'] ?? null,
-                'school_id' => $validated['school_id'] ?? null,
-            ];
+            $account['phone'] = $validated['phone'] ?? null;
+        } else {
+            $account['name'] = $validated['name'];
         }
 
         $user->update($account);
@@ -217,9 +192,6 @@ class AuthController extends Controller
                 'guardian_phone' => $validated['guardian_phone'] ?? null,
                 'guardian_email' => $validated['guardian_email'] ?? null,
             ]);
-        } elseif ($user->isTeacher()) {
-            $user->subjects()->sync($validated['subjects'] ?? []);
-            $this->assignHomeroomClass($user, $validated['homeroom_class_id'] ?? null);
         }
 
         return response()->json([
@@ -286,20 +258,6 @@ class AuthController extends Controller
         $request->user()->currentAccessToken()->delete();
 
         return response()->json(['message' => __('Log keluar berjaya.')]);
-    }
-
-    /** Keep the mobile and web profile flows on the same homeroom source of truth. */
-    private function assignHomeroomClass(User $teacher, ?int $classId): void
-    {
-        $current = $teacher->homeroomClass()->first();
-
-        if ($current && (int) $current->id !== (int) $classId) {
-            $current->update(['homeroom_teacher_id' => null]);
-        }
-
-        if ($classId) {
-            SchoolClass::where('id', $classId)->update(['homeroom_teacher_id' => $teacher->id]);
-        }
     }
 
     /**

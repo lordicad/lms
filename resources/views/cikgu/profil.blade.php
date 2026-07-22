@@ -8,6 +8,11 @@
         $field = "display:flex;flex-direction:column;gap:6px";
         $primary = "align-self:flex-start;min-height:46px;border:none;cursor:pointer;border-radius:12px;background:#17907B;color:#fff;font-family:'Geist',sans-serif;font-weight:800;font-size:14px;padding:0 22px";
         $err = "margin:0;font-size:12.5px;font-weight:700;color:#C24936";
+        // Admin-maintained fields: same box as an input so the form still reads as one list, but
+        // visibly inert. Rendered as text rather than a disabled <input> — there is nothing to
+        // submit, and a real input invites tabbing into it.
+        $locked = $input."display:flex;align-items:center;background:var(--tp-surface-2);color:var(--tp-muted-2);opacity:.8";
+        $note = "font-size:12.5px;color:var(--tp-muted-2)";
     @endphp
 
     <style>
@@ -23,17 +28,13 @@
             <div style="background:#DCF2EE;border:1px solid rgba(15,122,104,.25);border-radius:12px;padding:12px 16px;font-family:'Geist',sans-serif;font-size:13.5px;font-weight:700;color:#0F7A68">{{ session('status') }}</div>
         @endif
 
-        {{-- Account details --}}
-        <form method="POST" action="{{ route('profile.update') }}" enctype="multipart/form-data" style="{{ $card }};gap:16px"
-              x-data="{
-                  schoolId: '{{ old('school_id', $user->school_id) }}',
-                  classes: {{ \Illuminate\Support\Js::from($allClasses) }},
-                  homeroom: '{{ old('homeroom_class_id', $homeroomClassId) }}',
-                  get availableClasses() { return this.classes.filter(c => String(c.school_id) === String(this.schoolId)); },
-                  onSchoolChange() {
-                      if (this.homeroom && ! this.availableClasses.some(c => String(c.id) === String(this.homeroom))) this.homeroom = '';
-                  },
-              }">
+        {{-- Account details.
+
+             Only the display name, photo and phone number are editable. The rest is the school's
+             record of the teacher — it is shown here for reference and changed by the admin. The
+             controller enforces this by never validating those fields; the styling below only
+             reflects that decision. --}}
+        <form method="POST" action="{{ route('profile.update') }}" enctype="multipart/form-data" style="{{ $card }};gap:16px">
             @csrf
             @method('PATCH')
             <h2 style="{{ $h2 }}">{{ __('Butiran akaun') }}</h2>
@@ -51,9 +52,8 @@
             </div>
 
             <div style="{{ $field }}">
-                <label for="name" style="{{ $label }}">{{ __('Nama penuh') }}</label>
-                <input id="name" name="name" type="text" value="{{ old('name', $user->name) }}" required style="{{ $input }}">
-                @error('name')<p style="{{ $err }}">{{ $message }}</p>@enderror
+                <span style="{{ $label }}">{{ __('Nama penuh') }}</span>
+                <span style="{{ $locked }}">{{ $user->name }}</span>
             </div>
 
             <div style="{{ $field }}">
@@ -77,50 +77,35 @@
             </div>
 
             <div style="{{ $field }}">
-                <label for="position" style="{{ $label }}">{{ __('Jawatan') }}</label>
-                <input id="position" name="position" type="text" value="{{ old('position', $user->position) }}" placeholder="{{ __('Contoh: Guru Kanan Matematik') }}" style="{{ $input }}">
-                @error('position')<p style="{{ $err }}">{{ $message }}</p>@enderror
+                <span style="{{ $label }}">{{ __('Jawatan') }}</span>
+                <span style="{{ $locked }}">{{ $user->position ?: __('Belum ditetapkan') }}</span>
             </div>
 
             <div style="{{ $field }}">
-                <label for="school_id" style="{{ $label }}">{{ __('Sekolah') }}</label>
-                <select id="school_id" name="school_id" style="{{ $input }}" x-model="schoolId" @change="onSchoolChange()">
-                    <option value="">{{ __('Tiada / Belum ditetapkan') }}</option>
-                    @foreach ($schools as $school)
-                        <option value="{{ $school->id }}" @selected((int) old('school_id', $user->school_id) === $school->id)>{{ $school->name }}</option>
-                    @endforeach
-                </select>
-                @error('school_id')<p style="{{ $err }}">{{ $message }}</p>@enderror
+                <span style="{{ $label }}">{{ __('Sekolah') }}</span>
+                <span style="{{ $locked }}">{{ $user->school?->name ?: __('Belum ditetapkan') }}</span>
             </div>
 
             <div style="{{ $field }}">
-                <label for="homeroom_class_id" style="{{ $label }}">{{ __('Kelas guru kelas') }}</label>
-                <select id="homeroom_class_id" name="homeroom_class_id" style="{{ $input }}" x-model="homeroom" x-bind:disabled="! schoolId">
-                    <option value="">{{ __('Bukan guru kelas') }}</option>
-                    <template x-for="c in availableClasses" :key="c.id">
-                        <option :value="c.id" x-text="c.label"></option>
-                    </template>
-                </select>
-                <p style="margin:0;font-size:12px;color:var(--tp-muted)" x-show="! schoolId" x-cloak>{{ __('Pilih sekolah dahulu.') }}</p>
-                @error('homeroom_class_id')<p style="{{ $err }}">{{ $message }}</p>@enderror
+                <span style="{{ $label }}">{{ __('Kelas guru kelas') }}</span>
+                <span style="{{ $locked }}">{{ $user->homeroomClass?->label() ?: __('Bukan guru kelas') }}</span>
             </div>
 
-            {{-- Subjects taught: accessible multi-select via checkboxes with visible selections. --}}
-            <fieldset style="{{ $field }};border:1.5px solid var(--tp-line-2);border-radius:12px;padding:14px 16px;margin:0">
-                <legend style="{{ $label }};padding:0 6px">{{ __('Subjek diajar') }}</legend>
-                <div style="display:flex;flex-wrap:wrap;gap:10px 18px;margin-top:8px">
-                    @php($chosenSubjects = old('subjects', $selectedSubjectIds))
-                    @foreach ($subjects as $subject)
-                        <label style="display:flex;align-items:center;gap:8px;font-family:'Nunito',sans-serif;font-size:14px;color:var(--tp-ink);cursor:pointer">
-                            <input type="checkbox" name="subjects[]" value="{{ $subject->id }}"
-                                   @checked(in_array($subject->id, $chosenSubjects))
-                                   style="width:18px;height:18px;accent-color:#17907B">
-                            {{ $subject->icon }} {{ $subject->displayName() }}
-                        </label>
-                    @endforeach
-                </div>
-                @error('subjects')<p style="{{ $err }}">{{ $message }}</p>@enderror
-            </fieldset>
+            {{-- Subjects taught: the ones assigned, rather than every subject with most unticked. --}}
+            <div style="{{ $field }}">
+                <span style="{{ $label }}">{{ __('Subjek diajar') }}</span>
+                @if ($user->subjects->isEmpty())
+                    <span style="{{ $locked }}">{{ __('Belum ditetapkan') }}</span>
+                @else
+                    <div style="display:flex;flex-wrap:wrap;gap:8px">
+                        @foreach ($user->subjects as $subject)
+                            <span style="display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:6px 13px;font-family:'Nunito',sans-serif;font-size:13.5px;background:rgb({{ $subject->rgb }} / .12);color:rgb({{ $subject->rgb }})">{{ $subject->displayName() }}</span>
+                        @endforeach
+                    </div>
+                @endif
+            </div>
+
+            <p style="margin:0;{{ $note }}">{{ __('Butiran sekolah di atas diselenggara oleh pentadbir. Hubungi mereka jika ada yang perlu ditukar.') }}</p>
 
             <button type="submit" class="wl-primary" style="{{ $primary }}">{{ __('Simpan') }}</button>
         </form>
