@@ -53,18 +53,20 @@
             </div>
             <div class="tp-field">
                 <label for="file" class="tp-label">{{ __('Fail bahan') }}</label>
-                <input id="file" name="file" type="file" accept=".pdf,.ppt,.pptx,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg" class="tp-file" aria-describedby="file-help" @error('file') aria-invalid="true" @enderror>
+                <x-file-dropzone name="file" accept=".pdf,.ppt,.pptx,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg"
+                                 aria-describedby="file-help" :aria-invalid="$errors->has('file') ? 'true' : null">
+                    @if ($editing)
+                        <x-slot:current>
+                            <span style="font-size:18px">{{ $material->icon() }}</span>
+                            {{ __('Fail semasa:') }} {{ $material->original_name }} ({{ $material->humanSize() }})
+                        </x-slot:current>
+                    @endif
+                </x-file-dropzone>
                 <p id="file-help" class="tp-hint">
                     {{ __('PDF, PowerPoint, Word, Excel atau imej.') }} {{ __('Had saiz :max MB.', ['max' => config('lms.material_max_mb')]) }}
                     @if ($editing) {{ __('Biarkan kosong untuk mengekalkan fail sedia ada.') }} @endif
                 </p>
                 @error('file') <span class="tp-error">{{ $message }}</span> @enderror
-                @if ($editing)
-                    <p style="display:flex;align-items:center;gap:8px;background:var(--tp-input);border-radius:12px;padding:12px 14px;font-size:13.5px;color:var(--tp-muted-2);margin:6px 0 0">
-                        <span style="font-size:18px">{{ $material->icon() }}</span>
-                        {{ __('Fail semasa:') }} {{ $material->original_name }} ({{ $material->humanSize() }})
-                    </p>
-                @endif
             </div>
         </div>
 

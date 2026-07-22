@@ -12,9 +12,28 @@
             <p style="margin:0;font-size:15px;color:var(--tp-muted-2);max-width:640px">{{ $chapter->description }}</p>
         @endif
 
+        {{-- One tab per content type, instead of three stacked sections: the teacher lands on
+             Video and switches across without scrolling. The count sits in each tab label. --}}
+        <div x-data="{ tab: 'video' }" style="display:flex;flex-direction:column;gap:18px">
+
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px" role="tablist" aria-label="{{ __('Kandungan bab') }}">
+            <button type="button" role="tab" id="tab-video" :aria-selected="tab === 'video'" aria-controls="panel-video"
+                    @click="tab = 'video'" class="tp-toggle" :class="{ 'is-on': tab === 'video' }">
+                <x-icon name="video" class="h-4 w-4" /> {{ __('Video') }} ({{ $lessons->count() }})
+            </button>
+            <button type="button" role="tab" id="tab-bahan" :aria-selected="tab === 'bahan'" aria-controls="panel-bahan"
+                    @click="tab = 'bahan'" class="tp-toggle" :class="{ 'is-on': tab === 'bahan' }">
+                <x-icon name="file" class="h-4 w-4" /> {{ __('Bahan') }} ({{ $materials->count() }})
+            </button>
+            <button type="button" role="tab" id="tab-kuiz" :aria-selected="tab === 'kuiz'" aria-controls="panel-kuiz"
+                    @click="tab = 'kuiz'" class="tp-toggle" :class="{ 'is-on': tab === 'kuiz' }">
+                <x-icon name="quiz" class="h-4 w-4" /> {{ __('Kuiz') }} ({{ $quizzes->count() }})
+            </button>
+        </div>
+
         {{-- Videos --}}
-        <section style="display:flex;flex-direction:column;gap:12px">
-            <h2 class="tp-g" style="font-size:17px;font-weight:800;color:var(--tp-ink)">🎬 {{ __('Video') }} <span style="color:var(--tp-muted)">({{ $lessons->count() }})</span></h2>
+        <section id="panel-video" role="tabpanel" aria-labelledby="tab-video" x-show="tab === 'video'"
+                 style="display:flex;flex-direction:column;gap:12px">
 
             @if ($lessons->isEmpty())
                 <div class="tp-empty" style="padding:26px">
@@ -47,8 +66,8 @@
         </section>
 
         {{-- Materials --}}
-        <section style="display:flex;flex-direction:column;gap:12px">
-            <h2 class="tp-g" style="font-size:17px;font-weight:800;color:var(--tp-ink)">📄 {{ __('Bahan') }} <span style="color:var(--tp-muted)">({{ $materials->count() }})</span></h2>
+        <section id="panel-bahan" role="tabpanel" aria-labelledby="tab-bahan" x-show="tab === 'bahan'" x-cloak
+                 style="display:flex;flex-direction:column;gap:12px">
 
             @if ($materials->isEmpty())
                 <div class="tp-empty" style="padding:26px">
@@ -77,8 +96,8 @@
         </section>
 
         {{-- Quizzes --}}
-        <section style="display:flex;flex-direction:column;gap:12px">
-            <h2 class="tp-g" style="font-size:17px;font-weight:800;color:var(--tp-ink)">📝 {{ __('Kuiz') }} <span style="color:var(--tp-muted)">({{ $quizzes->count() }})</span></h2>
+        <section id="panel-kuiz" role="tabpanel" aria-labelledby="tab-kuiz" x-show="tab === 'kuiz'" x-cloak
+                 style="display:flex;flex-direction:column;gap:12px">
 
             @if ($quizzes->isEmpty())
                 <div class="tp-empty" style="padding:26px">
@@ -116,5 +135,7 @@
                 </div>
             @endif
         </section>
+
+        </div> {{-- /tabs --}}
     </div>
 </x-cikgu-layout>
