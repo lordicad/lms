@@ -384,6 +384,7 @@ class MaterialItem {
     required this.extension,
     required this.humanSize,
     required this.downloadUrl,
+    required this.fileName,
   });
 
   final int id;
@@ -392,6 +393,7 @@ class MaterialItem {
   final String extension;
   final String humanSize;
   final String downloadUrl;
+  final String fileName;
 
   factory MaterialItem.fromJson(Map<String, dynamic> j) => MaterialItem(
     id: _int(j['id']),
@@ -400,6 +402,7 @@ class MaterialItem {
     extension: _str(j['extension']),
     humanSize: _str(j['human_size']),
     downloadUrl: _str(j['download_url']),
+    fileName: _str(j['file_name']),
   );
 }
 
