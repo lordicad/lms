@@ -105,7 +105,7 @@
 
                         <x-dropdown-link :href="route('profile.edit')">{{ __('Profil Saya') }}</x-dropdown-link>
 
-                        <form method="POST" action="{{ route('logout') }}">
+                        <form method="POST" action="{{ route('logout') }}" onsubmit='return confirm(@js(__("Log keluar daripada akaun anda?")))'>
                             @csrf
                             <button type="submit"
                                     class="block w-full px-4 py-2.5 text-left text-sm font-semibold text-ink transition-colors hover:bg-surface-2">
