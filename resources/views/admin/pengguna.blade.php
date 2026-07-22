@@ -87,17 +87,14 @@
                                 <span style="font-size:13px;font-weight:600;color:var(--tp-muted-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center">{{ $u->email ?: '—' }}</span>
                                 <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center">{{ $teacherView ? ($u->position ?: '—') : ($u->grade?->name ?? '—') }}</span>
 
-                                {{-- Status badge doubles as an activate/deactivate toggle. The pill
+                                {{-- Read-only: the account is switched on or off from its edit form,
+                                     so the list cannot deactivate someone on a stray click. The pill
                                      carries a background, so it centres by justify-self rather than
                                      text-align — otherwise it would stretch the whole column. --}}
-                                <form method="POST" action="{{ route('admin.pengguna.status', $u) }}" style="justify-self:center">
-                                    @csrf
-                                    <button type="submit" title="{{ $u->is_active ? __('Klik untuk nyahaktifkan') : __('Klik untuk aktifkan') }}"
-                                            style="display:inline-flex;align-items:center;gap:6px;cursor:pointer;border:none;border-radius:999px;padding:5px 11px;font-family:'Geist',sans-serif;font-size:11.5px;font-weight:800;{{ $u->is_active ? 'background:#DCF2EE;color:#0F7A68' : 'background:#F1F0E8;color:var(--tp-muted)' }}">
-                                        <span style="width:7px;height:7px;border-radius:50%;background:{{ $u->is_active ? '#17907B' : '#B9B8C6' }}"></span>
-                                        {{ $u->is_active ? __('Aktif') : __('Tidak aktif') }}
-                                    </button>
-                                </form>
+                                <span style="justify-self:center;display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:5px 11px;font-family:'Geist',sans-serif;font-size:11.5px;font-weight:800;{{ $u->is_active ? 'background:#DCF2EE;color:#0F7A68' : 'background:#F1F0E8;color:var(--tp-muted)' }}">
+                                    <span style="width:7px;height:7px;border-radius:50%;background:{{ $u->is_active ? '#17907B' : '#B9B8C6' }}"></span>
+                                    {{ $u->is_active ? __('Aktif') : __('Tidak aktif') }}
+                                </span>
 
                                 <div style="display:flex;align-items:center;gap:6px;justify-self:center">
                                     <a href="{{ route('admin.pengguna.edit', $u) }}" title="{{ __('Sunting') }}"
