@@ -219,6 +219,21 @@ class TeacherRepository {
   Future<TeacherQuizStats> quizStats(int id) async =>
       _api.quizStats(await _token(), id);
 
+  Future<void> createFileQuiz({
+    required int chapterId,
+    required String title,
+    String? description,
+    required NativeUploadFile file,
+    required bool isPublished,
+  }) async => _api.createFileQuiz(
+    await _token(),
+    chapterId: chapterId,
+    title: title,
+    description: description,
+    file: file,
+    isPublished: isPublished,
+  );
+
   Future<YoutubeChannelsData> youtubeChannels() async =>
       _api.youtubeChannels(await _token());
 

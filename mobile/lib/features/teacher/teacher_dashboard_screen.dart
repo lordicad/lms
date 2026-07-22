@@ -15,6 +15,7 @@ import '../student/profile_tab.dart';
 import '../student/widgets/content_widgets.dart';
 import 'content_hub_tab.dart';
 import 'chapters_manage_tab.dart';
+import 'file_quiz_form_screen.dart';
 import 'material_form_screen.dart';
 import 'quiz_builder_screen.dart';
 import 'teacher_notifications_screen.dart';
@@ -207,10 +208,41 @@ class _DashboardTabState extends State<_DashboardTab> {
     }
   }
 
+  /// Mirrors the web's quiz-mode chooser: an interactive quiz answered in-app, or a printable
+  /// file students download.
   Future<void> _openAddQuiz() async {
+    final interactive = await showModalBottomSheet<bool>(
+      context: context,
+      showDragHandle: true,
+      builder: (ctx) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.quiz_outlined, color: LmsColors.brand),
+              title: const Text('Kuiz interaktif'),
+              subtitle: const Text('Murid menjawab dalam aplikasi.'),
+              onTap: () => Navigator.pop(ctx, true),
+            ),
+            ListTile(
+              leading: const Icon(Icons.description_outlined, color: LmsColors.brand),
+              title: const Text('Kuiz fail'),
+              subtitle: const Text('Muat naik PDF/DOC untuk murid muat turun.'),
+              onTap: () => Navigator.pop(ctx, false),
+            ),
+            const SizedBox(height: 8),
+          ],
+        ),
+      ),
+    );
+
+    if (interactive == null || !mounted) return;
+
     final created = await Navigator.of(context).push<bool>(
       MaterialPageRoute(
-        builder: (_) => QuizBuilderScreen(repository: widget.repository),
+        builder: (_) => interactive
+            ? QuizBuilderScreen(repository: widget.repository)
+            : FileQuizFormScreen(repository: widget.repository),
       ),
     );
     if (created == true) {

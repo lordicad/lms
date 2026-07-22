@@ -285,6 +285,23 @@ class TeacherApi {
     );
   }
 
+  /// A printable quiz: upload a PDF/DOC/DOCX students download instead of answering in-app.
+  Future<void> createFileQuiz(
+    String token, {
+    required int chapterId,
+    required String title,
+    String? description,
+    required NativeUploadFile file,
+    required bool isPublished,
+  }) async {
+    await _sendMultipart('POST', token, '/teacher/quizzes/file', {
+      'chapter_id': '$chapterId',
+      'title': title,
+      if (description != null && description.isNotEmpty) 'description': description,
+      'is_published': isPublished ? '1' : '0',
+    }, file: file);
+  }
+
   Future<YoutubeChannelsData> youtubeChannels(String token) async {
     final json = await _get(token, '/teacher/youtube/channels');
     return YoutubeChannelsData.fromJson(json);

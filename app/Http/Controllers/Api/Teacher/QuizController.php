@@ -9,6 +9,7 @@ use App\Models\Quiz;
 use App\Models\QuizAttempt;
 use App\Models\User;
 use App\Rules\ValidSubjectGradeCombo;
+use App\Support\Uploads;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -49,6 +50,57 @@ class QuizController extends Controller
 
             return $quiz;
         });
+
+        return response()->json(['id' => $quiz->id], 201);
+    }
+
+    /**
+     * A printable "kuiz fail": the teacher uploads a document students download instead of
+     * answering in-app. Mirrors the web Cikgu\QuizController@store for TYPE_FILE and reuses the
+     * same QuizRequest limits (config lms.quiz_file_mimes / quiz_file_max_mb).
+     */
+    public function storeFile(Request $request): JsonResponse
+    {
+        $teacher = $this->teacher($request);
+
+        if (! $teacher) {
+            return response()->json(['message' => 'Hanya guru boleh mengakses ini.'], 403);
+        }
+
+        $max = (int) config('lms.quiz_file_max_mb') * 1024; // validator wants kilobytes
+
+        $data = $request->validate([
+            'chapter_id' => ['required', 'integer', Rule::exists('chapters', 'id')],
+            'title' => ['required', 'string', 'max:255'],
+            'description' => ['nullable', 'string', 'max:5000'],
+            'file' => [
+                'required',
+                'file',
+                'mimes:'.implode(',', config('lms.quiz_file_mimes')),
+                "max:{$max}",
+            ],
+            'is_published' => ['boolean'],
+        ], [
+            'chapter_id.required' => __('Sila pilih Subjek, Tahun dan Bab.'),
+            'title.required' => __('Sila isi tajuk kuiz.'),
+            'file.required' => __('Sila pilih fail kuiz.'),
+            'file.mimes' => __('Fail kuiz mesti PDF, DOC atau DOCX.'),
+            'file.max' => __('Saiz fail terlalu besar. Had ialah :max MB.', ['max' => config('lms.quiz_file_max_mb')]),
+        ]);
+
+        $file = $request->file('file');
+
+        $quiz = Quiz::create([
+            'chapter_id' => $data['chapter_id'],
+            'teacher_id' => $teacher->id,
+            'title' => $data['title'],
+            'description' => $data['description'] ?? null,
+            'type' => Quiz::TYPE_FILE,
+            'duration_minutes' => null, // only meaningful for interactive quizzes
+            'file_path' => Uploads::store($file, 'quizzes'),
+            'original_name' => $file->getClientOriginalName(),
+            'is_published' => $data['is_published'] ?? true,
+        ]);
 
         return response()->json(['id' => $quiz->id], 201);
     }

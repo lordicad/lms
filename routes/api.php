@@ -117,6 +117,7 @@ Route::middleware('auth:sanctum')->prefix('teacher')->group(function () {
     Route::post('materials/{material}', [TeacherMaterialController::class, 'update']);
     Route::put('materials/{material}', [TeacherMaterialController::class, 'update']);
     Route::post('quizzes', [TeacherQuizController::class, 'store']);
+    Route::post('quizzes/file', [TeacherQuizController::class, 'storeFile']);
     Route::get('quizzes/{quiz}/stats', [TeacherQuizController::class, 'stats']);
     Route::get('quizzes/{quiz}', [TeacherQuizController::class, 'show']);
     Route::put('quizzes/{quiz}', [TeacherQuizController::class, 'update']);
