@@ -36,6 +36,13 @@ class NativeFilePicker {
     );
   }
 
+  static Future<NativeUploadFile?> pickVideo() async {
+    return _pick(
+      'pickVideo',
+      errorMessage: 'Video yang dipilih tidak dapat dibaca.',
+    );
+  }
+
   static Future<NativeUploadFile?> _pick(
     String method, {
     required String errorMessage,

@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 
+import '../../core/platform/native_file_picker.dart';
 import '../../core/teacher/teacher_models.dart';
 import '../../core/teacher/teacher_repository.dart';
 import '../../core/theme/lms_theme.dart';
 import '../../core/widgets/app_feedback.dart';
 import '../student/widgets/content_widgets.dart';
+
+/// Where a new video comes from. Editing keeps whatever source the lesson already has.
+enum _VideoSource { youtube, upload }
 
 /// Add or edit a YouTube video: pick Subject -> Tahun -> Bab, then title, description and
 /// the YouTube link. Upload-from-device comes in a later phase. Pops `true` on success.
@@ -24,6 +28,9 @@ class _VideoFormScreenState extends State<VideoFormScreen> {
   final _urlCtrl = TextEditingController();
   bool _published = true;
   bool _saving = false;
+
+  _VideoSource _source = _VideoSource.youtube;
+  NativeUploadFile? _videoFile;
 
   TeacherOptions? _options;
   Object? _optionsError;
@@ -106,17 +113,40 @@ class _VideoFormScreenState extends State<VideoFormScreen> {
   void _snack(String message) =>
       AppFeedback.error('Tidak dapat diteruskan', description: message);
 
+  Future<void> _pickVideoFile() async {
+    try {
+      final file = await NativeFilePicker.pickVideo();
+      if (file == null || !mounted) return;
+      setState(() => _videoFile = file);
+    } catch (e) {
+      if (mounted) _snack('$e');
+    }
+  }
+
   Future<void> _save() async {
     final title = _titleCtrl.text.trim();
     final url = _urlCtrl.text.trim();
     if (_chapter == null) return _snack('Sila pilih Bab.');
     if (title.isEmpty) return _snack('Sila isi tajuk video.');
-    if (url.isEmpty) return _snack('Sila isi pautan YouTube.');
+
+    final uploading = widget.video == null && _source == _VideoSource.upload;
+    if (uploading && _videoFile == null) {
+      return _snack('Sila pilih fail video untuk dimuat naik.');
+    }
+    if (!uploading && url.isEmpty) return _snack('Sila isi pautan YouTube.');
 
     setState(() => _saving = true);
     try {
       final video = widget.video;
-      if (video == null) {
+      if (video == null && uploading) {
+        await widget.repository.createVideoUpload(
+          chapterId: _chapter!.id,
+          title: title,
+          description: _descCtrl.text.trim(),
+          file: _videoFile!,
+          isPublished: _published,
+        );
+      } else if (video == null) {
         await widget.repository.createVideo(
           chapterId: _chapter!.id,
           title: title,
@@ -240,14 +270,42 @@ class _VideoFormScreenState extends State<VideoFormScreen> {
                   ),
                 ),
                 const SizedBox(height: 12),
-                TextField(
-                  controller: _urlCtrl,
-                  keyboardType: TextInputType.url,
-                  decoration: const InputDecoration(
-                    labelText: 'Pautan YouTube',
-                    hintText: 'https://youtu.be/…',
+                // Source is only choosable when creating; editing keeps the lesson's source.
+                if (!editing) ...[
+                  SegmentedButton<_VideoSource>(
+                    segments: const [
+                      ButtonSegment(
+                        value: _VideoSource.youtube,
+                        icon: Icon(Icons.link),
+                        label: Text('YouTube'),
+                      ),
+                      ButtonSegment(
+                        value: _VideoSource.upload,
+                        icon: Icon(Icons.upload_file),
+                        label: Text('Muat naik'),
+                      ),
+                    ],
+                    selected: {_source},
+                    onSelectionChanged: (s) => setState(() => _source = s.first),
+                    showSelectedIcon: false,
                   ),
-                ),
+                  const SizedBox(height: 12),
+                ],
+                if (editing || _source == _VideoSource.youtube)
+                  TextField(
+                    controller: _urlCtrl,
+                    keyboardType: TextInputType.url,
+                    decoration: const InputDecoration(
+                      labelText: 'Pautan YouTube',
+                      hintText: 'https://youtu.be/…',
+                    ),
+                  )
+                else
+                  _VideoFilePicker(
+                    file: _videoFile,
+                    onPick: _pickVideoFile,
+                    onClear: () => setState(() => _videoFile = null),
+                  ),
                 const SizedBox(height: 4),
                 SwitchListTile(
                   contentPadding: EdgeInsets.zero,
@@ -322,5 +380,79 @@ class _VideoFormScreenState extends State<VideoFormScreen> {
       if (chapter.id == id) return chapter;
     }
     return null;
+  }
+}
+
+/// Picks an MP4/WEBM from the device and shows what was chosen.
+class _VideoFilePicker extends StatelessWidget {
+  const _VideoFilePicker({
+    required this.file,
+    required this.onPick,
+    required this.onClear,
+  });
+
+  final NativeUploadFile? file;
+  final VoidCallback onPick;
+  final VoidCallback onClear;
+
+  @override
+  Widget build(BuildContext context) {
+    final chosen = file;
+
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Theme.of(context).dividerColor),
+      ),
+      padding: const EdgeInsets.all(12),
+      child: chosen == null
+          ? Row(
+              children: [
+                const Icon(Icons.movie_outlined, color: LmsColors.brand),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    'Pilih fail video (MP4 atau WEBM)',
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                ),
+                TextButton(onPressed: onPick, child: const Text('Pilih')),
+              ],
+            )
+          : Row(
+              children: [
+                const Icon(Icons.movie_outlined, color: LmsColors.brand),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        chosen.name,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                      Text(
+                        _size(chosen.sizeBytes),
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                    ],
+                  ),
+                ),
+                IconButton(
+                  tooltip: 'Buang',
+                  onPressed: onClear,
+                  icon: const Icon(Icons.close),
+                ),
+              ],
+            ),
+    );
+  }
+
+  static String _size(int bytes) {
+    if (bytes <= 0) return '';
+    final mb = bytes / (1024 * 1024);
+    return mb >= 1 ? '${mb.toStringAsFixed(1)} MB' : '${(bytes / 1024).round()} KB';
   }
 }

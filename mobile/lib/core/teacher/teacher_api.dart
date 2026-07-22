@@ -147,9 +147,36 @@ class TeacherApi {
       'title': title,
       if (description != null && description.isNotEmpty)
         'description': description,
+      'source': 'youtube',
       'youtube_url': youtubeUrl,
       'is_published': isPublished,
     });
+  }
+
+  /// Upload an MP4/WEBM from the device. Multipart, with the file in the `video` field so the
+  /// API can apply the same rules as the web upload form.
+  Future<void> createVideoUpload(
+    String token, {
+    required int chapterId,
+    required String title,
+    String? description,
+    required NativeUploadFile file,
+    required bool isPublished,
+  }) async {
+    await _sendMultipart(
+      'POST',
+      token,
+      '/teacher/videos',
+      {
+        'chapter_id': '$chapterId',
+        'title': title,
+        if (description != null && description.isNotEmpty) 'description': description,
+        'source': 'upload',
+        'is_published': isPublished ? '1' : '0',
+      },
+      file: file,
+      fileField: 'video',
+    );
   }
 
   Future<void> updateVideo(
@@ -362,6 +389,7 @@ class TeacherApi {
     String path,
     Map<String, String> fields, {
     NativeUploadFile? file,
+    String fileField = 'file',
   }) async {
     final request = http.MultipartRequest(method, Uri.parse('$baseUrl$path'))
       ..headers.addAll({
@@ -373,7 +401,7 @@ class TeacherApi {
     if (file != null) {
       request.files.add(
         await http.MultipartFile.fromPath(
-          'file',
+          fileField,
           file.path,
           filename: file.name,
         ),

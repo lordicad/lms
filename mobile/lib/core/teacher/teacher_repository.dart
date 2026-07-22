@@ -121,6 +121,21 @@ class TeacherRepository {
     isPublished: isPublished,
   );
 
+  Future<void> createVideoUpload({
+    required int chapterId,
+    required String title,
+    String? description,
+    required NativeUploadFile file,
+    required bool isPublished,
+  }) async => _api.createVideoUpload(
+    await _token(),
+    chapterId: chapterId,
+    title: title,
+    description: description,
+    file: file,
+    isPublished: isPublished,
+  );
+
   Future<void> updateVideo(
     int id, {
     required int chapterId,

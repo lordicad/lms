@@ -41,6 +41,7 @@ class MainActivity : FlutterActivity() {
                 val picker = when (call.method) {
                     "pickMaterial" -> PickerConfig(MATERIAL_REQUEST_CODE, MATERIAL_MIME_TYPES)
                     "pickAvatar" -> PickerConfig(AVATAR_REQUEST_CODE, AVATAR_MIME_TYPES)
+                    "pickVideo" -> PickerConfig(VIDEO_REQUEST_CODE, VIDEO_MIME_TYPES)
                     else -> {
                         result.notImplemented()
                         return@setMethodCallHandler
@@ -60,7 +61,12 @@ class MainActivity : FlutterActivity() {
     @Deprecated("Deprecated in Android SDK, retained for FlutterActivity compatibility.")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode != MATERIAL_REQUEST_CODE && requestCode != AVATAR_REQUEST_CODE) return
+        if (requestCode != MATERIAL_REQUEST_CODE &&
+            requestCode != AVATAR_REQUEST_CODE &&
+            requestCode != VIDEO_REQUEST_CODE
+        ) {
+            return
+        }
 
         val result = pendingResult ?: return
         pendingResult = null
@@ -69,7 +75,11 @@ class MainActivity : FlutterActivity() {
             return
         }
 
-        val folder = if (requestCode == AVATAR_REQUEST_CODE) "avatars" else "teacher-materials"
+        val folder = when (requestCode) {
+            AVATAR_REQUEST_CODE -> "avatars"
+            VIDEO_REQUEST_CODE -> "teacher-videos"
+            else -> "teacher-materials"
+        }
         copySelectedFile(data.data!!, result, folder)
     }
 
@@ -144,6 +154,7 @@ class MainActivity : FlutterActivity() {
         private const val FILES_CHANNEL = "com.weststar.lms_moe_mobile/files"
         private const val MATERIAL_REQUEST_CODE = 4310
         private const val AVATAR_REQUEST_CODE = 4311
+        private const val VIDEO_REQUEST_CODE = 4312
         private val MATERIAL_MIME_TYPES = arrayOf(
             "application/pdf",
             "application/msword",
@@ -159,6 +170,10 @@ class MainActivity : FlutterActivity() {
             "image/jpeg",
             "image/png",
             "image/webp",
+        )
+        private val VIDEO_MIME_TYPES = arrayOf(
+            "video/mp4",
+            "video/webm",
         )
     }
 }
