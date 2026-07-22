@@ -3,8 +3,8 @@
 <head>
     <meta charset="utf-8">
     {{-- Tab icon. One 196px PNG serves the browser tab and the phone home screen alike. --}}
-    <link rel="icon" type="image/png" href="{{ asset('images/welearn1.png') }}">
-    <link rel="apple-touch-icon" href="{{ asset('images/welearn1.png') }}">
+    <link rel="icon" type="image/png" href="{{ asset('images/welearn.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('images/welearn.png') }}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <title>{{ __('WeLearn. Belajar di mana-mana, bila-bila masa.') }}</title>

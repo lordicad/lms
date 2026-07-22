@@ -14,7 +14,7 @@ class FaviconTest extends TestCase
     private function assertHasFavicon(string $html, string $where): void
     {
         $this->assertStringContainsString('rel="icon"', $html, "no favicon on the {$where}");
-        $this->assertStringContainsString('images/welearn1.png', $html, "wrong favicon on the {$where}");
+        $this->assertStringContainsString('images/welearn.png', $html, "wrong favicon on the {$where}");
     }
 
     public function test_every_shell_carries_the_welearn_tab_icon(): void
