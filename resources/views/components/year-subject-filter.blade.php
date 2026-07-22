@@ -59,6 +59,10 @@
       })"
       style="display:flex;flex-wrap:wrap;align-items:flex-end;gap:14px">
 
+    {{-- An optional search box, rendered first so it reads before the dropdowns. It lives inside
+         this form on purpose: a separate one would reset the Tahun/Subjek pair on every search. --}}
+    {{ $search ?? '' }}
+
     {{-- 1. Tahun (Year) --}}
     <div class="tp-field" style="display:flex;flex-direction:column;gap:6px">
         <label for="ysf-tahun" class="{{ $cls['label'] }}">{{ __('Tahun') }}</label>

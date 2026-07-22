@@ -31,7 +31,15 @@
             @endforeach
         </div>
 
-        <x-year-subject-filter :action="route('admin.kandungan.video')" :grades="$grades" :subjects="$subjects" :filter="$filter" />
+        <x-year-subject-filter :action="route('admin.kandungan.video')" :grades="$grades" :subjects="$subjects" :filter="$filter">
+            <x-slot:search>
+                <div class="tp-field" style="flex:1;min-width:220px">
+                    <label for="cari-video" class="tp-label">{{ __('Cari') }}</label>
+                    <input id="cari-video" type="search" name="q" value="{{ $search }}"
+                           placeholder="{{ __('Tajuk video atau nama cikgu') }}" class="tp-input">
+                </div>
+            </x-slot:search>
+        </x-year-subject-filter>
 
         @if ($lessons->isEmpty())
             <div class="tp-empty">

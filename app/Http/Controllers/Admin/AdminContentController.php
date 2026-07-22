@@ -24,9 +24,14 @@ class AdminContentController extends Controller
     public function video(Request $request): View
     {
         $filter = ContentFilter::fromRequest($request);
+        $search = trim((string) $request->query('q', ''));
+
         // Rebuilt per call: the summary counts each need their own query, and reusing one
-        // builder would stack their wheres on top of each other.
-        $filtered = fn (): Builder => $filter->apply(SchoolScope::content(Lesson::query()));
+        // builder would stack their wheres on top of each other. The search rides along, so the
+        // cards keep describing the rows on screen rather than the unfiltered library.
+        $filtered = fn (): Builder => $this->searched(
+            $filter->apply(SchoolScope::content(Lesson::query())), $search
+        );
 
         $lessons = $filtered()
             ->with('chapter.subject', 'chapter.grade', 'teacher')
@@ -43,7 +48,24 @@ class AdminContentController extends Controller
             'subjects' => Subject::orderBy('sort_order')->get(),
             'grades' => Grade::orderBy('level')->get(),
             'filter' => $filter,
+            'search' => $search,
         ]);
+    }
+
+    /**
+     * Narrow content by a free-text term, matched against its own title and the name of the
+     * teacher who posted it — the two things an admin scanning this table actually knows.
+     *
+     * @param  Builder<Lesson>|Builder<Material>|Builder<Quiz>  $query
+     * @return Builder<Lesson>|Builder<Material>|Builder<Quiz>
+     */
+    private function searched(Builder $query, string $search): Builder
+    {
+        return $query->when($search !== '', fn (Builder $q) => $q->where(
+            fn (Builder $w) => $w
+                ->where('title', 'like', "%{$search}%")
+                ->orWhereHas('teacher', fn (Builder $t) => $t->where('name', 'like', "%{$search}%")),
+        ));
     }
 
     public function material(Request $request): View
