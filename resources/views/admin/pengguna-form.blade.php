@@ -24,7 +24,9 @@
              get availableClasses() { return this.classes.filter(c => String(c.school_id) === String(this.schoolId) && String(c.grade_id) === String(this.gradeId)); },
              onContextChange() { if (this.schoolClass && ! this.availableClasses.some(c => String(c.id) === String(this.schoolClass))) this.schoolClass = ''; },
          }">
-        <a href="{{ route('admin.pengguna') }}" style="display:inline-flex;align-items:center;gap:6px;font-family:'Geist',sans-serif;font-size:13.5px;font-weight:800;color:var(--tp-muted-2);text-decoration:none;margin-bottom:16px">← {{ __('Semua pengguna') }}</a>
+        {{-- Same outlined button as the "back to Dashboard" link on the contributors page. --}}
+        <a href="{{ route('admin.pengguna') }}" class="tp-btn-outline"
+           style="align-self:flex-start;min-height:40px;border-radius:11px;font-size:13px;padding:0 14px;border-width:1.5px;margin-bottom:16px">← {{ __('Semua pengguna') }}</a>
 
         <form method="POST" action="{{ $editing ? route('admin.pengguna.update', $user) : route('admin.pengguna.store') }}"
               style="background:var(--tp-surface);border:1px solid var(--tp-line);border-radius:18px;padding:24px;display:flex;flex-direction:column;gap:16px;box-shadow:0 2px 10px rgba(46,44,80,.04)">
