@@ -13,7 +13,7 @@
     @endphp
 
     {{-- Centred within the main content box. --}}
-    <div style="display:flex;flex-direction:column;gap:32px;max-width:820px;width:100%;margin:0 auto">
+    <div style="display:flex;flex-direction:column;gap:32px;max-width:clamp(820px, 58vw, 1100px);width:100%;margin:0 auto">
         @if ($stats)
             {{-- Header --}}
             <div style="background:var(--wl-surface);border:1px solid var(--wl-line);border-radius:22px;padding:28px;display:flex;align-items:center;gap:22px;box-shadow:0 8px 24px var(--wl-line);flex-wrap:wrap">

@@ -130,7 +130,7 @@
     </aside>
 
     {{-- ── MAIN ── --}}
-    <main class="wl-main" style="min-width:0;padding:28px 36px 48px;display:flex;flex-direction:column;gap:28px;max-width:1180px;box-sizing:border-box;width:100%;margin:0 auto">
+    <main class="wl-main" style="min-width:0;padding:28px clamp(14px, 3vw, 36px) 48px;display:flex;flex-direction:column;gap:28px;max-width:clamp(1180px, 78vw, 1440px);box-sizing:border-box;width:100%;margin:0 auto">
         {{-- HEADER --}}
         <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
             <form method="GET" action="{{ route('cari.index') }}" role="search"
