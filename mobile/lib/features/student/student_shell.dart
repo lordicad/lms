@@ -65,7 +65,7 @@ class _StudentShellState extends State<StudentShell> {
   Widget build(BuildContext context) {
     final english = widget.language == AppLanguage.en;
     final gradeName = _activeGrade == null
-        ? (widget.user.grade?.name ?? 'Tahun anda')
+        ? (widget.user.grade?.name ?? (english ? 'Your year' : 'Tahun anda'))
         : 'Tahun $_activeGrade';
 
     final tabs = [
@@ -122,7 +122,7 @@ class _StudentShellState extends State<StudentShell> {
           NavigationDestination(
             icon: const Icon(Icons.download_for_offline_outlined),
             selectedIcon: const Icon(Icons.download_for_offline),
-            label: 'Offline',
+            label: english ? 'Offline' : 'Simpanan',
           ),
           NavigationDestination(
             icon: const Icon(Icons.emoji_events_outlined),
@@ -156,10 +156,15 @@ class _StudentShellState extends State<StudentShell> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const ListTile(
-              leading: Icon(Icons.school_outlined),
-              title: Text('Pilih Tahun'),
-              subtitle: Text('Untuk ulang kaji kandungan Tahun lain.'),
+            ListTile(
+              leading: const Icon(Icons.school_outlined),
+              title: Text(context.copy(bm: 'Pilih Tahun', en: 'Choose year')),
+              subtitle: Text(
+                context.copy(
+                  bm: 'Untuk ulang kaji kandungan Tahun lain.',
+                  en: 'Review learning content from another year.',
+                ),
+              ),
             ),
             for (var level = 1; level <= 6; level++)
               ListTile(
@@ -186,7 +191,9 @@ class _StudentShellState extends State<StudentShell> {
     await Navigator.of(context).push<void>(
       MaterialPageRoute(
         builder: (_) => Scaffold(
-          appBar: AppBar(title: const Text('Profil saya')),
+          appBar: AppBar(
+            title: Text(context.copy(bm: 'Profil saya', en: 'My profile')),
+          ),
           body: SafeArea(
             child: ProfileTab(
               user: widget.user,

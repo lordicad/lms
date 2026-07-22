@@ -101,7 +101,10 @@ class _DashboardTabState extends State<DashboardTab> {
         if (snapshot.hasError) {
           return StateMessage(
             icon: Icons.wifi_off_outlined,
-            title: 'Tidak dapat memuatkan pembelajaran',
+            title: context.copy(
+              bm: 'Tidak dapat memuatkan pembelajaran',
+              en: 'Unable to load learning',
+            ),
             subtitle: '${snapshot.error}',
             onRetry: _reload,
           );
@@ -109,11 +112,16 @@ class _DashboardTabState extends State<DashboardTab> {
 
         final data = snapshot.data!;
         if (data.grade == null) {
-          return const StateMessage(
+          return StateMessage(
             icon: Icons.school_outlined,
-            title: 'Tahun anda belum ditetapkan',
-            subtitle:
-                'Sila kemas kini profil untuk melihat kandungan yang betul.',
+            title: context.copy(
+              bm: 'Tahun anda belum ditetapkan',
+              en: 'Your year has not been set',
+            ),
+            subtitle: context.copy(
+              bm: 'Sila kemas kini profil untuk melihat kandungan yang betul.',
+              en: 'Update your profile to see the right learning content.',
+            ),
           );
         }
 
@@ -170,14 +178,20 @@ class _DashboardTabState extends State<DashboardTab> {
               ],
               if (data.continueWatching.isNotEmpty) ...[
                 _RailHeading(
-                  title: 'Sambung menonton',
+                  title: context.copy(
+                    bm: 'Sambung menonton',
+                    en: 'Continue watching',
+                  ),
                   trailing: data.subjects.isEmpty
                       ? null
                       : GestureDetector(
                           onTap: widget.onSeeAllSubjects,
-                          child: const Text(
-                            'Lihat subjek',
-                            style: TextStyle(
+                          child: Text(
+                            context.copy(
+                              bm: 'Lihat subjek',
+                              en: 'View subjects',
+                            ),
+                            style: const TextStyle(
                               fontSize: 13,
                               fontWeight: FontWeight.w700,
                               color: LmsColors.brandStrong,
@@ -195,21 +209,28 @@ class _DashboardTabState extends State<DashboardTab> {
               if (data.trending.isNotEmpty) ...[
                 _RailHeading(
                   title: data.trendingFallback
-                      ? 'Baru ditambah'
-                      : 'Paling popular',
+                      ? context.copy(bm: 'Baru ditambah', en: 'Newly added')
+                      : context.copy(bm: 'Paling popular', en: 'Most popular'),
                 ),
                 const SizedBox(height: 12),
                 LessonRail(lessons: data.trending, onTapLesson: _openLesson),
                 const SizedBox(height: 24),
               ],
               if (data.newest.isNotEmpty && !data.trendingFallback) ...[
-                const _RailHeading(title: 'Baru ditambah'),
+                _RailHeading(
+                  title: context.copy(bm: 'Baru ditambah', en: 'Newly added'),
+                ),
                 const SizedBox(height: 12),
                 LessonRail(lessons: data.newest, onTapLesson: _openLesson),
                 const SizedBox(height: 24),
               ],
               if (data.suggested.isNotEmpty) ...[
-                const _RailHeading(title: 'Anda mungkin suka'),
+                _RailHeading(
+                  title: context.copy(
+                    bm: 'Anda mungkin suka',
+                    en: 'You may like',
+                  ),
+                ),
                 const SizedBox(height: 12),
                 LessonRail(lessons: data.suggested, onTapLesson: _openLesson),
                 const SizedBox(height: 24),
@@ -219,12 +240,15 @@ class _DashboardTabState extends State<DashboardTab> {
                   // Keeps the section baseline aligned with the WeLearn logo.
                   padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
                   child: SectionTitle(
-                    'Subjek ${data.grade!.name}',
+                    context.copy(
+                      bm: 'Subjek ${data.grade!.name}',
+                      en: 'Year ${data.grade!.level} subjects',
+                    ),
                     trailing: GestureDetector(
                       onTap: widget.onSeeAllSubjects,
-                      child: const Text(
-                        'Lihat semua',
-                        style: TextStyle(
+                      child: Text(
+                        context.copy(bm: 'Lihat semua', en: 'See all'),
+                        style: const TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w700,
                           color: LmsColors.brandStrong,
@@ -244,12 +268,18 @@ class _DashboardTabState extends State<DashboardTab> {
                 ),
               ],
               if (noContent)
-                const Padding(
-                  padding: EdgeInsets.fromLTRB(20, 72, 20, 0),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 72, 20, 0),
                   child: StateMessage(
                     icon: Icons.ondemand_video_outlined,
-                    title: 'Belum ada video',
-                    subtitle: 'Sila semak semula kemudian.',
+                    title: context.copy(
+                      bm: 'Belum ada video',
+                      en: 'No videos yet',
+                    ),
+                    subtitle: context.copy(
+                      bm: 'Sila semak semula kemudian.',
+                      en: 'Please check again later.',
+                    ),
                   ),
                 ),
             ],
@@ -361,8 +391,8 @@ class _HeroContent extends StatelessWidget {
                 color: const Color(0xFF4A5A6B),
               ),
             if (!resuming)
-              const _HeroChip(
-                text: 'TRENDING',
+              _HeroChip(
+                text: context.copy(bm: 'POPULAR', en: 'TRENDING'),
                 color: LmsColors.brandStrong,
                 dark: true,
               ),
@@ -388,7 +418,14 @@ class _HeroContent extends StatelessWidget {
             FilledButton.icon(
               onPressed: onWatch,
               icon: const Icon(Icons.play_arrow_rounded, size: 18),
-              label: Text(resuming ? 'Sambung menonton' : 'Tonton'),
+              label: Text(
+                resuming
+                    ? context.copy(
+                        bm: 'Sambung menonton',
+                        en: 'Continue watching',
+                      )
+                    : context.copy(bm: 'Tonton', en: 'Watch'),
+              ),
               style: FilledButton.styleFrom(
                 backgroundColor: LmsColors.brand,
                 foregroundColor: Colors.white,
@@ -404,7 +441,7 @@ class _HeroContent extends StatelessWidget {
                 size: 18,
                 color: lesson.favourited ? LmsColors.danger : null,
               ),
-              label: const Text('Kegemaran'),
+              label: Text(context.copy(bm: 'Kegemaran', en: 'Favourite')),
               style: OutlinedButton.styleFrom(
                 foregroundColor: const Color(0xFF293743),
                 minimumSize: const Size(0, 44),
