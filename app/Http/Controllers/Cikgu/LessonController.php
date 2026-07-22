@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\LessonRequest;
 use App\Models\Grade;
 use App\Models\Lesson;
-use App\Models\Material;
 use App\Models\Subject;
 use App\Models\User;
 use App\Services\OwnershipService;
@@ -81,26 +80,25 @@ class LessonController extends Controller
     {
         $this->authorize('create', Lesson::class);
 
-        $source = $request->input('source');
-
-        $data = [
+        $shared = [
             'chapter_id' => $request->integer('chapter_id'),
             'teacher_id' => $request->user()->id,
-            'title' => $request->input('title'),
-            'description' => $request->input('description'),
-            'source' => $source,
+            'source' => $request->input('source'),
             'is_published' => $request->boolean('is_published'),
         ];
 
-        $banner = null;
-
-        if ($source === Lesson::SOURCE_UPLOAD) {
-            $data['video_path'] = Uploads::store($request->file('video'), 'videos');
-        } else {
-            $data['youtube_id'] = $request->youtubeId();
-            [$attribution, $banner] = $this->attribute($ownership, $request->youtubeId(), $request->user());
-            $data += $attribution;
+        if ($request->isBatchUpload()) {
+            return $this->storeBatch($request, $shared);
         }
+
+        $data = $shared + [
+            'title' => $request->input('title'),
+            'description' => $request->input('description'),
+            'youtube_id' => $request->youtubeId(),
+        ];
+
+        [$attribution, $banner] = $this->attribute($ownership, $request->youtubeId(), $request->user());
+        $data += $attribution;
 
         if ($request->hasFile('thumbnail')) {
             $data['thumbnail_path'] = Uploads::store($request->file('thumbnail'), 'thumbnails');
@@ -108,11 +106,47 @@ class LessonController extends Controller
 
         $lesson = Lesson::create($data);
 
-        $this->storeAttachments($request, $lesson);
-
         return $this->savedRedirect(
             __('Video ":title" berjaya disimpan.', ['title' => $lesson->title]),
             $banner,
+        );
+    }
+
+    /**
+     * One uploaded file, one video. Each row on the form carries its own title, paired to its file
+     * by position; a blank one falls back to the file's own name with the extension dropped.
+     *
+     * Thumbnails come from the browser, which captures a frame per file and posts them keyed by
+     * the same index — so a capture that failed simply leaves that key absent rather than pushing
+     * every later thumbnail onto the wrong video.
+     *
+     * @param  array<string, mixed>  $shared
+     */
+    private function storeBatch(LessonRequest $request, array $shared): RedirectResponse
+    {
+        $titles = $request->input('video_titles', []);
+        $thumbnails = $request->file('thumbnails', []);
+        $saved = [];
+
+        foreach ($request->file('videos', []) as $index => $file) {
+            $given = trim((string) ($titles[$index] ?? ''));
+
+            $data = $shared + [
+                'title' => $given !== '' ? $given : pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME),
+                'video_path' => Uploads::store($file, 'videos'),
+            ];
+
+            if (isset($thumbnails[$index])) {
+                $data['thumbnail_path'] = Uploads::store($thumbnails[$index], 'thumbnails');
+            }
+
+            $saved[] = Lesson::create($data);
+        }
+
+        return $this->savedRedirect(
+            count($saved) === 1
+                ? __('Video ":title" berjaya disimpan.', ['title' => $saved[0]->title])
+                : __(':count video berjaya disimpan.', ['count' => count($saved)]),
         );
     }
 
@@ -177,8 +211,6 @@ class LessonController extends Controller
 
         $lesson->save();
 
-        $this->storeAttachments($request, $lesson);
-
         // Only after the row is safely saved do we drop the files it no longer points at.
         foreach (array_filter([$staleVideo, $staleThumbnail]) as $path) {
             Storage::disk('uploads')->delete($path);
@@ -223,35 +255,7 @@ class LessonController extends Controller
         ], $banner];
     }
 
-    /**
-     * Save the files dropped alongside the video as Materials on this lesson.
-     *
-     * They are the same thing the Bahan page creates, so they appear there too and download
-     * through the same route. The display name is paired to the file by position — the form
-     * renders one text input per file in the same order — and falls back to the file's own name
-     * with the extension dropped, which is what a teacher would have typed anyway.
-     */
-    private function storeAttachments(LessonRequest $request, Lesson $lesson): void
-    {
-        $titles = $request->input('attachment_titles', []);
-
-        foreach ($request->file('attachments', []) as $index => $file) {
-            $given = trim((string) ($titles[$index] ?? ''));
-
-            Material::create([
-                'chapter_id' => $lesson->chapter_id,
-                'lesson_id' => $lesson->id,
-                'teacher_id' => $lesson->teacher_id,
-                'title' => $given !== '' ? $given : pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME),
-                'file_path' => Uploads::store($file, 'materials'),
-                'original_name' => $file->getClientOriginalName(),
-                'mime_type' => $file->getClientMimeType(),
-                'size_kb' => (int) ceil($file->getSize() / 1024),
-            ]);
-        }
-    }
-
-    private function savedRedirect(string $status, ?string $banner): RedirectResponse
+    private function savedRedirect(string $status, ?string $banner = null): RedirectResponse
     {
         $redirect = redirect()->route('cikgu.video.index')->with('status', $status);
 

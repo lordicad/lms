@@ -11,8 +11,8 @@ use Illuminate\Validation\Validator;
 
 class LessonRequest extends FormRequest
 {
-    /** Enough for a lesson's handouts without letting one submission carry a whole term's files. */
-    public const MAX_ATTACHMENTS = 10;
+    /** One upload should be a lesson's worth of recordings, not a term's. */
+    public const MAX_VIDEOS = 10;
 
     public function authorize(): bool
     {
@@ -26,20 +26,35 @@ class LessonRequest extends FormRequest
     {
         $videoMax = config('lms.video_max_mb') * 1024;   // validator wants kilobytes
 
+        $fileRules = [
+            'file',
+            'mimes:'.implode(',', config('lms.video_mimes')),
+            'mimetypes:'.implode(',', config('lms.video_mimetypes')),
+            "max:{$videoMax}",
+        ];
+
         return [
             'chapter_id' => ['required', 'integer', Rule::exists('chapters', 'id'), ValidSubjectGradeCombo::forChapter()],
-            'title' => ['required', 'string', 'max:255'],
+            // Uploading a batch names each video in its own row, so the shared field is only
+            // required on the paths that produce exactly one lesson.
+            'title' => [Rule::requiredIf(! $this->isBatchUpload()), 'nullable', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:5000'],
             'source' => ['required', Rule::in([Lesson::SOURCE_UPLOAD, Lesson::SOURCE_YOUTUBE])],
 
-            'video' => [
+            // A batch: one lesson per file, titled by the matching row.
+            'videos' => [Rule::requiredIf($this->isBatchUpload()), 'nullable', 'array', 'max:'.self::MAX_VIDEOS],
+            'videos.*' => $fileRules,
+            'video_titles' => ['nullable', 'array', 'max:'.self::MAX_VIDEOS],
+            'video_titles.*' => ['nullable', 'string', 'max:255'],
+            // Captured in the browser, one per video, keyed by the same index.
+            'thumbnails' => ['nullable', 'array', 'max:'.self::MAX_VIDEOS],
+            'thumbnails.*' => ['nullable', 'image', 'mimes:'.implode(',', config('lms.thumbnail_mimes')), 'max:4096'],
+
+            // Editing one video still replaces one file.
+            'video' => array_merge([
                 Rule::requiredIf($this->needsVideoFile()),
                 'nullable',
-                'file',
-                'mimes:'.implode(',', config('lms.video_mimes')),
-                'mimetypes:'.implode(',', config('lms.video_mimetypes')),
-                "max:{$videoMax}",
-            ],
+            ], $fileRules),
 
             'youtube_url' => [
                 Rule::requiredIf($this->input('source') === Lesson::SOURCE_YOUTUBE),
@@ -54,18 +69,6 @@ class LessonRequest extends FormRequest
                 'mimes:'.implode(',', config('lms.thumbnail_mimes')),
                 'max:4096',
             ],
-
-            // Attachments ride along with the video and become Materials on the same lesson. Each
-            // one carries an optional display name, paired to the file by position, so both arrays
-            // are validated with the same bounds.
-            'attachments' => ['nullable', 'array', 'max:'.self::MAX_ATTACHMENTS],
-            'attachments.*' => [
-                'file',
-                'mimes:'.implode(',', config('lms.material_mimes')),
-                'max:'.(config('lms.material_max_mb') * 1024),
-            ],
-            'attachment_titles' => ['nullable', 'array', 'max:'.self::MAX_ATTACHMENTS],
-            'attachment_titles.*' => ['nullable', 'string', 'max:100'],
 
             'is_published' => ['boolean'],
         ];
@@ -83,16 +86,18 @@ class LessonRequest extends FormRequest
             'title.required' => __('Sila isi tajuk video.'),
             'source.required' => __('Sila pilih sumber video.'),
             'video.required' => __('Sila pilih fail video untuk dimuat naik.'),
+            'videos.required' => __('Sila pilih sekurang-kurangnya satu fail video.'),
+            'videos.max' => __('Terlalu banyak video. Had ialah :max fail sekali muat naik.', ['max' => self::MAX_VIDEOS]),
+            'videos.*.mimes' => __('Format video mesti MP4 atau WEBM.'),
+            'videos.*.mimetypes' => __('Fail itu bukan video MP4/WEBM yang sah.'),
+            'videos.*.max' => __('Saiz video terlalu besar. Had ialah :max MB. Untuk rakaman kelas penuh, sila guna pautan YouTube.', ['max' => $max]),
+            'video_titles.*.max' => __('Tajuk terlalu panjang. Had ialah 255 aksara.'),
             'video.mimes' => __('Format video mesti MP4 atau WEBM.'),
             'video.mimetypes' => __('Fail itu bukan video MP4/WEBM yang sah.'),
             'video.max' => __('Saiz video terlalu besar. Had ialah :max MB. Untuk rakaman kelas penuh, sila guna pautan YouTube.', ['max' => $max]),
             'youtube_url.required' => __('Sila tampal pautan YouTube.'),
             'thumbnail.image' => __('Gambar kecil mesti fail imej.'),
             'thumbnail.max' => __('Gambar kecil terlalu besar. Had ialah 4 MB.'),
-            'attachments.max' => __('Terlalu banyak lampiran. Had ialah :max fail.', ['max' => self::MAX_ATTACHMENTS]),
-            'attachments.*.mimes' => __('Format lampiran tidak dibenarkan. Guna PDF, PowerPoint, Word, Excel atau imej.'),
-            'attachments.*.max' => __('Lampiran terlalu besar. Had ialah :max MB setiap fail.', ['max' => config('lms.material_max_mb')]),
-            'attachment_titles.*.max' => __('Nama paparan terlalu panjang. Had ialah 100 aksara.'),
         ];
     }
 
@@ -108,9 +113,16 @@ class LessonRequest extends FormRequest
      * An upload needs a file on create, and on update only when the teacher is switching
      * away from YouTube or replacing the existing file.
      */
+    /** True when this submission uploads a batch: the create form, on the upload tab. */
+    public function isBatchUpload(): bool
+    {
+        return $this->isMethod('POST') && $this->input('source') === Lesson::SOURCE_UPLOAD;
+    }
+
     private function needsVideoFile(): bool
     {
-        if ($this->input('source') !== Lesson::SOURCE_UPLOAD) {
+        // A batch is validated through videos[] instead, and creating never uses this field.
+        if ($this->input('source') !== Lesson::SOURCE_UPLOAD || $this->isBatchUpload()) {
             return false;
         }
 

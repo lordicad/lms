@@ -11,9 +11,8 @@
           x-data="videoForm({{ Js::from([
               'source' => old('source', $lesson->source ?? 'youtube'),
               'maxMb' => config('lms.video_max_mb'),
-              'maxAttachmentMb' => config('lms.material_max_mb'),
-              'maxAttachments' => \App\Http\Requests\LessonRequest::MAX_ATTACHMENTS,
-              'allowedExtensions' => config('lms.material_mimes'),
+              'maxVideos' => \App\Http\Requests\LessonRequest::MAX_VIDEOS,
+              'editing' => $editing,
               'hasVideo' => (bool) $lesson->video_path,
               'fallbackUrl' => route('cikgu.video.index'),
               'labels' => [
@@ -23,12 +22,9 @@
                   'networkFailed' => __('Muat naik gagal. Sila semak sambungan internet anda dan cuba lagi.'),
                   'thumbReady' => __('✓ Gambar kecil diambil daripada video anda.'),
                   'thumbFailed' => __('Gambar kecil tidak dapat diambil daripada video ini. Anda boleh muat naik gambar sendiri.'),
-                  'badType' => __('":name" bukan jenis fail yang dibenarkan.'),
-                  'attachmentTooBig' => __('":name" melebihi had :max MB.'),
-                  'tooManyFiles' => __('Had :max lampiran sahaja.'),
-                  'attachmentCount' => __(':count lampiran'),
-                  'videoOnly' => __('1 video'),
-                  'videoPlus' => __('1 video dan :rest'),
+                  'notVideo' => __('":name" bukan fail video. Guna MP4 atau WEBM.'),
+                  'tooManyFiles' => __('Had :max video sekali muat naik.'),
+                  'videoCount' => __(':count video dipilih'),
               ],
           ]) }})"
           @submit.prevent="submit($event)">
@@ -46,12 +42,13 @@
             <x-chapter-picker :subjects="$subjects" :grades="$grades" :chapter="$chapter" />
         </div>
 
-        {{-- Details --}}
-        <div class="tp-panelform">
+        {{-- Details. Uploading a batch names each video in its own row, so this panel steps aside:
+             one title and one description cannot describe five different recordings. --}}
+        <div class="tp-panelform" @if (! $editing) x-show="! batch" x-cloak @endif>
             <h2 class="tp-g" style="font-size:17px;font-weight:800;color:var(--tp-ink)">{{ __('Butiran video') }}</h2>
             <div class="tp-field">
                 <label for="title" class="tp-label">{{ __('Tajuk') }}</label>
-                <input id="title" name="title" type="text" value="{{ old('title', $lesson->title) }}" required class="tp-input" @error('title') aria-invalid="true" @enderror>
+                <input id="title" name="title" type="text" value="{{ old('title', $lesson->title) }}" class="tp-input" @error('title') aria-invalid="true" @enderror>
                 @error('title') <span class="tp-error">{{ $message }}</span> @enderror
             </div>
             <div class="tp-field">
@@ -91,109 +88,114 @@
 
             {{-- Upload --}}
             <div id="panel-upload" role="tabpanel" aria-labelledby="tab-upload" x-show="source === 'upload'" x-cloak class="tp-field">
-                <label for="video" class="tp-label">{{ __('Fail video dan lampiran') }}</label>
+                <label class="tp-label">{{ $editing ? __('Fail video') : __('Fail video') }}</label>
 
-                {{-- One drop target for everything. Files are sorted by type on arrival: a video
-                     goes to the #video input (still the single thing the lesson stores), anything
-                     else joins the attachment list below and is saved as a Material on this
-                     lesson. The real inputs stay in the page -- screen-reader reachable, and still
-                     what submits -- the zone is only a nicer way to reach them. --}}
-                <div class="tp-dropzone" :class="dragging && 'is-dragging'"
-                     role="button" tabindex="0" aria-controls="video"
-                     @click="$refs.picker.click()"
-                     @keydown.enter.prevent="$refs.picker.click()"
-                     @keydown.space.prevent="$refs.picker.click()"
-                     @dragover.prevent="dragging = true"
-                     @dragenter.prevent="dragging = true"
-                     @dragleave.prevent="dragging = false"
-                     @drop.prevent="onDrop($event)">
-                    <x-icon name="upload" class="h-7 w-7" style="color:var(--tp-teal)" />
-                    <span class="tp-g" style="font-weight:800;font-size:14.5px;color:var(--tp-ink)">{{ __('Seret & lepaskan fail di sini') }}</span>
-                    <span class="tp-hint">{{ __('atau') }}</span>
-                    <span class="tp-btn-outline" style="min-height:38px;padding:0 16px;font-size:13px;pointer-events:none">{{ __('Tambah Fail') }}</span>
-                </div>
-
-                {{-- The picker holds nothing itself: onPicked() sorts what it collects into the two
-                     inputs below and clears it, so choosing twice adds rather than replaces. --}}
-                <input type="file" multiple x-ref="picker" @change="onPicked($event)" class="sr-only"
-                       accept=".mp4,.webm,{{ collect(config('lms.material_mimes'))->map(fn ($e) => '.'.$e)->implode(',') }}">
-
-                <input id="video" name="video" type="file" accept=".mp4,.webm,video/mp4,video/webm"
-                       x-ref="video" @change="onVideoChosen($event)" class="sr-only" aria-describedby="video-help" @error('video') aria-invalid="true" @enderror>
-                <input type="file" name="attachments[]" multiple x-ref="attachments" class="sr-only" tabindex="-1" aria-hidden="true">
-
-                <p id="video-help" class="tp-hint">
-                    {{ __('Video (MP4/WEBM, sehingga :video MB) dan lampiran (PDF, PPT, DOC, XLS, imej sehingga :material MB) akan disimpan bersama video.', ['video' => config('lms.video_max_mb'), 'material' => config('lms.material_max_mb')]) }}
-                    @if ($editing && $lesson->video_path) {{ __('Biarkan kosong untuk mengekalkan video sedia ada.') }} @endif
-                </p>
-
-                {{-- What is about to be uploaded. The video and the attachments share one table so
-                     it reads as a single list. --}}
-                <div x-show="videoName || attachments.length" x-cloak
-                     style="border:1px solid var(--tp-line-2);border-radius:14px;overflow:hidden;margin-top:4px">
-                    <div style="display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--tp-line)">
-                        <span class="tp-g" style="font-weight:800;font-size:14px;color:var(--tp-ink)" x-text="fileCountLabel"></span>
-                        <span class="tp-hint" style="margin-left:auto">{{ __('Maks. saiz setiap fail: :max MB', ['max' => config('lms.material_max_mb')]) }}</span>
+                @if ($editing)
+                    {{-- Editing replaces the one file this video points at, so it stays single. --}}
+                    <div class="tp-dropzone" :class="dragging && 'is-dragging'"
+                         role="button" tabindex="0" aria-controls="video"
+                         @click="$refs.video.click()"
+                         @keydown.enter.prevent="$refs.video.click()"
+                         @keydown.space.prevent="$refs.video.click()"
+                         @dragover.prevent="dragging = true"
+                         @dragenter.prevent="dragging = true"
+                         @dragleave.prevent="dragging = false"
+                         @drop.prevent="dragging = false; replaceVideo($event.dataTransfer?.files?.[0])">
+                        <x-icon name="upload" class="h-7 w-7" style="color:var(--tp-teal)" />
+                        <template x-if="! videoName">
+                            <span class="tp-g" style="font-weight:800;font-size:14.5px;color:var(--tp-ink)">{{ __('Seret & lepaskan fail di sini') }}</span>
+                        </template>
+                        <template x-if="videoName">
+                            <span class="tp-g" style="font-weight:800;font-size:14.5px;color:var(--tp-ink);word-break:break-all" x-text="videoName"></span>
+                        </template>
+                        <span class="tp-hint" x-text="videoName ? videoSize : @js(__('atau'))"></span>
+                        <span class="tp-btn-outline" style="min-height:38px;padding:0 16px;font-size:13px;pointer-events:none">{{ __('Tambah Fail') }}</span>
                     </div>
 
-                    <div style="display:grid;grid-template-columns:1fr 88px minmax(180px,1.2fr) 44px;gap:12px;padding:9px 16px;border-bottom:1px solid var(--tp-line)">
-                        <span class="tp-g tp-hint" style="font-weight:800">{{ __('Fail') }}</span>
-                        <span class="tp-g tp-hint" style="font-weight:800">{{ __('Saiz') }}</span>
-                        <span class="tp-g tp-hint" style="font-weight:800">{{ __('Nama paparan (untuk pelajar)') }}</span>
-                        <span></span>
+                    <input id="video" name="video" type="file" accept=".mp4,.webm,video/mp4,video/webm"
+                           x-ref="video" @change="onVideoChosen($event)" class="sr-only" aria-describedby="video-help" @error('video') aria-invalid="true" @enderror>
+                    <p id="video-help" class="tp-hint">
+                        {{ __('Format MP4 atau WEBM. Had saiz :max MB.', ['max' => config('lms.video_max_mb')]) }}
+                        @if ($lesson->video_path) {{ __('Biarkan kosong untuk mengekalkan video sedia ada.') }} @endif
+                    </p>
+                @else
+                    {{-- Creating takes any number of recordings at once. Each becomes its own
+                         video, titled by its row. --}}
+                    <div class="tp-dropzone" :class="dragging && 'is-dragging'"
+                         role="button" tabindex="0"
+                         @click="$refs.picker.click()"
+                         @keydown.enter.prevent="$refs.picker.click()"
+                         @keydown.space.prevent="$refs.picker.click()"
+                         @dragover.prevent="dragging = true"
+                         @dragenter.prevent="dragging = true"
+                         @dragleave.prevent="dragging = false"
+                         @drop.prevent="dragging = false; take($event.dataTransfer?.files)">
+                        <x-icon name="upload" class="h-7 w-7" style="color:var(--tp-teal)" />
+                        <span class="tp-g" style="font-weight:800;font-size:14.5px;color:var(--tp-ink)">{{ __('Seret & lepaskan fail di sini') }}</span>
+                        <span class="tp-hint">{{ __('atau') }}</span>
+                        <span class="tp-btn-outline" style="min-height:38px;padding:0 16px;font-size:13px;pointer-events:none">{{ __('Tambah Fail') }}</span>
                     </div>
 
-                    {{-- The video, when one is chosen. It gets no display name of its own: the
-                         lesson title is what students see. --}}
-                    <template x-if="videoName">
-                        <div style="display:grid;grid-template-columns:1fr 88px minmax(180px,1.2fr) 44px;gap:12px;align-items:center;padding:12px 16px;border-bottom:1px solid var(--tp-line)">
-                            <span style="display:flex;align-items:center;gap:10px;min-width:0">
-                                <span style="width:34px;height:34px;flex-shrink:0;border-radius:9px;background:#E4EEF9;color:#2E6CA8;display:grid;place-items:center">
-                                    <x-icon name="video" class="h-4 w-4" />
-                                </span>
-                                <span style="min-width:0;display:flex;flex-direction:column">
-                                    <span class="tp-g" style="font-weight:800;font-size:13.5px;color:var(--tp-ink);word-break:break-all" x-text="videoName"></span>
-                                    <span class="tp-hint">{{ __('Video') }}</span>
-                                </span>
-                            </span>
-                            <span class="tp-hint" x-text="videoSize"></span>
-                            <span class="tp-hint">{{ __('Guna tajuk video di atas') }}</span>
-                            <button type="button" class="tp-icon-action tp-icon-danger" @click="removeVideo()" title="{{ __('Buang') }}">
-                                <x-icon name="trash" class="h-4 w-4" />
-                                <span class="sr-only">{{ __('Buang video') }}</span>
-                            </button>
-                        </div>
-                    </template>
+                    <input type="file" multiple x-ref="picker" accept=".mp4,.webm,video/mp4,video/webm"
+                           @change="take($event.target.files); $event.target.value = ''" class="sr-only">
+                    <input type="file" name="videos[]" multiple x-ref="videos" class="sr-only" tabindex="-1" aria-hidden="true">
 
-                    <template x-for="(file, index) in attachments" :key="file.key">
-                        <div style="display:grid;grid-template-columns:1fr 88px minmax(180px,1.2fr) 44px;gap:12px;align-items:center;padding:12px 16px;border-bottom:1px solid var(--tp-line)">
-                            <span style="display:flex;align-items:center;gap:10px;min-width:0">
-                                <span style="width:34px;height:34px;flex-shrink:0;border-radius:9px;background:#FBE4ED;color:#B84A75;display:grid;place-items:center">
-                                    <x-icon name="file-text" class="h-4 w-4" />
-                                </span>
-                                <span style="min-width:0;display:flex;flex-direction:column">
-                                    <span class="tp-g" style="font-weight:800;font-size:13.5px;color:var(--tp-ink);word-break:break-all" x-text="file.name"></span>
-                                    <span class="tp-hint" x-text="file.ext"></span>
-                                </span>
-                            </span>
-                            <span class="tp-hint" x-text="file.size"></span>
-                            <span style="display:flex;flex-direction:column;gap:3px;min-width:0">
-                                {{-- Paired to the file by position: the server reads
-                                     attachment_titles[i] for attachments[i]. --}}
-                                <input type="text" name="attachment_titles[]" maxlength="100"
-                                       class="tp-input" style="min-height:38px;font-size:13.5px"
-                                       :placeholder="file.name"
-                                       aria-label="{{ __('Nama paparan (untuk pelajar)') }}"
-                                       x-model="file.title">
-                                <span class="tp-hint" style="align-self:flex-end" x-text="(file.title || '').length + '/100'"></span>
-                            </span>
-                            <button type="button" class="tp-icon-action tp-icon-danger" @click="removeAttachment(index)" title="{{ __('Buang') }}">
-                                <x-icon name="trash" class="h-4 w-4" />
-                                <span class="sr-only">{{ __('Buang lampiran') }}</span>
-                            </button>
+                    <p id="video-help" class="tp-hint">
+                        {{ __('Format MP4 atau WEBM. Had saiz :max MB setiap fail.', ['max' => config('lms.video_max_mb')]) }}
+                        {{ __('Setiap fail menjadi satu video berasingan.') }}
+                    </p>
+
+                    <div x-show="videos.length" x-cloak style="border:1px solid var(--tp-line-2);border-radius:14px;overflow:hidden;margin-top:4px">
+                        <div style="display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--tp-line)">
+                            <span class="tp-g" style="font-weight:800;font-size:14px;color:var(--tp-ink)"
+                                  x-text="labels.videoCount.replace(':count', videos.length)"></span>
+                            <span class="tp-hint" style="margin-left:auto">{{ __('Maks. saiz setiap fail: :max MB', ['max' => config('lms.video_max_mb')]) }}</span>
                         </div>
-                    </template>
-                </div>
+
+                        <div style="display:grid;grid-template-columns:1fr 88px minmax(180px,1.2fr) 44px;gap:12px;padding:9px 16px;border-bottom:1px solid var(--tp-line)">
+                            <span class="tp-g tp-hint" style="font-weight:800">{{ __('Fail') }}</span>
+                            <span class="tp-g tp-hint" style="font-weight:800">{{ __('Saiz') }}</span>
+                            <span class="tp-g tp-hint" style="font-weight:800">{{ __('Tajuk video') }}</span>
+                            <span></span>
+                        </div>
+
+                        <template x-for="(row, index) in videos" :key="row.key">
+                            <div style="display:grid;grid-template-columns:1fr 88px minmax(180px,1.2fr) 44px;gap:12px;align-items:center;padding:12px 16px;border-bottom:1px solid var(--tp-line)">
+                                <span style="display:flex;align-items:center;gap:10px;min-width:0">
+                                    <span style="width:34px;height:34px;flex-shrink:0;border-radius:9px;background:#E4EEF9;color:#2E6CA8;display:grid;place-items:center">
+                                        <x-icon name="video" class="h-4 w-4" />
+                                    </span>
+                                    <span style="min-width:0;display:flex;flex-direction:column">
+                                        <span class="tp-g" style="font-weight:800;font-size:13.5px;color:var(--tp-ink);word-break:break-all" x-text="row.name"></span>
+                                        <span class="tp-hint" x-text="row.thumbReady ? @js(__('Gambar kecil sedia')) : row.ext"></span>
+                                    </span>
+                                </span>
+                                <span class="tp-hint" x-text="row.size"></span>
+                                <span style="display:flex;flex-direction:column;gap:3px;min-width:0">
+                                    {{-- Paired to the file by position: video_titles[i] names videos[i]. --}}
+                                    <input type="text" name="video_titles[]" maxlength="255"
+                                           class="tp-input" style="min-height:38px;font-size:13.5px"
+                                           :placeholder="row.name"
+                                           aria-label="{{ __('Tajuk video') }}"
+                                           x-model="row.title">
+                                </span>
+                                <button type="button" class="tp-icon-action tp-icon-danger" @click="removeVideo(index)" title="{{ __('Buang') }}">
+                                    <x-icon name="trash" class="h-4 w-4" />
+                                    <span class="sr-only">{{ __('Buang video') }}</span>
+                                </button>
+                            </div>
+                        </template>
+                    </div>
+
+                    {{-- One hidden input per captured frame, keyed by the row it belongs to, so a
+                         capture that fails leaves a gap instead of shifting the rest. --}}
+                    <div x-ref="thumbs" class="sr-only" aria-hidden="true"></div>
+
+                    @foreach ($errors->get('videos.*') as $messages)
+                        <span class="tp-error">{{ $messages[0] }}</span>
+                    @endforeach
+                    @error('videos') <span class="tp-error">{{ $message }}</span> @enderror
+                @endif
 
                 <p x-show="sizeError" x-cloak class="tp-error" x-text="sizeError"></p>
                 @error('video') <span class="tp-error">{{ $message }}</span> @enderror
@@ -203,8 +205,10 @@
                 </div>
             </div>
 
-            {{-- Thumbnail --}}
-            <div class="tp-field" style="border-top:1px solid var(--tp-line);padding-top:16px">
+            {{-- Thumbnail. A batch captures one frame per video automatically, so a single
+                 picker here would only be ambiguous. --}}
+            <div class="tp-field" style="border-top:1px solid var(--tp-line);padding-top:16px"
+                 @if (! $editing) x-show="! batch" x-cloak @endif>
                 <label for="thumbnail" class="tp-label">{{ __('Gambar kecil (pilihan)') }}</label>
                 <input id="thumbnail" name="thumbnail" type="file" accept="image/*" class="tp-file"
                        x-ref="thumbnail" @change="onThumbnailPicked()" aria-describedby="thumbnail-help">
@@ -257,66 +261,75 @@
 
     @push('scripts')
         <script>
-            function videoForm({ source, maxMb, maxAttachmentMb, maxAttachments, allowedExtensions, hasVideo, fallbackUrl, labels }) {
+            function videoForm({ source, maxMb, maxVideos, editing, hasVideo, fallbackUrl, labels }) {
                 return {
-                    source, maxMb, maxAttachmentMb, maxAttachments, allowedExtensions, hasVideo, fallbackUrl, labels,
+                    source, maxMb, maxVideos, editing, hasVideo, fallbackUrl, labels,
                     uploading: false, progress: 0, sizeError: '', failed: '',
                     // autoThumb marks the thumbnail input as holding a frame we captured, so a
                     // teacher's own picture is never overwritten but ours can be replaced.
                     autoThumb: false, thumbBusy: false, thumbNote: '', thumbError: '',
                     dragging: false, videoName: '', videoSize: '',
-                    // One entry per chosen attachment: { key, file, name, ext, size, title }.
-                    // The order here IS the submitted order, and the title inputs are rendered
-                    // from the same array, so attachments[i] always pairs with
-                    // attachment_titles[i] on the server.
-                    attachments: [], nextKey: 0,
+                    // One row per chosen recording: { key, file, name, ext, size, title,
+                    // thumbFile, thumbReady }. Row order is submission order, so videos[i] is
+                    // named by video_titles[i] on the server.
+                    videos: [], nextKey: 0,
 
-                    get fileCountLabel() {
-                        const n = this.attachments.length;
-                        const attached = n === 0 ? '' : this.labels.attachmentCount.replace(':count', n);
-                        if (! this.videoName) return attached;
-                        return attached ? this.labels.videoPlus.replace(':rest', attached) : this.labels.videoOnly;
+                    /** Creating on the upload tab: one lesson per file, each titled by its row. */
+                    get batch() {
+                        return ! this.editing && this.source === 'upload';
                     },
 
-                    onDrop(event) {
-                        this.dragging = false;
-                        this.take(event.dataTransfer?.files);
-                    },
-
-                    onPicked(event) {
-                        this.take(event.target.files);
-                        // Clear it, so picking the same file again still fires a change event and
-                        // so a second pick adds to the list rather than replacing it.
-                        event.target.value = '';
-                    },
-
-                    /**
-                     * Sort incoming files by kind: a video goes to the #video input, everything
-                     * else joins the attachment list. Both end up in real file inputs, so the form
-                     * submits exactly the way it would have without any of this.
-                     */
                     take(fileList) {
                         if (! fileList || typeof DataTransfer === 'undefined') return;
 
                         this.sizeError = '';
 
                         for (const file of Array.from(fileList)) {
-                            if (this.isVideo(file)) {
-                                this.setVideo(file);
-                            } else if (this.isAllowedAttachment(file)) {
-                                this.addAttachment(file);
-                            } else {
-                                this.sizeError = this.labels.badType.replace(':name', file.name);
+                            if (this.videos.length >= this.maxVideos) {
+                                this.sizeError = this.labels.tooManyFiles.replace(':max', this.maxVideos);
+                                break;
                             }
+                            if (! this.isVideo(file)) {
+                                this.sizeError = this.labels.notVideo.replace(':name', file.name);
+                                continue;
+                            }
+
+                            const megabytes = file.size / (1024 * 1024);
+                            if (megabytes > this.maxMb) {
+                                this.sizeError = this.labels.tooBig
+                                    .replace(':size', megabytes.toFixed(1))
+                                    .replace(':max', this.maxMb);
+                                continue;
+                            }
+
+                            const row = {
+                                key: this.nextKey++,
+                                file,
+                                name: file.name,
+                                ext: this.extensionOf(file.name).toUpperCase(),
+                                size: this.megabytes(file.size),
+                                title: '',
+                                thumbFile: null,
+                                thumbReady: false,
+                            };
+
+                            this.videos.push(row);
+                            // Capture runs per file and takes a moment each; the row is already
+                            // on screen, so the teacher is not kept waiting for it.
+                            this.captureFor(row);
                         }
+
+                        this.syncVideos();
+                    },
+
+                    removeVideo(index) {
+                        this.videos.splice(index, 1);
+                        this.sizeError = '';
+                        this.syncVideos();
                     },
 
                     isVideo(file) {
                         return /^video\//.test(file.type) || /\.(mp4|webm)$/i.test(file.name);
-                    },
-
-                    isAllowedAttachment(file) {
-                        return this.allowedExtensions.includes(this.extensionOf(file.name));
                     },
 
                     extensionOf(name) {
@@ -328,63 +341,64 @@
                         return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
                     },
 
-                    setVideo(file) {
+                    /** Rebuild the hidden inputs so they match the list on screen, in order. */
+                    syncVideos() {
+                        const transfer = new DataTransfer();
+                        this.videos.forEach((row) => transfer.items.add(row.file));
+                        this.$refs.videos.files = transfer.files;
+                        this.syncThumbs();
+                    },
+
+                    /**
+                     * One input per captured frame, named for the row it belongs to.
+                     *
+                     * Keying by index rather than pushing into a single list matters: a video the
+                     * browser cannot decode simply leaves its key absent, instead of shifting
+                     * every later thumbnail onto the wrong video.
+                     */
+                    syncThumbs() {
+                        const holder = this.$refs.thumbs;
+                        if (! holder) return;
+
+                        holder.innerHTML = '';
+
+                        this.videos.forEach((row, index) => {
+                            if (! row.thumbFile) return;
+
+                            const input = document.createElement('input');
+                            input.type = 'file';
+                            input.name = `thumbnails[${index}]`;
+
+                            const transfer = new DataTransfer();
+                            transfer.items.add(row.thumbFile);
+                            input.files = transfer.files;
+
+                            holder.appendChild(input);
+                        });
+                    },
+
+                    async captureFor(row) {
+                        row.thumbFile = await this.frameFrom(row.file);
+                        row.thumbReady = row.thumbFile !== null;
+                        this.syncThumbs();
+                    },
+
+                    /** The single-file path, used when editing one video. */
+                    replaceVideo(file) {
+                        if (! file || typeof DataTransfer === 'undefined') return;
+                        if (! this.isVideo(file)) {
+                            this.sizeError = this.labels.notVideo.replace(':name', file.name);
+                            return;
+                        }
+
                         const transfer = new DataTransfer();
                         transfer.items.add(file);
                         this.$refs.video.files = transfer.files;
                         // Assigning .files does not fire change, so the size check and the
-                        // thumbnail capture would silently never run. Dispatching keeps the
-                        // dropped and picked paths identical.
+                        // capture would silently never run.
                         this.$refs.video.dispatchEvent(new Event('change', { bubbles: true }));
                     },
 
-                    removeVideo() {
-                        this.$refs.video.value = '';
-                        this.videoName = '';
-                        this.videoSize = '';
-                        this.sizeError = '';
-                    },
-
-                    addAttachment(file) {
-                        if (this.attachments.length >= this.maxAttachments) {
-                            this.sizeError = this.labels.tooManyFiles.replace(':max', this.maxAttachments);
-                            return;
-                        }
-
-                        const megabytes = file.size / (1024 * 1024);
-                        if (megabytes > this.maxAttachmentMb) {
-                            this.sizeError = this.labels.attachmentTooBig
-                                .replace(':name', file.name)
-                                .replace(':max', this.maxAttachmentMb);
-                            return;
-                        }
-
-                        this.attachments.push({
-                            key: this.nextKey++,
-                            file,
-                            name: file.name,
-                            ext: this.extensionOf(file.name).toUpperCase(),
-                            size: this.megabytes(file.size),
-                            title: '',
-                        });
-
-                        this.syncAttachments();
-                    },
-
-                    removeAttachment(index) {
-                        this.attachments.splice(index, 1);
-                        this.sizeError = '';
-                        this.syncAttachments();
-                    },
-
-                    /** Rebuild the hidden multi-file input so it matches the list on screen. */
-                    syncAttachments() {
-                        const transfer = new DataTransfer();
-                        this.attachments.forEach((entry) => transfer.items.add(entry.file));
-                        this.$refs.attachments.files = transfer.files;
-                    },
-
-                    /** Runs for both routes: validates, names the file, and captures the thumbnail. */
                     onVideoChosen(event) {
                         this.checkSize(event);
 
@@ -419,9 +433,35 @@
                         const input = this.$refs.thumbnail;
                         const chosenByTeacher = input && input.files.length && ! this.autoThumb;
                         if (! input || chosenByTeacher) return;
-                        if (typeof DataTransfer === 'undefined' || ! HTMLCanvasElement.prototype.toBlob) return;
 
                         this.thumbBusy = true; this.thumbNote = ''; this.thumbError = '';
+
+                        const frame = await this.frameFrom(file);
+
+                        if (frame) {
+                            const transfer = new DataTransfer();
+                            transfer.items.add(frame);
+                            input.files = transfer.files;
+                            this.autoThumb = true;
+                            this.thumbNote = this.labels.thumbReady;
+                        } else {
+                            this.thumbError = this.labels.thumbFailed;
+                        }
+
+                        this.thumbBusy = false;
+                    },
+
+                    /**
+                     * Grab a still from a video file and return it as an image, or null.
+                     *
+                     * Done in the browser because the server has no ffmpeg — and never needs one:
+                     * the file is already here, and the frame rides along with the upload. A codec
+                     * the browser cannot decode, or a seek that never lands, returns null and the
+                     * video falls back to the subject artwork.
+                     */
+                    async frameFrom(file) {
+                        if (typeof DataTransfer === 'undefined' || ! HTMLCanvasElement.prototype.toBlob) return null;
+
                         const url = URL.createObjectURL(file);
                         const video = document.createElement('video');
                         video.preload = 'auto'; video.muted = true; video.playsInline = true; video.src = url;
@@ -440,19 +480,12 @@
                             canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
 
                             const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/jpeg', 0.82));
-                            if (! blob) throw new Error('frame could not be encoded');
+                            if (! blob) return null;
 
-                            const transfer = new DataTransfer();
-                            transfer.items.add(new File([blob], 'auto-thumbnail.jpg', { type: 'image/jpeg' }));
-                            input.files = transfer.files;
-                            this.autoThumb = true;
-                            this.thumbNote = this.labels.thumbReady;
+                            return new File([blob], 'auto-thumbnail.jpg', { type: 'image/jpeg' });
                         } catch (error) {
-                            // A codec the browser cannot decode, or a seek that never lands. The
-                            // upload still goes ahead; it just falls back to the subject artwork.
-                            this.thumbError = this.labels.thumbFailed;
+                            return null;
                         } finally {
-                            this.thumbBusy = false;
                             URL.revokeObjectURL(url);
                         }
                     },
