@@ -7,7 +7,9 @@
 
     {{-- Content leaderboards, first on the page: which of a teacher's own videos, materials and
          quizzes are actually being used is the thing they open this page to find out. --}}
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;align-items:start">
+    {{-- Two columns, not auto-fit: four cards across a wide screen left the fourth stranded on a
+         row of its own, so the pairing is fixed to give an even 2x2 block. --}}
+    <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:start">
         @foreach ($lists as $list)
             <div class="tp-card" style="overflow:hidden">
                 <div style="padding:18px 22px;border-bottom:1px solid var(--tp-line);display:flex;flex-direction:column;gap:2px">
