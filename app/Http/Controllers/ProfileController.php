@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Lesson;
 use App\Models\QuizAttempt;
+use App\Models\User;
 use App\Services\LeaderboardService;
 use App\Support\Uploads;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -57,7 +60,89 @@ class ProfileController extends Controller
             'user' => $user,
             'homeroomTeacher' => $user->homeroomTeacher(),
             'stats' => $stats,
+            'activity' => $user->isStudent() ? $this->recentActivity($user) : collect(),
+            'recommended' => $user->isStudent() ? $this->recommended($user) : collect(),
         ]);
+    }
+
+    /**
+     * The student's own last few actions, newest first.
+     *
+     * Only things the app actually records: a video opened, a quiz finished, a video saved. There
+     * is no per-student download log — materials keep an aggregate count and nothing more — so
+     * downloads are deliberately absent rather than guessed at.
+     *
+     * @return \Illuminate\Support\Collection<int, array<string, mixed>>
+     */
+    private function recentActivity(User $user, int $limit = 6): Collection
+    {
+        $views = $user->lessonViews()->with('lesson.chapter')->latest()->limit($limit)->get()
+            ->map(fn ($view) => [
+                'at' => $view->created_at,
+                'icon' => 'play',
+                'tint' => '#E4EEF9',
+                'ink' => '#2E6CA8',
+                'title' => $view->lesson?->title,
+                'meta' => $view->lesson?->chapter?->title,
+                'tag' => __('Ditonton'),
+                'url' => $view->lesson ? route('video.show', $view->lesson) : null,
+            ]);
+
+        $attempts = QuizAttempt::where('student_id', $user->id)->completed()
+            ->with('quiz')->latest('completed_at')->limit($limit)->get()
+            ->map(fn (QuizAttempt $attempt) => [
+                'at' => $attempt->completed_at,
+                'icon' => 'quiz',
+                'tint' => '#DCF2EE',
+                'ink' => '#0F7A68',
+                'title' => $attempt->quiz?->title,
+                'meta' => $attempt->max_score > 0
+                    ? __('Skor: :percent%', ['percent' => round($attempt->score / $attempt->max_score * 100)])
+                    : null,
+                'tag' => __('Selesai'),
+                'url' => null,
+            ]);
+
+        $saved = $user->favourites()->with('lesson.chapter')->latest()->limit($limit)->get()
+            ->map(fn ($favourite) => [
+                'at' => $favourite->created_at,
+                'icon' => 'heart',
+                'tint' => '#FBE4ED',
+                'ink' => '#B84A75',
+                'title' => $favourite->lesson?->title,
+                'meta' => $favourite->lesson?->chapter?->title,
+                'tag' => __('Disimpan'),
+                'url' => $favourite->lesson ? route('video.show', $favourite->lesson) : null,
+            ]);
+
+        return $views->concat($attempts)->concat($saved)
+            ->filter(fn (array $row) => filled($row['title']) && $row['at'])
+            ->sortByDesc('at')
+            ->take($limit)
+            ->values();
+    }
+
+    /**
+     * Published videos in the student's own Year that they have not opened yet, newest first.
+     *
+     * "Recommended" is doing modest work here: it is what is available and unseen, not a model of
+     * what they would like. Saying so in the subtitle keeps the promise the panel makes small.
+     *
+     * @return \Illuminate\Support\Collection<int, Lesson>
+     */
+    private function recommended(User $user, int $limit = 6): Collection
+    {
+        if (! $user->grade_id) {
+            return collect();
+        }
+
+        return Lesson::published()
+            ->with('chapter.subject')
+            ->whereHas('chapter', fn ($q) => $q->where('grade_id', $user->grade_id))
+            ->whereNotIn('id', $user->lessonViews()->select('lesson_id'))
+            ->latest()
+            ->limit($limit)
+            ->get();
     }
 
     public function update(Request $request): RedirectResponse
