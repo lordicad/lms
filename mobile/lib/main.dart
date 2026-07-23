@@ -348,19 +348,43 @@ class _SplashBackdrop extends StatelessWidget {
   const _SplashBackdrop();
 
   @override
-  Widget build(BuildContext context) => const Stack(
+  Widget build(BuildContext context) => Stack(
     children: [
-      Positioned(
+      Positioned.fill(
+        child: Opacity(
+          opacity: .18,
+          child: Image.asset(
+            'assets/images/landing_pic.png',
+            fit: BoxFit.cover,
+            alignment: Alignment.center,
+          ),
+        ),
+      ),
+      Positioned.fill(
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                LmsColors.forest.withValues(alpha: .92),
+                LmsColors.forest.withValues(alpha: .98),
+              ],
+            ),
+          ),
+        ),
+      ),
+      const Positioned(
         top: -126,
         right: -90,
         child: _SplashOrb(size: 300, color: Color(0x164F8D42)),
       ),
-      Positioned(
+      const Positioned(
         bottom: -138,
         left: -100,
         child: _SplashOrb(size: 330, color: Color(0x142F7040)),
       ),
-      Positioned(
+      const Positioned(
         top: 118,
         left: 34,
         child: _SplashOrb(size: 78, color: Color(0x18FFFFFF)),

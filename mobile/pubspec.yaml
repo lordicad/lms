@@ -75,6 +75,8 @@ flutter:
 
   assets:
     - assets/images/lms_moe_logo.png
+    - assets/images/auth_pic.png
+    - assets/images/landing_pic.png
 
   # WeLearn brand typeface (matches the design). Bundled so it works offline.
   fonts:
