@@ -88,10 +88,12 @@
             /* The uploaded artwork fills the panel, no veil over it. --dark-green stays as the base
                colour behind the image, so any transparent areas of the PNG read as brand green
                rather than a gap. */
-            background: var(--dark-green) url('{{ asset('images/AuthPic.png') }}') center center / cover no-repeat;
-            /* The artwork is light, so the text over it is dark. These are fixed values rather than
-               the theme vars: the image does not change with the theme, so the text must not flip
-               to light in dark mode. */
+            /* `contain`, so the whole portrait artwork shows rather than having its top and bottom
+               cropped to fill this landscape panel. The base colour is the image's own cream, so
+               the little space beside the image on a wide screen blends into it instead of showing
+               a bar. The artwork is light, so the text over it is dark — fixed values, not theme
+               vars, since the image does not change with the theme. */
+            background: #F5F8EF url('{{ asset('images/AuthPic.png') }}') center center / contain no-repeat;
             color: #55684F;
             display: flex; flex-direction: column; justify-content: space-between;
             padding: 48px 56px;
