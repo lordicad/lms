@@ -104,9 +104,9 @@
            app-wide and reads as something to press instead of drifting into the heading. */
         .wl-back {
             align-self:flex-start; display:inline-flex; align-items:center; gap:8px;
-            min-height:40px; cursor:pointer; border-radius:11px; border:1.5px solid var(--wl-teal);
+            min-height:36px; cursor:pointer; border-radius:10px; border:1.5px solid var(--wl-teal);
             background:var(--wl-surface); color:var(--wl-teal); text-decoration:none;
-            font-family:'Geist',sans-serif; font-weight:800; font-size:13px; padding:0 14px;
+            font-family:'Geist',sans-serif; font-weight:700; font-size:12px; padding:0 12px;
             transition:background .15s, color .15s;
         }
         .wl-back:hover { background:var(--wl-active-bg); color:var(--wl-teal); }

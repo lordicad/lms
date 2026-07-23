@@ -5,8 +5,7 @@
     @php($tagColor = "color-mix(in oklab, {$col} 82%, #000)")
 
     <div style="display:flex;flex-direction:column;gap:22px">
-        <a href="{{ route('belajar.subjek', ['subject' => $subject->slug, 'grade' => $grade->level]) }}" class="wl-back"
-           style="align-self:flex-start;display:flex;align-items:center;gap:8px;font-family:'Geist',sans-serif;font-size:14px;font-weight:800;color:var(--wl-muted-2);text-decoration:none;padding:6px 0">← {{ __('Semua bab') }}</a>
+        <a href="{{ route('belajar.subjek', ['subject' => $subject->slug, 'grade' => $grade->level]) }}" class="wl-back">← {{ __('Semua bab') }}</a>
 
         <div style="background:var(--wl-surface);border:1px solid var(--wl-line);border-radius:18px;padding:20px 24px;display:flex;flex-direction:column;gap:4px;box-shadow:0 3px 12px rgba(46,44,80,.04)">
             <span style="font-family:'Geist',sans-serif;font-size:13px;font-weight:800;color:#2E6CA8"><x-subject-emoji :subject="$subject" class="text-sm" /> {{ $subject->name }} · {{ $grade->name }}</span>

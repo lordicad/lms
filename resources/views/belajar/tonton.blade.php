@@ -6,8 +6,7 @@
     @php($tagColor = "color-mix(in oklab, {$col} 82%, #000)")
 
     <div style="display:flex;flex-direction:column;gap:18px">
-        <a href="{{ route('bab.show', $chapter) }}" class="wl-back"
-           style="align-self:flex-start;display:flex;align-items:center;gap:8px;font-family:'Geist',sans-serif;font-size:14px;font-weight:800;color:var(--wl-muted-2);text-decoration:none;padding:6px 0">← Bab {{ $chapter->number }}: {{ $chapter->title }}</a>
+        <a href="{{ route('bab.show', $chapter) }}" class="wl-back">← Bab {{ $chapter->number }}: {{ $chapter->title }}</a>
 
         <div style="display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:24px;align-items:start">
             {{-- LEFT: player + title/meta --}}
