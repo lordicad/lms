@@ -85,12 +85,10 @@
 
         /* ── Brand panel ── */
         .wla-brand {
-            /* The uploaded artwork fills the panel. A semi-transparent brand-green veil sits over
-               it (first layer, so on top) so the light heading and copy stay readable and the tone
-               stays on-brand; --dark-green shows underneath as the fallback if the image is slow. */
-            background:
-                linear-gradient(180deg, color-mix(in srgb, var(--dark-green) 58%, transparent), color-mix(in srgb, var(--dark-green) 72%, transparent)),
-                var(--dark-green) url('{{ asset('images/AuthPic.png') }}') center center / cover no-repeat;
+            /* The uploaded artwork fills the panel, no veil over it. --dark-green stays as the base
+               colour behind the image, so any transparent areas of the PNG read as brand green
+               rather than a gap. */
+            background: var(--dark-green) url('{{ asset('images/AuthPic.png') }}') center center / cover no-repeat;
             color: var(--dark-ink);
             display: flex; flex-direction: column; justify-content: space-between;
             padding: 48px 56px;
