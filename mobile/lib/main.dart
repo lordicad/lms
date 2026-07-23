@@ -28,6 +28,7 @@ class LmsMobileApp extends StatefulWidget {
 
 class _LmsMobileAppState extends State<LmsMobileApp> {
   final AuthRepository _auth = AuthRepository();
+  final _navigatorKey = GlobalKey<NavigatorState>();
   AuthUser? _user;
   var _initialising = true;
   var _sessionRestoreStarted = false;
@@ -95,6 +96,7 @@ class _LmsMobileAppState extends State<LmsMobileApp> {
     await _auth.logout();
 
     if (mounted) {
+      _navigatorKey.currentState?.popUntil((route) => route.isFirst);
       setState(() => _user = null);
     }
   }
@@ -150,6 +152,7 @@ class _LmsMobileAppState extends State<LmsMobileApp> {
       language: _language,
       child: ToastificationWrapper(
         child: MaterialApp(
+          navigatorKey: _navigatorKey,
           title: 'LMS MOE',
           debugShowCheckedModeBanner: false,
           theme: buildLmsTheme(),
