@@ -11,6 +11,7 @@ import 'chapters_manage_tab.dart';
 import 'material_form_screen.dart';
 import 'quiz_builder_screen.dart';
 import 'quiz_statistics_screen.dart';
+import 'teacher_video_preview_screen.dart';
 import 'video_form_screen.dart';
 
 /// The teacher's Content Hub: a segmented list of their videos, materials and quizzes
@@ -281,6 +282,14 @@ class _ContentHubTabState extends State<ContentHubTab> {
     }
   }
 
+  Future<void> _previewVideo(TeacherVideo video) async {
+    await Navigator.of(context).push<void>(
+      MaterialPageRoute(
+        builder: (_) => TeacherVideoPreviewScreen(video: video),
+      ),
+    );
+  }
+
   Future<void> _editMaterial(TeacherMaterial material) async {
     final updated = await Navigator.of(context).push<bool>(
       MaterialPageRoute(
@@ -361,6 +370,7 @@ class _ContentHubTabState extends State<ContentHubTab> {
           onToggle: _togglePublishVideo,
           onDelete: _deleteVideo,
           onEdit: _editVideo,
+          onPreview: _previewVideo,
         );
     }
   }
@@ -403,12 +413,14 @@ class _VideosList extends StatelessWidget {
     required this.onToggle,
     required this.onDelete,
     required this.onEdit,
+    required this.onPreview,
   });
   final Future<List<TeacherVideo>> future;
   final VoidCallback onReload;
   final void Function(int id) onToggle;
   final void Function(int id) onDelete;
   final void Function(TeacherVideo video) onEdit;
+  final void Function(TeacherVideo video) onPreview;
 
   @override
   Widget build(BuildContext context) {
@@ -474,6 +486,9 @@ class _VideosList extends StatelessWidget {
                 },
               ].join(' · '),
               published: v.published,
+              onTap: () => onPreview(v),
+              onOpen: () => onPreview(v),
+              openLabel: context.copy(bm: 'Tonton video', en: 'Watch video'),
               onEdit: v.source == 'youtube' ? () => onEdit(v) : null,
               onTogglePublish: () => onToggle(v.id),
               onDelete: () => onDelete(v.id),
@@ -662,6 +677,8 @@ class _ContentCard extends StatelessWidget {
     this.onTogglePublish,
     this.onDelete,
     this.onOpen,
+    this.onTap,
+    this.openLabel = 'Buka bahan',
   });
 
   final IconData icon;
@@ -674,144 +691,153 @@ class _ContentCard extends StatelessWidget {
   final VoidCallback? onTogglePublish;
   final VoidCallback? onDelete;
   final VoidCallback? onOpen;
+  final VoidCallback? onTap;
+  final String openLabel;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: LmsPalette.surface(context),
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: LmsPalette.border(context)),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x0D1B3520),
-            blurRadius: 10,
-            offset: Offset(0, 3),
+        child: Ink(
+          decoration: BoxDecoration(
+            color: LmsPalette.surface(context),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: LmsPalette.border(context)),
+            boxShadow: const [
+              BoxShadow(
+                color: Color(0x0D1B3520),
+                blurRadius: 10,
+                offset: Offset(0, 3),
+              ),
+            ],
           ),
-        ],
-      ),
-      padding: const EdgeInsets.all(14),
-      child: Row(
-        children: [
-          _ContentLeading(icon: icon, thumbnailUrl: thumbnailUrl),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
+          padding: const EdgeInsets.all(14),
+          child: Row(
+            children: [
+              _ContentLeading(icon: icon, thumbnailUrl: thumbnailUrl),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Expanded(
-                      child: Text(
-                        title,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            title,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                        ),
+                        if (published != null) ...[
+                          const SizedBox(width: 8),
+                          _StatusChip(published: published!),
+                        ],
+                      ],
                     ),
-                    if (published != null) ...[
-                      const SizedBox(width: 8),
-                      _StatusChip(published: published!),
-                    ],
+                    const SizedBox(height: 2),
+                    Text(
+                      subtitle,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
                   ],
                 ),
-                const SizedBox(height: 2),
-                Text(
-                  subtitle,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.bodyMedium,
+              ),
+              if (onEdit != null ||
+                  onStats != null ||
+                  onTogglePublish != null ||
+                  onDelete != null ||
+                  onOpen != null)
+                PopupMenuButton<String>(
+                  icon: Icon(Icons.more_vert, color: LmsPalette.faint(context)),
+                  tooltip: 'Tindakan',
+                  onSelected: (value) {
+                    if (value == 'edit') onEdit?.call();
+                    if (value == 'stats') onStats?.call();
+                    if (value == 'toggle') onTogglePublish?.call();
+                    if (value == 'delete') onDelete?.call();
+                    if (value == 'open') onOpen?.call();
+                  },
+                  itemBuilder: (_) => [
+                    if (onOpen != null)
+                      PopupMenuItem(
+                        value: 'open',
+                        child: Row(
+                          children: [
+                            const Icon(Icons.open_in_new_rounded, size: 18),
+                            const SizedBox(width: 10),
+                            Text(openLabel),
+                          ],
+                        ),
+                      ),
+                    if (onEdit != null)
+                      const PopupMenuItem(
+                        value: 'edit',
+                        child: Row(
+                          children: [
+                            Icon(Icons.edit_outlined, size: 18),
+                            SizedBox(width: 10),
+                            Text('Sunting'),
+                          ],
+                        ),
+                      ),
+                    if (onStats != null)
+                      const PopupMenuItem(
+                        value: 'stats',
+                        child: Row(
+                          children: [
+                            Icon(Icons.bar_chart_outlined, size: 18),
+                            SizedBox(width: 10),
+                            Text('Statistik'),
+                          ],
+                        ),
+                      ),
+                    if (onTogglePublish != null && published != null)
+                      PopupMenuItem(
+                        value: 'toggle',
+                        child: Row(
+                          children: [
+                            Icon(
+                              published!
+                                  ? Icons.visibility_off_outlined
+                                  : Icons.public,
+                              size: 18,
+                              color: LmsColors.ink,
+                            ),
+                            const SizedBox(width: 10),
+                            Text(published! ? 'Sembunyikan' : 'Terbitkan'),
+                          ],
+                        ),
+                      ),
+                    if (onDelete != null)
+                      const PopupMenuItem(
+                        value: 'delete',
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.delete_outline,
+                              size: 18,
+                              color: LmsColors.danger,
+                            ),
+                            SizedBox(width: 10),
+                            Text(
+                              'Padam',
+                              style: TextStyle(color: LmsColors.danger),
+                            ),
+                          ],
+                        ),
+                      ),
+                  ],
                 ),
-              ],
-            ),
+            ],
           ),
-          if (onEdit != null ||
-              onStats != null ||
-              onTogglePublish != null ||
-              onDelete != null ||
-              onOpen != null)
-            PopupMenuButton<String>(
-              icon: Icon(Icons.more_vert, color: LmsPalette.faint(context)),
-              tooltip: 'Tindakan',
-              onSelected: (value) {
-                if (value == 'edit') onEdit?.call();
-                if (value == 'stats') onStats?.call();
-                if (value == 'toggle') onTogglePublish?.call();
-                if (value == 'delete') onDelete?.call();
-                if (value == 'open') onOpen?.call();
-              },
-              itemBuilder: (_) => [
-                if (onOpen != null)
-                  const PopupMenuItem(
-                    value: 'open',
-                    child: Row(
-                      children: [
-                        Icon(Icons.open_in_new_rounded, size: 18),
-                        SizedBox(width: 10),
-                        Text('Buka bahan'),
-                      ],
-                    ),
-                  ),
-                if (onEdit != null)
-                  const PopupMenuItem(
-                    value: 'edit',
-                    child: Row(
-                      children: [
-                        Icon(Icons.edit_outlined, size: 18),
-                        SizedBox(width: 10),
-                        Text('Sunting'),
-                      ],
-                    ),
-                  ),
-                if (onStats != null)
-                  const PopupMenuItem(
-                    value: 'stats',
-                    child: Row(
-                      children: [
-                        Icon(Icons.bar_chart_outlined, size: 18),
-                        SizedBox(width: 10),
-                        Text('Statistik'),
-                      ],
-                    ),
-                  ),
-                if (onTogglePublish != null && published != null)
-                  PopupMenuItem(
-                    value: 'toggle',
-                    child: Row(
-                      children: [
-                        Icon(
-                          published!
-                              ? Icons.visibility_off_outlined
-                              : Icons.public,
-                          size: 18,
-                          color: LmsColors.ink,
-                        ),
-                        const SizedBox(width: 10),
-                        Text(published! ? 'Sembunyikan' : 'Terbitkan'),
-                      ],
-                    ),
-                  ),
-                if (onDelete != null)
-                  const PopupMenuItem(
-                    value: 'delete',
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.delete_outline,
-                          size: 18,
-                          color: LmsColors.danger,
-                        ),
-                        SizedBox(width: 10),
-                        Text(
-                          'Padam',
-                          style: TextStyle(color: LmsColors.danger),
-                        ),
-                      ],
-                    ),
-                  ),
-              ],
-            ),
-        ],
+        ),
       ),
     );
   }

@@ -44,6 +44,8 @@ class ContentController extends Controller
                 'views' => (int) $l->views_count,
                 'source' => $l->source,
                 'ownership' => $l->ownership,
+                'video_url' => $l->videoUrl(),
+                'youtube_id' => $l->youtube_id,
                 'youtube_url' => $l->youtube_id ? "https://youtu.be/{$l->youtube_id}" : null,
                 'thumbnail_url' => $l->thumbnailUrl(),
             ])->all(),

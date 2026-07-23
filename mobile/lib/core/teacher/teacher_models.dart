@@ -375,6 +375,8 @@ class TeacherVideo {
     required this.views,
     required this.source,
     required this.ownership,
+    required this.videoUrl,
+    required this.youtubeId,
     required this.youtubeUrl,
     required this.thumbnailUrl,
   });
@@ -393,6 +395,8 @@ class TeacherVideo {
   final int views;
   final String source; // 'upload' | 'youtube'
   final String ownership; // 'upload' | 'owned' | 'reference'
+  final String? videoUrl;
+  final String? youtubeId;
   final String? youtubeUrl;
   final String? thumbnailUrl;
 
@@ -420,6 +424,8 @@ class TeacherVideo {
     views: _int(j['views']),
     source: _str(j['source']),
     ownership: _str(j['ownership']),
+    videoUrl: _strOrNull(j['video_url']),
+    youtubeId: _strOrNull(j['youtube_id']),
     youtubeUrl: _strOrNull(j['youtube_url']),
     thumbnailUrl: _strOrNull(j['thumbnail_url']),
   );
@@ -794,13 +800,14 @@ class YoutubeChannelItem {
   final String? thumbnailUrl;
   final String? verifiedAt;
 
-  factory YoutubeChannelItem.fromJson(Map<String, dynamic> j) => YoutubeChannelItem(
-    id: _int(j['id']),
-    channelId: _str(j['channel_id']),
-    title: _str(j['title']),
-    thumbnailUrl: _strOrNull(j['thumbnail_url']),
-    verifiedAt: _strOrNull(j['verified_at']),
-  );
+  factory YoutubeChannelItem.fromJson(Map<String, dynamic> j) =>
+      YoutubeChannelItem(
+        id: _int(j['id']),
+        channelId: _str(j['channel_id']),
+        title: _str(j['title']),
+        thumbnailUrl: _strOrNull(j['thumbnail_url']),
+        verifiedAt: _strOrNull(j['verified_at']),
+      );
 }
 
 class YoutubeChannelsData {
@@ -817,9 +824,10 @@ class YoutubeChannelsData {
   final String connectUrl;
   final List<YoutubeChannelItem> channels;
 
-  factory YoutubeChannelsData.fromJson(Map<String, dynamic> j) => YoutubeChannelsData(
-    configured: _bool(j['configured']),
-    connectUrl: _str(j['connect_url']),
-    channels: _mapList(j['channels'], YoutubeChannelItem.fromJson),
-  );
+  factory YoutubeChannelsData.fromJson(Map<String, dynamic> j) =>
+      YoutubeChannelsData(
+        configured: _bool(j['configured']),
+        connectUrl: _str(j['connect_url']),
+        channels: _mapList(j['channels'], YoutubeChannelItem.fromJson),
+      );
 }
