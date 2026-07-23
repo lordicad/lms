@@ -28,9 +28,9 @@
             --ink: #24312A; --muted: #5C685C; --faint: #879182;
             --brand: #3E6B45; --brand-hover: #4A7D52; --brand-ink: #56793F; --brand-soft: #E7EEDA;
             --line: rgba(36,49,42,.08); --line-strong: rgba(36,49,42,.14);
-            /* Header/footer bar colour — a soft sage sampled from the landing artwork's leaves,
+            /* Header/footer bar colour — a soft, airy green drawn from the landing artwork's leaves,
                so the chrome reads as part of the page rather than a white band. */
-            --chrome: #E3EDD4;
+            --chrome: #E8F3DD;
             --dark-green: #24402C; --accent: #A9C97E;
             --shadow-sm: 0 4px 16px rgba(36,49,42,.05);
             --shadow-lg: 0 24px 60px rgba(36,49,42,.14);
