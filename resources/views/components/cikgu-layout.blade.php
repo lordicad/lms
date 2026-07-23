@@ -81,6 +81,14 @@
         .tp button { font-family:inherit; }
         .tp-g { font-family:'Geist',sans-serif; }
 
+        /* Page wallpaper: a fixed, cover-sized artwork that stays put while the page scrolls, with
+           --tp-page underneath as the fallback. The sidebar and content cards keep their own solid
+           backgrounds, so the image shows in the space around them. Dark mode drops the photo — a
+           light image behind pale text would fight it. Set here rather than inline on <body> so the
+           dark override can win. */
+        body.tp { background: var(--tp-page) url('{{ asset('images/gambarbg.png') }}') center center / cover no-repeat fixed; }
+        html.theme-dark body.tp { background: var(--tp-page); }
+
         /* Shell */
         .tp-shell { min-height:100vh; display:grid; grid-template-columns:236px 1fr; }
         .tp-side {
@@ -273,7 +281,7 @@
     </style>
 </head>
 
-<body class="tp" style="margin:0; background:var(--tp-page);">
+<body class="tp" style="margin:0;">
 <div class="tp-shell">
     {{-- SIDEBAR --}}
     <aside class="tp-side">
