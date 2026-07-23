@@ -262,7 +262,8 @@
                 </a>
 
                 <a href="{{ route('login') }}" class="wl-btn wl-btn-outline">{{ __('Log Masuk') }}</a>
-                <a href="{{ route('register') }}" class="wl-btn wl-btn-solid">{{ __('Daftar') }}</a>
+                {{-- Header "Daftar" hidden for now — uncomment to bring it back. --}}
+                {{-- <a href="{{ route('register') }}" class="wl-btn wl-btn-solid">{{ __('Daftar') }}</a> --}}
             </div>
         </div>
     </header>
