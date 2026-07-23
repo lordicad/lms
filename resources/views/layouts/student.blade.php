@@ -46,13 +46,13 @@
             --wl-page:#FAF5EE; --wl-surface:#fff; --wl-surface-2:#FBFAF6; --wl-input:#F6F5F0; --wl-chip:#ECEBF4;
             --wl-ink:#28293F; --wl-body:#2D2F44; --wl-muted:#8B8AA3; --wl-muted-2:#6C6F87;
             --wl-line:rgba(46,44,80,.08); --wl-line-2:rgba(46,44,80,.1); --wl-line-3:rgba(46,44,80,.15);
-            --wl-hover:#F1F0E8; --wl-active-bg:#E6F5F1; --wl-active-fg:#0F7A68;
+            --wl-hover:#F1F0E8; --wl-active-bg:#E6F5F1; --wl-active-fg:#0F7A68; --wl-teal:#17907B;
         }
         html.theme-dark .wl {
             --wl-page:#0E1116; --wl-surface:#171E27; --wl-surface-2:#1E2731; --wl-input:#1E2731; --wl-chip:#232D38;
             --wl-ink:#EDF2F8; --wl-body:#C9D2DC; --wl-muted:#8A94A3; --wl-muted-2:#A6AFBC;
             --wl-line:rgba(255,255,255,.09); --wl-line-2:rgba(255,255,255,.12); --wl-line-3:rgba(255,255,255,.16);
-            --wl-hover:#232D38; --wl-active-bg:#123029; --wl-active-fg:#5EEAD4;
+            --wl-hover:#232D38; --wl-active-bg:#123029; --wl-active-fg:#5EEAD4; --wl-teal:#2DD4BF;
         }
 
         /* ── WeLearn prototype styles, ported verbatim ── */
@@ -68,8 +68,12 @@
         /* Night mode keeps its dark ramp — a pale wallpaper behind it would undo the point of it
            and leave the light text on the cards fighting the background. */
         html.theme-dark body { background: var(--wl-page); }
-        .wl a { color: #17907B; text-decoration: none; }
-        .wl a:hover { color: #2BB39B; }
+        .wl a { text-decoration: none; }
+        /* Only plain content links get teal. Links with a class — the sidebar nav, the back button —
+           carry their own colour, so the nav can read grey like the teacher rail instead of being
+           overridden to teal by a bare `.wl a` rule. Mirrors `.tp a:not([class])` on that side. */
+        .wl a:not([class]) { color: #17907B; }
+        .wl a:not([class]):hover { color: #2BB39B; }
         .wl input:focus, .wl select:focus { outline: none; border-color: #17907B !important; box-shadow: 0 0 0 3px rgba(43,179,155,.25); }
         @media (prefers-reduced-motion: reduce) { .wl * { animation: none !important; transition: none !important; } }
 
@@ -96,8 +100,16 @@
         .wl-profile { transition: transform .15s; }
         .wl-profile:hover { transform: scale(1.06); }
         .wl-logout:hover { background: #FDE7E0 !important; }
-        .wl-back { transition: color .15s; }
-        .wl-back:hover { color: #17907B !important; }
+        /* Outlined teal button — matches the Cikgu/Admin .tp-back so "go back" looks the same
+           app-wide and reads as something to press instead of drifting into the heading. */
+        .wl-back {
+            align-self:flex-start; display:inline-flex; align-items:center; gap:8px;
+            min-height:40px; cursor:pointer; border-radius:11px; border:1.5px solid var(--wl-teal);
+            background:var(--wl-surface); color:var(--wl-teal); text-decoration:none;
+            font-family:'Geist',sans-serif; font-weight:800; font-size:13px; padding:0 14px;
+            transition:background .15s, color .15s;
+        }
+        .wl-back:hover { background:var(--wl-active-bg); color:var(--wl-teal); }
         .wl-acct-row { transition: background .15s; }
         .wl-acct-row:hover { background: #FAF8F3 !important; }
 
