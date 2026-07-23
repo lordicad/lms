@@ -81,6 +81,13 @@
         .tp button { font-family:inherit; }
         .tp-g { font-family:'Geist',sans-serif; }
 
+        /* Page wallpaper: a fixed, cover-sized artwork behind the page, with --tp-page underneath as
+           the fallback. The sidebar and cards keep their own solid backgrounds, so the image shows
+           around them. Dark mode drops the photo. Set here rather than inline on <body> so the dark
+           override can win. */
+        body.tp { background: var(--tp-page) url('{{ asset('images/gambarbg.png') }}') center center / cover no-repeat fixed; }
+        html.theme-dark body.tp { background: var(--tp-page); }
+
         /* Shell */
         .tp-shell { min-height:100vh; display:grid; grid-template-columns:236px 1fr; }
         .tp-side {
@@ -214,7 +221,7 @@
     </style>
 </head>
 
-<body class="tp" style="margin:0; background:var(--tp-page);">
+<body class="tp" style="margin:0;">
 <div class="tp-shell">
     {{-- SIDEBAR --}}
     <aside class="tp-side">
