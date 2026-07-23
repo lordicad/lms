@@ -46,11 +46,13 @@
             --wl-page:#FAF5EE; --wl-surface:#fff; --wl-surface-2:#FBFAF6; --wl-input:#F6F5F0; --wl-chip:#ECEBF4;
             --wl-ink:#28293F; --wl-body:#2D2F44; --wl-muted:#8B8AA3; --wl-muted-2:#6C6F87;
             --wl-line:rgba(46,44,80,.08); --wl-line-2:rgba(46,44,80,.1); --wl-line-3:rgba(46,44,80,.15);
+            --wl-hover:#F1F0E8; --wl-active-bg:#E6F5F1; --wl-active-fg:#0F7A68;
         }
         html.theme-dark .wl {
             --wl-page:#0E1116; --wl-surface:#171E27; --wl-surface-2:#1E2731; --wl-input:#1E2731; --wl-chip:#232D38;
             --wl-ink:#EDF2F8; --wl-body:#C9D2DC; --wl-muted:#8A94A3; --wl-muted-2:#A6AFBC;
             --wl-line:rgba(255,255,255,.09); --wl-line-2:rgba(255,255,255,.12); --wl-line-3:rgba(255,255,255,.16);
+            --wl-hover:#232D38; --wl-active-bg:#123029; --wl-active-fg:#5EEAD4;
         }
 
         /* ── WeLearn prototype styles, ported verbatim ── */
@@ -59,7 +61,7 @@
            smear it on long pages. --wl-page stays underneath as the fallback colour. */
         body {
             margin: 0;
-            background: var(--wl-page) url('{{ asset('images/gambar5.jpg') }}') center center / cover no-repeat fixed;
+            background: var(--wl-page) url('{{ asset('images/gambarbg.png') }}') center center / cover no-repeat fixed;
             font-family: 'Nunito', sans-serif;
             color: var(--wl-body);
         }
@@ -99,34 +101,76 @@
         .wl-acct-row { transition: background .15s; }
         .wl-acct-row:hover { background: #FAF8F3 !important; }
 
-        @media (max-width: 720px) {
-            .wl-shell { grid-template-columns: 76px 1fr !important; }
+        /* ── Sidebar — matched to the Cikgu/Admin wide labelled rail (236px, icon + label rows). ── */
+        .wl-brand { display:flex; align-items:center; gap:10px; padding:4px 8px 16px; text-decoration:none; }
+        .wl-brand img { width:42px; height:42px; object-fit:contain; display:block; }
+        .wl-brand-name { font-family:'Geist',sans-serif; font-weight:800; font-size:16px; color:var(--wl-ink); }
+        .wl-brand-sub  { font-size:11.5px; font-weight:700; color:var(--wl-muted); }
+
+        .wl-nav {
+            display:flex; align-items:center; gap:12px; width:100%; min-height:48px;
+            border-radius:12px; padding:0 14px; text-decoration:none;
+            font-family:'Geist',sans-serif; font-weight:800; font-size:14.5px;
+            background:transparent; color:var(--wl-muted-2); transition:all .15s;
+        }
+        .wl-nav:hover { background:var(--wl-hover); color:var(--wl-ink); }
+        .wl-nav.is-active { background:var(--wl-active-bg); color:var(--wl-active-fg); }
+        .wl-nav.is-active:hover { background:var(--wl-active-bg); }
+        .wl-nav svg { width:21px; height:21px; flex-shrink:0; }
+
+        .wl-userbar { display:flex; align-items:center; gap:10px; padding:10px 8px; border-top:1px solid var(--wl-line); }
+        .wl-ava {
+            width:42px; height:42px; border-radius:50%; background:#17907B; color:#fff;
+            display:grid; place-items:center; font-family:'Geist',sans-serif; font-weight:800;
+            font-size:15px; flex-shrink:0; text-decoration:none;
+        }
+        .wl-userbar-name { font-family:'Geist',sans-serif; font-weight:800; font-size:13.5px; color:var(--wl-ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .wl-userbar-sub  { font-size:11.5px; font-weight:700; color:var(--wl-muted); }
+        .wl-logout { width:36px; height:36px; border-radius:10px; display:grid; place-items:center; color:#C24936; flex-shrink:0; border:none; background:transparent; cursor:pointer; }
+        .wl-logout:hover { background:#FDE7E0; }
+
+        @media (max-width: 900px) {
+            .wl-shell { grid-template-columns: 1fr !important; }
+            .wl-side { position:static !important; height:auto !important; flex-direction:row !important; flex-wrap:wrap !important; }
             .wl-main { padding: 20px 16px 40px !important; }
         }
     </style>
 </head>
 
 <body class="wl">
-<div class="wl-shell" style="min-height:100vh;display:grid;grid-template-columns:96px 1fr">
-    {{-- ── SIDEBAR ── --}}
-    <aside style="background:var(--wl-surface);border-right:1px solid var(--wl-line);display:flex;flex-direction:column;align-items:center;padding:12px 8px;gap:4px;position:sticky;top:0;height:100vh;box-sizing:border-box">
-        <a href="{{ route('belajar.index') }}" title="WeLearn" style="width:46px;height:46px;flex-shrink:0;border-radius:14px;overflow:hidden;display:block;background:var(--wl-surface)">
-            <img src="{{ asset('images/welearn1.png') }}" alt="WeLearn" style="width:46px;height:46px;object-fit:contain;display:block">
+<div class="wl-shell" style="min-height:100vh;display:grid;grid-template-columns:236px 1fr">
+    {{-- ── SIDEBAR (wide labelled rail, matched to the Cikgu/Admin shell) ── --}}
+    <aside class="wl-side" style="background:var(--wl-surface);border-right:1px solid var(--wl-line);display:flex;flex-direction:column;padding:20px 14px;gap:4px;position:sticky;top:0;height:100vh;box-sizing:border-box">
+        <a href="{{ route('belajar.index') }}" class="wl-brand" title="WeLearn">
+            <img src="{{ asset('images/welearn1.png') }}" alt="WeLearn">
+            <span style="display:flex;flex-direction:column">
+                <span class="wl-brand-name">WeLearn</span>
+                <span class="wl-brand-sub">{{ __('Portal Murid') }}</span>
+            </span>
         </a>
-        <div style="height:6px"></div>
 
         @foreach ($nav as $n)
-            <a href="{{ route($n['route']) }}" title="{{ $n['label'] }}" @if ($n['active']) aria-current="page" @endif
-               style="width:70px;min-height:52px;flex-shrink:0;text-decoration:none;border-radius:16px;display:flex;flex-direction:column;gap:3px;align-items:center;justify-content:center;padding:6px 4px;{{ $n['active'] ? 'background:#DCF2EE;color:#0F7A68' : 'background:transparent;color:var(--wl-muted)' }}">
-                <span style="display:block;width:22px;height:22px;margin:0 auto">{!! $icons[$n['icon']] !!}</span>
-                <span style="font-family:'Geist',sans-serif;font-size:11.5px;font-weight:700">{{ $n['label'] }}</span>
+            <a href="{{ route($n['route']) }}" @class(['wl-nav', 'is-active' => $n['active']]) aria-current="{{ $n['active'] ? 'page' : 'false' }}">
+                {!! $icons[$n['icon']] !!}
+                {{ $n['label'] }}
             </a>
         @endforeach
 
         <div style="margin-top:auto"></div>
 
-        <a href="{{ route('profile.edit') }}" title="{{ __('Profil') }}" class="wl-profile"
-           style="width:44px;height:44px;flex-shrink:0;border-radius:50%;background:#17907B;color:#fff;display:grid;place-items:center;font-family:'Geist',sans-serif;font-weight:800;font-size:15px;text-decoration:none">{{ $user->initials() }}</a>
+        <div class="wl-userbar">
+            <a href="{{ route('profile.edit') }}" class="wl-ava" title="{{ __('Profil') }}">{{ $user->initials() }}</a>
+            <a href="{{ route('profile.edit') }}" style="display:flex;flex-direction:column;min-width:0;flex:1;text-decoration:none">
+                <span class="wl-userbar-name">{{ $user->username }}</span>
+                <span class="wl-userbar-sub">{{ __('Murid') }}</span>
+            </a>
+            <form method="POST" action="{{ route('logout') }}" onsubmit="return confirm(@js(__('Log keluar daripada akaun anda?')))">
+                @csrf
+                <button type="submit" class="wl-logout" title="{{ __('Log Keluar') }}">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                </button>
+            </form>
+        </div>
     </aside>
 
     {{-- ── MAIN ── --}}
