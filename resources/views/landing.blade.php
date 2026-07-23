@@ -28,6 +28,9 @@
             --ink: #24312A; --muted: #5C685C; --faint: #879182;
             --brand: #3E6B45; --brand-hover: #4A7D52; --brand-ink: #56793F; --brand-soft: #E7EEDA;
             --line: rgba(36,49,42,.08); --line-strong: rgba(36,49,42,.14);
+            /* Header/footer bar colour — a soft sage sampled from the landing artwork's leaves,
+               so the chrome reads as part of the page rather than a white band. */
+            --chrome: #E3EDD4;
             --dark-green: #24402C; --accent: #A9C97E;
             --shadow-sm: 0 4px 16px rgba(36,49,42,.05);
             --shadow-lg: 0 24px 60px rgba(36,49,42,.14);
@@ -39,6 +42,8 @@
             --brand: #9DC284; --brand-hover: #A9C97E; --brand-ink: #9DC284; --brand-soft: rgba(157,194,132,.14);
             --line: rgba(255,255,255,.09); --line-strong: rgba(255,255,255,.14);
             --dark-green: #101B14;
+            /* Dark mode drops the photo, so the chrome falls back to the dark surface. */
+            --chrome: var(--surface);
             --shadow-sm: 0 4px 16px rgba(0,0,0,.35);
             --shadow-lg: 0 24px 60px rgba(0,0,0,.5);
         }
@@ -75,7 +80,7 @@
         .wl-logo-text .learn { color: var(--ink); }
 
         /* Header */
-        header.wl-header { position: sticky; top: 0; z-index: 40; background: color-mix(in srgb, var(--surface) 95%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+        header.wl-header { position: sticky; top: 0; z-index: 40; background: color-mix(in srgb, var(--chrome) 92%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
         .wl-nav { display: flex; align-items: center; gap: 10px; padding-top: 10px; padding-bottom: 10px; flex-wrap: nowrap; min-width: 0; }
         .wl-nav-links { display: flex; gap: 2px; margin-left: auto; font-family: 'Geist', sans-serif; font-size: 14px; font-weight: 600; white-space: nowrap; }
         .wl-nav-links a { padding: 10px; border-radius: 10px; color: var(--muted); transition: background .15s, color .15s; }
@@ -180,7 +185,7 @@
         .wl-cta .wl-btn-outline { border-color: rgba(255,255,255,.5); color: #fff; }
         .wl-cta .wl-btn-outline:hover { background: rgba(255,255,255,.12); color: #fff; }
 
-        footer.wl-footer { border-top: 1px solid var(--line); padding: 28px 0; background: var(--surface); }
+        footer.wl-footer { border-top: 1px solid var(--line); padding: 28px 0; background: var(--chrome); }
         .wl-footer-row { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
         .wl-footer-row .copy { font-size: 13.5px; color: var(--faint); }
 
