@@ -82,8 +82,8 @@
                         </button>
                     </form>
 
-                    <a href="{{ route('cikgu.video.edit', $lesson) }}" class="tp-btn-ghost" style="flex-shrink:0">
-                        ✏️ {{ __('Sunting') }}
+                    <a href="{{ route('cikgu.video.edit', $lesson) }}" class="tp-btn-ghost" style="flex-shrink:0;display:inline-flex;align-items:center;gap:6px">
+                        <x-icon name="pencil" class="h-4 w-4" />{{ __('Sunting') }}
                     </a>
 
                     <form method="POST" action="{{ route('cikgu.video.destroy', $lesson) }}" style="flex-shrink:0"
