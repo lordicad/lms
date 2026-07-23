@@ -14,15 +14,15 @@
         {{-- Summary chips --}}
         <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px">
             <div style="background:var(--tp-surface);border:1px solid var(--tp-line);border-radius:14px;padding:16px 18px;display:flex;flex-direction:column;gap:4px;box-shadow:0 2px 10px rgba(46,44,80,.04)">
-                <span style="font-size:12.5px;font-weight:700;color:#2E6CA8">🧑‍🏫 {{ __('Cikgu') }}</span>
+                <span style="display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;color:#2E6CA8"><x-icon name="user" class="h-4 w-4" />{{ __('Cikgu') }}</span>
                 <span style="font-family:'Geist',sans-serif;font-size:24px;font-weight:800;color:var(--tp-ink)">{{ number_format($counts['teacher']) }}</span>
             </div>
             <div style="background:var(--tp-surface);border:1px solid var(--tp-line);border-radius:14px;padding:16px 18px;display:flex;flex-direction:column;gap:4px;box-shadow:0 2px 10px rgba(46,44,80,.04)">
-                <span style="font-size:12.5px;font-weight:700;color:#0F7A68">🧑‍🎓 {{ __('Murid') }}</span>
+                <span style="display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;color:#0F7A68"><x-icon name="graduation" class="h-4 w-4" />{{ __('Murid') }}</span>
                 <span style="font-family:'Geist',sans-serif;font-size:24px;font-weight:800;color:var(--tp-ink)">{{ number_format($counts['student']) }}</span>
             </div>
             <div style="background:var(--tp-surface);border:1px solid var(--tp-line);border-radius:14px;padding:16px 18px;display:flex;flex-direction:column;gap:4px;box-shadow:0 2px 10px rgba(46,44,80,.04)">
-                <span style="font-size:12.5px;font-weight:700;color:#C24936">✕ {{ __('Tidak aktif') }}</span>
+                <span style="display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;color:#C24936"><x-icon name="x-circle" class="h-4 w-4" />{{ __('Tidak aktif') }}</span>
                 <span style="font-family:'Geist',sans-serif;font-size:24px;font-weight:800;color:var(--tp-ink)">{{ number_format($counts['inactive']) }}</span>
             </div>
         </div>
@@ -56,7 +56,7 @@
 
         @if ($users->isEmpty())
             <div class="tp-empty">
-                <span style="font-size:30px">👥</span>
+                <x-icon name="users" class="h-8 w-8" style="color:var(--tp-muted)" />
                 <h3 style="margin:0;font-family:'Geist',sans-serif;font-size:19px;font-weight:800;color:var(--tp-ink)">{{ __('Tiada pengguna') }}</h3>
                 <p style="margin:0;font-size:14.5px;color:var(--tp-muted);max-width:380px">{{ __('Tiada akaun yang sepadan. Laraskan carian anda atau tambah pengguna baharu.') }}</p>
             </div>
