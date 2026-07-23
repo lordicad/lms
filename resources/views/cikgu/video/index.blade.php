@@ -20,6 +20,15 @@
         </a>
     </x-year-subject-filter>
 
+    {{-- Clicking a video opens a preview here instead of navigating to the watch page — the same
+         look the admin content page uses. A look, not a lesson: no view is counted. --}}
+    <div x-data="{
+             lesson: null,
+             open(data) { this.lesson = data; document.body.classList.add('overflow-hidden'); },
+             close() { this.lesson = null; document.body.classList.remove('overflow-hidden'); },
+         }"
+         @keydown.escape.window="close()">
+
     @if ($lessons->isEmpty())
         <div class="tp-empty">
             <span style="font-size:30px">🎬</span>
@@ -31,17 +40,25 @@
         <div class="tp-list">
             @foreach ($lessons as $lesson)
                 @php($subject = $lesson->chapter->subject)
+                @php($preview = [
+                    'title' => $lesson->title,
+                    'subtitle' => collect([$subject->name, $lesson->chapter->grade->name, __('Bab :n', ['n' => $lesson->chapter->number])])->implode(' · '),
+                    'kind' => $lesson->isYoutube() ? 'youtube' : 'upload',
+                    'src' => $lesson->isYoutube() ? $lesson->embedUrl() : $lesson->videoUrl(),
+                    'poster' => $lesson->thumbnailUrl(),
+                ])
                 <div class="tp-listcard">
-                    <span class="tp-thumb" style="width:96px;height:60px;background:rgb({{ $subject->rgb }} / .14);font-size:14px">
+                    <button type="button" @click="open(@js($preview))" class="tp-thumb" title="{{ __('Lihat video') }}"
+                            style="width:96px;height:60px;background:rgb({{ $subject->rgb }} / .14);font-size:14px;border:none;padding:0;cursor:pointer">
                         @if ($lesson->thumbnailUrl())
                             <img src="{{ $lesson->thumbnailUrl() }}" alt="" loading="lazy" style="width:100%;height:100%;object-fit:cover">
                         @else
                             ▶
                         @endif
-                    </span>
+                    </button>
 
                     <div style="display:flex;flex-direction:column;gap:6px;min-width:0;flex:1">
-                        <a href="{{ route('video.show', $lesson) }}" class="tp-g" style="font-weight:800;font-size:15.5px;color:var(--tp-ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $lesson->title }}</a>
+                        <button type="button" @click="open(@js($preview))" class="tp-g" style="text-align:left;background:none;border:none;padding:0;cursor:pointer;font-family:inherit;font-weight:800;font-size:15.5px;color:var(--tp-ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $lesson->title }}</button>
                         {{-- Subject on its own line, with the rest of the detail beneath it: the
                              coloured chip is what the eye picks out when scanning the list. --}}
                         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
@@ -84,4 +101,25 @@
 
         <div>{{ $lessons->links() }}</div>
     @endif
+
+        {{-- Preview modal: gradient header + black video body, the shared admin shell. x-if so
+             closing destroys the player and stops its audio. --}}
+        <template x-if="lesson">
+            <x-content-preview obj="lesson" :pill="'🎬 '.__('Video')">
+                <div style="overflow-y:auto;background:#000;height:min(72vh,620px)">
+                    <template x-if="lesson.kind === 'youtube'">
+                        <iframe style="width:100%;height:100%;border:0;display:block" :src="lesson.src" :title="lesson.title"
+                                referrerpolicy="strict-origin-when-cross-origin"
+                                allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowfullscreen></iframe>
+                    </template>
+
+                    <template x-if="lesson.kind === 'upload'">
+                        <video style="width:100%;height:100%;object-fit:contain;background:#000;display:block" controls preload="metadata"
+                               :src="lesson.src" :poster="lesson.poster"></video>
+                    </template>
+                </div>
+            </x-content-preview>
+        </template>
+    </div>
 </x-cikgu-layout>
