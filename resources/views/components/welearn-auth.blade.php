@@ -88,11 +88,19 @@
             /* The uploaded artwork fills the panel, no veil over it. --dark-green stays as the base
                colour behind the image, so any transparent areas of the PNG read as brand green
                rather than a gap. */
-            /* The green design lives on the left half of the artwork and the right half is white.
-               Anchoring `cover` to the left shows the green design and crops the white side off,
-               rather than centring on the white middle. The artwork is light, so the text over it
-               is dark — fixed values, not theme vars, since the image does not change with the theme. */
-            background: #F5F8EF url('{{ asset('images/AuthPic.png') }}') left center / cover no-repeat;
+            /* The green design lives on the left half of the artwork; the right half is white, so
+               `cover` is anchored left to show the green and crop the white off.
+
+               The first layer is a left-to-right fade that stays transparent over the green and
+               reaches the form's own colour (var(--bg)) by the right edge — so the seam between
+               this panel and the form dissolves instead of showing a hard line. var(--bg) keeps
+               that blend correct in both light and dark themes.
+
+               The text is dark on the light artwork — fixed values, not theme vars, since the
+               image does not change with the theme. */
+            background:
+                linear-gradient(to right, transparent 42%, var(--bg) 100%),
+                #F5F8EF url('{{ asset('images/AuthPic.png') }}') left center / cover no-repeat;
             color: #55684F;
             display: flex; flex-direction: column; justify-content: space-between;
             padding: 48px 56px;
