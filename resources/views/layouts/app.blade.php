@@ -21,10 +21,18 @@
             --wl-ink: rgb(var(--c-ink)); --wl-body: rgb(var(--c-ink)); --wl-muted: rgb(var(--c-ink-2)); --wl-muted-2: rgb(var(--c-ink-2));
             --wl-line: var(--border-subtle); --wl-line-2: var(--border-subtle); --wl-line-3: var(--border-strong);
         }
+
+        /* Same page wallpaper as the student shell: a fixed, cover-sized artwork that stays put
+           while the page scrolls, with the theme background colour underneath as the fallback.
+           Dark mode drops the photo — a light image behind pale text would fight it. */
+        body {
+            background: rgb(var(--c-bg)) url('{{ asset('images/gambar5.jpg') }}') center center / cover no-repeat fixed;
+        }
+        html.theme-dark body { background: rgb(var(--c-bg)); }
     </style>
 </head>
 
-<body class="min-h-screen bg-bg font-sans {{ auth()->user()?->isStudent() ? 'type-student' : '' }}">
+<body class="min-h-screen font-sans {{ auth()->user()?->isStudent() ? 'type-student' : '' }}">
     <a href="#kandungan" class="skip-link">{{ __('Terus ke kandungan') }}</a>
 
     @php($user = auth()->user())
