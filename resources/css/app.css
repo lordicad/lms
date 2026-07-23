@@ -528,3 +528,72 @@
         transform: none;
     }
 }
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Styled filter dropdowns (.ss-*)
+   Native <select> option lists are drawn by the OS and can't be styled or kept
+   "in frame". The enhancer in app.js hides each filter <select> and mirrors it
+   with this framed, scrollable popover while the real <select> stays the source
+   of truth (all dependent-filter logic + form submit still runs). Tokens are
+   self-contained (not the tp-/wl-/c- systems) so the control looks identical on
+   the teacher, admin and student surfaces, in light and dark.
+   ────────────────────────────────────────────────────────────────────────── */
+:root {
+    --ss-surface:#fff; --ss-ink:#28293F; --ss-muted:#6C6F87;
+    --ss-hover:#F1F0E8; --ss-active-bg:#E6F5F1; --ss-active-fg:#0F7A68;
+    --ss-line:rgba(46,44,80,.14); --ss-teal:#17907B;
+    --ss-shadow:0 14px 38px rgba(46,44,80,.18);
+}
+html.theme-dark {
+    --ss-surface:#171E27; --ss-ink:#EDF2F8; --ss-muted:#A6AFBC;
+    --ss-hover:#232D38; --ss-active-bg:#123029; --ss-active-fg:#5EEAD4;
+    --ss-line:rgba(255,255,255,.14); --ss-teal:#2DD4BF;
+    --ss-shadow:0 18px 44px rgba(0,0,0,.55);
+}
+
+.ss-wrap { position:relative; display:inline-block; vertical-align:top; }
+/* The real select stays in the DOM (submits, holds the value) but out of sight. */
+.ss-native {
+    position:absolute !important; width:1px; height:1px; padding:0; margin:0;
+    opacity:0; pointer-events:none; clip:rect(0 0 0 0); overflow:hidden;
+}
+
+.ss-trigger {
+    display:flex; align-items:center; gap:10px; width:100%; min-height:46px;
+    border:1.5px solid var(--ss-line); border-radius:12px; padding:0 14px;
+    background:var(--ss-surface); color:var(--ss-ink); cursor:pointer;
+    font-family:'Geist',sans-serif; font-weight:800; font-size:14px; text-align:left;
+    transition:border-color .15s, box-shadow .15s, background .15s;
+}
+.ss-trigger:hover { border-color:var(--ss-teal); }
+.ss-wrap.is-open .ss-trigger { border-color:var(--ss-teal); box-shadow:0 0 0 3px rgba(23,144,123,.18); }
+.ss-trigger.is-empty { color:var(--ss-muted); font-weight:700; }
+.ss-trigger:disabled { opacity:.5; cursor:not-allowed; }
+.ss-value { flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.ss-chevron { width:16px; height:16px; color:var(--ss-muted); flex-shrink:0; transition:transform .15s; }
+.ss-wrap.is-open .ss-chevron { transform:rotate(180deg); }
+
+.ss-panel {
+    position:absolute; z-index:70; top:calc(100% + 6px); left:0;
+    min-width:100%; max-width:min(360px,92vw); max-height:320px; overflow-y:auto;
+    background:var(--ss-surface); border:1px solid var(--ss-line); border-radius:14px;
+    box-shadow:var(--ss-shadow); padding:6px; font-family:'Geist',sans-serif;
+}
+.ss-panel[hidden] { display:none; }
+.ss-panel.ss-align-right { left:auto; right:0; }
+.ss-group {
+    padding:9px 12px 4px; font-size:11px; font-weight:800; text-transform:uppercase;
+    letter-spacing:.05em; color:var(--ss-muted);
+}
+.ss-opt {
+    display:flex; align-items:center; gap:8px; width:100%; min-height:38px;
+    border:none; background:transparent; cursor:pointer; border-radius:9px; padding:0 10px;
+    font-family:'Geist',sans-serif; font-weight:700; font-size:13.5px; color:var(--ss-ink); text-align:left;
+    transition:background .1s;
+}
+.ss-opt:hover:not(.is-disabled) { background:var(--ss-hover); }
+.ss-opt.is-selected { background:var(--ss-active-bg); color:var(--ss-active-fg); font-weight:800; }
+.ss-opt.is-disabled { color:var(--ss-muted); opacity:.5; cursor:not-allowed; }
+.ss-opt-label { flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.ss-check { width:16px; height:16px; flex-shrink:0; opacity:0; color:var(--ss-active-fg); }
+.ss-opt.is-selected .ss-check { opacity:1; }

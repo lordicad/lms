@@ -331,4 +331,157 @@ Alpine.data('activityChart', (config = {}) => ({
     },
 }));
 
+// ── Styled filter dropdowns ──────────────────────────────────────────────────
+// A native <select>'s open option list is painted by the OS: it ignores the app's
+// design and can spill outside the frame (the complaint that started this). CSS can't
+// touch it. So we upgrade the *filter* selects to a framed, scrollable popover while
+// keeping the real <select> as the source of truth — we hide it, mirror its options in
+// a styled panel, and on pick we set the select's value + dispatch 'change' so every
+// existing handler (dependent filters, this.form.submit(), navigation) fires exactly as
+// before. Progressive enhancement: any failure leaves the native select visible and
+// working, never a regression. Styles live in app.css under `.ss-*`.
+const STYLED_SELECT_SELECTOR = 'select.tp-filter-select, select.ysf-select, select.js-styled-select';
+
+function enhanceSelect(sel) {
+    if (sel.dataset.ssEnhanced) return;
+    sel.dataset.ssEnhanced = '1';
+
+    const wrap = document.createElement('div');
+    wrap.className = 'ss-wrap';
+    // Keep the control's column width — the selects set it via an inline min-width.
+    const mw = (sel.getAttribute('style') || '').match(/min-width:\s*([^;]+)/);
+    if (mw) wrap.style.minWidth = mw[1].trim();
+
+    const trigger = document.createElement('button');
+    trigger.type = 'button';
+    trigger.className = 'ss-trigger';
+    trigger.setAttribute('aria-haspopup', 'listbox');
+    trigger.setAttribute('aria-expanded', 'false');
+    const value = document.createElement('span');
+    value.className = 'ss-value';
+    trigger.appendChild(value);
+    trigger.insertAdjacentHTML('beforeend',
+        '<svg class="ss-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>');
+
+    const panel = document.createElement('div');
+    panel.className = 'ss-panel';
+    panel.setAttribute('role', 'listbox');
+    panel.hidden = true;
+
+    sel.parentNode.insertBefore(wrap, sel);
+    wrap.append(sel, trigger, panel);
+    sel.classList.add('ss-native');
+    sel.setAttribute('tabindex', '-1');
+    sel.setAttribute('aria-hidden', 'true');
+
+    let open = false;
+
+    const syncValue = () => {
+        const opt = sel.options[sel.selectedIndex];
+        value.textContent = opt ? opt.textContent.trim() : '';
+        trigger.classList.toggle('is-empty', ! sel.value);
+    };
+
+    const addRow = (o) => {
+        const row = document.createElement('button');
+        row.type = 'button';
+        row.className = 'ss-opt';
+        row.setAttribute('role', 'option');
+        if (o.disabled) row.classList.add('is-disabled');
+        if (o.selected) { row.classList.add('is-selected'); row.setAttribute('aria-selected', 'true'); }
+        row.innerHTML = '<span class="ss-opt-label"></span><svg class="ss-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+        row.querySelector('.ss-opt-label').textContent = o.textContent.trim();
+        row.addEventListener('click', () => {
+            if (o.disabled) return;
+            if (sel.value !== o.value) {
+                sel.value = o.value;
+                sel.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+            syncValue();
+            close();
+            trigger.focus();
+        });
+        panel.appendChild(row);
+    };
+
+    // Rebuild from the live DOM each open, so dynamically toggled disabled/added options
+    // (dependent filters) are always reflected.
+    const build = () => {
+        panel.innerHTML = '';
+        for (const child of sel.children) {
+            if (child.tagName === 'OPTGROUP') {
+                const head = document.createElement('div');
+                head.className = 'ss-group';
+                head.textContent = child.label;
+                panel.appendChild(head);
+                for (const o of child.children) if (o.tagName === 'OPTION') addRow(o);
+            } else if (child.tagName === 'OPTION') {
+                addRow(child);
+            }
+        }
+    };
+
+    const rows = () => Array.from(panel.querySelectorAll('.ss-opt:not(.is-disabled)'));
+
+    const openPanel = () => {
+        if (sel.disabled) return;
+        build();
+        panel.hidden = false;
+        panel.classList.remove('ss-align-right');
+        open = true;
+        trigger.setAttribute('aria-expanded', 'true');
+        wrap.classList.add('is-open');
+        // Flip to right-aligned if the panel would run past the viewport edge.
+        const r = panel.getBoundingClientRect();
+        if (r.right > window.innerWidth - 8) panel.classList.add('ss-align-right');
+        const cur = panel.querySelector('.ss-opt.is-selected') || rows()[0];
+        if (cur) cur.scrollIntoView({ block: 'nearest' });
+    };
+    const close = () => {
+        panel.hidden = true;
+        open = false;
+        trigger.setAttribute('aria-expanded', 'false');
+        wrap.classList.remove('is-open');
+    };
+
+    trigger.addEventListener('click', (e) => { e.preventDefault(); open ? close() : openPanel(); });
+    trigger.addEventListener('keydown', (e) => {
+        if (! open && (e.key === 'ArrowDown' || e.key === 'Enter' || e.key === ' ')) {
+            e.preventDefault(); openPanel(); const r = rows(); if (r[0]) r[0].focus();
+        }
+    });
+    panel.addEventListener('keydown', (e) => {
+        const r = rows();
+        const i = r.indexOf(document.activeElement);
+        if (e.key === 'ArrowDown') { e.preventDefault(); (r[i + 1] || r[0])?.focus(); }
+        else if (e.key === 'ArrowUp') { e.preventDefault(); (r[i - 1] || r[r.length - 1])?.focus(); }
+        else if (e.key === 'Escape') { e.preventDefault(); close(); trigger.focus(); }
+    });
+    document.addEventListener('click', (e) => { if (open && ! wrap.contains(e.target)) close(); });
+
+    sel.addEventListener('change', syncValue);
+    const reflectDisabled = () => { trigger.disabled = sel.disabled; wrap.classList.toggle('is-disabled', sel.disabled); };
+    new MutationObserver(reflectDisabled).observe(sel, { attributes: true, attributeFilter: ['disabled'] });
+
+    reflectDisabled();
+    syncValue();
+}
+
+function enhanceStyledSelects(root = document) {
+    root.querySelectorAll(STYLED_SELECT_SELECTOR).forEach((sel) => {
+        try {
+            enhanceSelect(sel);
+        } catch (err) {
+            // Leave the native select fully functional if anything goes wrong.
+            sel.classList.remove('ss-native');
+            sel.removeAttribute('aria-hidden');
+            console.error('styled-select enhance failed', err);
+        }
+    });
+}
+
 Alpine.start();
+
+document.addEventListener('alpine:initialized', () => enhanceStyledSelects());
+if (document.readyState !== 'loading') enhanceStyledSelects();
+else document.addEventListener('DOMContentLoaded', () => enhanceStyledSelects());

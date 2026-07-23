@@ -13,7 +13,7 @@
             </div>
             <label style="display:flex;flex-direction:column;gap:5px;font-family:'Geist',sans-serif;font-size:12.5px;font-weight:800;color:var(--wl-ink)">
                 {{ __('Tukar Tahun') }}
-                <select onchange="if (this.value) window.location = '{{ url('/belajar/'.$subject->slug) }}/' + this.value"
+                <select onchange="if (this.value) window.location = '{{ url('/belajar/'.$subject->slug) }}/' + this.value" class="js-styled-select"
                         style="min-height:44px;border:1px solid var(--wl-line-2);border-radius:12px;padding:0 36px 0 14px;-webkit-appearance:none;-moz-appearance:none;appearance:none;background:var(--wl-surface) url(&quot;data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='24'%20height='24'%20viewBox='0%200%2024%2024'%20fill='none'%20stroke='%2328293F'%20stroke-width='2.5'%20stroke-linecap='round'%20stroke-linejoin='round'%3E%3Cpath%20d='M6%209l6%206%206-6'/%3E%3C/svg%3E&quot;) no-repeat right 12px center;background-size:12px;font-family:'Geist',sans-serif;font-weight:700;font-size:14px;color:var(--wl-ink);cursor:pointer">
                     @foreach ($grades as $option)
                         <option value="{{ $option->level }}" @selected($option->level === $grade->level)>{{ $option->name }}</option>
