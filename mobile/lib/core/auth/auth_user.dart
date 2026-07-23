@@ -114,28 +114,11 @@ class ProfileUpdate {
   final List<int> subjectIds;
 
   Map<String, dynamic> toJson(UserRole role) {
-    final data = <String, dynamic>{
-      'name': name,
-      'username': username,
-      'email': email,
-    };
-    if (role == UserRole.student) {
-      data.addAll({
-        'school_id': schoolId,
-        'grade_level': gradeLevel,
-        'school_class_id': schoolClassId,
-        'guardian_name': guardianName,
-        'guardian_phone': guardianPhone,
-        'guardian_email': guardianEmail,
-      });
+    final data = <String, dynamic>{'username': username};
+    if (role == UserRole.admin) {
+      data['name'] = name;
     } else if (role == UserRole.teacher) {
-      data.addAll({
-        'phone': phone,
-        'position': position,
-        'school_id': schoolId,
-        'homeroom_class_id': homeroomClassId,
-        'subjects': subjectIds,
-      });
+      data.addAll({'phone': phone});
     }
     return data;
   }

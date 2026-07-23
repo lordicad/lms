@@ -38,18 +38,11 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
   late final TextEditingController _phone;
   late final TextEditingController _position;
 
-  ProfileOptions? _options;
-  Object? _optionsError;
-  int? _schoolId;
-  int? _gradeLevel;
-  int? _schoolClassId;
-  int? _homeroomClassId;
-  late Set<int> _teacherSubjectIds;
-  var _loadingOptions = true;
   var _saving = false;
   var _uploadingAvatar = false;
   late AuthUser _currentUser;
 
+  bool get _isAdmin => widget.user.role == UserRole.admin;
   bool get _isStudent => widget.user.role == UserRole.student;
   bool get _isTeacher => widget.user.role == UserRole.teacher;
 
@@ -68,16 +61,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     );
     _phone = TextEditingController(text: widget.user.phone ?? '');
     _position = TextEditingController(text: widget.user.position ?? '');
-    _schoolId = widget.user.school?.id;
-    _gradeLevel = widget.user.grade?.level;
-    _schoolClassId = widget.user.schoolClass?.id;
-    _homeroomClassId = widget.user.homeroomClass?.id;
-    _teacherSubjectIds = widget.user.subjects
-        .map((subject) => subject.id)
-        .toSet();
     _currentUser = widget.user;
-    if (_isStudent || _isTeacher) unawaited(_loadOptions());
-    if (!_isStudent && !_isTeacher) _loadingOptions = false;
   }
 
   @override
@@ -93,77 +77,13 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     super.dispose();
   }
 
-  Future<void> _loadOptions() async {
-    setState(() {
-      _loadingOptions = true;
-      _optionsError = null;
-    });
-    try {
-      final options = await widget.loadOptions();
-      if (!mounted) return;
-      setState(() {
-        _options = options;
-        _loadingOptions = false;
-        _normaliseSelections();
-      });
-    } catch (error) {
-      if (mounted) {
-        setState(() {
-          _loadingOptions = false;
-          _optionsError = error;
-        });
-      }
-    }
-  }
-
-  int? get _selectedGradeId {
-    final level = _gradeLevel;
-    if (level == null) return null;
-    for (final grade in _options?.grades ?? const <Grade>[]) {
-      if (grade.level == level) return grade.id;
-    }
-    return null;
-  }
-
-  List<SchoolClassInfo> get _studentClasses {
-    final schoolId = _schoolId;
-    final gradeId = _selectedGradeId;
-    if (schoolId == null || gradeId == null) return const [];
-    return (_options?.classes ?? const [])
-        .where((item) => item.schoolId == schoolId && item.gradeId == gradeId)
-        .toList(growable: false);
-  }
-
-  List<SchoolClassInfo> get _teacherClasses {
-    final schoolId = _schoolId;
-    if (schoolId == null) return const [];
-    return (_options?.classes ?? const [])
-        .where((item) => item.schoolId == schoolId)
-        .toList(growable: false);
-  }
-
-  void _normaliseSelections() {
-    if (_isStudent &&
-        !_studentClasses.any((item) => item.id == _schoolClassId)) {
-      _schoolClassId = null;
-    }
-    if (_isTeacher &&
-        !_teacherClasses.any((item) => item.id == _homeroomClassId)) {
-      _homeroomClassId = null;
-    }
-  }
-
   String? _clean(TextEditingController controller) {
     final value = controller.text.trim();
     return value.isEmpty ? null : value;
   }
 
   Future<void> _save() async {
-    if (!_formKey.currentState!.validate() ||
-        ((_isStudent || _isTeacher) && _options == null)) {
-      return;
-    }
-    if (_isStudent && _gradeLevel == null) return;
+    if (!_formKey.currentState!.validate()) return;
 
     setState(() => _saving = true);
     try {
@@ -172,16 +92,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
           name: _name.text.trim(),
           username: _username.text.trim(),
           email: _clean(_email),
-          schoolId: _schoolId,
-          gradeLevel: _gradeLevel,
-          schoolClassId: _schoolClassId,
-          guardianName: _clean(_guardianName),
-          guardianPhone: _clean(_guardianPhone),
-          guardianEmail: _clean(_guardianEmail),
           phone: _clean(_phone),
-          position: _clean(_position),
-          homeroomClassId: _homeroomClassId,
-          subjectIds: _teacherSubjectIds.toList(growable: false),
         ),
       );
       if (mounted) Navigator.of(context).pop(updated);
@@ -287,9 +198,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
               _profileFields(),
               const SizedBox(height: 28),
               FilledButton.icon(
-                onPressed: _saving || _loadingOptions || _optionsError != null
-                    ? null
-                    : _save,
+                onPressed: _saving ? null : _save,
                 icon: _saving
                     ? const SizedBox(
                         height: 18,
@@ -341,9 +250,13 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
       TextFormField(
         controller: _name,
         textCapitalization: TextCapitalization.words,
-        decoration: const InputDecoration(
-          labelText: 'Nama penuh',
+        readOnly: !_isAdmin,
+        decoration: InputDecoration(
+          labelText: _isAdmin ? 'Nama penuh' : 'Nama rasmi',
           prefixIcon: Icon(Icons.person_outline_rounded),
+          helperText: _isAdmin
+              ? null
+              : 'Nama rasmi dikunci mengikut rekod sekolah.',
         ),
         validator: (value) => value == null || value.trim().isEmpty
             ? 'Sila isi nama anda.'
@@ -386,19 +299,6 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
 
   Widget _profileFields() {
     if (!_isStudent && !_isTeacher) return const SizedBox.shrink();
-    if (_loadingOptions) {
-      return const Padding(
-        padding: EdgeInsets.all(16),
-        child: Center(child: CircularProgressIndicator()),
-      );
-    }
-    if (_optionsError != null) {
-      return OutlinedButton.icon(
-        onPressed: _loadOptions,
-        icon: const Icon(Icons.refresh_rounded),
-        label: Text('Muat semula pilihan profil: $_optionsError'),
-      );
-    }
 
     if (_isTeacher) return _teacherFields();
 
@@ -410,128 +310,60 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
           style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
         ),
         const SizedBox(height: 12),
-        _schoolDropdown(),
-        ..._studentFields(),
+        _ReadOnlyInfoTile(
+          icon: Icons.account_balance_outlined,
+          label: 'Sekolah',
+          value: widget.user.school?.name ?? 'Belum ditetapkan',
+        ),
+        const SizedBox(height: 12),
+        _ReadOnlyInfoTile(
+          icon: Icons.school_outlined,
+          label: 'Tahun',
+          value: widget.user.grade?.name ?? 'Belum ditetapkan',
+        ),
+        const SizedBox(height: 12),
+        _ReadOnlyInfoTile(
+          icon: Icons.groups_outlined,
+          label: 'Kelas',
+          value: widget.user.schoolClass?.label ?? 'Belum ditetapkan',
+        ),
+        const SizedBox(height: 22),
+        const Text(
+          'Maklumat penjaga',
+          style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
+        ),
+        const SizedBox(height: 12),
+        _ReadOnlyInfoTile(
+          icon: Icons.family_restroom_outlined,
+          label: 'Nama penjaga',
+          value: _guardianName.text.isEmpty
+              ? 'Belum ditetapkan'
+              : _guardianName.text,
+        ),
+        const SizedBox(height: 12),
+        _ReadOnlyInfoTile(
+          icon: Icons.phone_outlined,
+          label: 'Nombor telefon penjaga',
+          value: _guardianPhone.text.isEmpty
+              ? 'Belum ditetapkan'
+              : _guardianPhone.text,
+        ),
+        const SizedBox(height: 12),
+        _ReadOnlyInfoTile(
+          icon: Icons.mail_outline_rounded,
+          label: 'E-mel penjaga',
+          value: _guardianEmail.text.isEmpty
+              ? 'Belum ditetapkan'
+              : _guardianEmail.text,
+        ),
+        const SizedBox(height: 8),
+        const Text(
+          'Butiran sekolah dan penjaga dikunci mengikut web. Hubungi pentadbir untuk perubahan rekod.',
+          style: TextStyle(fontSize: 12, color: LmsColors.inkMuted),
+        ),
       ],
     );
   }
-
-  Widget _schoolDropdown() => DropdownButtonFormField<int?>(
-    key: ValueKey('school-$_schoolId'),
-    initialValue: _schoolId,
-    isExpanded: true,
-    decoration: const InputDecoration(
-      labelText: 'Sekolah',
-      prefixIcon: Icon(Icons.account_balance_outlined),
-    ),
-    items: [
-      const DropdownMenuItem<int?>(
-        value: null,
-        child: Text('Belum ditetapkan'),
-      ),
-      ...(_options?.schools ?? const []).map(
-        (school) => DropdownMenuItem<int?>(
-          value: school.id,
-          child: Text(school.name, overflow: TextOverflow.ellipsis),
-        ),
-      ),
-    ],
-    onChanged: (value) => setState(() {
-      _schoolId = value;
-      _normaliseSelections();
-    }),
-  );
-
-  List<Widget> _studentFields() => [
-    const SizedBox(height: 16),
-    DropdownButtonFormField<int>(
-      key: ValueKey('grade-$_gradeLevel'),
-      initialValue: _gradeLevel,
-      isExpanded: true,
-      decoration: const InputDecoration(
-        labelText: 'Tahun',
-        prefixIcon: Icon(Icons.school_outlined),
-      ),
-      items: (_options?.grades ?? const [])
-          .map(
-            (grade) => DropdownMenuItem<int>(
-              value: grade.level,
-              child: Text(grade.name),
-            ),
-          )
-          .toList(growable: false),
-      onChanged: (value) => setState(() {
-        _gradeLevel = value;
-        _normaliseSelections();
-      }),
-      validator: (value) => value == null ? 'Sila pilih Tahun anda.' : null,
-    ),
-    const SizedBox(height: 16),
-    DropdownButtonFormField<int?>(
-      key: ValueKey('student-class-$_schoolClassId-$_schoolId-$_gradeLevel'),
-      initialValue: _schoolClassId,
-      isExpanded: true,
-      decoration: const InputDecoration(
-        labelText: 'Kelas',
-        prefixIcon: Icon(Icons.groups_outlined),
-      ),
-      items: [
-        const DropdownMenuItem<int?>(
-          value: null,
-          child: Text('Belum ditetapkan'),
-        ),
-        ..._studentClasses.map(
-          (schoolClass) => DropdownMenuItem<int?>(
-            value: schoolClass.id,
-            child: Text(schoolClass.label, overflow: TextOverflow.ellipsis),
-          ),
-        ),
-      ],
-      onChanged: _schoolId == null || _gradeLevel == null
-          ? null
-          : (value) => setState(() => _schoolClassId = value),
-    ),
-    if (_schoolId == null || _gradeLevel == null)
-      const Padding(
-        padding: EdgeInsets.only(top: 7),
-        child: Text(
-          'Pilih sekolah dan Tahun dahulu untuk melihat kelas.',
-          style: TextStyle(fontSize: 12, color: LmsColors.inkMuted),
-        ),
-      ),
-    const SizedBox(height: 22),
-    const Text(
-      'Maklumat penjaga',
-      style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
-    ),
-    const SizedBox(height: 12),
-    TextFormField(
-      controller: _guardianName,
-      textCapitalization: TextCapitalization.words,
-      decoration: const InputDecoration(
-        labelText: 'Nama penjaga',
-        prefixIcon: Icon(Icons.family_restroom_outlined),
-      ),
-    ),
-    const SizedBox(height: 16),
-    TextFormField(
-      controller: _guardianPhone,
-      keyboardType: TextInputType.phone,
-      decoration: const InputDecoration(
-        labelText: 'Nombor telefon penjaga',
-        prefixIcon: Icon(Icons.phone_outlined),
-      ),
-    ),
-    const SizedBox(height: 16),
-    TextFormField(
-      controller: _guardianEmail,
-      keyboardType: TextInputType.emailAddress,
-      decoration: const InputDecoration(
-        labelText: 'E-mel penjaga',
-        prefixIcon: Icon(Icons.mail_outline_rounded),
-      ),
-    ),
-  ];
 
   Widget _teacherFields() => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
@@ -558,88 +390,118 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
         },
       ),
       const SizedBox(height: 16),
-      TextFormField(
-        controller: _position,
-        textCapitalization: TextCapitalization.words,
-        maxLength: 100,
-        decoration: const InputDecoration(
-          labelText: 'Jawatan',
-          hintText: 'Contoh: Guru Kanan Matematik',
-          prefixIcon: Icon(Icons.work_outline_rounded),
-        ),
+      _ReadOnlyInfoTile(
+        icon: Icons.work_outline_rounded,
+        label: 'Jawatan',
+        value: _position.text.isEmpty ? 'Belum ditetapkan' : _position.text,
       ),
-      const SizedBox(height: 6),
+      const SizedBox(height: 22),
       const Text(
         'Sekolah dan kelas',
         style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
       ),
       const SizedBox(height: 12),
-      _schoolDropdown(),
-      const SizedBox(height: 16),
-      DropdownButtonFormField<int?>(
-        key: ValueKey('teacher-homeroom-$_homeroomClassId-$_schoolId'),
-        initialValue: _homeroomClassId,
-        isExpanded: true,
-        decoration: const InputDecoration(
-          labelText: 'Kelas guru kelas',
-          prefixIcon: Icon(Icons.groups_outlined),
-        ),
-        items: [
-          const DropdownMenuItem<int?>(
-            value: null,
-            child: Text('Bukan guru kelas'),
-          ),
-          ..._teacherClasses.map(
-            (schoolClass) => DropdownMenuItem<int?>(
-              value: schoolClass.id,
-              child: Text(schoolClass.label, overflow: TextOverflow.ellipsis),
-            ),
-          ),
-        ],
-        onChanged: _schoolId == null
-            ? null
-            : (value) => setState(() => _homeroomClassId = value),
+      _ReadOnlyInfoTile(
+        icon: Icons.account_balance_outlined,
+        label: 'Sekolah',
+        value: widget.user.school?.name ?? 'Belum ditetapkan',
       ),
-      if (_schoolId == null)
-        const Padding(
-          padding: EdgeInsets.only(top: 7),
-          child: Text(
-            'Pilih sekolah dahulu untuk melihat kelas.',
-            style: TextStyle(fontSize: 12, color: LmsColors.inkMuted),
-          ),
-        ),
+      const SizedBox(height: 12),
+      _ReadOnlyInfoTile(
+        icon: Icons.groups_outlined,
+        label: 'Kelas guru kelas',
+        value: widget.user.homeroomClass?.label ?? 'Bukan guru kelas',
+      ),
       const SizedBox(height: 22),
       const Text(
         'Subjek diajar',
         style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
       ),
-      const SizedBox(height: 6),
-      const Text(
-        'Pilih semua subjek yang anda ajar.',
-        style: TextStyle(fontSize: 12, color: LmsColors.inkMuted),
-      ),
       const SizedBox(height: 10),
       Wrap(
         spacing: 8,
         runSpacing: 8,
-        children: (_options?.subjects ?? const [])
+        children: widget.user.subjects
             .map(
-              (subject) => FilterChip(
+              (subject) => Chip(
                 label: Text(subject.name),
-                selected: _teacherSubjectIds.contains(subject.id),
-                onSelected: (selected) => setState(() {
-                  if (selected) {
-                    _teacherSubjectIds.add(subject.id);
-                  } else {
-                    _teacherSubjectIds.remove(subject.id);
-                  }
-                }),
+                avatar: const Icon(Icons.menu_book_outlined, size: 16),
               ),
             )
             .toList(growable: false),
       ),
+      if (widget.user.subjects.isEmpty)
+        const Text(
+          'Belum ditetapkan',
+          style: TextStyle(fontSize: 13, color: LmsColors.inkMuted),
+        ),
+      const SizedBox(height: 8),
+      const Text(
+        'Jawatan, sekolah, kelas dan subjek dikunci mengikut web. Hubungi pentadbir untuk perubahan rekod.',
+        style: TextStyle(fontSize: 12, color: LmsColors.inkMuted),
+      ),
     ],
   );
+}
+
+class _ReadOnlyInfoTile extends StatelessWidget {
+  const _ReadOnlyInfoTile({
+    required this.icon,
+    required this.label,
+    required this.value,
+  });
+
+  final IconData icon;
+  final String label;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: LmsPalette.surface(context),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: LmsPalette.border(context)),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, color: LmsColors.brandStrong),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 11.5,
+                    color: LmsPalette.muted(context),
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  value,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: LmsPalette.text(context),
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Icon(
+            Icons.lock_outline_rounded,
+            size: 16,
+            color: LmsPalette.faint(context),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 class _AvatarPreview extends StatelessWidget {

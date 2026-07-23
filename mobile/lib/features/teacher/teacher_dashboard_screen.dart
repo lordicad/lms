@@ -455,8 +455,8 @@ class _DashboardTabState extends State<_DashboardTab> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // The web dashboard now leads with the four content
-                      // leaderboards, followed by the quiz outcome summary.
+                      _statsGrid(context, s),
+                      const SizedBox(height: 16),
                       if (data.leaderboards.isNotEmpty) ...[
                         _Heading(
                           context.copy(
@@ -504,62 +504,6 @@ class _DashboardTabState extends State<_DashboardTab> {
                         _PassFailCard(data: data.passFail),
                         const SizedBox(height: 16),
                       ],
-                      LayoutBuilder(
-                        builder: (context, constraints) => GridView(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            mainAxisSpacing: 10,
-                            crossAxisSpacing: 10,
-                            // A fixed, responsive-safe height leaves room for
-                            // the icon, value and label even on narrow phones.
-                            // Tablets keep the cards compact instead of huge.
-                            mainAxisExtent: constraints.maxWidth < 600
-                                ? 118
-                                : 128,
-                          ),
-                          children: [
-                            _StatCard(
-                              icon: Icons.visibility_outlined,
-                              value: '${s.views}',
-                              label: context.copy(
-                                bm: 'Tontonan video',
-                                en: 'Video views',
-                              ),
-                              tint: const Color(0xFFE7EFFD),
-                            ),
-                            _StatCard(
-                              icon: Icons.favorite_border_rounded,
-                              value: '${s.favourites}',
-                              label: context.copy(
-                                bm: 'Video digemari',
-                                en: 'Video likes',
-                              ),
-                              tint: const Color(0xFFFBE4ED),
-                            ),
-                            _StatCard(
-                              icon: Icons.file_download_outlined,
-                              value: '${s.downloads}',
-                              label: context.copy(
-                                bm: 'Bahan dimuat turun',
-                                en: 'Downloads',
-                              ),
-                              tint: const Color(0xFFDCF2EE),
-                            ),
-                            _StatCard(
-                              icon: Icons.quiz_outlined,
-                              value: '${s.attempts}',
-                              label: context.copy(
-                                bm: 'Percubaan kuiz',
-                                en: 'Quiz attempts',
-                              ),
-                              tint: const Color(0xFFFFF0D9),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 12),
                       Row(
                         children: [
                           Expanded(
@@ -661,6 +605,49 @@ class _DashboardTabState extends State<_DashboardTab> {
           ),
         );
       },
+    );
+  }
+
+  Widget _statsGrid(BuildContext context, TeacherStats stats) {
+    return LayoutBuilder(
+      builder: (context, constraints) => GridView(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          mainAxisSpacing: 10,
+          crossAxisSpacing: 10,
+          // A fixed, responsive-safe height leaves room for the icon, value and
+          // label even on narrow phones. Tablets keep the cards compact.
+          mainAxisExtent: constraints.maxWidth < 600 ? 118 : 128,
+        ),
+        children: [
+          _StatCard(
+            icon: Icons.visibility_outlined,
+            value: '${stats.views}',
+            label: context.copy(bm: 'Tontonan video', en: 'Video views'),
+            tint: const Color(0xFFE7EFFD),
+          ),
+          _StatCard(
+            icon: Icons.favorite_border_rounded,
+            value: '${stats.favourites}',
+            label: context.copy(bm: 'Video digemari', en: 'Video likes'),
+            tint: const Color(0xFFFBE4ED),
+          ),
+          _StatCard(
+            icon: Icons.file_download_outlined,
+            value: '${stats.downloads}',
+            label: context.copy(bm: 'Bahan dimuat turun', en: 'Downloads'),
+            tint: const Color(0xFFDCF2EE),
+          ),
+          _StatCard(
+            icon: Icons.quiz_outlined,
+            value: '${stats.attempts}',
+            label: context.copy(bm: 'Percubaan kuiz', en: 'Quiz attempts'),
+            tint: const Color(0xFFFFF0D9),
+          ),
+        ],
+      ),
     );
   }
 }
