@@ -46,10 +46,11 @@
         html { scroll-behavior: smooth; }
         body {
             margin: 0; overflow-x: hidden;
-            /* The artwork stays behind the whole page and does not scroll away (`fixed`), and the
-               whole picture is shown rather than cropped (`contain`). --bg fills the letterbox
-               around it. Dark mode drops the photo — a light image behind pale text would undo it. */
-            background: var(--bg) url('{{ asset('images/LandingPic.png') }}') center center / contain no-repeat fixed;
+            /* The artwork stays behind the whole page and does not scroll away (`fixed`). `cover`
+               fills the viewport at every scroll position, so no strip of the page colour shows
+               through — the trade for that is the image's edges being cropped to the screen shape.
+               Dark mode drops the photo — a light image behind pale text would undo it. */
+            background: var(--bg) url('{{ asset('images/LandingPic.png') }}') center center / cover no-repeat fixed;
             color: var(--ink);
             font-family: 'Nunito', sans-serif; font-size: 16px; line-height: 1.5;
             -webkit-font-smoothing: antialiased;
@@ -147,7 +148,10 @@
         html.theme-dark .wl-total.t-vid, html.theme-dark .wl-total.t-mat, html.theme-dark .wl-total.t-quiz { background: #1C2A21; }
 
         /* Teachers band */
-        .wl-band { background: color-mix(in srgb, var(--surface) 60%, var(--bg)); }
+        /* Translucent, not opaque, so the fixed artwork shows through this band too — a light veil
+           over it keeps the heading and list readable. Dark mode fills it solid (the photo is
+           dropped there anyway). */
+        .wl-band { background: color-mix(in srgb, var(--surface) 62%, transparent); }
         html.theme-dark .wl-band { background: var(--dark-green); }
         .wl-band-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; padding: 64px 0; }
         .wl-ticks { margin: 6px 0 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 12px; font-size: 15.5px; color: var(--muted); }
