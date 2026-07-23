@@ -18,7 +18,7 @@
         {{-- Stats: total + one per Tahun --}}
         <div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:12px">
             <div style="background:var(--tp-surface);border:1px solid var(--tp-line);border-radius:14px;padding:16px 18px;display:flex;flex-direction:column;gap:6px;box-shadow:0 2px 10px rgba(46,44,80,.04)">
-                <span style="font-size:12.5px;font-weight:700;color:var(--tp-muted)">👥 {{ __('Jumlah') }}</span>
+                <span style="display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;color:var(--tp-muted)"><x-icon name="users" class="h-4 w-4" />{{ __('Jumlah') }}</span>
                 <span style="font-family:'Geist',sans-serif;font-size:24px;font-weight:800;color:var(--tp-ink)">{{ number_format($totalStudents) }}</span>
             </div>
             @foreach ($grades as $grade)
