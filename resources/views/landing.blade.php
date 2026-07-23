@@ -46,15 +46,10 @@
         html { scroll-behavior: smooth; }
         body {
             margin: 0; overflow-x: hidden;
-            /* The uploaded artwork sits behind the whole page. `fixed` holds it to the viewport
-               while the page scrolls; --bg stays underneath as the fallback colour. */
-            background: var(--bg) url('{{ asset('images/LandingPic.png') }}') center top / cover no-repeat fixed;
-            color: var(--ink);
+            background: var(--bg); color: var(--ink);
             font-family: 'Nunito', sans-serif; font-size: 16px; line-height: 1.5;
             -webkit-font-smoothing: antialiased;
         }
-        /* Dark mode keeps its own dark ramp — a light photo behind pale text would undo it. */
-        html.theme-dark body { background: var(--bg); }
         h1, h2, h3, .font-display { font-family: 'Geist', sans-serif; }
         a { color: var(--brand); text-decoration: none; }
         img, svg { display: block; }
@@ -101,10 +96,16 @@
         .wl-btn-outline.wl-btn-lg:hover { transform: none; }
 
         /* Hero */
-        /* A translucent scrim rather than an opaque fill, so the artwork behind shows through the
-           hero — the part of the page most people see — while the headline stays legible over it.
-           Fully opaque in dark mode, which drops the photo. */
-        .wl-hero { background: linear-gradient(180deg, color-mix(in srgb, var(--surface) 74%, transparent) 0%, color-mix(in srgb, var(--bg) 82%, transparent) 100%); }
+        /* The uploaded artwork lives in the hero, under a translucent scrim (first layer, so it
+           sits on top) that keeps the headline legible. No `fixed`: the default `scroll` makes the
+           image move with the page as it is scrolled past, so there is no parallax drift — that
+           drift was the "motion". Dark mode replaces the whole background with an opaque ramp,
+           dropping the photo, since a light image behind pale text would undo the dark theme. */
+        .wl-hero {
+            background:
+                linear-gradient(180deg, color-mix(in srgb, var(--surface) 74%, transparent) 0%, color-mix(in srgb, var(--bg) 82%, transparent) 100%),
+                url('{{ asset('images/LandingPic.png') }}') center center / cover no-repeat;
+        }
         html.theme-dark .wl-hero { background: linear-gradient(180deg, var(--surface) 0%, var(--bg) 100%); }
         .wl-hero-grid { display: grid; grid-template-columns: 1.05fr .95fr; gap: 56px; align-items: center; padding: 72px 0 64px; }
         .wl-eyebrow { display: inline-flex; align-self: flex-start; align-items: center; gap: 8px; background: var(--brand-soft); color: var(--brand-ink); border-radius: 999px; padding: 8px 16px; font-family: 'Geist', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
