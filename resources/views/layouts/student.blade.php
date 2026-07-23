@@ -152,7 +152,7 @@
 <body class="wl">
 <div class="wl-shell" style="min-height:100vh;display:grid;grid-template-columns:236px 1fr">
     {{-- ── SIDEBAR (wide labelled rail, matched to the Cikgu/Admin shell) ── --}}
-    <aside class="wl-side" style="background:var(--wl-surface);border-right:1px solid var(--wl-line);display:flex;flex-direction:column;padding:20px 14px;gap:4px;position:sticky;top:0;height:100vh;box-sizing:border-box">
+    <aside class="wl-side" style="background:var(--wl-surface);border-right:1px solid var(--wl-line);display:flex;flex-direction:column;padding:20px 14px;gap:4px;position:sticky;top:0;align-self:start;height:100vh;overflow-y:auto;box-sizing:border-box">
         <a href="{{ route('belajar.index') }}" class="wl-brand" title="WeLearn">
             <img src="{{ asset('images/welearn1.png') }}" alt="WeLearn">
             <span style="display:flex;flex-direction:column">

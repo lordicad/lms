@@ -93,7 +93,9 @@
         .tp-side {
             background:var(--tp-surface); border-right:1px solid var(--tp-line);
             display:flex; flex-direction:column; padding:20px 14px; gap:4px;
-            position:sticky; top:0; height:100vh;
+            /* align-self:start stops the grid from stretching this column to the full page
+               height — a stretched item has no room to stick, so it would scroll away. */
+            position:sticky; top:0; align-self:start; height:100vh; overflow-y:auto;
         }
         .tp-brand { display:flex; align-items:center; gap:10px; padding:4px 8px 16px; }
         .tp-brand img { width:42px; height:42px; object-fit:contain; display:block; }
