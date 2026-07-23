@@ -44,13 +44,13 @@
                                     @endunless
                                 </span>
                                 <div style="display:flex;align-items:center;gap:12px">
-                                    <span class="tp-meta">🎬 {{ $chapter->lessons_count }}</span>
-                                    <span class="tp-meta">📄 {{ $chapter->materials_count }}</span>
-                                    <span class="tp-meta">📝 {{ $chapter->quizzes_count }}</span>
+                                    <span class="tp-meta" style="display:inline-flex;align-items:center;gap:5px"><x-icon name="video" class="h-4 w-4" />{{ $chapter->lessons_count }}</span>
+                                    <span class="tp-meta" style="display:inline-flex;align-items:center;gap:5px"><x-icon name="file" class="h-4 w-4" />{{ $chapter->materials_count }}</span>
+                                    <span class="tp-meta" style="display:inline-flex;align-items:center;gap:5px"><x-icon name="quiz" class="h-4 w-4" />{{ $chapter->quizzes_count }}</span>
                                 </div>
                             </div>
 
-                            <a href="{{ route('cikgu.bab.show', $chapter) }}" class="tp-btn-ghost" style="flex-shrink:0">👁 {{ __('Lihat') }}</a>
+                            <a href="{{ route('cikgu.bab.show', $chapter) }}" class="tp-btn-ghost" style="flex-shrink:0"><x-icon name="eye" class="h-4 w-4" />{{ __('Lihat') }}</a>
                         </div>
                     @endforeach
                 </div>

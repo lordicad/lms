@@ -6,7 +6,7 @@
     {{-- Total quizzes created by this teacher (all-time, not the filtered count). --}}
     <div class="tp-stat" style="max-width:340px;margin-bottom:18px">
         <div style="display:flex;align-items:center;gap:10px">
-            <span class="tp-stat-ico" style="background:#FEF0CE">📝</span>
+            <span class="tp-stat-ico" style="background:#FEF0CE"><x-icon name="quiz" class="h-5 w-5" style="color:#8A6A12" /></span>
             <span class="tp-stat-label">{{ __('Kuiz Saya') }}</span>
         </div>
         <span class="tp-stat-value">{{ number_format($totalQuizzes) }}</span>
@@ -54,7 +54,7 @@
                                 <span class="tp-meta">{{ __(':count soalan', ['count' => $quiz->questions_count]) }}</span>
                                 <span class="tp-meta">{{ __(':count percubaan', ['count' => $quiz->completed_attempts_count]) }}</span>
                                 @if ($quiz->duration_minutes)
-                                    <span class="tp-meta">🕐 {{ __(':count min', ['count' => $quiz->duration_minutes]) }}</span>
+                                    <span class="tp-meta" style="display:inline-flex;align-items:center;gap:4px"><x-icon name="clock" class="h-4 w-4" />{{ __(':count min', ['count' => $quiz->duration_minutes]) }}</span>
                                 @endif
                             @endif
                         </div>
@@ -76,8 +76,8 @@
                                     'correct' => (bool) $option->is_correct,
                                 ])->all(),
                             ])->all(),
-                        ]))">👁 {{ __('Lihat Soalan') }}</button>
-                        <a href="{{ route('cikgu.kuiz.statistik', $quiz) }}" class="tp-btn-ghost" style="flex-shrink:0">📊 {{ __('Statistik') }}</a>
+                        ]))"><x-icon name="eye" class="h-4 w-4" />{{ __('Lihat Soalan') }}</button>
+                        <a href="{{ route('cikgu.kuiz.statistik', $quiz) }}" class="tp-btn-ghost" style="flex-shrink:0"><x-icon name="chart" class="h-4 w-4" />{{ __('Statistik') }}</a>
                     @else
                         <a href="{{ route('muat-turun.kuiz', $quiz) }}" class="tp-btn-ghost" style="flex-shrink:0">
                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
@@ -85,9 +85,8 @@
                         </a>
                     @endif
 
-                    <a href="{{ route('cikgu.kuiz.edit', $quiz) }}" class="tp-icon-action" style="flex-shrink:0" title="{{ __('Sunting') }}">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
-                        <span class="sr-only">{{ __('Sunting :title', ['title' => $quiz->title]) }}</span>
+                    <a href="{{ route('cikgu.kuiz.edit', $quiz) }}" class="tp-btn-ghost" style="flex-shrink:0;display:inline-flex;align-items:center;gap:6px">
+                        <x-icon name="pencil" class="h-4 w-4" />{{ __('Sunting') }}
                     </a>
 
                     <form method="POST" action="{{ route('cikgu.kuiz.destroy', $quiz) }}" style="flex-shrink:0"

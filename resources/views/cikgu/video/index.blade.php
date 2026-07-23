@@ -6,7 +6,7 @@
     {{-- Total videos uploaded by this teacher (all-time, not the filtered count). --}}
     <div class="tp-stat" style="max-width:340px;margin-bottom:18px">
         <div style="display:flex;align-items:center;gap:10px">
-            <span class="tp-stat-ico" style="background:#E4EEF9">🎬</span>
+            <span class="tp-stat-ico" style="background:#E4EEF9"><x-icon name="video" class="h-5 w-5" style="color:#2E6CA8" /></span>
             <span class="tp-stat-label">{{ __('Video Saya') }}</span>
         </div>
         <span class="tp-stat-value">{{ number_format($totalVideos) }}</span>
