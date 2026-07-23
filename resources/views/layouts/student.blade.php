@@ -144,8 +144,8 @@
 
         @media (max-width: 900px) {
             .wl-shell { grid-template-columns: 1fr !important; }
-            .wl-side { position:static !important; height:auto !important; flex-direction:row !important; flex-wrap:wrap !important; }
-            .wl-main { padding: 20px 16px 40px !important; }
+            .wl-side { position:static !important; width:auto !important; height:auto !important; flex-direction:row !important; flex-wrap:wrap !important; }
+            .wl-main { grid-column:auto !important; padding: 20px 16px 40px !important; }
         }
     </style>
 </head>
@@ -153,7 +153,7 @@
 <body class="wl">
 <div class="wl-shell" style="min-height:100vh;display:grid;grid-template-columns:236px 1fr">
     {{-- ── SIDEBAR (wide labelled rail, matched to the Cikgu/Admin shell) ── --}}
-    <aside class="wl-side" style="background:var(--wl-surface);border-right:1px solid var(--wl-line);display:flex;flex-direction:column;padding:20px 14px;gap:4px;position:sticky;top:0;align-self:start;height:100vh;overflow-y:auto;box-sizing:border-box">
+    <aside class="wl-side" style="background:var(--wl-surface);border-right:1px solid var(--wl-line);display:flex;flex-direction:column;padding:20px 14px;gap:4px;position:fixed;top:0;left:0;width:236px;height:100vh;overflow-y:auto;box-sizing:border-box">
         <a href="{{ route('belajar.index') }}" class="wl-brand" title="WeLearn">
             <img src="{{ asset('images/welearn1.png') }}" alt="WeLearn">
             <span style="display:flex;flex-direction:column">
@@ -187,7 +187,7 @@
     </aside>
 
     {{-- ── MAIN ── --}}
-    <main class="wl-main" style="min-width:0;padding:28px clamp(14px, 3vw, 36px) 48px;display:flex;flex-direction:column;gap:28px;max-width:clamp(1180px, 78vw, 1440px);box-sizing:border-box;width:100%;margin:0 auto">
+    <main class="wl-main" style="min-width:0;grid-column:2;padding:28px clamp(14px, 3vw, 36px) 48px;display:flex;flex-direction:column;gap:28px;max-width:clamp(1180px, 78vw, 1440px);box-sizing:border-box;width:100%;margin:0 auto">
         {{-- HEADER --}}
         <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
             <form method="GET" action="{{ route('cari.index') }}" role="search"

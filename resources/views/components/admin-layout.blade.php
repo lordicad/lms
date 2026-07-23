@@ -93,9 +93,10 @@
         .tp-side {
             background:var(--tp-surface); border-right:1px solid var(--tp-line);
             display:flex; flex-direction:column; padding:20px 14px; gap:4px;
-            /* align-self:start stops the grid from stretching this column to the full page
-               height — a stretched item has no room to stick, so it would scroll away. */
-            position:sticky; top:0; align-self:start; height:100vh; overflow-y:auto;
+            /* Fixed rail so it can't scroll with the page. The grid still reserves the 236px
+               track; .tp-main is pinned to column 2 since a fixed item leaves the grid flow.
+               overflow-y:auto lets a tall nav scroll inside the rail. */
+            position:fixed; top:0; left:0; width:236px; height:100vh; overflow-y:auto;
         }
         .tp-brand { display:flex; align-items:center; gap:10px; padding:4px 8px 16px; }
         .tp-brand img { width:42px; height:42px; object-fit:contain; display:block; }
@@ -133,7 +134,7 @@
         .tp-logout:hover { background:#FDE7E0; }
 
         /* Main + header */
-        .tp-main { padding:28px 40px 48px; display:flex; flex-direction:column; gap:24px; min-width:0; max-width:clamp(1240px, 78vw, 1440px); width:100%; margin:0 auto; }
+        .tp-main { grid-column:2; padding:28px 40px 48px; display:flex; flex-direction:column; gap:24px; min-width:0; max-width:clamp(1240px, 78vw, 1440px); width:100%; margin:0 auto; }
         .tp-head { display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
         .tp-h1  { font-family:'Geist',sans-serif; font-size:24px; font-weight:800; letter-spacing:-.01em; color:var(--tp-ink); }
         .tp-hsub{ font-size:14px; color:var(--tp-muted); }
@@ -217,8 +218,8 @@
 
         @media (max-width:900px) {
             .tp-shell { grid-template-columns:1fr; }
-            .tp-side { position:static; height:auto; flex-direction:row; flex-wrap:wrap; }
-            .tp-main { padding:20px; }
+            .tp-side { position:static; width:auto; height:auto; flex-direction:row; flex-wrap:wrap; }
+            .tp-main { grid-column:auto; padding:20px; }
         }
         @media (prefers-reduced-motion:reduce){ .tp * { transition:none !important; } }
     </style>
