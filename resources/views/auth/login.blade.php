@@ -1,4 +1,5 @@
-<x-welearn-auth active="login" :title="__('Log Masuk')">
+{{-- tabs off: with registration hidden, the lone "Log Masuk" tab was redundant. Remove :tabs to bring it back. --}}
+<x-welearn-auth active="login" :tabs="false" :title="__('Log Masuk')">
     <div class="wla-stack">
         <div class="wla-head">
             <h2>{{ __('Selamat kembali!') }}</h2>
