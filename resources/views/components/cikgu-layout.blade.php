@@ -121,8 +121,9 @@
         .tp-ava {
             width:42px; height:42px; border-radius:50%; background:var(--tp-teal); color:#fff;
             display:grid; place-items:center; font-family:'Geist',sans-serif; font-weight:800;
-            font-size:15px; flex-shrink:0; cursor:pointer; border:none;
+            font-size:15px; flex-shrink:0; cursor:pointer; border:none; overflow:hidden;
         }
+        .tp-ava img { width:100%; height:100%; object-fit:cover; }
         .tp-userbar-name { font-family:'Geist',sans-serif; font-weight:800; font-size:13.5px; color:var(--tp-ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
         .tp-userbar-sub  { font-size:11.5px; font-weight:700; color:var(--tp-muted); }
         .tp-logout {
@@ -305,7 +306,7 @@
         <div style="margin-top:auto"></div>
 
         <div class="tp-userbar">
-            <a href="{{ route('profile.edit') }}" class="tp-ava" title="{{ __('Profil') }}">{{ $user->initials() }}</a>
+            <a href="{{ route('profile.edit') }}" class="tp-ava" title="{{ __('Profil') }}">@if ($user->avatarUrl())<img src="{{ $user->avatarUrl() }}" alt="">@else{{ $user->initials() }}@endif</a>
             <a href="{{ route('profile.edit') }}" style="display:flex;flex-direction:column;min-width:0;flex:1">
                 <span class="tp-userbar-name">Cikgu {{ $user->username }}</span>
                 <span class="tp-userbar-sub">{{ __('Guru') }}</span>
