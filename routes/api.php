@@ -66,6 +66,7 @@ Route::middleware('auth:sanctum')->prefix('student')->group(function () {
 
     // Interactive quiz flow: list -> intro -> start attempt -> submit -> result.
     Route::get('quizzes', [QuizController::class, 'list']);
+    Route::get('quizzes/{quiz}/download', [QuizController::class, 'downloadFile']);
     Route::get('quizzes/{quiz}', [QuizController::class, 'intro']);
     Route::post('quizzes/{quiz}/start', [QuizController::class, 'start']);
     Route::post('attempts/{attempt}/submit', [QuizController::class, 'submit']);

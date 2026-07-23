@@ -680,6 +680,8 @@ class QuizIntro {
     required this.questionCount,
     required this.maxScore,
     required this.fileUrl,
+    required this.fileName,
+    required this.fileExtension,
     required this.hasRankedAttempt,
     required this.myAttempts,
   });
@@ -694,6 +696,8 @@ class QuizIntro {
   final int questionCount;
   final int maxScore;
   final String? fileUrl;
+  final String? fileName;
+  final String? fileExtension;
   final bool hasRankedAttempt;
   final List<QuizAttemptSummary> myAttempts;
 
@@ -714,6 +718,8 @@ class QuizIntro {
       questionCount: _int(j['question_count']),
       maxScore: _int(j['max_score']),
       fileUrl: _strOrNull(j['file_url']),
+      fileName: _strOrNull(j['file_name']),
+      fileExtension: _strOrNull(j['file_extension']),
       hasRankedAttempt: _bool(j['has_ranked_attempt']),
       myAttempts: _list(j['my_attempts'], QuizAttemptSummary.fromJson),
     );

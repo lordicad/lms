@@ -56,6 +56,7 @@ class TeacherRepository {
         fileName: material.fileName.isEmpty
             ? '${material.title}.${material.extension}'
             : material.fileName,
+        fallbackExtension: material.extension,
       );
 
   Future<List<TeacherQuiz>> quizzes() async => _api.quizzes(await _token());

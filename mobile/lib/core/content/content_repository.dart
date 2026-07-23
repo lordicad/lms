@@ -75,10 +75,23 @@ class ContentRepository {
   Future<void> openMaterial({
     required String url,
     required String fileName,
+    String? fallbackExtension,
   }) async => AuthenticatedFileOpener.open(
     url: url,
     token: await _token(),
     fileName: fileName,
+    fallbackExtension: fallbackExtension,
+  );
+
+  Future<void> openQuizFile({
+    required String url,
+    required String fileName,
+    String? fallbackExtension,
+  }) async => AuthenticatedFileOpener.open(
+    url: url,
+    token: await _token(),
+    fileName: fileName,
+    fallbackExtension: fallbackExtension,
   );
 
   Future<bool> toggleFavourite(int lessonId) async =>

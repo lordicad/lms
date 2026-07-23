@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/content/content_models.dart';
 import '../../core/content/content_repository.dart';
@@ -62,9 +61,25 @@ class _QuizIntroScreenState extends State<QuizIntroScreen> {
     }
   }
 
-  Future<void> _openFile(String url) async {
-    final uri = Uri.tryParse(url);
-    if (uri != null) await launchUrl(uri, mode: LaunchMode.externalApplication);
+  Future<void> _openFile(QuizIntro quiz) async {
+    if (quiz.fileUrl == null) return;
+    try {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Menyediakan kuiz untuk dibuka...')),
+      );
+      await widget.repository.openQuizFile(
+        url: quiz.fileUrl!,
+        fileName: quiz.fileName?.isNotEmpty == true
+            ? quiz.fileName!
+            : '${quiz.title}.${quiz.fileExtension ?? 'pdf'}',
+        fallbackExtension: quiz.fileExtension ?? 'pdf',
+      );
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Tidak dapat membuka kuiz: $error')),
+      );
+    }
   }
 
   @override
@@ -206,7 +221,7 @@ class _QuizIntroScreenState extends State<QuizIntroScreen> {
                   ? FilledButton.icon(
                       onPressed: quiz.fileUrl == null
                           ? null
-                          : () => _openFile(quiz.fileUrl!),
+                          : () => _openFile(quiz),
                       icon: const Icon(Icons.download_rounded),
                       label: const Text('Muat turun kuiz'),
                     )

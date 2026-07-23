@@ -7,7 +7,9 @@ use App\Models\QuizAttempt;
 use App\Services\QuizGrader;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
  * Interactive quiz flow for the mobile app: cover (intro), start/resume an attempt,
@@ -90,7 +92,11 @@ class QuizController extends StudentApiController
             'subject' => $this->subjectCard($quiz->chapter->subject),
             'question_count' => $quiz->questions()->count(),
             'max_score' => $quiz->maxScore(),
-            'file_url' => $quiz->isFile() ? route('muat-turun.kuiz', $quiz) : null,
+            'file_url' => $quiz->isFile() ? url("/api/student/quizzes/{$quiz->id}/download") : null,
+            'file_name' => $quiz->isFile() ? ($quiz->original_name ?? $quiz->title) : null,
+            'file_extension' => $quiz->isFile() && $quiz->file_path
+                ? (pathinfo($quiz->file_path, PATHINFO_EXTENSION) ?: 'pdf')
+                : null,
             'has_ranked_attempt' => $user->isStudent() && $quiz->rankedAttemptFor($user) !== null,
             'my_attempts' => $myAttempts->map(fn ($a) => [
                 'id' => $a->id,
@@ -101,6 +107,26 @@ class QuizController extends StudentApiController
                 'completed_at' => $a->completed_at?->toIso8601String(),
             ])->all(),
         ]);
+    }
+
+    public function downloadFile(Request $request, Quiz $quiz): StreamedResponse
+    {
+        $user = $request->user();
+        $quiz->load('chapter.grade');
+
+        abort_unless($user?->isStudent(), Response::HTTP_FORBIDDEN);
+        abort_unless($quiz->is_published && $quiz->isFile() && $quiz->file_path, Response::HTTP_NOT_FOUND);
+
+        $grade = $this->resolveGrade($request, $user);
+        abort_if(! $grade || $quiz->chapter?->grade_id !== $grade->id, Response::HTTP_NOT_FOUND);
+
+        $disk = Storage::disk('uploads');
+        abort_unless($disk->exists($quiz->file_path), Response::HTTP_NOT_FOUND);
+
+        $extension = pathinfo($quiz->file_path, PATHINFO_EXTENSION) ?: 'pdf';
+        $fileName = $quiz->original_name ?: $quiz->title.'.'.$extension;
+
+        return $disk->download($quiz->file_path, $fileName);
     }
 
     public function start(Request $request, Quiz $quiz): JsonResponse

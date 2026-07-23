@@ -159,6 +159,7 @@ class _WatchScreenState extends State<WatchScreen> {
         fileName: material.fileName.isEmpty
             ? '${material.title}.${material.extension}'
             : material.fileName,
+        fallbackExtension: material.extension,
       );
     } catch (error) {
       if (!mounted) return;

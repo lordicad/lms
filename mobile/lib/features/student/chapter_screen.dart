@@ -71,6 +71,7 @@ class _ChapterScreenState extends State<ChapterScreen> {
         fileName: material.fileName.isEmpty
             ? '${material.title}.${material.extension}'
             : material.fileName,
+        fallbackExtension: material.extension,
       );
     } catch (error) {
       if (!mounted) return;
@@ -140,10 +141,8 @@ class _ChapterScreenState extends State<ChapterScreen> {
                 const SectionTitle('Bahan'),
                 const SizedBox(height: 8),
                 ...data.materials.map(
-                  (m) => _MaterialTile(
-                    material: m,
-                    onTap: () => _openMaterial(m),
-                  ),
+                  (m) =>
+                      _MaterialTile(material: m, onTap: () => _openMaterial(m)),
                 ),
                 const SizedBox(height: 20),
               ],

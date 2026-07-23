@@ -76,13 +76,15 @@ abstract class StudentApiController extends Controller
      */
     protected function materialCard(Material $material): array
     {
+        $gradeLevel = $material->chapter?->grade?->level;
+
         return [
             'id' => $material->id,
             'title' => $material->title,
             'icon_name' => $material->iconName(),
             'extension' => $material->extension(),
             'human_size' => $material->humanSize(),
-            'download_url' => route('muat-turun.bahan', $material),
+            'download_url' => url('/api/student/offline/materials/'.$material->id.($gradeLevel ? '?grade='.$gradeLevel : '')),
             'file_name' => $material->original_name,
         ];
     }
