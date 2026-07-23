@@ -61,7 +61,7 @@
                             <span class="tp-meta">{{ $material->chapter->grade->name }}</span>
                             <span class="tp-meta">Bab {{ $material->chapter->number }}</span>
                             @if ($material->lesson)
-                                <span class="tp-meta" style="display:inline-flex;align-items:center;gap:4px;max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><x-icon name="video" class="h-[13px] w-[13px]" style="flex-shrink:0" />{{ $material->lesson->title }}</span>
+                                <span class="tp-meta" style="display:inline-flex;align-items:center;gap:4px;max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><x-icon name="file" class="h-[13px] w-[13px]" style="flex-shrink:0" />{{ $material->lesson->title }}</span>
                             @endif
                             <span class="tp-tag-neutral">{{ strtoupper($material->extension()) }}</span>
                             <span class="tp-meta">{{ $material->humanSize() }}</span>
