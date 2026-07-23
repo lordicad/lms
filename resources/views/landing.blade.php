@@ -102,9 +102,9 @@
         .wl-btn-outline.wl-btn-lg:hover { transform: none; }
 
         /* Hero */
-        /* A translucent scrim, so the fixed body artwork shows through the hero while the headline
-           stays legible over it. Dark mode fills it opaquely, which hides the (dropped) photo. */
-        .wl-hero { background: linear-gradient(180deg, color-mix(in srgb, var(--surface) 74%, transparent) 0%, color-mix(in srgb, var(--bg) 82%, transparent) 100%); }
+        /* No veil in light mode — the artwork shows through the hero at full strength. Dark mode
+           fills it with the opaque ramp, which hides the (dropped) photo. */
+        .wl-hero { background: transparent; }
         html.theme-dark .wl-hero { background: linear-gradient(180deg, var(--surface) 0%, var(--bg) 100%); }
         .wl-hero-grid { display: grid; grid-template-columns: 1.05fr .95fr; gap: 56px; align-items: center; padding: 72px 0 64px; }
         .wl-eyebrow { display: inline-flex; align-self: flex-start; align-items: center; gap: 8px; background: var(--brand-soft); color: var(--brand-ink); border-radius: 999px; padding: 8px 16px; font-family: 'Geist', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
@@ -148,10 +148,9 @@
         html.theme-dark .wl-total.t-vid, html.theme-dark .wl-total.t-mat, html.theme-dark .wl-total.t-quiz { background: #1C2A21; }
 
         /* Teachers band */
-        /* Translucent, not opaque, so the fixed artwork shows through this band too — a light veil
-           over it keeps the heading and list readable. Dark mode fills it solid (the photo is
-           dropped there anyway). */
-        .wl-band { background: color-mix(in srgb, var(--surface) 62%, transparent); }
+        /* No veil in light mode — the artwork shows through this band at full strength. Dark mode
+           fills it solid (the photo is dropped there anyway). */
+        .wl-band { background: transparent; }
         html.theme-dark .wl-band { background: var(--dark-green); }
         .wl-band-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; padding: 64px 0; }
         .wl-ticks { margin: 6px 0 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 12px; font-size: 15.5px; color: var(--muted); }
