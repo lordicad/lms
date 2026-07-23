@@ -286,7 +286,7 @@
                     <div class="wl-chips">
                         @foreach ($terasSubjects as $subject)
                             <span class="wl-chip" style="background: rgb({{ $subject->rgb }} / .13); color: rgb({{ $subject->rgb }});">
-                                <x-subject-icon :subject="$subject" class="h-[17px] w-[17px]" />{{ $subject->displayName() }}
+                                <x-subject-icon :subject="$subject" class="h-4 w-4" />{{ $subject->displayName() }}
                             </span>
                         @endforeach
                     </div>
