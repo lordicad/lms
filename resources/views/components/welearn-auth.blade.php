@@ -89,7 +89,10 @@
                colour behind the image, so any transparent areas of the PNG read as brand green
                rather than a gap. */
             background: var(--dark-green) url('{{ asset('images/AuthPic.png') }}') center center / cover no-repeat;
-            color: var(--dark-ink);
+            /* The artwork is light, so the text over it is dark. These are fixed values rather than
+               the theme vars: the image does not change with the theme, so the text must not flip
+               to light in dark mode. */
+            color: #55684F;
             display: flex; flex-direction: column; justify-content: space-between;
             padding: 48px 56px;
         }
@@ -101,15 +104,15 @@
         .wla-brand-copy { display: flex; flex-direction: column; gap: 18px; max-width: 420px; }
         .wla-brand h1 {
             margin: 0; font-family: 'Geist', sans-serif; font-size: 40px; line-height: 1.15;
-            font-weight: 800; letter-spacing: -.01em; color: #fff; text-wrap: balance;
+            font-weight: 800; letter-spacing: -.01em; color: #24402C; text-wrap: balance;
         }
-        .wla-brand p { margin: 0; font-size: 16.5px; line-height: 1.65; color: var(--dark-muted); }
+        .wla-brand p { margin: 0; font-size: 16.5px; line-height: 1.65; color: #55684F; }
         .wla-brand-accent {
             display: flex; gap: 10px; align-items: center; font-family: 'Geist', sans-serif;
             font-weight: 700; font-size: 13px; letter-spacing: .1em; text-transform: uppercase;
-            color: var(--accent);
+            color: #6E8B4E;
         }
-        .wla-brand-foot { font-size: 12.5px; color: var(--dark-faint); }
+        .wla-brand-foot { font-size: 12.5px; color: #8A9A80; }
 
         /* ── Form panel ── */
         .wla-form {
