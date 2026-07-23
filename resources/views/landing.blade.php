@@ -92,8 +92,10 @@
         .wl-langpill a { min-width: 44px; min-height: 36px; display: inline-flex; align-items: center; justify-content: center; border-radius: 999px; padding: 6px 14px; color: var(--brand-ink); transition: background .15s, color .15s; }
         .wl-langpill a[aria-current="true"] { background: var(--brand); color: #fff; }
 
-        .wl-iconbtn { width: 40px; height: 40px; flex-shrink: 0; border-radius: 50%; border: 1px solid var(--line-strong); background: var(--surface); color: var(--muted); cursor: pointer; display: grid; place-items: center; transition: background .15s; }
-        .wl-iconbtn:hover { background: var(--brand-soft); color: var(--brand-ink); }
+        /* Sits in the header, so its default fill is transparent — it shows the header colour
+           behind it — and it turns to the white surface on hover. */
+        .wl-iconbtn { width: 40px; height: 40px; flex-shrink: 0; border-radius: 50%; border: 1px solid var(--line-strong); background: transparent; color: var(--muted); cursor: pointer; display: grid; place-items: center; transition: background .15s, color .15s; }
+        .wl-iconbtn:hover { background: var(--surface); color: var(--brand-ink); }
         .wl-iconbtn svg { width: 20px; height: 20px; }
 
         .wl-btn { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 16px; border-radius: 12px; font-family: 'Geist', sans-serif; font-weight: 700; font-size: 14px; white-space: nowrap; transition: background .15s, transform .15s, color .15s; }
