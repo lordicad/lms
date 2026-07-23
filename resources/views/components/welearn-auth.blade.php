@@ -88,11 +88,11 @@
             /* The uploaded artwork fills the panel, no veil over it. --dark-green stays as the base
                colour behind the image, so any transparent areas of the PNG read as brand green
                rather than a gap. */
-            /* The artwork is landscape, so `cover` fills this panel edge to edge with only a small
-               side crop — no top/bottom loss and no margin. The base cream matches the image and
-               only shows for the moment before it loads. The artwork is light, so the text over it
+            /* The green design lives on the left half of the artwork and the right half is white.
+               Anchoring `cover` to the left shows the green design and crops the white side off,
+               rather than centring on the white middle. The artwork is light, so the text over it
                is dark — fixed values, not theme vars, since the image does not change with the theme. */
-            background: #F5F8EF url('{{ asset('images/AuthPic.png') }}') center center / cover no-repeat;
+            background: #F5F8EF url('{{ asset('images/AuthPic.png') }}') left center / cover no-repeat;
             color: #55684F;
             display: flex; flex-direction: column; justify-content: space-between;
             padding: 48px 56px;
