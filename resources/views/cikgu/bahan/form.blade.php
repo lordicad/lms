@@ -63,7 +63,7 @@
                     </p>
                     @error('file') <span class="tp-error">{{ $message }}</span> @enderror
                     <p style="display:flex;align-items:center;gap:8px;background:var(--tp-input);border-radius:12px;padding:12px 14px;font-size:13.5px;color:var(--tp-muted-2);margin:6px 0 0">
-                        <span style="font-size:18px">{{ $material->icon() }}</span>
+                        <x-icon :name="$material->iconName()" class="h-5 w-5" style="color:var(--tp-muted-2)" />
                         {{ __('Fail semasa:') }} {{ $material->original_name }} ({{ $material->humanSize() }})
                     </p>
                 </div>

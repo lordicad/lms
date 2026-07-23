@@ -85,6 +85,36 @@ class Subject extends Model
     }
 
     /**
+     * A vector icon name (from the shared <x-icon> set) for this subject, mapped from its slug so
+     * the UI can drop the stored emoji. Languages share the `language` glyph and are told apart by
+     * their colour; an unmapped subject falls back to a book. Specific cases come first — sign
+     * language is `hand`, not a `language` book, even though its slug also starts with "bahasa-".
+     */
+    public function iconName(): string
+    {
+        $slug = $this->slug ?? '';
+
+        return match (true) {
+            $slug === 'bahasa-isyarat-malaysia' => 'hand',
+            str_starts_with($slug, 'bahasa-') => 'language',
+            $slug === 'matematik' => 'calculator',
+            $slug === 'pendidikan-islam' => 'moon',
+            $slug === 'pendidikan-moral' => 'scale',
+            str_starts_with($slug, 'alam-dan-manusia') => 'world',
+            str_starts_with($slug, 'eksplorasi-seni'), $slug === 'pendidikan-seni-visual' => 'palette',
+            str_starts_with($slug, 'eksplorasi-sains'), $slug === 'sains' => 'flask',
+            $slug === 'sejarah' => 'history',
+            str_starts_with($slug, 'pendidikan-jasmani') => 'run',
+            $slug === 'pendidikan-muzik' => 'music',
+            $slug === 'teknologi-dan-digital' => 'laptop',
+            str_contains($slug, 'ketidakupayaan-penglihatan') => 'accessible',
+            str_contains($slug, 'masalah-pembelajaran') => 'puzzle',
+            $slug === 'pembentukan-karakter' => 'star',
+            default => 'book',
+        };
+    }
+
+    /**
      * The availability map, [subjectId => [level, ...]], for embedding into the dependent
      * Subject → Tahun dropdowns via @json so no extra endpoint is needed.
      *

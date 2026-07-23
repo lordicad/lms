@@ -6,7 +6,7 @@
     <div style="display:flex;flex-direction:column;gap:22px;max-width:960px">
         <a href="{{ route('cikgu.bab.index', ['subjek' => $subject->slug, 'tahun' => $grade->level]) }}" class="tp-back">← {{ __('Semua Bab') }}</a>
 
-        <span style="align-self:flex-start;background:#E4EEF9;color:#2E6CA8;border-radius:999px;padding:5px 14px;font-family:'Geist',sans-serif;font-size:12.5px;font-weight:800">{{ $subject->icon }} {{ $subject->name }}. {{ $grade->name }}. {{ __('Bab :number', ['number' => $chapter->number]) }}</span>
+        <span style="align-self:flex-start;background:#E4EEF9;color:#2E6CA8;border-radius:999px;padding:5px 14px;font-family:'Geist',sans-serif;font-size:12.5px;font-weight:800;display:inline-flex;align-items:center;gap:6px"><x-icon :name="$subject->iconName()" class="h-[15px] w-[15px]" />{{ $subject->name }}. {{ $grade->name }}. {{ __('Bab :number', ['number' => $chapter->number]) }}</span>
 
         @if ($chapter->description)
             <p style="margin:0;font-size:15px;color:var(--tp-muted-2);max-width:640px">{{ $chapter->description }}</p>
@@ -59,7 +59,7 @@
                 <div class="tp-list">
                     @foreach ($materials as $material)
                         <div class="tp-listcard">
-                            <span style="width:40px;height:40px;border-radius:12px;background:#FBE4ED;color:#B84A75;display:grid;place-items:center;flex-shrink:0">{{ $material->icon() }}</span>
+                            <span style="width:40px;height:40px;border-radius:12px;background:#FBE4ED;color:#B84A75;display:grid;place-items:center;flex-shrink:0"><x-icon :name="$material->iconName()" class="h-5 w-5" /></span>
                             <div style="display:flex;flex-direction:column;gap:4px;min-width:0;flex:1">
                                 <span class="tp-g" style="font-weight:800;font-size:15px;color:var(--tp-ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ $material->title }}</span>
                                 <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px">
