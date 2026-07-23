@@ -151,7 +151,9 @@
             padding: 36px; display: flex; flex-direction: column; gap: 22px;
         }
         .wla-tabs {
-            display: grid; grid-template-columns: 1fr 1fr; background: var(--tab-track);
+            /* One column while the Daftar tab is hidden, so Log Masuk fills the bar. Restore
+               `1fr 1fr` when the Daftar tab below is uncommented. */
+            display: grid; grid-template-columns: 1fr; background: var(--tab-track);
             border-radius: 12px; padding: 4px; font-family: 'Geist', sans-serif; font-weight: 700; font-size: 14.5px;
         }
         .wla-tab {
@@ -263,8 +265,9 @@
                 <div class="wla-tabs">
                     <a href="{{ route('login') }}" class="wla-tab {{ $active === 'login' ? 'is-active' : '' }}"
                        @if ($active === 'login') aria-current="page" @endif>{{ __('Log Masuk') }}</a>
-                    <a href="{{ route('register') }}" class="wla-tab {{ $active === 'register' ? 'is-active' : '' }}"
-                       @if ($active === 'register') aria-current="page" @endif>{{ __('Daftar') }}</a>
+                    {{-- Daftar tab hidden for now — uncomment this and restore `1fr 1fr` on .wla-tabs to bring it back. --}}
+                    {{-- <a href="{{ route('register') }}" class="wla-tab {{ $active === 'register' ? 'is-active' : '' }}"
+                       @if ($active === 'register') aria-current="page" @endif>{{ __('Daftar') }}</a> --}}
                 </div>
             @endif
 
