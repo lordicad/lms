@@ -34,7 +34,7 @@
             <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:17px;font-weight:800;color:var(--tp-ink)">{{ __('Cikgu') }}</h2>
             <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px">
                 <div style="background:var(--tp-surface);border:1px solid var(--tp-line);border-radius:16px;padding:20px 22px;display:flex;flex-direction:column;gap:8px;box-shadow:0 2px 10px rgba(46,44,80,.04)">
-                    <span style="font-size:13.5px;font-weight:700;color:var(--tp-muted)">🧑‍🏫 {{ __('Jumlah cikgu') }}</span>
+                    <span style="display:inline-flex;align-items:center;gap:6px;font-size:13.5px;font-weight:700;color:var(--tp-muted)"><x-icon name="user" class="h-4 w-4" />{{ __('Jumlah cikgu') }}</span>
                     <span style="font-family:'Geist',sans-serif;font-size:28px;font-weight:800;color:var(--tp-ink)">{{ number_format($totalTeachers) }}</span>
                 </div>
                 <div style="background:var(--tp-surface);border:1px solid var(--tp-line);border-radius:16px;padding:20px 22px;display:flex;flex-direction:column;gap:8px;box-shadow:0 2px 10px rgba(46,44,80,.04)">
@@ -94,7 +94,7 @@
         {{-- Teacher table --}}
         @if ($teachers->isEmpty())
             <div class="tp-empty">
-                <span style="font-size:30px">🧑‍🏫</span>
+                <x-icon name="user" class="h-8 w-8" style="color:var(--tp-muted)" />
                 <h3 style="margin:0;font-family:'Geist',sans-serif;font-size:19px;font-weight:800;color:var(--tp-ink)">{{ __('Tiada cikgu untuk dipaparkan') }}</h3>
                 <p style="margin:0;font-size:14.5px;color:var(--tp-muted);max-width:380px">{{ __('Tiada cikgu yang sepadan dengan tapisan ini.') }}</p>
             </div>

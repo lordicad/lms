@@ -3,10 +3,10 @@
     // room than the single-button Action column on the Video and Quiz tabs.
     $cols = 'grid-template-columns:minmax(0,2fr) 1.3fr .8fr .8fr 1.2fr 1fr 2fr;gap:12px;align-items:center';
     $stats = [
-        ['icon' => '📁', 'label' => __('Jumlah bahan'), 'value' => $totalCount],
-        ['icon' => '📕', 'label' => 'PDF',              'value' => $pdfCount],
-        ['icon' => '📄', 'label' => 'DOCX',             'value' => $docxCount],
-        ['icon' => '📊', 'label' => 'PPTX',             'value' => $pptxCount],
+        ['icon' => 'file',         'label' => __('Jumlah bahan'), 'value' => $totalCount],
+        ['icon' => 'file-pdf',     'label' => 'PDF',              'value' => $pdfCount],
+        ['icon' => 'file-text',    'label' => 'DOCX',             'value' => $docxCount],
+        ['icon' => 'presentation', 'label' => 'PPTX',             'value' => $pptxCount],
     ];
 @endphp
 
@@ -28,7 +28,7 @@
         <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px">
             @foreach ($stats as $s)
                 <div style="background:var(--tp-surface);border:1px solid var(--tp-line);border-radius:16px;padding:20px 22px;display:flex;flex-direction:column;gap:8px;box-shadow:0 2px 10px rgba(46,44,80,.04)">
-                    <span style="font-size:13.5px;font-weight:700;color:var(--tp-muted)">{{ $s['icon'] }} {{ $s['label'] }}</span>
+                    <span style="display:inline-flex;align-items:center;gap:6px;font-size:13.5px;font-weight:700;color:var(--tp-muted)"><x-icon :name="$s['icon']" class="h-4 w-4" />{{ $s['label'] }}</span>
                     <span style="font-family:'Geist',sans-serif;font-size:28px;font-weight:800;color:var(--tp-ink)">{{ number_format($s['value']) }}</span>
                 </div>
             @endforeach

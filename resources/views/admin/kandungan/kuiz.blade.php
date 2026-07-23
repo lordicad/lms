@@ -1,10 +1,10 @@
 @php
     $cols = 'grid-template-columns:minmax(0,2fr) 1.3fr .8fr .8fr .6fr .6fr 1fr .7fr;gap:12px;align-items:center';
     $stats = [
-        ['icon' => '📝', 'label' => __('Jumlah kuiz'),      'value' => $totalCount,   'labelColor' => '#8B8AA3'],
-        ['icon' => '👥', 'label' => __('Jumlah percubaan'), 'value' => $attemptCount, 'labelColor' => '#8B8AA3'],
-        ['icon' => '✅', 'label' => __('Lulus'),            'value' => $passCount,    'labelColor' => '#0F7A68'],
-        ['icon' => '❌', 'label' => __('Gagal'),            'value' => $failCount,    'labelColor' => '#C24936'],
+        ['icon' => 'quiz',         'label' => __('Jumlah kuiz'),      'value' => $totalCount,   'labelColor' => '#8B8AA3'],
+        ['icon' => 'users',        'label' => __('Jumlah percubaan'), 'value' => $attemptCount, 'labelColor' => '#8B8AA3'],
+        ['icon' => 'check-circle', 'label' => __('Lulus'),            'value' => $passCount,    'labelColor' => '#0F7A68'],
+        ['icon' => 'x-circle',     'label' => __('Gagal'),            'value' => $failCount,    'labelColor' => '#C24936'],
     ];
 @endphp
 
@@ -27,7 +27,7 @@
             <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px">
                 @foreach ($stats as $s)
                     <div style="background:var(--tp-surface);border:1px solid var(--tp-line);border-radius:16px;padding:20px 22px;display:flex;flex-direction:column;gap:8px;box-shadow:0 2px 10px rgba(46,44,80,.04)">
-                        <span style="font-size:13.5px;font-weight:700;color:{{ $s['labelColor'] }}">{{ $s['icon'] }} {{ $s['label'] }}</span>
+                        <span style="display:inline-flex;align-items:center;gap:6px;font-size:13.5px;font-weight:700;color:{{ $s['labelColor'] }}"><x-icon :name="$s['icon']" class="h-4 w-4" />{{ $s['label'] }}</span>
                         <span style="font-family:'Geist',sans-serif;font-size:28px;font-weight:800;color:var(--tp-ink)">{{ number_format($s['value']) }}</span>
                     </div>
                 @endforeach
