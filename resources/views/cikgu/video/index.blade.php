@@ -48,36 +48,51 @@
                     'poster' => $lesson->thumbnailUrl(),
                 ])
                 <div class="tp-listcard">
-                    <button type="button" @click="open(@js($preview))" class="tp-thumb" title="{{ __('Lihat video') }}"
-                            style="width:96px;height:60px;background:rgb({{ $subject->rgb }} / .14);font-size:14px;border:none;padding:0;cursor:pointer">
+                    {{-- Thumbnail: click to preview. A play disc sits over the frame and, once a
+                         duration has been captured, a badge in the corner shows it. --}}
+                    <button type="button" @click="open(@js($preview))" title="{{ __('Lihat video') }}"
+                            style="position:relative;width:128px;height:80px;border-radius:12px;overflow:hidden;background:rgb({{ $subject->rgb }} / .14);border:none;padding:0;cursor:pointer;flex-shrink:0">
                         @if ($lesson->thumbnailUrl())
                             <img src="{{ $lesson->thumbnailUrl() }}" alt="" loading="lazy" style="width:100%;height:100%;object-fit:cover">
-                        @else
-                            ▶
+                        @endif
+                        <span style="position:absolute;inset:0;display:grid;place-items:center">
+                            <span style="width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.92);display:grid;place-items:center;box-shadow:0 2px 8px rgba(0,0,0,.28)">
+                                <x-icon name="play" class="h-4 w-4" style="color:#1F2937;margin-left:2px" />
+                            </span>
+                        </span>
+                        @if ($lesson->durationLabel())
+                            <span style="position:absolute;right:6px;bottom:6px;background:rgba(0,0,0,.8);color:#fff;font-family:'Geist',sans-serif;font-weight:700;font-size:11px;padding:2px 6px;border-radius:6px">{{ $lesson->durationLabel() }}</span>
                         @endif
                     </button>
 
-                    <div style="display:flex;flex-direction:column;gap:6px;min-width:0;flex:1">
-                        <button type="button" @click="open(@js($preview))" class="tp-g" style="text-align:left;background:none;border:none;padding:0;cursor:pointer;font-family:inherit;font-weight:800;font-size:15.5px;color:var(--tp-ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $lesson->title }}</button>
-                        {{-- Subject on its own line, with the rest of the detail beneath it: the
-                             coloured chip is what the eye picks out when scanning the list. --}}
+                    <div style="display:flex;flex-direction:column;gap:8px;min-width:0;flex:1">
+                        <button type="button" @click="open(@js($preview))" class="tp-g" style="text-align:left;background:none;border:none;padding:0;cursor:pointer;font-family:inherit;font-weight:800;font-size:16px;color:var(--tp-ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $lesson->title }}</button>
+
+                        {{-- Subject on its own line: the coloured chip is what the eye picks out
+                             when scanning the list. --}}
                         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
                             <span class="tp-tag" style="background:rgb({{ $subject->rgb }} / .14);color:rgb({{ $subject->rgb }})">{{ $subject->name }}</span>
                         </div>
-                        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-                            <span class="tp-meta">{{ $lesson->chapter->grade->name }}</span>
-                            <span class="tp-meta">Bab {{ $lesson->chapter->number }}</span>
-                            <span class="tp-tag-neutral">{{ $lesson->isYoutube() ? 'YouTube' : __('Muat naik') }}</span>
+
+                        {{-- Detail row, each item led by an icon. --}}
+                        <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+                            <span class="tp-meta" style="display:inline-flex;align-items:center;gap:6px"><x-icon name="calendar" class="h-4 w-4" style="color:var(--tp-muted-2)" />{{ $lesson->chapter->grade->name }} · Bab {{ $lesson->chapter->number }}</span>
+                            <span class="tp-meta" style="display:inline-flex;align-items:center;gap:6px"><x-icon name="{{ $lesson->isYoutube() ? 'youtube' : 'upload' }}" class="h-4 w-4" style="color:var(--tp-muted-2)" />{{ $lesson->isYoutube() ? 'YouTube' : __('Muat naik') }}</span>
+                            <span class="tp-meta" style="display:inline-flex;align-items:center;gap:6px"><x-icon name="eye" class="h-4 w-4" style="color:var(--tp-muted-2)" />{{ $lesson->views_count }} {{ __('tontonan') }}</span>
                             @unless ($lesson->chapter->is_active)
                                 <span class="tp-tag" style="background:#FEF0CE;color:#8A6A12">{{ __('Bab tidak lagi dalam kurikulum') }}</span>
                             @endunless
-                            <span class="tp-meta">👁 {{ $lesson->views_count }}</span>
                         </div>
                     </div>
 
+                    {{-- Publish toggle: green with a check when live, amber when a draft. Still a
+                         button — clicking it flips the state. --}}
                     <form method="POST" action="{{ route('cikgu.video.terbit', $lesson) }}" style="flex-shrink:0">
                         @csrf
-                        <button type="submit" class="tp-badge {{ $lesson->is_published ? 'tp-badge-ok' : 'tp-badge-draft' }}" style="border:none;cursor:pointer">
+                        <button type="submit" class="tp-badge {{ $lesson->is_published ? 'tp-badge-ok' : 'tp-badge-draft' }}" style="border:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px">
+                            @if ($lesson->is_published)
+                                <x-icon name="check-circle" class="h-4 w-4" />
+                            @endif
                             {{ $lesson->is_published ? __('Diterbitkan') : __('Draf') }}
                         </button>
                     </form>
@@ -90,8 +105,8 @@
                           onsubmit="return confirm(@js(__("Padam video \":title\"? Fail video juga akan dipadam. Tindakan ini tidak boleh dibatalkan.", ["title" => $lesson->title])))">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" class="tp-icon-action tp-icon-danger" title="{{ __('Padam') }}">
-                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                        <button type="submit" class="tp-icon-action tp-icon-danger" title="{{ __('Padam') }}" style="border:1.5px solid var(--tp-line-2)">
+                            <x-icon name="trash" class="h-[18px] w-[18px]" />
                             <span class="sr-only">{{ __('Padam :title', ['title' => $lesson->title]) }}</span>
                         </button>
                     </form>
