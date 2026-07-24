@@ -144,7 +144,11 @@
         /* Content totals */
         .wl-total { border-radius: 18px; border: 1px solid var(--line); padding: 26px; display: flex; flex-direction: column; gap: 8px; min-height: 130px; transition: transform .15s; }
         .wl-total:hover { transform: translateY(-3px); }
-        .wl-total .em { font-size: 28px; }
+        .wl-total .ico { width: 46px; height: 46px; border-radius: 12px; display: grid; place-items: center; background: rgba(255,255,255,.6); }
+        html.theme-dark .wl-total .ico { background: rgba(255,255,255,.08); }
+        .wl-total.t-vid .ico { color: #2E6CA8; }
+        .wl-total.t-mat .ico { color: #0F7A68; }
+        .wl-total.t-quiz .ico { color: #96721A; }
         .wl-total .num { font-family: 'Geist', sans-serif; font-weight: 900; font-size: 34px; color: var(--ink); }
         .wl-total .name { font-family: 'Geist', sans-serif; font-weight: 800; font-size: 16px; color: var(--ink); }
         .wl-total .sub { font-size: 13px; color: var(--faint); }
@@ -361,19 +365,19 @@
 
                 <div class="wl-grid-3">
                     <div class="wl-total t-vid">
-                        <span class="em">🎬</span>
+                        <span class="ico"><x-icon name="video" class="h-6 w-6" /></span>
                         <span class="num">{{ number_format($lessonCount) }}</span>
                         <span class="name">{{ __('Video Pengajaran') }}</span>
                         <span class="sub">{{ __('Merentas semua subjek dan tahun') }}</span>
                     </div>
                     <div class="wl-total t-mat">
-                        <span class="em">📚</span>
+                        <span class="ico"><x-icon name="file" class="h-6 w-6" /></span>
                         <span class="num">{{ number_format($materialCount) }}</span>
                         <span class="name">{{ __('Bahan Pembelajaran') }}</span>
                         <span class="sub">{{ __('PDF, slaid dan lembaran kerja') }}</span>
                     </div>
                     <div class="wl-total t-quiz">
-                        <span class="em">✍️</span>
+                        <span class="ico"><x-icon name="quiz" class="h-6 w-6" /></span>
                         <span class="num">{{ number_format($quizCount) }}</span>
                         <span class="name">{{ __('Kuiz') }}</span>
                         <span class="sub">{{ __('Kuiz interaktif semak-sendiri') }}</span>
