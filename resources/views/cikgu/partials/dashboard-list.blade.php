@@ -20,12 +20,14 @@
                 2 => ['disc' => '#D69A5F', 'ring' => '#BC8146', 'ribA' => '#CD9155', 'ribB' => '#A6723B', 'num' => '#fff', 'shadow' => true],
             ][$i] ?? null)
             @if ($medal)
-                <span style="position:relative;width:24px;height:24px;flex-shrink:0;display:block">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style="display:block">
-                        <circle cx="12" cy="12" r="11" fill="{{ $medal['disc'] }}" stroke="{{ $medal['ring'] }}" stroke-width="1.5" />
-                        <circle cx="12" cy="12" r="8" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="1" />
+                <span style="position:relative;width:24px;height:29px;flex-shrink:0;display:block">
+                    <svg width="24" height="29" viewBox="0 0 28 34" fill="none" style="display:block">
+                        <path d="M6 1 L11 1 L18 16 L13 16 Z" fill="{{ $medal['ribB'] }}" />
+                        <path d="M22 1 L17 1 L10 16 L15 16 Z" fill="{{ $medal['ribA'] }}" />
+                        <circle cx="14" cy="23" r="10.5" fill="{{ $medal['disc'] }}" stroke="{{ $medal['ring'] }}" stroke-width="1.5" />
+                        <circle cx="14" cy="23" r="7.5" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="1" />
                     </svg>
-                    <span style="position:absolute;inset:0;display:grid;place-items:center;font-family:'Geist',sans-serif;font-weight:800;font-size:11px;color:{{ $medal['num'] }};{{ $medal['shadow'] ? 'text-shadow:0 1px 1px rgba(0,0,0,.25)' : '' }}">{{ $i + 1 }}</span>
+                    <span style="position:absolute;left:0;top:9px;width:24px;height:21px;display:grid;place-items:center;font-family:'Geist',sans-serif;font-weight:800;font-size:11px;color:{{ $medal['num'] }};{{ $medal['shadow'] ? 'text-shadow:0 1px 1px rgba(0,0,0,.25)' : '' }}">{{ $i + 1 }}</span>
                 </span>
             @else
                 <span style="width:28px;flex-shrink:0;text-align:center;font-family:'Geist',sans-serif;font-weight:800;font-size:12px;color:var(--tp-muted)">{{ $i + 1 }}</span>
