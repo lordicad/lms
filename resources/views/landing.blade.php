@@ -287,8 +287,6 @@
                         <a href="{{ route('register') }}" class="wl-btn wl-btn-solid wl-btn-lg">{{ __('Daftar Sekarang') }}</a>
                         <a href="#ciri" class="wl-btn wl-btn-outline wl-btn-lg">{{ __('Lihat Cara Ia Berfungsi') }}</a>
                     </div>
-
-                    <p class="wl-note">{{ __('Murid mendaftar sendiri · Cikgu memerlukan kod sekolah') }}</p>
                 </div>
 
                 {{-- Real core subjects from the database, styled as the design's chip grid. --}}
