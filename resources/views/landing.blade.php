@@ -424,7 +424,7 @@
             <div class="wl-wrap">
                 <div class="wl-cta">
                     <h2>{{ __('Sedia untuk mula belajar?') }}</h2>
-                    <p>{{ __('Murid mendaftar sendiri. Cikgu, dapatkan kod sekolah anda dan mula berkongsi hari ini.') }}</p>
+                    <p>{{ __('Sertai WeLearn hari ini untuk belajar dengan lebih fleksibel, mengajar dengan lebih kreatif dan berkembang bersama.') }}</p>
                     <div class="wl-flex wl-gap-14" style="margin-top:8px">
                         <a href="{{ route('register') }}" class="wl-btn wl-btn-solid wl-btn-lg">{{ __('Daftar Sekarang') }}</a>
                         <a href="{{ route('login') }}" class="wl-btn wl-btn-outline wl-btn-lg">{{ __('Log Masuk') }}</a>
