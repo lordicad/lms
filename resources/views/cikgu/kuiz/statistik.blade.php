@@ -78,13 +78,13 @@
                     <div style="overflow-x:auto">
                         <div style="min-width:800px">
                             @php($cols = '44px minmax(0,2fr) 1fr 1fr 1fr 1fr 1fr 1.4fr')
-                            <div style="display:grid;grid-template-columns:{{ $cols }};gap:12px;padding:14px 20px;border-bottom:1px solid var(--tp-line)">
+                            <div style="display:grid;grid-template-columns:{{ $cols }};gap:12px;padding:14px 20px;border-bottom:1px solid var(--tp-line);justify-items:center;text-align:center">
                                 @foreach (['#', __('Murid'), __('Tahun'), __('Markah'), __('Betul'), __('Masa'), __('Jenis'), __('Tarikh')] as $h)
                                     <span class="tp-g" style="font-size:12px;font-weight:800;color:var(--tp-muted)">{{ $h }}</span>
                                 @endforeach
                             </div>
                             @foreach ($attempts as $attempt)
-                                <div class="tp-row" style="display:grid;grid-template-columns:{{ $cols }};gap:12px;padding:13px 20px">
+                                <div class="tp-row" style="display:grid;grid-template-columns:{{ $cols }};gap:12px;padding:13px 20px;justify-items:center;align-items:center;text-align:center">
                                     {{-- Continuous number across pages: page 1 is 1-10, page 2 is 11-20. --}}
                                     <span class="tp-meta" style="font-variant-numeric:tabular-nums">{{ $attempts->firstItem() + $loop->index }}</span>
                                     <div style="display:flex;align-items:center;gap:10px;min-width:0">
