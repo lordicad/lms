@@ -3,7 +3,7 @@
     :heading="__('Bab')"
     :sub="__('Bab dikongsi oleh semua guru mengikut sukatan Kurikulum 2027.')">
 
-    <div style="display:flex;flex-direction:column;gap:18px;max-width:860px">
+    <div style="display:flex;flex-direction:column;gap:18px;max-width:1200px">
         {{-- The shared Tahun -> Subjek filter, same as the Video, Bahan and Kuiz pages: the Subjek
              list holds only the subjects that Tahun actually offers. A Tahun is always chosen here,
              so there is no "Semua tahun" — a Bab list needs a definite Subject and Year. --}}
