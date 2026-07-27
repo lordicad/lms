@@ -48,6 +48,8 @@
                     'name' => $material->original_name,
                     'type' => strtoupper($material->extension()),
                     'size' => $material->humanSize(),
+                    'date' => $material->created_at->format('d/m/Y'),
+                    'downloads' => $material->download_count,
                     'downloadUrl' => route('muat-turun.bahan', $material),
                 ])
                 <div class="tp-listcard">
@@ -107,6 +109,23 @@
              download. Shared admin shell so both surfaces stay in step. --}}
         <template x-if="item">
             <x-content-preview obj="item" :pill="__('Bahan')">
+                {{-- File facts: type, size, upload date, and how many times it has been downloaded. --}}
+                <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:13px 22px;border-bottom:1px solid var(--tp-line);background:#FAFAFB">
+                    <span style="background:#F1F0F5;color:#4A4B63;border-radius:999px;padding:5px 14px;font-family:'Geist',sans-serif;font-size:12px;font-weight:800" x-text="item.type"></span>
+                    <span style="width:1px;height:20px;background:var(--tp-line-2)"></span>
+                    <span style="display:inline-flex;align-items:center;gap:7px;font-size:13.5px;font-weight:700;color:var(--tp-muted-2)"><x-icon name="file" class="h-4 w-4" style="color:#C24936" /><span x-text="item.size"></span></span>
+                    <span style="width:1px;height:20px;background:var(--tp-line-2)"></span>
+                    <span style="display:inline-flex;align-items:center;gap:7px;font-size:13.5px;font-weight:700;color:var(--tp-muted-2)"><x-icon name="calendar" class="h-4 w-4" style="color:#C24936" /><span x-text="item.date"></span></span>
+                    <span style="width:1px;height:20px;background:var(--tp-line-2)"></span>
+                    <span style="display:inline-flex;align-items:center;gap:9px">
+                        <x-icon name="download" class="h-5 w-5" style="color:#C24936" />
+                        <span style="display:flex;flex-direction:column;line-height:1.15">
+                            <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:14px;color:var(--tp-ink)" x-text="item.downloads"></span>
+                            <span style="font-size:11px;font-weight:700;color:var(--tp-muted)">{{ __('jumlah muat turun') }}</span>
+                        </span>
+                    </span>
+                </div>
+
                 <template x-if="item.kind === 'pdf'">
                     <iframe style="width:100%;height:min(72vh,620px);border:0;display:block;background:#000" :src="item.src" :title="item.title"></iframe>
                 </template>
