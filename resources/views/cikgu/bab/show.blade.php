@@ -62,19 +62,13 @@
                             <span style="width:40px;height:40px;border-radius:12px;background:#FBE4ED;color:#B84A75;display:grid;place-items:center;flex-shrink:0"><x-icon :name="$material->iconName()" class="h-5 w-5" /></span>
                             <div style="display:flex;flex-direction:column;gap:4px;min-width:0;flex:1">
                                 <span class="tp-g" style="font-weight:800;font-size:15px;color:var(--tp-ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ $material->title }}</span>
-                                {{-- File facts: type, size, upload date, and how many times it has
-                                     been downloaded. --}}
+                                {{-- File facts: type, size, upload date, and download count — in the
+                                     soft rose of the material theme. --}}
                                 <div style="display:flex;flex-wrap:wrap;align-items:center;gap:14px">
-                                    <span style="background:#F1F0F5;color:#4A4B63;border-radius:999px;padding:4px 12px;font-family:'Geist',sans-serif;font-size:11.5px;font-weight:800">{{ strtoupper($material->extension()) }}</span>
-                                    <span class="tp-meta" style="display:inline-flex;align-items:center;gap:6px"><x-icon name="file" class="h-4 w-4" style="color:#C24936" />{{ $material->humanSize() }}</span>
-                                    <span class="tp-meta" style="display:inline-flex;align-items:center;gap:6px"><x-icon name="calendar" class="h-4 w-4" style="color:#C24936" />{{ $material->created_at->format('d/m/Y') }}</span>
-                                    <span style="display:inline-flex;align-items:center;gap:8px">
-                                        <x-icon name="download" class="h-5 w-5" style="color:#C24936" />
-                                        <span style="display:flex;flex-direction:column;line-height:1.15">
-                                            <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:14px;color:var(--tp-ink)">{{ $material->download_count }}</span>
-                                            <span style="font-size:11px;font-weight:700;color:var(--tp-muted)">{{ __('jumlah muat turun') }}</span>
-                                        </span>
-                                    </span>
+                                    <span style="background:#FBE4ED;color:#B84A75;border-radius:999px;padding:4px 12px;font-family:'Geist',sans-serif;font-size:11.5px;font-weight:800">{{ strtoupper($material->extension()) }}</span>
+                                    <span class="tp-meta" style="display:inline-flex;align-items:center;gap:6px"><x-icon name="file" class="h-4 w-4" style="color:#B84A75" />{{ $material->humanSize() }}</span>
+                                    <span class="tp-meta" style="display:inline-flex;align-items:center;gap:6px"><x-icon name="calendar" class="h-4 w-4" style="color:#B84A75" />{{ $material->created_at->format('d/m/Y') }}</span>
+                                    <span class="tp-meta" style="display:inline-flex;align-items:center;gap:6px"><x-icon name="download" class="h-4 w-4" style="color:#B84A75" />{{ $material->download_count }}</span>
                                 </div>
                             </div>
                             <a href="{{ $material->fileUrl() }}" target="_blank" rel="noopener" class="tp-btn-ghost" style="flex-shrink:0">👁 {{ __('Buka') }}</a>
