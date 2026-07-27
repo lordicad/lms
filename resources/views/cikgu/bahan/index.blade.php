@@ -51,26 +51,35 @@
                     'downloadUrl' => route('muat-turun.bahan', $material),
                 ])
                 <div class="tp-listcard">
+                    {{-- File-type icon in a tinted square; clicking it opens the preview. --}}
                     <button type="button" @click="open(@js($preview))" title="{{ __('Lihat bahan') }}"
-                            style="width:46px;height:46px;border-radius:11px;background:rgb({{ $subject->rgb }} / .14);color:rgb({{ $subject->rgb }});display:grid;place-items:center;flex-shrink:0;border:none;cursor:pointer"><x-icon :name="$material->iconName()" class="h-5 w-5" /></button>
+                            style="width:60px;height:60px;border-radius:14px;background:rgb({{ $subject->rgb }} / .14);color:rgb({{ $subject->rgb }});display:grid;place-items:center;flex-shrink:0;border:none;cursor:pointer"><x-icon :name="$material->iconName()" class="h-7 w-7" /></button>
 
-                    <div style="display:flex;flex-direction:column;gap:6px;min-width:0;flex:1">
-                        <button type="button" @click="open(@js($preview))" class="tp-g" style="text-align:left;background:none;border:none;padding:0;cursor:pointer;font-family:inherit;font-weight:800;font-size:15.5px;color:var(--tp-ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $material->title }}</button>
-                        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                    <div style="display:flex;flex-direction:column;gap:8px;min-width:0;flex:1">
+                        <button type="button" @click="open(@js($preview))" class="tp-g" style="text-align:left;background:none;border:none;padding:0;cursor:pointer;font-family:inherit;font-weight:800;font-size:17px;color:var(--tp-ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $material->title }}</button>
+
+                        <div>
                             <span class="tp-tag" style="background:rgb({{ $subject->rgb }} / .14);color:rgb({{ $subject->rgb }})">{{ $subject->name }}</span>
-                            <span class="tp-meta">{{ $material->chapter->grade->name }}</span>
-                            <span class="tp-meta">Bab {{ $material->chapter->number }}</span>
+                        </div>
+
+                        {{-- Detail row, each item led by an icon. --}}
+                        <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+                            <span class="tp-meta" style="display:inline-flex;align-items:center;gap:6px"><x-icon name="graduation" class="h-4 w-4" style="color:#0F7A68" />{{ $material->chapter->grade->name }}</span>
+                            <span class="tp-meta" style="display:inline-flex;align-items:center;gap:6px"><x-icon name="book" class="h-4 w-4" style="color:#0F7A68" />Bab {{ $material->chapter->number }}</span>
                             @if ($material->lesson)
-                                <span class="tp-meta" style="display:inline-flex;align-items:center;gap:4px;max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><x-icon name="file" class="h-3.5 w-3.5" style="flex-shrink:0" />{{ $material->lesson->title }}</span>
+                                <span class="tp-meta" style="display:inline-flex;align-items:center;gap:6px;max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><x-icon name="file" class="h-4 w-4" style="color:#0F7A68;flex-shrink:0" />{{ $material->lesson->title }}</span>
                             @endif
-                            <span class="tp-tag-neutral">{{ strtoupper($material->extension()) }}</span>
+                            <span style="background:#EAEBFB;color:#4F46E5;border-radius:999px;padding:4px 12px;font-family:'Geist',sans-serif;font-size:11.5px;font-weight:800">{{ strtoupper($material->extension()) }}</span>
                             <span class="tp-meta">{{ $material->humanSize() }}</span>
-                            <span class="tp-meta" style="display:inline-flex;align-items:center;gap:4px"><x-icon name="download" class="h-3.5 w-3.5" />{{ $material->download_count }}</span>
+                            <span class="tp-meta" style="display:inline-flex;align-items:center;gap:6px"><x-icon name="download" class="h-4 w-4" style="color:var(--tp-muted-2)" />{{ $material->download_count }}</span>
                         </div>
                     </div>
 
-                    <a href="{{ route('muat-turun.bahan', $material) }}" class="tp-icon-action" style="flex-shrink:0" title="{{ __('Muat turun') }}">
-                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                    {{-- A divider sets the row's actions apart from its detail. --}}
+                    <span style="width:1px;height:46px;background:var(--tp-line);flex-shrink:0"></span>
+
+                    <a href="{{ route('muat-turun.bahan', $material) }}" class="tp-icon-action" style="flex-shrink:0;background:#DCF2EE;color:#0F7A68" title="{{ __('Muat turun') }}">
+                        <x-icon name="download" class="h-[18px] w-[18px]" />
                         <span class="sr-only">{{ __('Muat turun :title', ['title' => $material->title]) }}</span>
                     </a>
 
@@ -82,8 +91,8 @@
                           onsubmit="return confirm(@js(__("Padam bahan \":title\"? Fail juga akan dipadam.", ["title" => $material->title])))">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" class="tp-icon-action tp-icon-danger" title="{{ __('Padam') }}">
-                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                        <button type="submit" class="tp-icon-action tp-icon-danger" title="{{ __('Padam') }}" style="background:#FDE7E0">
+                            <x-icon name="trash" class="h-[18px] w-[18px]" />
                             <span class="sr-only">{{ __('Padam :title', ['title' => $material->title]) }}</span>
                         </button>
                     </form>
