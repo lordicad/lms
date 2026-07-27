@@ -117,7 +117,7 @@
             <button type="button" @click="addQuestion()"
                     class="tp-g" style="min-height:52px;cursor:pointer;border-radius:14px;border:1.5px dashed rgba(46,44,80,.2);background:#F1F0E8;color:var(--tp-ink);font-weight:800;font-size:14.5px">+ {{ __('Tambah Soalan') }}</button>
 
-            <div style="position:sticky;bottom:16px">
+            <div>
                 <div class="tp-card" style="border-radius:16px;padding:16px 20px;display:flex;align-items:center;gap:14px">
                     <span style="font-size:13.5px;font-weight:700;color:var(--tp-muted-2);flex:1"><span x-text="questions.length"></span> {{ __('soalan.') }} <span x-text="totalPoints()"></span> {{ __('mata keseluruhan.') }}</span>
                     <a href="{{ route('cikgu.kuiz.index') }}" class="tp-btn-ghost">{{ __('Batal') }}</a>
