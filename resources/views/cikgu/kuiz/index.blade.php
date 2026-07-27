@@ -33,10 +33,13 @@
         <div class="tp-list">
             @foreach ($quizzes as $quiz)
                 @php($subject = $quiz->chapter->subject)
-                <div class="tp-listcard" style="padding:18px 20px">
+                <div class="tp-listcard" style="padding:18px 20px;border-left:4px solid rgb({{ $subject->rgb }})">
+                    {{-- Subject icon square, colour-matched to the subject. --}}
+                    <span style="width:60px;height:60px;border-radius:14px;background:rgb({{ $subject->rgb }} / .14);color:rgb({{ $subject->rgb }});display:grid;place-items:center;flex-shrink:0"><x-icon :name="$subject->iconName()" class="h-7 w-7" /></span>
+
                     <div style="display:flex;flex-direction:column;gap:8px;min-width:0;flex:1">
                         <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-                            <span class="tp-g" style="font-weight:800;font-size:16px;color:var(--tp-ink)">{{ $quiz->title }}</span>
+                            <span class="tp-g" style="font-weight:800;font-size:17px;color:var(--tp-ink)">{{ $quiz->title }}</span>
                             @if ($quiz->isInteractive())
                                 <span class="tp-tag" style="background:#DCF2EE;color:#0F7A68">{{ __('Interaktif') }}</span>
                             @else
@@ -46,15 +49,16 @@
                                 <span class="tp-tag" style="background:#FEF0CE;color:#8A6A12">{{ __('Draf') }}</span>
                             @endunless
                         </div>
-                        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                        {{-- Detail row, each item led by an icon. --}}
+                        <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
                             <span class="tp-tag" style="background:rgb({{ $subject->rgb }} / .14);color:rgb({{ $subject->rgb }})">{{ $subject->name }}</span>
-                            <span class="tp-meta">{{ $quiz->chapter->grade->name }}</span>
-                            <span class="tp-meta">Bab {{ $quiz->chapter->number }}</span>
+                            <span class="tp-meta" style="display:inline-flex;align-items:center;gap:6px"><x-icon name="graduation" class="h-4 w-4" style="color:#0F7A68" />{{ $quiz->chapter->grade->name }}</span>
+                            <span class="tp-meta" style="display:inline-flex;align-items:center;gap:6px"><x-icon name="book" class="h-4 w-4" style="color:#0F7A68" />Bab {{ $quiz->chapter->number }}</span>
                             @if ($quiz->isInteractive())
-                                <span class="tp-meta">{{ __(':count soalan', ['count' => $quiz->questions_count]) }}</span>
-                                <span class="tp-meta">{{ __(':count percubaan', ['count' => $quiz->completed_attempts_count]) }}</span>
+                                <span class="tp-meta" style="display:inline-flex;align-items:center;gap:6px"><x-icon name="help-circle" class="h-4 w-4" style="color:#0F7A68" />{{ __(':count soalan', ['count' => $quiz->questions_count]) }}</span>
+                                <span class="tp-meta" style="display:inline-flex;align-items:center;gap:6px"><x-icon name="users" class="h-4 w-4" style="color:var(--tp-muted-2)" />{{ __(':count percubaan', ['count' => $quiz->completed_attempts_count]) }}</span>
                                 @if ($quiz->duration_minutes)
-                                    <span class="tp-meta" style="display:inline-flex;align-items:center;gap:4px"><x-icon name="clock" class="h-4 w-4" />{{ __(':count min', ['count' => $quiz->duration_minutes]) }}</span>
+                                    <span class="tp-meta" style="display:inline-flex;align-items:center;gap:6px"><x-icon name="clock" class="h-4 w-4" style="color:var(--tp-muted-2)" />{{ __(':count min', ['count' => $quiz->duration_minutes]) }}</span>
                                 @endif
                             @endif
                         </div>
@@ -64,7 +68,7 @@
                     </div>
 
                     @if ($quiz->isInteractive())
-                        <button type="button" class="tp-btn tp-btn-sm" style="flex-shrink:0" @click="open(@js([
+                        <button type="button" style="flex-shrink:0;display:inline-flex;align-items:center;gap:7px;min-height:42px;border-radius:11px;border:1.5px solid #0F7A68;background:var(--tp-surface);color:#0F7A68;font-family:'Geist',sans-serif;font-weight:800;font-size:13px;padding:0 16px;cursor:pointer" @click="open(@js([
                             'title' => $quiz->title,
                             'subtitle' => collect([$quiz->chapter->subject->displayName(), $quiz->chapter->grade->name, __(':count soalan', ['count' => $quiz->questions_count])])->filter()->implode(' · '),
                             'questions' => $quiz->questions->map(fn ($question) => [
@@ -77,24 +81,27 @@
                                 ])->all(),
                             ])->all(),
                         ]))"><x-icon name="eye" class="h-4 w-4" />{{ __('Lihat Soalan') }}</button>
-                        <a href="{{ route('cikgu.kuiz.statistik', $quiz) }}" class="tp-btn-ghost" style="flex-shrink:0"><x-icon name="chart" class="h-4 w-4" />{{ __('Statistik') }}</a>
+                        <a href="{{ route('cikgu.kuiz.statistik', $quiz) }}" class="tp-icon-action" style="flex-shrink:0;border:1.5px solid var(--tp-line-2)" title="{{ __('Statistik') }}">
+                            <x-icon name="chart" class="h-[18px] w-[18px]" />
+                            <span class="sr-only">{{ __('Statistik') }}</span>
+                        </a>
                     @else
-                        <a href="{{ route('muat-turun.kuiz', $quiz) }}" class="tp-btn-ghost" style="flex-shrink:0">
-                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                            {{ __('Fail') }}
+                        <a href="{{ route('muat-turun.kuiz', $quiz) }}" class="tp-btn-ghost" style="flex-shrink:0;display:inline-flex;align-items:center;gap:6px">
+                            <x-icon name="download" class="h-4 w-4" />{{ __('Fail') }}
                         </a>
                     @endif
 
-                    <a href="{{ route('cikgu.kuiz.edit', $quiz) }}" class="tp-btn-ghost" style="flex-shrink:0;display:inline-flex;align-items:center;gap:6px">
-                        <x-icon name="pencil" class="h-4 w-4" />{{ __('Sunting') }}
+                    <a href="{{ route('cikgu.kuiz.edit', $quiz) }}" class="tp-icon-action" style="flex-shrink:0;border:1.5px solid var(--tp-line-2)" title="{{ __('Sunting') }}">
+                        <x-icon name="pencil" class="h-[18px] w-[18px]" />
+                        <span class="sr-only">{{ __('Sunting :title', ['title' => $quiz->title]) }}</span>
                     </a>
 
                     <form method="POST" action="{{ route('cikgu.kuiz.destroy', $quiz) }}" style="flex-shrink:0"
                           onsubmit="return confirm(@js(__("Padam kuiz \":title\"? Semua soalan dan percubaan murid akan dipadam sekali. Tindakan ini tidak boleh dibatalkan.", ["title" => $quiz->title])))">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" class="tp-icon-action tp-icon-danger" title="{{ __('Padam') }}">
-                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                        <button type="submit" class="tp-icon-action tp-icon-danger" title="{{ __('Padam') }}" style="border:1.5px solid #EBC9C1">
+                            <x-icon name="trash" class="h-[18px] w-[18px]" />
                             <span class="sr-only">{{ __('Padam :title', ['title' => $quiz->title]) }}</span>
                         </button>
                     </form>
