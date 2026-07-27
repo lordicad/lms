@@ -348,9 +348,12 @@ function enhanceSelect(sel) {
 
     const wrap = document.createElement('div');
     wrap.className = 'ss-wrap';
-    // Keep the control's column width — the selects set it via an inline min-width.
+    // Keep the control's column width — the filter selects set it via an inline min-width.
     const mw = (sel.getAttribute('style') || '').match(/min-width:\s*([^;]+)/);
     if (mw) wrap.style.minWidth = mw[1].trim();
+    // Form selects (tp-select) fill their field rather than sizing to their content,
+    // the way the inline filter selects do.
+    if (sel.classList.contains('tp-select')) wrap.classList.add('ss-block');
 
     const trigger = document.createElement('button');
     trigger.type = 'button';
@@ -460,6 +463,21 @@ function enhanceSelect(sel) {
     document.addEventListener('click', (e) => { if (open && ! wrap.contains(e.target)) close(); });
 
     sel.addEventListener('change', syncValue);
+
+    // Alpine's x-model sets <select>.value programmatically and does not emit an event,
+    // so hook the value setter to mirror those assignments into the trigger. This covers
+    // dependent resets in the content forms — e.g. picking a Tahun that no longer offers
+    // the chosen Subjek clears the Subjek, and its trigger must follow. User picks still
+    // go through the 'change' listener above.
+    const valueDesc = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'value');
+    if (valueDesc && valueDesc.configurable) {
+        Object.defineProperty(sel, 'value', {
+            configurable: true,
+            get() { return valueDesc.get.call(this); },
+            set(v) { valueDesc.set.call(this, v); syncValue(); },
+        });
+    }
+
     const reflectDisabled = () => { trigger.disabled = sel.disabled; wrap.classList.toggle('is-disabled', sel.disabled); };
     new MutationObserver(reflectDisabled).observe(sel, { attributes: true, attributeFilter: ['disabled'] });
 

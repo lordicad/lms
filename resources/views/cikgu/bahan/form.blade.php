@@ -31,7 +31,7 @@
                  })"
                  @chapter-changed.window="onChapter($event.detail.chapter)">
                 <label for="lesson_id" class="tp-label">{{ __('Lampirkan pada video (pilihan)') }}</label>
-                <select id="lesson_id" name="lesson_id" class="tp-select" x-model.number="selected" :disabled="loading">
+                <select id="lesson_id" name="lesson_id" class="tp-select js-styled-select" x-model.number="selected" :disabled="loading">
                     <option value="" x-text="loading ? labels.loading : labels.none"></option>
                     <template x-for="v in videos" :key="v.id">
                         <option :value="v.id" x-text="v.title"></option>
