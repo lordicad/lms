@@ -498,8 +498,28 @@ function enhanceStyledSelects(root = document) {
     });
 }
 
+// Enhance a subtree, and the node itself when it is a styled select (querySelectorAll skips self).
+function enhanceStyledSelectsIn(node) {
+    if (node.nodeType !== 1) return;
+    if (node.matches?.(STYLED_SELECT_SELECTOR)) {
+        try { enhanceSelect(node); } catch { node.classList.remove('ss-native'); node.removeAttribute('aria-hidden'); }
+    }
+    enhanceStyledSelects(node);
+}
+
+// Selects added after load — e.g. a new question row in the quiz builder — are enhanced as they
+// appear. Already-enhanced selects are skipped by the dataset guard in enhanceSelect, so the
+// wrap this inserts never re-triggers a loop.
+function watchForStyledSelects() {
+    new MutationObserver((records) => {
+        for (const record of records) {
+            for (const node of record.addedNodes) enhanceStyledSelectsIn(node);
+        }
+    }).observe(document.body, { childList: true, subtree: true });
+}
+
 Alpine.start();
 
-document.addEventListener('alpine:initialized', () => enhanceStyledSelects());
+document.addEventListener('alpine:initialized', () => { enhanceStyledSelects(); watchForStyledSelects(); });
 if (document.readyState !== 'loading') enhanceStyledSelects();
 else document.addEventListener('DOMContentLoaded', () => enhanceStyledSelects());

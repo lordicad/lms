@@ -65,7 +65,7 @@
                     <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
                         <div class="tp-field">
                             <label class="tp-label" :for="`q-${question.uid}-type`">{{ __('Jenis jawapan') }}</label>
-                            <select :id="`q-${question.uid}-type`" :name="`questions[${qIndex}][question_type]`" x-model="question.question_type" @change="onTypeChange(question)" class="tp-select">
+                            <select :id="`q-${question.uid}-type`" :name="`questions[${qIndex}][question_type]`" x-model="question.question_type" @change="onTypeChange(question)" class="tp-select js-styled-select">
                                 <option value="single">{{ __('Radio (satu jawapan)') }}</option>
                                 <option value="multiple">{{ __('Kotak semak (banyak jawapan)') }}</option>
                             </select>
