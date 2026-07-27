@@ -58,9 +58,11 @@
         {{-- Details --}}
         <div class="tp-panelform">
             <h2 class="tp-g" style="font-size:17px;font-weight:800;color:var(--tp-ink)">{{ __('Butiran kuiz') }}</h2>
-            <div class="tp-field">
+            {{-- A single shared title for an interactive quiz (and when editing any quiz). Printed
+                 quizzes created in a batch are titled per file in the drop zone below instead. --}}
+            <div class="tp-field" x-show="type === 'interactive' || {{ $editing ? 'true' : 'false' }}" @unless ($editing) x-cloak @endunless>
                 <label for="title" class="tp-label">{{ __('Tajuk') }}</label>
-                <input id="title" name="title" type="text" value="{{ old('title', $quiz->title) }}" required class="tp-input" @error('title') aria-invalid="true" @enderror>
+                <input id="title" name="title" type="text" value="{{ old('title', $quiz->title) }}" class="tp-input" @error('title') aria-invalid="true" @enderror>
                 @error('title') <span class="tp-error">{{ $message }}</span> @enderror
             </div>
             <div class="tp-field">
@@ -79,15 +81,37 @@
             </div>
 
             {{-- File only --}}
-            <div x-show="type === 'file'" x-cloak class="tp-field">
-                <label for="file" class="tp-label">{{ __('Fail kuiz') }}</label>
-                <input id="file" name="file" type="file" accept=".pdf,.doc,.docx" class="tp-file" aria-describedby="quiz-file-help" @error('file') aria-invalid="true" @enderror>
-                <p id="quiz-file-help" class="tp-hint">
-                    {{ __('PDF, DOC atau DOCX. Had saiz :size MB.', ['size' => config('lms.quiz_file_max_mb')]) }}
-                    @if ($editing && $quiz->file_path) {{ __('Biarkan kosong untuk mengekalkan fail sedia ada (:name).', ['name' => $quiz->original_name]) }} @endif
-                </p>
-                @error('file') <span class="tp-error">{{ $message }}</span> @enderror
-            </div>
+            @if ($editing)
+                {{-- Editing replaces the one file this quiz points at, so it stays single. --}}
+                <div x-show="type === 'file'" x-cloak class="tp-field">
+                    <label for="file" class="tp-label">{{ __('Fail kuiz') }}</label>
+                    <input id="file" name="file" type="file" accept=".pdf,.doc,.docx" class="tp-file" aria-describedby="quiz-file-help" @error('file') aria-invalid="true" @enderror>
+                    <p id="quiz-file-help" class="tp-hint">
+                        {{ __('PDF, DOC atau DOCX. Had saiz :size MB.', ['size' => config('lms.quiz_file_max_mb')]) }}
+                        @if ($quiz->file_path) {{ __('Biarkan kosong untuk mengekalkan fail sedia ada (:name).', ['name' => $quiz->original_name]) }} @endif
+                    </p>
+                    @error('file') <span class="tp-error">{{ $message }}</span> @enderror
+                </div>
+            @else
+                {{-- Creating takes many files at once, each becoming its own printed quiz, titled
+                     per row — the same drop zone the material and video uploads use. --}}
+                <div x-show="type === 'file'" x-cloak>
+                    <x-file-dropzone
+                        name="files[]"
+                        title-name="titles[]"
+                        :extensions="config('lms.quiz_file_mimes')"
+                        :accept="collect(config('lms.quiz_file_mimes'))->map(fn ($e) => '.'.$e)->implode(',')"
+                        :max-mb="config('lms.quiz_file_max_mb')"
+                        :max-files="\App\Http\Requests\QuizRequest::MAX_FILES"
+                        :hint="__('PDF, DOC atau DOCX. Had saiz :size MB setiap fail.', ['size' => config('lms.quiz_file_max_mb')])"
+                        :title-label="__('Tajuk kuiz (untuk pelajar)')" />
+
+                    @error('files') <span class="tp-error">{{ $message }}</span> @enderror
+                    @foreach ($errors->get('files.*') as $messages)
+                        <span class="tp-error">{{ $messages[0] }}</span>
+                    @endforeach
+                </div>
+            @endif
         </div>
 
         {{-- Publish --}}

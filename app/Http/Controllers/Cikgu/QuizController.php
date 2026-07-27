@@ -71,38 +71,63 @@ class QuizController extends Controller
     {
         $this->authorize('create', Quiz::class);
 
-        $type = $request->input('type');
+        // A printed quiz can be a batch: each file becomes its own quiz, the same way materials
+        // and videos upload many at once.
+        if ($request->input('type') === Quiz::TYPE_FILE) {
+            return $this->storeFileBatch($request);
+        }
 
-        $data = [
+        $quiz = Quiz::create([
             'chapter_id' => $request->integer('chapter_id'),
             'teacher_id' => $request->user()->id,
             'title' => $request->input('title'),
             'description' => $request->input('description'),
-            'type' => $type,
+            'type' => Quiz::TYPE_INTERACTIVE,
             'is_published' => $request->boolean('is_published'),
-            'duration_minutes' => $type === Quiz::TYPE_INTERACTIVE
-                ? ($request->input('duration_minutes') ?: null)
-                : null,
-        ];
-
-        if ($type === Quiz::TYPE_FILE) {
-            $file = $request->file('file');
-            $data['file_path'] = Uploads::store($file, 'quizzes');
-            $data['original_name'] = $file->getClientOriginalName();
-        }
-
-        $quiz = Quiz::create($data);
+            'duration_minutes' => $request->input('duration_minutes') ?: null,
+        ]);
 
         // An interactive quiz is not usable until it has questions, so go straight there.
-        if ($quiz->isInteractive()) {
-            return redirect()
-                ->route('cikgu.kuiz.soalan', $quiz)
-                ->with('status', __('Kuiz dicipta. Sekarang tambah soalan.'));
+        return redirect()
+            ->route('cikgu.kuiz.soalan', $quiz)
+            ->with('status', __('Kuiz dicipta. Sekarang tambah soalan.'));
+    }
+
+    /**
+     * One printed quiz per uploaded file. Titles pair to files by position; a blank one falls back
+     * to the file's own name, and the shared description/publish flag apply to the whole batch.
+     */
+    private function storeFileBatch(QuizRequest $request): RedirectResponse
+    {
+        $titles = $request->input('titles', []);
+        $files = $request->file('files', []);
+        $chapterId = $request->integer('chapter_id');
+        $description = $request->input('description');
+        $isPublished = $request->boolean('is_published');
+
+        $created = [];
+
+        foreach ($files as $index => $file) {
+            $given = trim((string) ($titles[$index] ?? ''));
+
+            $created[] = Quiz::create([
+                'chapter_id' => $chapterId,
+                'teacher_id' => $request->user()->id,
+                'title' => $given !== '' ? $given : pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME),
+                'description' => $description,
+                'type' => Quiz::TYPE_FILE,
+                'is_published' => $isPublished,
+                'duration_minutes' => null,
+                'file_path' => Uploads::store($file, 'quizzes'),
+                'original_name' => $file->getClientOriginalName(),
+            ]);
         }
 
-        return redirect()
-            ->route('cikgu.kuiz.index')
-            ->with('status', __('Kuiz ":title" berjaya dimuat naik.', ['title' => $quiz->title]));
+        $status = count($created) === 1
+            ? __('Kuiz ":title" berjaya dimuat naik.', ['title' => $created[0]->title])
+            : __(':count kuiz berjaya dimuat naik.', ['count' => count($created)]);
+
+        return redirect()->route('cikgu.kuiz.index')->with('status', $status);
     }
 
     public function edit(Quiz $quiz): View
