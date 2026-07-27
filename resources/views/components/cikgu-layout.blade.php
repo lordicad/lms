@@ -182,6 +182,8 @@
         .tp-icon-action:hover { background:var(--tp-chip); }
         .tp-icon-danger { color:#C24936; }
         .tp-icon-danger:hover { background:#FDE7E0; }
+        .tp-icon-action:disabled { opacity:.4; cursor:not-allowed; }
+        .tp-icon-action:disabled:hover { background:transparent; }
 
         /* Forms */
         .tp-field { display:flex; flex-direction:column; gap:6px; }

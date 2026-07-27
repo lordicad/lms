@@ -49,10 +49,10 @@
                 <div class="tp-panelform" style="padding:24px">
                     <div style="display:flex;align-items:center;gap:8px">
                         <h3 class="tp-g" style="font-size:16px;font-weight:800;color:var(--tp-ink);flex:1">{{ __('Soalan') }} <span x-text="qIndex + 1"></span></h3>
-                        <button type="button" class="tp-icon-action" style="width:36px;height:36px" @click="moveUp(qIndex)" :disabled="qIndex === 0" title="{{ __('Naik') }}">↑</button>
-                        <button type="button" class="tp-icon-action" style="width:36px;height:36px" @click="moveDown(qIndex)" :disabled="qIndex === questions.length - 1" title="{{ __('Turun') }}">↓</button>
-                        <button type="button" class="tp-icon-action tp-icon-danger" style="width:36px;height:36px" @click="removeQuestion(qIndex)" :disabled="questions.length === 1" title="{{ __('Padam') }}">
-                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                        <button type="button" class="tp-icon-action" style="width:36px;height:36px;border:1.5px solid var(--tp-line-2)" @click="moveUp(qIndex)" :disabled="qIndex === 0" title="{{ __('Naik') }}"><x-icon name="arrow-up" class="h-4 w-4" /></button>
+                        <button type="button" class="tp-icon-action" style="width:36px;height:36px;border:1.5px solid var(--tp-line-2)" @click="moveDown(qIndex)" :disabled="qIndex === questions.length - 1" title="{{ __('Turun') }}"><x-icon name="arrow-down" class="h-4 w-4" /></button>
+                        <button type="button" class="tp-icon-action tp-icon-danger" style="width:36px;height:36px;border:1.5px solid var(--tp-line-2)" @click="removeQuestion(qIndex)" :disabled="questions.length === 1" title="{{ __('Padam') }}">
+                            <x-icon name="trash" class="h-4 w-4" />
                         </button>
                     </div>
 
