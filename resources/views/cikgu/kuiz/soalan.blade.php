@@ -41,7 +41,7 @@
                       'checkboxError' => __('Soalan checkbox mesti ada sekurang-kurangnya satu jawapan betul.'),
                   ],
               ]) }})"
-              @submit="submitting = true">
+              @submit="onSubmit($event)">
             @csrf
             @method('PUT')
 
@@ -120,14 +120,24 @@
             <div>
                 <div class="tp-card" style="border-radius:16px;padding:16px 20px;display:flex;align-items:center;gap:14px">
                     <span style="font-size:13.5px;font-weight:700;color:var(--tp-muted-2);flex:1"><span x-text="questions.length"></span> {{ __('soalan.') }} <span x-text="totalPoints()"></span> {{ __('mata keseluruhan.') }}</span>
-                    <a href="{{ route('cikgu.kuiz.index') }}" class="tp-btn-ghost">{{ __('Batal') }}</a>
-                    <button type="submit" class="tp-btn tp-btn-sm" :disabled="! isValid() || submitting">
+                    {{-- Cancel posts to the discard endpoint (a separate form, so it is not nested in
+                         the questions form): an empty quiz is thrown away, one with questions is kept. --}}
+                    <button type="submit" form="kuiz-batal" class="tp-btn-ghost">{{ __('Batal') }}</button>
+                    <button type="submit" class="tp-btn tp-btn-sm" :disabled="submitting">
                         <span x-show="! submitting">{{ __('Simpan Soalan') }}</span>
                         <span x-show="submitting" x-cloak>{{ __('Menyimpan...') }}</span>
                     </button>
                 </div>
-                <p style="margin:8px 0 0;text-align:center;font-size:13px;color:#C24936" x-show="! isValid()" x-cloak>{{ __('Semak semula soalan anda. Setiap soalan radio perlu tepat satu jawapan betul, dan setiap soalan checkbox perlu sekurang-kurangnya satu.') }}</p>
+                {{-- Shown once they try to save an incomplete quiz, rather than a permanently greyed
+                     button that never says why. --}}
+                <p style="margin:8px 0 0;text-align:center;font-size:13px;font-weight:700;color:#C24936" x-show="showError && ! isValid()" x-cloak>{{ __('Sila tambah sekurang-kurangnya satu soalan yang lengkap sebelum menyimpan. Setiap soalan radio perlu tepat satu jawapan betul, dan setiap soalan checkbox perlu sekurang-kurangnya satu.') }}</p>
             </div>
+        </form>
+
+        {{-- Kept outside the questions form (forms cannot nest); the Batal button targets it by id. --}}
+        <form id="kuiz-batal" method="POST" action="{{ route('cikgu.kuiz.soalan.batal', $quiz) }}" class="sr-only">
+            @csrf
+            @method('DELETE')
         </form>
     </div>
 
@@ -152,8 +162,17 @@
                     )),
                 }));
                 return {
-                    defaults, labels, submitting: false,
+                    defaults, labels, submitting: false, showError: false,
                     questions: questions.length ? hydrate(questions) : [blankQuestion()],
+                    onSubmit(event) {
+                        // Block the save and surface the reason instead of silently doing nothing.
+                        if (! this.isValid()) {
+                            event.preventDefault();
+                            this.showError = true;
+                            return;
+                        }
+                        this.submitting = true;
+                    },
                     addQuestion() {
                         this.questions.push(blankQuestion());
                         this.$nextTick(() => { window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }); });

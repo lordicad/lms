@@ -46,6 +46,29 @@ class QuizBuilderController extends Controller
         ]);
     }
 
+    /**
+     * Leaving the builder. An interactive quiz with no questions is unusable — a teacher who
+     * created one and then backed out without adding any never really meant to keep it — so it is
+     * discarded rather than left cluttering the list. A quiz that already holds questions (an edit
+     * that was cancelled) is untouched.
+     */
+    public function cancel(Quiz $quiz): RedirectResponse
+    {
+        $this->authorize('update', $quiz);
+
+        abort_unless($quiz->isInteractive(), Response::HTTP_NOT_FOUND);
+
+        if ($quiz->questions()->doesntExist()) {
+            $quiz->delete();
+
+            return redirect()
+                ->route('cikgu.kuiz.index')
+                ->with('status', __('Kuiz dibuang kerana tiada soalan ditambah.'));
+        }
+
+        return redirect()->route('cikgu.kuiz.index');
+    }
+
     public function update(Request $request, Quiz $quiz): RedirectResponse
     {
         $this->authorize('update', $quiz);

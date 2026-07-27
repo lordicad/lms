@@ -145,6 +145,8 @@ Route::middleware(['auth', 'role:teacher'])
 
         Route::get('kuiz/{quiz}/soalan', [QuizBuilderController::class, 'edit'])->name('kuiz.soalan');
         Route::put('kuiz/{quiz}/soalan', [QuizBuilderController::class, 'update'])->name('kuiz.soalan.simpan');
+        // Leaving the builder: a quiz with no questions yet is a discarded draft, so it is removed.
+        Route::delete('kuiz/{quiz}/soalan', [QuizBuilderController::class, 'cancel'])->name('kuiz.soalan.batal');
         Route::get('kuiz/{quiz}/statistik', QuizStatsController::class)->name('kuiz.statistik');
 
         // Chapters: read-only index + a per-chapter show (the teacher's own content in that Bab).
