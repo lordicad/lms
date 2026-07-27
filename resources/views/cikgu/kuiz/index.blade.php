@@ -100,7 +100,7 @@
                           onsubmit="return confirm(@js(__("Padam kuiz \":title\"? Semua soalan dan percubaan murid akan dipadam sekali. Tindakan ini tidak boleh dibatalkan.", ["title" => $quiz->title])))">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" class="tp-icon-action tp-icon-danger" title="{{ __('Padam') }}" style="border:1.5px solid #EBC9C1">
+                        <button type="submit" class="tp-icon-action tp-icon-danger" title="{{ __('Padam') }}" style="background:#FDECEC;border:none;border-radius:14px">
                             <x-icon name="trash" class="h-[18px] w-[18px]" />
                             <span class="sr-only">{{ __('Padam :title', ['title' => $quiz->title]) }}</span>
                         </button>

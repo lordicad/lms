@@ -105,7 +105,7 @@
                           onsubmit="return confirm(@js(__("Padam video \":title\"? Fail video juga akan dipadam. Tindakan ini tidak boleh dibatalkan.", ["title" => $lesson->title])))">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" class="tp-icon-action tp-icon-danger" title="{{ __('Padam') }}" style="border:1.5px solid var(--tp-line-2)">
+                        <button type="submit" class="tp-icon-action tp-icon-danger" title="{{ __('Padam') }}" style="background:#FDECEC;border:none;border-radius:14px">
                             <x-icon name="trash" class="h-[18px] w-[18px]" />
                             <span class="sr-only">{{ __('Padam :title', ['title' => $lesson->title]) }}</span>
                         </button>
