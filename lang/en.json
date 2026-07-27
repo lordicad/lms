@@ -1168,6 +1168,8 @@
     ":count video berjaya disimpan.": ":count videos saved.",
     ":count bahan berjaya dimuat naik.": ":count materials uploaded.",
     ":count kuiz berjaya dimuat naik.": ":count quizzes uploaded.",
+    ":count bab tersedia": ":count chapters available",
+    "Progres": "Progress",
     "Kuiz dibuang kerana tiada soalan ditambah.": "The quiz was discarded because no questions were added.",
     "Tajuk kuiz (untuk pelajar)": "Quiz title (for students)",
     "PDF, DOC atau DOCX. Had saiz :size MB setiap fail.": "PDF, DOC or DOCX. Size limit :size MB per file.",
