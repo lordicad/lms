@@ -10,15 +10,24 @@
         {{-- Summary --}}
         <div class="tp-stats">
             <div class="tp-stat">
-                <span class="tp-stat-label">{{ __('Percubaan selesai') }}</span>
+                <div style="display:flex;align-items:center;gap:10px">
+                    <span class="tp-stat-ico" style="background:#E4EEF9"><x-icon name="users" class="h-5 w-5" style="color:#2E6CA8" /></span>
+                    <span class="tp-stat-label">{{ __('Percubaan selesai') }}</span>
+                </div>
                 <span class="tp-stat-value">{{ $completedCount }}</span>
             </div>
             <div class="tp-stat">
-                <span class="tp-stat-label">{{ __('Purata markah') }}</span>
+                <div style="display:flex;align-items:center;gap:10px">
+                    <span class="tp-stat-ico" style="background:#FEF0CE"><x-icon name="trophy" class="h-5 w-5" style="color:#8A6A12" /></span>
+                    <span class="tp-stat-label">{{ __('Purata markah') }}</span>
+                </div>
                 <span class="tp-stat-value">{{ $averageScore }}<span style="font-size:18px;color:var(--tp-muted)">/{{ $quiz->maxScore() }}</span></span>
             </div>
             <div class="tp-stat">
-                <span class="tp-stat-label">{{ __('Purata ketepatan') }}</span>
+                <div style="display:flex;align-items:center;gap:10px">
+                    <span class="tp-stat-ico" style="background:#DCF2EE"><x-icon name="check-circle" class="h-5 w-5" style="color:#0F7A68" /></span>
+                    <span class="tp-stat-label">{{ __('Purata ketepatan') }}</span>
+                </div>
                 <span class="tp-stat-value">{{ $averagePercent }}%</span>
             </div>
         </div>
