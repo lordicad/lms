@@ -1,51 +1,22 @@
 @props(['subject', 'class' => 'text-2xl'])
 
 {{--
-    Emoji glyph per subject, matching the WeLearn prototype (which labels each subject with an
-    emoji rather than a vector icon). Mapped by slug, with a per-category fallback so a new or
-    unmapped subject still gets a sensible glyph. Decorative — every subject also carries its name.
+    A vector icon per subject (from the shared icon set, mapped by slug in Subject::iconName()).
+    Callers still size it with the old text-* class they used for the emoji; that maps to an icon
+    dimension here. Decorative — every subject also carries its name — and it strokes in
+    currentColor, so inside a coloured chip it matches the chip's text.
 --}}
 
 @php
-    $map = [
-        'bahasa-melayu' => '📖',
-        'bahasa-inggeris' => '🔤',
-        'bahasa-cina-sjk' => '🀄',
-        'bahasa-tamil-sjk' => '🌸',
-        'matematik' => '🔢',
-        'pendidikan-islam' => '🕌',
-        'pendidikan-moral' => '🤝',
-        'alam-dan-manusia-pembelajaran-bersepadu' => '🌍',
-        'eksplorasi-seni-dan-dunia-pembelajaran-bersepadu' => '🎨',
-        'eksplorasi-sains-dan-teknologi-pembelajaran-bersepadu' => '💡',
-        'sejarah' => '📜',
-        'sains' => '🔬',
-        'pendidikan-jasmani' => '⚽',
-        'pendidikan-jasmani-dan-pendidikan-kesihatan' => '⚽',
-        'pendidikan-seni-visual' => '🎨',
-        'pendidikan-muzik' => '🎵',
-        'teknologi-dan-digital' => '💻',
-        'pendidikan-asas-individu-ketidakupayaan-penglihatan' => '📿',
-        'bahasa-isyarat-malaysia' => '🤟',
-        'pengurusan-kehidupan-masalah-pembelajaran' => '🧩',
-        'bahasa-cina-sk' => '🀄',
-        'bahasa-tamil-sk' => '🌸',
-        'bahasa-iban' => '🛶',
-        'bahasa-kadazandusun' => '⛰️',
-        'bahasa-semai' => '🌿',
-        'bahasa-arab' => '🕋',
-        'pembentukan-karakter' => '🌟',
+    $sizeMap = [
+        'text-sm' => 'h-4 w-4',
+        'text-base' => 'h-[18px] w-[18px]',
+        'text-lg' => 'h-5 w-5',
+        'text-xl' => 'h-6 w-6',
+        'text-2xl' => 'h-7 w-7',
     ];
 
-    $categoryFallback = [
-        'teras' => '📚',
-        'wajib' => '⭐',
-        'wajib_mbpk' => '♿',
-        'tambahan' => '🗣️',
-        'program' => '🌟',
-    ];
-
-    $emoji = $map[$subject->slug] ?? ($categoryFallback[$subject->category] ?? '📚');
+    $iconClass = $sizeMap[trim($class)] ?? 'h-5 w-5';
 @endphp
 
-<span {{ $attributes->merge(['class' => $class]) }} aria-hidden="true">{{ $emoji }}</span>
+<x-icon :name="$subject->iconName()" :class="$iconClass" style="display:inline-block;vertical-align:-.15em;flex-shrink:0" />
