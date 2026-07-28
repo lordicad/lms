@@ -50,10 +50,13 @@
                 </div>
             </div>
 
-            <p class="mt-6 rounded-card border border-line bg-surface-2 p-4 text-ink-2">
-                {{ __('Kuiz ini disediakan sebagai fail untuk dicetak atau dijawab di atas kertas.') }}
-                {{ __('Ia tidak disemak secara automatik dan tidak memberi mata ranking.') }}
-            </p>
+            <div class="mt-6 flex items-start gap-4" style="background:#EEF2FB;border-radius:16px;padding:18px 22px;color:#3F4A5F">
+                <span style="flex-shrink:0;color:#2E6CA8;margin-top:1px"><x-icon name="info-circle" style="width:24px;height:24px" /></span>
+                <p style="margin:0;font-size:15px;line-height:1.6">
+                    {{ __('Kuiz ini disediakan sebagai fail untuk dicetak atau dijawab di atas kertas.') }}
+                    {{ __('Ia tidak disemak secara automatik dan tidak memberi mata ranking.') }}
+                </p>
+            </div>
 
             @if ($quiz->file_path)
                 <a href="{{ route('muat-turun.kuiz', $quiz) }}" class="btn-primary mt-6 w-full">
