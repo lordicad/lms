@@ -1,7 +1,7 @@
 <x-dynamic-component :component="auth()->user()->isTeacher() ? 'app-layout' : 'student-layout'" :title="$quiz->title">
     <div class="mx-auto max-w-2xl" style="--sc: {{ $subject->rgb }}">
         <a href="{{ route('bab.show', $chapter) }}" class="inline-flex items-center gap-2"
-           style="border:1.5px solid #E6E7EC;background:#fff;border-radius:12px;padding:9px 16px;font-family:'Geist',sans-serif;font-weight:800;font-size:13.5px;color:#3F4A5F;text-decoration:none;box-shadow:0 1px 2px rgba(46,44,80,.04)">
+           style="border:2px solid #17907B;background:#fff;border-radius:14px;padding:10px 20px;font-family:'Geist',sans-serif;font-weight:800;font-size:14px;color:#0F7A68;text-decoration:none">
             <x-icon name="arrow-left" class="h-4 w-4" />
             Bab {{ $chapter->number }}: {{ $chapter->title }}
         </a>
