@@ -120,9 +120,9 @@
             @if ($suggested->isNotEmpty())
                 <div style="display:flex;flex-direction:column;gap:16px">
                     <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:21px;font-weight:800;color:var(--wl-ink)">{{ __('Anda mungkin suka') }}</h2>
-                    <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px">
-                        @foreach ($suggested->take(3) as $lesson)
-                            <x-vid-card :lesson="$lesson" :thumbHeight="116" />
+                    <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px">
+                        @foreach ($suggested->take(4) as $lesson)
+                            <x-vid-card :lesson="$lesson" :thumbHeight="104" />
                         @endforeach
                     </div>
                 </div>
