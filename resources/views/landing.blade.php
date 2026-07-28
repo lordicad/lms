@@ -280,8 +280,7 @@
                     <p class="wl-lead">{{ __('Video pelajaran, bahan dan kuiz daripada cikgu anda — semuanya tersusun mengikut Subjek dan Tahun, sedia ditonton seperti perkhidmatan penstriman kegemaran anda.') }}</p>
 
                     <div class="wl-flex wl-gap-14" style="flex-wrap:wrap">
-                        <a href="{{ route('register') }}" class="wl-btn wl-btn-solid wl-btn-lg">{{ __('Daftar Sekarang') }}</a>
-                        <a href="#ciri" class="wl-btn wl-btn-outline wl-btn-lg">{{ __('Lihat Cara Ia Berfungsi') }}</a>
+                        <a href="#ciri" class="wl-btn wl-btn-solid wl-btn-lg">{{ __('Lihat Cara Ia Berfungsi') }}</a>
                     </div>
                 </div>
 
@@ -422,8 +421,7 @@
                     <h2>{{ __('Sedia untuk mula belajar?') }}</h2>
                     <p>{{ __('Sertai WeLearn hari ini untuk belajar dengan lebih fleksibel, mengajar dengan lebih kreatif dan berkembang bersama.') }}</p>
                     <div class="wl-flex wl-gap-14" style="margin-top:8px">
-                        <a href="{{ route('register') }}" class="wl-btn wl-btn-solid wl-btn-lg">{{ __('Daftar Sekarang') }}</a>
-                        <a href="{{ route('login') }}" class="wl-btn wl-btn-outline wl-btn-lg">{{ __('Log Masuk') }}</a>
+                        <a href="{{ route('login') }}" class="wl-btn wl-btn-solid wl-btn-lg">{{ __('Log Masuk') }}</a>
                     </div>
                 </div>
             </div>
