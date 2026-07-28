@@ -58,8 +58,10 @@
                                     <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:14.5px;color:var(--wl-ink)">{{ $quiz->title }}</span>
                                     <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
                                         <span style="background:{{ $tagBg }};color:{{ $tagColor }};border-radius:999px;padding:3px 11px;font-family:'Geist',sans-serif;font-size:11.5px;font-weight:800">{{ $sub->displayName() }}</span>
-                                        <span style="display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:700;color:var(--wl-muted)"><x-icon name="graduation" style="width:15px;height:15px;color:#0F7A68" />{{ $quiz->chapter->grade->name }}</span>
                                         <span style="display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:700;color:var(--wl-muted)"><x-icon name="book" style="width:15px;height:15px;color:#0F7A68" />Bab {{ $quiz->chapter->number }}</span>
+                                        @if ($attempt->completed_at)
+                                            <span style="display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:700;color:var(--wl-muted)"><x-icon name="clock" style="width:15px;height:15px;color:#0F7A68" />{{ $attempt->completed_at->translatedFormat('d M Y') }}</span>
+                                        @endif
                                     </div>
                                 </div>
                                 <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
