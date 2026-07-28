@@ -4,7 +4,8 @@
     @php($tagColor = "color-mix(in oklab, {$col} 82%, #000)")
 
     <div style="display:flex;flex-direction:column;gap:16px;max-width:760px;margin:0 auto;width:100%">
-        <a href="{{ route('bab.show', $chapter) }}" class="wl-back">← {{ __('Kembali') }}</a>
+        @php($backToQuizzes = request('from') === 'quizzes')
+        <a href="{{ $backToQuizzes ? route('kuiz-saya.index') : route('bab.show', $chapter) }}" class="wl-back">← {{ $backToQuizzes ? __('Kuiz Saya') : __('Kembali') }}</a>
 
         @if ($isPreview)
             <div style="background:#FEF0CE;border-radius:14px;padding:14px 18px;font-weight:700;font-size:14px;color:#8A6A12">{{ __('Anda melihat kuiz ini sebagai cikgu. Guru tidak boleh mencuba kuiz, hanya menyemak.') }}</div>

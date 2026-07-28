@@ -1,9 +1,12 @@
 <x-dynamic-component :component="auth()->user()->isTeacher() ? 'app-layout' : 'student-layout'" :title="$quiz->title">
     <div class="mx-auto max-w-2xl" style="--sc: {{ $subject->rgb }}">
-        <a href="{{ route('bab.show', $chapter) }}" class="inline-flex items-center gap-2"
+        {{-- Back goes where the student came from: the Quizzes list when opened from there,
+             otherwise the chapter page (the default for a direct link). --}}
+        @php($backToQuizzes = request('from') === 'quizzes')
+        <a href="{{ $backToQuizzes ? route('kuiz-saya.index') : route('bab.show', $chapter) }}" class="inline-flex items-center gap-2"
            style="border:2px solid #17907B;background:#fff;border-radius:14px;padding:10px 20px;font-family:'Geist',sans-serif;font-weight:800;font-size:14px;color:#0F7A68;text-decoration:none">
             <x-icon name="arrow-left" class="h-4 w-4" />
-            Bab {{ $chapter->number }}: {{ $chapter->title }}
+            {{ $backToQuizzes ? __('Kuiz Saya') : 'Bab '.$chapter->number.': '.$chapter->title }}
         </a>
 
         <div class="card card-pad mt-4">

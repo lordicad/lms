@@ -98,7 +98,7 @@
                                 @if ($quiz->my_attempts_count > 0)
                                     <span style="font-size:12.5px;font-weight:700;color:var(--wl-muted)">{{ __('Dicuba :count kali', ['count' => $quiz->my_attempts_count]) }}</span>
                                 @endif
-                                <a href="{{ route('kuiz.intro', $quiz) }}" class="wl-btn-primary" style="margin-left:auto;min-height:42px;display:inline-flex;align-items:center;border-radius:12px;background:#17907B;color:#fff;font-family:'Geist',sans-serif;font-weight:800;font-size:13.5px;padding:0 18px;text-decoration:none">{{ $quiz->isFile() ? __('Lihat Kuiz') : __('Cuba Kuiz') }}</a>
+                                <a href="{{ route('kuiz.intro', ['quiz' => $quiz, 'from' => 'chapter']) }}" class="wl-btn-primary" style="margin-left:auto;min-height:42px;display:inline-flex;align-items:center;border-radius:12px;background:#17907B;color:#fff;font-family:'Geist',sans-serif;font-weight:800;font-size:13.5px;padding:0 18px;text-decoration:none">{{ $quiz->isFile() ? __('Lihat Kuiz') : __('Cuba Kuiz') }}</a>
                             </div>
                         </div>
                     @endforeach

@@ -88,7 +88,7 @@
                                 <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:15.5px;color:var(--wl-ink)">{{ $quiz->title }}</span>
                                 <div style="display:flex;align-items:center;gap:12px;margin-top:auto">
                                     <span style="font-size:12.5px;font-weight:700;color:var(--wl-muted)">@if ($quiz->isInteractive()){{ $quiz->questions_count }} {{ __('soalan') }}@if ($quiz->duration_minutes) · {{ $quiz->duration_minutes }} minit @endif @else {{ __('Kuiz Bercetak') }} @endif</span>
-                                    <a href="{{ route('kuiz.intro', $quiz) }}" class="wl-btn-primary" style="margin-left:auto;min-height:42px;display:inline-flex;align-items:center;border-radius:12px;background:#17907B;color:#fff;font-family:'Geist',sans-serif;font-weight:800;font-size:13.5px;padding:0 18px;text-decoration:none">{{ $quiz->isFile() ? __('Lihat') : __('Mula Kuiz') }}</a>
+                                    <a href="{{ route('kuiz.intro', ['quiz' => $quiz, 'from' => 'quizzes']) }}" class="wl-btn-primary" style="margin-left:auto;min-height:42px;display:inline-flex;align-items:center;border-radius:12px;background:#17907B;color:#fff;font-family:'Geist',sans-serif;font-weight:800;font-size:13.5px;padding:0 18px;text-decoration:none">{{ $quiz->isFile() ? __('Lihat') : __('Mula Kuiz') }}</a>
                                 </div>
                             </div>
                         @endforeach
