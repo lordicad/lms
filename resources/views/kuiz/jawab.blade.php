@@ -22,7 +22,7 @@
         .qnum.active { border:none; background:#17907B; color:#fff; }
     </style>
 
-    <div style="display:flex;flex-direction:column;gap:18px;max-width:900px;margin:0 auto;width:100%"
+    <div style="display:flex;flex-direction:column;gap:18px;max-width:900px;margin:16px auto 0;width:100%"
          x-data="quizRunner({ total: {{ $questions->count() }}, secondsLeft: {{ $secondsLeft === null ? 'null' : $secondsLeft }}, labels: { answered: @js(__('dijawab')) } })"
          x-init="start()">
 
