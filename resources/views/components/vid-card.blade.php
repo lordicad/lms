@@ -41,7 +41,9 @@
     </div>
 
     <div style="padding:{{ $showMeta ? '14px 16px' : '13px 15px' }};flex:1 1 auto;display:flex;flex-direction:column;gap:{{ $showMeta ? '4px' : '8px' }}">
-        <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:{{ $showMeta ? '15px' : '14.5px' }};color:var(--wl-ink)">{{ $lesson->title }}</span>
+        {{-- Always reserve two lines for the title so a one-line and a two-line card end up the
+             same height — the grid stretches a whole row to its tallest card otherwise. --}}
+        <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:{{ $showMeta ? '15px' : '14.5px' }};color:var(--wl-ink);line-height:1.3;min-height:2.6em;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">{{ $lesson->title }}</span>
 
         @if ($showMeta)
             <span style="margin-top:auto;font-size:12.5px;color:var(--wl-muted)">{{ $subject->displayName() }} · Bab {{ $lesson->chapter->number }}@if ($lesson->durationLabel()) · {{ $lesson->durationLabel() }}@endif</span>
