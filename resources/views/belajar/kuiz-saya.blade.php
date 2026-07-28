@@ -89,7 +89,7 @@
                             @php($tagColor = "color-mix(in oklab, {$col} 82%, #000)")
                             <div class="wl-lift" style="background:var(--wl-surface);border:1px solid var(--wl-line);border-radius:18px;padding:18px 20px;display:flex;flex-direction:column;gap:12px;box-shadow:0 4px 16px rgba(46,44,80,.04)">
                                 <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-                                    <span style="background:{{ $tagBg }};color:{{ $tagColor }};border-radius:999px;padding:4px 12px;font-family:'Geist',sans-serif;font-size:11.5px;font-weight:800"><x-subject-emoji :subject="$sub" class="text-sm" /> {{ $sub->displayName() }}</span>
+                                    <span style="background:{{ $tagBg }};color:{{ $tagColor }};border-radius:999px;padding:4px 12px;font-family:'Geist',sans-serif;font-size:11.5px;font-weight:800">{{ $sub->displayName() }}</span>
                                     <span style="font-size:12px;font-weight:700;color:var(--wl-muted)">Bab {{ $quiz->chapter->number }}</span>
                                 </div>
                                 <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:15.5px;color:var(--wl-ink)">{{ $quiz->title }}</span>
