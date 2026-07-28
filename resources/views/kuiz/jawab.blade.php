@@ -44,7 +44,7 @@
         </noscript>
 
         <form method="POST" action="{{ route('kuiz.hantar', $attempt) }}" x-ref="form" @submit="submitting = true"
-              style="display:flex;flex-direction:column;gap:18px">
+              style="display:flex;flex-direction:column;gap:18px;margin-top:10px">
             @csrf
             @foreach ($questions as $index => $question)
                 <section x-show="current === {{ $index }}" @if ($index > 0) x-cloak @endif class="qcard"
