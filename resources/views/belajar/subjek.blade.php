@@ -6,7 +6,7 @@
         <a href="{{ route('subjek.index', ['tahun' => $grade->level]) }}" class="wl-back">← {{ __('Semua subjek') }}</a>
 
         <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
-            <span style="width:56px;height:56px;border-radius:16px;background:{{ $selGrad }};display:grid;place-items:center"><x-subject-icon :subject="$subject" :size="30" /></span>
+            <span style="width:56px;height:56px;border-radius:16px;background:{{ $selGrad }};display:grid;place-items:center"><x-subject-icon :subject="$subject" :size="38" /></span>
             <div style="display:flex;flex-direction:column;gap:2px;margin-right:auto">
                 <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:26px;font-weight:800;letter-spacing:-.01em;color:var(--wl-ink)">{{ $subject->name }}</h2>
                 <span style="font-size:14px;font-weight:700;color:var(--wl-muted)">{{ $grade->name }}</span>

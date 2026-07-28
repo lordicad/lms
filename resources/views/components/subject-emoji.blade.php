@@ -12,9 +12,9 @@
     $sizeMap = [
         'text-sm' => 16,
         'text-base' => 18,
-        'text-lg' => 22,
-        'text-xl' => 28,
-        'text-2xl' => 34,
+        'text-lg' => 20,
+        'text-xl' => 24,
+        'text-2xl' => 28,
     ];
 
     $px = $sizeMap[trim($class)] ?? 20;
