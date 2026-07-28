@@ -37,11 +37,11 @@
         }
 
         html.theme-dark {
-            --bg: #0C1410; --surface: #15221A;
+            --bg: #16291E; --surface: #20362A;
             --ink: #ECF2F4; --muted: #B8C8BC; --faint: #8FA093;
             --brand: #9DC284; --brand-hover: #A9C97E; --brand-ink: #9DC284; --brand-soft: rgba(157,194,132,.14);
             --line: rgba(255,255,255,.09); --line-strong: rgba(255,255,255,.14);
-            --dark-green: #101B14;
+            --dark-green: #12241A;
             /* Dark mode drops the photo, so the chrome falls back to the dark surface. */
             --chrome: var(--surface);
             --shadow-sm: 0 4px 16px rgba(0,0,0,.35);
