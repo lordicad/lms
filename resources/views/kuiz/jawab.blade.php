@@ -13,6 +13,9 @@
         .q2radio { width:26px; height:26px; flex-shrink:0; border-radius:50%; border:2px solid rgba(40,40,60,.18); background:#fff; display:grid; place-items:center; color:transparent; }
         .qopt2.check .q2radio { border-radius:8px; }
         .qopt2:has(input:checked) .q2radio { background:#fff; border-color:#fff; color:var(--solid); }
+        /* The question card. Flex/gap live here (not inline) so Alpine's x-show does not drop the
+           display back to block on reveal — which would collapse the gap and stack the rows. */
+        .qcard { display:flex; flex-direction:column; gap:28px; }
         /* Footer question jumper */
         .qnum { width:44px; height:44px; border-radius:12px; cursor:pointer; font-family:'Geist',sans-serif; font-weight:800; font-size:15px; border:1.5px solid var(--wl-line-2); background:var(--wl-surface); color:#4A4B63; transition:all .12s; }
         .qnum.answered { border-color:#17907B; color:#0F7A68; }
@@ -41,8 +44,8 @@
               style="display:flex;flex-direction:column;gap:18px">
             @csrf
             @foreach ($questions as $index => $question)
-                <section x-show="current === {{ $index }}" @if ($index > 0) x-cloak @endif
-                         style="background:var(--wl-surface);border:1px solid var(--wl-line);border-radius:24px;padding:32px;display:flex;flex-direction:column;gap:28px;box-shadow:0 10px 30px var(--wl-line)">
+                <section x-show="current === {{ $index }}" @if ($index > 0) x-cloak @endif class="qcard"
+                         style="background:var(--wl-surface);border:1px solid var(--wl-line);border-radius:24px;padding:32px;box-shadow:0 10px 30px var(--wl-line)">
                     {{-- Position + points + answered count --}}
                     <div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap">
                         <span style="background:#17907B;color:#fff;border-radius:999px;padding:6px 15px;font-family:'Geist',sans-serif;font-weight:800;font-size:13.5px">{{ $index + 1 }} / {{ $questions->count() }}</span>
