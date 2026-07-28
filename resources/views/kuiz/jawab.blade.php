@@ -35,7 +35,7 @@
                       style="display:inline-flex;align-items:center;gap:7px;border-radius:999px;padding:8px 16px;font-family:'Geist',sans-serif;font-weight:800;font-size:15px"><x-icon name="clock" style="width:17px;height:17px" /><span x-text="clock()">{{ gmdate('i:s', $secondsLeft) }}</span></span>
             @else
                 {{-- No time limit: an infinity mark rather than a misleading 00:00. --}}
-                <span title="{{ __('Tiada had masa') }}" style="display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:7px 18px;font-family:'Geist',sans-serif;font-weight:800;background:#EDECF2;color:#6C6F87"><x-icon name="clock" style="width:18px;height:18px" /><span style="font-size:24px;line-height:1;position:relative;top:-1px">∞</span></span>
+                <span title="{{ __('Tiada had masa') }}" style="display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:9px 16px;font-family:'Geist',sans-serif;font-weight:800;background:#EDECF2;color:#6C6F87"><x-icon name="clock" style="width:18px;height:18px" /><x-icon name="infinity" style="width:22px;height:22px" /></span>
             @endif
         </div>
 
