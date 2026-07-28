@@ -31,17 +31,17 @@
             </div>
 
             <div style="background:#F6F3EC;border:1px solid var(--wl-line);border-radius:16px;padding:20px 22px;display:flex;flex-direction:column;gap:12px">
-                <span style="font-family:'Geist',sans-serif;font-size:14.5px;font-weight:800;color:var(--wl-ink)">ℹ️ {{ __('Peraturan kuiz') }}</span>
+                <span style="display:inline-flex;align-items:center;gap:8px;font-family:'Geist',sans-serif;font-size:14.5px;font-weight:800;color:var(--wl-ink)"><x-icon name="info-circle" style="width:18px;height:18px;color:#2E6CA8" />{{ __('Peraturan kuiz') }}</span>
                 <div style="display:flex;gap:10px;align-items:flex-start">
-                    <span style="color:#17907B;font-size:13px;flex-shrink:0">✓</span>
+                    <span style="color:#17907B;flex-shrink:0;margin-top:1px"><x-icon name="check" style="width:16px;height:16px" /></span>
                     <span style="font-size:13.5px;color:#4A4B63;line-height:1.5">{{ __('Soalan pilihan: pilih') }} <b>{{ __('satu') }}</b> {{ __('jawapan sahaja.') }}</span>
                 </div>
                 <div style="display:flex;gap:10px;align-items:flex-start">
-                    <span style="color:#17907B;font-size:13px;flex-shrink:0">✓</span>
+                    <span style="color:#17907B;flex-shrink:0;margin-top:1px"><x-icon name="check" style="width:16px;height:16px" /></span>
                     <span style="font-size:13.5px;color:#4A4B63;line-height:1.5">{{ __('Soalan kotak semak: pilih') }} <b>{{ __('semua') }}</b> {{ __('jawapan yang betul. Semua mesti betul untuk mendapat markah.') }}</span>
                 </div>
                 <div style="display:flex;gap:10px;align-items:flex-start">
-                    <span style="color:#17907B;font-size:13px;flex-shrink:0">🏆</span>
+                    <span style="color:#8A6A12;flex-shrink:0;margin-top:1px"><x-icon name="trophy" style="width:16px;height:16px" /></span>
                     <span style="font-size:13.5px;color:#4A4B63;line-height:1.5"><b>{{ __('Hanya percubaan pertama') }}</b> {{ __('dikira untuk ranking. Percubaan seterusnya adalah latihan sahaja dan tidak menjejaskan mata anda.') }}</span>
                 </div>
                 @if ($quiz->duration_minutes)
@@ -53,7 +53,7 @@
             </div>
 
             @if ($rankedAttempt)
-                <div style="background:#DCF2EE;border:1px solid rgba(23,144,123,.25);border-radius:14px;padding:14px 18px;font-family:'Geist',sans-serif;font-size:13.5px;font-weight:700;color:#0F7A68">✓ {{ __('Percubaan pertama anda: :score/:max mata. Percubaan baharu adalah latihan.', ['score' => $rankedAttempt->score, 'max' => $rankedAttempt->max_score]) }}</div>
+                <div style="display:flex;align-items:center;gap:8px;background:#DCF2EE;border:1px solid rgba(23,144,123,.25);border-radius:14px;padding:14px 18px;font-family:'Geist',sans-serif;font-size:13.5px;font-weight:700;color:#0F7A68"><x-icon name="check-circle" style="width:18px;height:18px;flex-shrink:0" />{{ __('Percubaan pertama anda: :score/:max mata. Percubaan baharu adalah latihan.', ['score' => $rankedAttempt->score, 'max' => $rankedAttempt->max_score]) }}</div>
             @endif
 
             @unless ($isPreview)
