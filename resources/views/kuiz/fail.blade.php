@@ -20,32 +20,32 @@
 
             {{-- File facts: format, page count (when the PDF exposes it) and when it was created. --}}
             @php($pages = $quiz->pageCount())
-            <div class="mt-6 flex flex-wrap items-center gap-x-8 gap-y-5 border-t border-line pt-6">
-                <div class="flex items-center gap-4">
-                    <span class="grid h-12 w-12 place-items-center rounded-2xl bg-surface-2 text-ink"><x-icon name="file" class="h-6 w-6" /></span>
+            <div class="mt-6 flex flex-wrap items-center gap-x-7 gap-y-5 border-t border-line pt-6">
+                <div class="flex items-center gap-3">
+                    <span class="grid h-10 w-10 place-items-center rounded-xl bg-surface-2 text-ink"><x-icon name="file" class="h-5 w-5" /></span>
                     <span class="flex flex-col gap-0.5">
-                        <span class="text-sm font-semibold text-ink-2">{{ __('Format') }}</span>
-                        <span class="text-lg font-extrabold text-ink">{{ $quiz->extension() }}</span>
+                        <span class="text-xs font-semibold text-ink-2">{{ __('Format') }}</span>
+                        <span class="text-base font-extrabold text-ink">{{ $quiz->extension() }}</span>
                     </span>
                 </div>
 
                 @if ($pages)
-                    <span class="hidden h-10 w-px bg-line sm:block"></span>
-                    <div class="flex items-center gap-4">
-                        <span class="grid h-12 w-12 place-items-center rounded-2xl bg-surface-2 text-ink"><x-icon name="printer" class="h-6 w-6" /></span>
+                    <span class="hidden h-9 w-px bg-line sm:block"></span>
+                    <div class="flex items-center gap-3">
+                        <span class="grid h-10 w-10 place-items-center rounded-xl bg-surface-2 text-ink"><x-icon name="printer" class="h-5 w-5" /></span>
                         <span class="flex flex-col gap-0.5">
-                            <span class="text-sm font-semibold text-ink-2">{{ __('Halaman') }}</span>
-                            <span class="text-lg font-extrabold text-ink">{{ __(':count halaman', ['count' => $pages]) }}</span>
+                            <span class="text-xs font-semibold text-ink-2">{{ __('Halaman') }}</span>
+                            <span class="text-base font-extrabold text-ink">{{ __(':count halaman', ['count' => $pages]) }}</span>
                         </span>
                     </div>
                 @endif
 
-                <span class="hidden h-10 w-px bg-line sm:block"></span>
-                <div class="flex items-center gap-4">
-                    <span class="grid h-12 w-12 place-items-center rounded-2xl bg-surface-2 text-ink"><x-icon name="clock" class="h-6 w-6" /></span>
+                <span class="hidden h-9 w-px bg-line sm:block"></span>
+                <div class="flex items-center gap-3">
+                    <span class="grid h-10 w-10 place-items-center rounded-xl bg-surface-2 text-ink"><x-icon name="clock" class="h-5 w-5" /></span>
                     <span class="flex flex-col gap-0.5">
-                        <span class="text-sm font-semibold text-ink-2">{{ __('Dicipta') }}</span>
-                        <span class="text-lg font-extrabold text-ink">{{ $quiz->created_at->translatedFormat('j M Y') }}</span>
+                        <span class="text-xs font-semibold text-ink-2">{{ __('Dicipta') }}</span>
+                        <span class="text-base font-extrabold text-ink">{{ $quiz->created_at->translatedFormat('j M Y') }}</span>
                     </span>
                 </div>
             </div>
