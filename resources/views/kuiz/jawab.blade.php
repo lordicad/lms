@@ -67,7 +67,7 @@
 
                     <div style="display:flex;flex-direction:column;gap:8px">
                         <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--wl-muted)">{{ $question->isMultiple() ? __('Pilih semua jawapan betul') : __('Pilih satu jawapan') }}</span>
-                        <h3 style="margin:0;font-family:'Geist',sans-serif;font-size:23px;font-weight:800;line-height:1.35;color:var(--wl-ink)">{{ $question->question_text }}</h3>
+                        <h3 style="margin:0;font-family:'Geist',sans-serif;font-size:20px;font-weight:800;line-height:1.35;color:var(--wl-ink)">{{ $question->question_text }}</h3>
                     </div>
 
                     {{-- Answer options, one per row. --}}
