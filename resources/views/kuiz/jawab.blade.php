@@ -42,7 +42,7 @@
             @csrf
             @foreach ($questions as $index => $question)
                 <section x-show="current === {{ $index }}" @if ($index > 0) x-cloak @endif
-                         style="background:var(--wl-surface);border:1px solid var(--wl-line);border-radius:24px;padding:30px;display:flex;flex-direction:column;gap:22px;box-shadow:0 10px 30px var(--wl-line)">
+                         style="background:var(--wl-surface);border:1px solid var(--wl-line);border-radius:24px;padding:32px;display:flex;flex-direction:column;gap:28px;box-shadow:0 10px 30px var(--wl-line)">
                     {{-- Position + points + answered count --}}
                     <div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap">
                         <span style="background:#17907B;color:#fff;border-radius:999px;padding:6px 15px;font-family:'Geist',sans-serif;font-weight:800;font-size:13.5px">{{ $index + 1 }} / {{ $questions->count() }}</span>
