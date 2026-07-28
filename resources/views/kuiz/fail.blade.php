@@ -22,7 +22,7 @@
                 </div>
 
                 {{-- Decorative clipboard-and-clock, in the subject teal. Hidden on narrow screens. --}}
-                <div class="hidden shrink-0 sm:block" style="width:150px" aria-hidden="true">
+                <div class="hidden shrink-0 sm:block" style="width:150px;transform:rotate(8deg)" aria-hidden="true">
                     <svg viewBox="0 0 210 180" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto">
                         <circle cx="150" cy="56" r="44" fill="#E7F4EF" />
                         <circle cx="96" cy="122" r="32" fill="#EDF7F3" />
