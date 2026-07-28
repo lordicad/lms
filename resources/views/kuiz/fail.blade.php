@@ -18,6 +18,38 @@
                 <p class="mt-3 max-w-prose text-ink-2">{{ $quiz->description }}</p>
             @endif
 
+            {{-- File facts: format, page count (when the PDF exposes it) and when it was created. --}}
+            @php($pages = $quiz->pageCount())
+            <div class="mt-5 flex flex-wrap items-center gap-x-8 gap-y-4 border-t border-line pt-5">
+                <div class="flex items-center gap-3">
+                    <span class="grid h-11 w-11 place-items-center rounded-xl bg-surface-2 text-ink"><x-icon name="file" class="h-5 w-5" /></span>
+                    <span class="flex flex-col leading-tight">
+                        <span class="text-xs font-bold text-ink-2">{{ __('Format') }}</span>
+                        <span class="text-sm font-extrabold text-ink">{{ $quiz->extension() }}</span>
+                    </span>
+                </div>
+
+                @if ($pages)
+                    <span class="hidden h-8 w-px bg-line sm:block"></span>
+                    <div class="flex items-center gap-3">
+                        <span class="grid h-11 w-11 place-items-center rounded-xl bg-surface-2 text-ink"><x-icon name="printer" class="h-5 w-5" /></span>
+                        <span class="flex flex-col leading-tight">
+                            <span class="text-xs font-bold text-ink-2">{{ __('Halaman') }}</span>
+                            <span class="text-sm font-extrabold text-ink">{{ __(':count halaman', ['count' => $pages]) }}</span>
+                        </span>
+                    </div>
+                @endif
+
+                <span class="hidden h-8 w-px bg-line sm:block"></span>
+                <div class="flex items-center gap-3">
+                    <span class="grid h-11 w-11 place-items-center rounded-xl bg-surface-2 text-ink"><x-icon name="clock" class="h-5 w-5" /></span>
+                    <span class="flex flex-col leading-tight">
+                        <span class="text-xs font-bold text-ink-2">{{ __('Dicipta') }}</span>
+                        <span class="text-sm font-extrabold text-ink">{{ $quiz->created_at->translatedFormat('j M Y') }}</span>
+                    </span>
+                </div>
+            </div>
+
             <p class="mt-6 rounded-card border border-line bg-surface-2 p-4 text-ink-2">
                 {{ __('Kuiz ini disediakan sebagai fail untuk dicetak atau dijawab di atas kertas.') }}
                 {{ __('Ia tidak disemak secara automatik dan tidak memberi mata ranking.') }}

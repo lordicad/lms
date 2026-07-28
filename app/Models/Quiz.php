@@ -109,6 +109,46 @@ class Quiz extends Model
         return $this->file_path ? Storage::disk('uploads')->url($this->file_path) : null;
     }
 
+    /** The uploaded file's type, e.g. "PDF" — from its original name. */
+    public function extension(): string
+    {
+        $ext = pathinfo($this->original_name ?? $this->file_path ?? '', PATHINFO_EXTENSION);
+
+        return $ext !== '' ? strtoupper($ext) : 'FILE';
+    }
+
+    /**
+     * Page count of the attached PDF, read from the file itself, or null when it is not a PDF or
+     * the count cannot be read (a compressed page tree). Leaf /Page objects first, then the /Pages
+     * root's /Count as a fallback — best effort, so a card hides the figure rather than guessing.
+     */
+    public function pageCount(): ?int
+    {
+        if (! $this->file_path || strtolower(pathinfo($this->original_name ?? $this->file_path, PATHINFO_EXTENSION)) !== 'pdf') {
+            return null;
+        }
+
+        try {
+            $content = Storage::disk('uploads')->get($this->file_path);
+        } catch (\Throwable) {
+            return null;
+        }
+
+        if (! $content) {
+            return null;
+        }
+
+        if (preg_match_all('~/Type\s*/Page\b~', $content, $m) && ($count = count($m[0])) > 0) {
+            return $count;
+        }
+
+        if (preg_match_all('~/Count\s+(\d+)~', $content, $m)) {
+            return max(array_map('intval', $m[1])) ?: null;
+        }
+
+        return null;
+    }
+
     public function deleteFile(): void
     {
         if ($this->file_path) {
