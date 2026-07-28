@@ -12,8 +12,8 @@
         'text-sm' => 'h-4 w-4',
         'text-base' => 'h-[18px] w-[18px]',
         'text-lg' => 'h-5 w-5',
-        'text-xl' => 'h-6 w-6',
-        'text-2xl' => 'h-7 w-7',
+        'text-xl' => 'h-7 w-7',
+        'text-2xl' => 'h-9 w-9',
     ];
 
     $iconClass = $sizeMap[trim($class)] ?? 'h-5 w-5';
