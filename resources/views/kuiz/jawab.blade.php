@@ -1,6 +1,6 @@
 <x-student-layout :title="$quiz->title">
     <style>
-        .qopt { position:relative; display:flex; align-items:center; gap:14px; border-radius:14px; padding:16px 18px; cursor:pointer; transition:all .12s; border:1.5px solid var(--wl-line-2); background:var(--wl-surface); }
+        .qopt { position:relative; display:flex; align-items:center; gap:14px; border-radius:14px; padding:18px 20px; cursor:pointer; transition:all .12s; border:1.5px solid var(--wl-line-2); background:var(--wl-surface); }
         .qopt:has(input:checked) { border-color:#17907B; background:#DCF2EE; }
         .qopt input { position:absolute; opacity:0; width:0; height:0; }
         .qdot { width:22px; height:22px; flex-shrink:0; display:grid; place-items:center; color:#fff; font-size:12px; background:var(--wl-surface); border:2px solid var(--wl-line-3); }
@@ -49,13 +49,13 @@
             @csrf
             @foreach ($questions as $index => $question)
                 <section x-show="current === {{ $index }}" @if ($index > 0) x-cloak @endif
-                         style="background:var(--wl-surface);border:1px solid var(--wl-line);border-radius:22px;padding:26px;display:flex;flex-direction:column;gap:18px;box-shadow:0 8px 24px var(--wl-line)">
+                         style="background:var(--wl-surface);border:1px solid var(--wl-line);border-radius:22px;padding:28px;display:flex;flex-direction:column;gap:20px;box-shadow:0 8px 24px var(--wl-line)">
                     <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
                         <span style="background:#E4EEF9;color:#2E6CA8;border-radius:999px;padding:5px 13px;font-family:'Geist',sans-serif;font-size:12.5px;font-weight:800">{{ $question->points }} {{ __('mata') }}</span>
                         <span style="background:#F1F0E8;color:var(--wl-muted-2);border-radius:999px;padding:5px 13px;font-family:'Geist',sans-serif;font-size:12.5px;font-weight:800">{{ $question->isMultiple() ? __('Pilih semua jawapan betul') : __('Pilih satu jawapan') }}</span>
                     </div>
                     <h3 style="margin:0;font-family:'Geist',sans-serif;font-size:20px;font-weight:800;line-height:1.4;color:var(--wl-ink)">{{ $question->question_text }}</h3>
-                    <div style="display:flex;flex-direction:column;gap:10px">
+                    <div style="display:flex;flex-direction:column;gap:14px">
                         @foreach ($question->options as $option)
                             <label class="qopt {{ $question->isMultiple() ? 'check' : 'radio' }}">
                                 <input type="{{ $question->isMultiple() ? 'checkbox' : 'radio' }}" name="answers[{{ $question->id }}][]" value="{{ $option->id }}" @change="touch({{ $index }})">
@@ -65,19 +65,27 @@
                             </label>
                         @endforeach
                     </div>
+
+                    {{-- Navigation lives inside the card, on its own row at the bottom. Each section
+                         is only shown when it is the current one, so a plain @if per index decides
+                         which buttons appear. --}}
+                    <div style="display:flex;align-items:center;gap:10px;margin-top:4px">
+                        @if ($index > 0)
+                            <button type="button" @click="previous()"
+                                    style="min-height:48px;cursor:pointer;border-radius:13px;border:1.5px solid var(--wl-line-2);background:var(--wl-surface);color:var(--wl-ink);font-family:'Geist',sans-serif;font-weight:800;font-size:15px;padding:0 22px">← {{ __('Sebelum') }}</button>
+                        @endif
+                        @if ($index === $questions->count() - 1)
+                            <button type="submit" :disabled="submitting"
+                                    style="margin-left:auto;min-height:48px;border:none;cursor:pointer;border-radius:13px;background:#EB5E5A;color:#fff;font-family:'Geist',sans-serif;font-weight:800;font-size:15px;padding:0 26px">
+                                <span x-show="! submitting">{{ __('Hantar Jawapan') }}</span><span x-show="submitting" x-cloak>{{ __('Menghantar...') }}</span>
+                            </button>
+                        @else
+                            <button type="button" @click="next()"
+                                    style="margin-left:auto;min-height:48px;border:none;cursor:pointer;border-radius:13px;background:#17907B;color:#fff;font-family:'Geist',sans-serif;font-weight:800;font-size:15px;padding:0 26px">{{ __('Seterusnya') }} →</button>
+                        @endif
+                    </div>
                 </section>
             @endforeach
-
-            <div style="display:flex;align-items:center;gap:10px">
-                <button type="button" x-show="current > 0" x-cloak @click="previous()" class="wl-btn-secondary"
-                        style="min-height:48px;cursor:pointer;border-radius:13px;border:1.5px solid var(--wl-line-2);background:var(--wl-surface);color:var(--wl-ink);font-family:'Geist',sans-serif;font-weight:800;font-size:15px;padding:0 22px">← {{ __('Sebelum') }}</button>
-                <button type="submit" x-show="current === total - 1" x-cloak :disabled="submitting"
-                        style="margin-left:auto;min-height:48px;border:none;cursor:pointer;border-radius:13px;background:#EB5E5A;color:#fff;font-family:'Geist',sans-serif;font-weight:800;font-size:15px;padding:0 26px">
-                    <span x-show="! submitting">{{ __('Hantar Jawapan') }}</span><span x-show="submitting" x-cloak>{{ __('Menghantar...') }}</span>
-                </button>
-                <button type="button" x-show="current < total - 1" @click="next()" class="wl-btn-primary"
-                        style="margin-left:auto;min-height:48px;border:none;cursor:pointer;border-radius:13px;background:#17907B;color:#fff;font-family:'Geist',sans-serif;font-weight:800;font-size:15px;padding:0 26px">{{ __('Seterusnya') }} →</button>
-            </div>
 
             <div style="display:flex;flex-direction:column;gap:10px">
                 <span style="font-family:'Geist',sans-serif;font-size:13.5px;font-weight:800;color:#4A4B63">{{ __('Lompat ke soalan') }}</span>
