@@ -36,7 +36,7 @@
                 <span style="font-family:'Geist',sans-serif;font-size:13.5px;font-weight:700;color:#0F7A68;text-align:left">{{ $attempt->counts_for_ranking ? __('Ini percubaan pertama anda, jadi :score mata dikira untuk ranking.', ['score' => $attempt->score]) : __('Ini latihan semula. Markah ini tidak menjejaskan ranking anda.') }}</span>
             </div>
             <div style="display:flex;gap:12px;margin-top:8px;flex-wrap:wrap;justify-content:center">
-                <a href="{{ route('kuiz.intro', $quiz) }}" class="wl-btn-secondary" style="min-height:48px;display:inline-flex;align-items:center;border-radius:13px;border:1.5px solid var(--wl-line-2);background:var(--wl-surface);color:var(--wl-ink);font-family:'Geist',sans-serif;font-weight:800;font-size:14.5px;padding:0 22px;text-decoration:none">{{ __('Cuba Lagi (Latihan)') }}</a>
+                <a href="{{ route('kuiz.intro', $quiz) }}" class="wl-btn-secondary" style="min-height:48px;display:inline-flex;align-items:center;border-radius:14px;border:2px solid #17907B;background:#fff;color:#0F7A68;font-family:'Geist',sans-serif;font-weight:800;font-size:14.5px;padding:0 22px;text-decoration:none">{{ __('Cuba Lagi (Latihan)') }}</a>
                 <a href="{{ route('ranking.index') }}" class="wl-btn-primary" style="min-height:48px;display:inline-flex;align-items:center;gap:8px;border-radius:13px;background:#17907B;color:#fff;font-family:'Geist',sans-serif;font-weight:800;font-size:14.5px;padding:0 22px;text-decoration:none"><x-icon name="trophy" style="width:18px;height:18px" />{{ __('Lihat Ranking') }}</a>
             </div>
         </div>
@@ -86,6 +86,6 @@
             @endforeach
         </div>
 
-        <a href="{{ route('kuiz-saya.index') }}" class="wl-btn-secondary" style="align-self:center;min-height:48px;display:inline-flex;align-items:center;border-radius:13px;border:1.5px solid var(--wl-line-2);background:var(--wl-surface);color:var(--wl-ink);font-family:'Geist',sans-serif;font-weight:800;font-size:14.5px;padding:0 24px;text-decoration:none">← {{ __('Kembali') }}</a>
+        <a href="{{ route('kuiz-saya.index') }}" class="wl-btn-secondary" style="align-self:center;min-height:48px;display:inline-flex;align-items:center;gap:6px;border-radius:14px;border:2px solid #17907B;background:#fff;color:#0F7A68;font-family:'Geist',sans-serif;font-weight:800;font-size:14.5px;padding:0 24px;text-decoration:none"><x-icon name="arrow-left" style="width:17px;height:17px" />{{ __('Kembali') }}</a>
     </div>
 </x-student-layout>
