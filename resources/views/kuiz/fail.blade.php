@@ -7,16 +7,46 @@
         </a>
 
         <div class="card card-pad mt-4">
-            <div class="flex flex-wrap items-center gap-2">
-                <span class="chip bg-subject-wash text-subject-ink"><x-subject-icon :subject="$subject" class="h-4 w-4" /> {{ $subject->name }}</span>
-                <span class="chip bg-surface-2 text-ink-2">{{ __('Kuiz Bercetak') }}</span>
+            <div class="flex items-start justify-between gap-6">
+                <div class="min-w-0">
+                    <div class="flex flex-wrap items-center gap-2">
+                        <span class="chip bg-subject-wash text-subject-ink"><x-subject-icon :subject="$subject" class="h-4 w-4" /> {{ $subject->name }}</span>
+                        <span class="chip bg-surface-2 text-ink-2">{{ __('Kuiz Bercetak') }}</span>
+                    </div>
+
+                    <h1 class="mt-3 text-3xl font-extrabold text-ink">{{ $quiz->title }}</h1>
+
+                    @if ($quiz->description)
+                        <p class="mt-3 max-w-prose text-ink-2">{{ $quiz->description }}</p>
+                    @endif
+                </div>
+
+                {{-- Decorative clipboard-and-clock, in the subject teal. Hidden on narrow screens. --}}
+                <div class="hidden shrink-0 sm:block" style="width:150px" aria-hidden="true">
+                    <svg viewBox="0 0 210 180" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto">
+                        <circle cx="150" cy="56" r="44" fill="#E7F4EF" />
+                        <circle cx="96" cy="122" r="32" fill="#EDF7F3" />
+                        <g fill="#C7E3DA">
+                            @for ($r = 0; $r < 4; $r++)
+                                @for ($c = 0; $c < 4; $c++)
+                                    <circle cx="{{ 42 + $c * 8 }}" cy="{{ 108 + $r * 8 }}" r="2.1" />
+                                @endfor
+                            @endfor
+                        </g>
+                        <rect x="76" y="34" width="94" height="120" rx="12" fill="#fff" stroke="#17907B" stroke-width="3.5" />
+                        <rect x="102" y="26" width="42" height="18" rx="6" fill="#17907B" />
+                        <circle cx="123" cy="30" r="4.5" fill="#fff" />
+                        @foreach ([62, 92, 122] as $y)
+                            <rect x="90" y="{{ $y }}" width="16" height="16" rx="4" fill="#DCF2EE" stroke="#17907B" stroke-width="2.5" />
+                            <rect x="114" y="{{ $y + 3 }}" width="42" height="4" rx="2" fill="#7CC4B3" />
+                            <rect x="114" y="{{ $y + 11 }}" width="30" height="4" rx="2" fill="#C7E3DA" />
+                        @endforeach
+                        <circle cx="170" cy="132" r="30" fill="#fff" stroke="#17907B" stroke-width="3.5" />
+                        <path d="M170 116 v16 h11" stroke="#17907B" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" />
+                        <circle cx="170" cy="132" r="2.6" fill="#17907B" />
+                    </svg>
+                </div>
             </div>
-
-            <h1 class="mt-3 text-3xl font-extrabold text-ink">{{ $quiz->title }}</h1>
-
-            @if ($quiz->description)
-                <p class="mt-3 max-w-prose text-ink-2">{{ $quiz->description }}</p>
-            @endif
 
             {{-- File facts: format, page count (when the PDF exposes it) and when it was created. --}}
             @php($pages = $quiz->pageCount())
