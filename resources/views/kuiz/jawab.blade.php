@@ -90,8 +90,8 @@
                 </section>
             @endforeach
 
-            {{-- Footer: Sebelum · question jumper · Seterusnya/Hantar --}}
-            <div style="display:flex;align-items:center;gap:12px;padding:0 6px">
+            {{-- Footer, in its own card below the question: Sebelum · question jumper · Seterusnya/Hantar --}}
+            <div style="display:flex;align-items:center;gap:12px;background:var(--wl-surface);border:1px solid var(--wl-line);border-radius:20px;padding:16px 20px;box-shadow:0 8px 24px var(--wl-line)">
                 <button type="button" @click="previous()" :style="{ visibility: current === 0 ? 'hidden' : 'visible' }"
                         style="min-height:48px;cursor:pointer;border-radius:14px;border:1.5px solid var(--wl-line-2);background:var(--wl-surface);color:var(--wl-ink);font-family:'Geist',sans-serif;font-weight:800;font-size:15px;padding:0 20px">← {{ __('Sebelum') }}</button>
 
