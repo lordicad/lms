@@ -70,8 +70,8 @@
                         <h3 style="margin:0;font-family:'Geist',sans-serif;font-size:23px;font-weight:800;line-height:1.35;color:var(--wl-ink)">{{ $question->question_text }}</h3>
                     </div>
 
-                    {{-- Answer options, two per row. --}}
-                    <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px">
+                    {{-- Answer options, one per row. --}}
+                    <div style="display:flex;flex-direction:column;gap:14px">
                         @foreach ($question->options as $oIndex => $option)
                             @php($pal = [
                                 ['tint' => '#FBF0D9', 'solid' => '#D99A28'],
