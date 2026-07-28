@@ -46,16 +46,18 @@ class YoutubeApi
     }
 
     /**
-     * The channelId that owns a public/unlisted video. Returns null when the video is private or
-     * deleted (no item). Throws on a transient API/network error — the caller degrades gracefully
-     * rather than losing the lesson. Cached 24h per video id (misses are not cached, so a video
-     * flipped from private to public is picked up on the next save).
+     * The owning channelId and length of a public/unlisted video, in one call. Returns null when
+     * the video is private or deleted (no item). Throws on a transient API/network error — the
+     * caller degrades gracefully rather than losing the lesson. Cached 24h per video id (misses are
+     * not cached, so a video flipped from private to public is picked up on the next save).
+     *
+     * @return array{channel_id:string, duration_seconds:?int}|null
      */
-    public function videoChannelId(string $videoId): ?string
+    public function videoInfo(string $videoId): ?array
     {
-        return Cache::remember("yt:video-channel:{$videoId}", now()->addDay(), function () use ($videoId) {
+        return Cache::remember("yt:video-info:{$videoId}", now()->addDay(), function () use ($videoId) {
             $resp = Http::timeout(12)->get(self::BASE.'/videos', [
-                'part' => 'snippet',
+                'part' => 'snippet,contentDetails',
                 'id' => $videoId,
                 'key' => (string) config('services.youtube.key'),
             ]);
@@ -64,7 +66,40 @@ class YoutubeApi
 
             $items = $resp->json('items', []);
 
-            return empty($items) ? null : (string) data_get($items[0], 'snippet.channelId');
+            if (empty($items)) {
+                return null;
+            }
+
+            return [
+                'channel_id' => (string) data_get($items[0], 'snippet.channelId'),
+                'duration_seconds' => self::parseDuration(data_get($items[0], 'contentDetails.duration')),
+            ];
         });
+    }
+
+    /**
+     * The channelId that owns a public/unlisted video, or null when private/deleted.
+     */
+    public function videoChannelId(string $videoId): ?string
+    {
+        return $this->videoInfo($videoId)['channel_id'] ?? null;
+    }
+
+    /**
+     * ISO 8601 duration ("PT15M20S") → whole seconds, or null when absent/unparseable.
+     */
+    public static function parseDuration(?string $iso): ?int
+    {
+        if (! $iso || ! str_starts_with($iso, 'P')) {
+            return null;
+        }
+
+        try {
+            $i = new \DateInterval($iso);
+        } catch (\Throwable) {
+            return null;
+        }
+
+        return $i->d * 86400 + $i->h * 3600 + $i->i * 60 + $i->s;
     }
 }

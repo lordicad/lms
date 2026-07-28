@@ -248,11 +248,19 @@ class LessonController extends Controller
             default => null,
         };
 
-        return [[
+        $columns = [
             'ownership' => $result['ownership'],
             'counts_for_talent' => $result['counts_for_talent'],
             'youtube_channel_id' => $result['youtube_channel_id'],
-        ], $banner];
+        ];
+
+        // Only set the length when the API actually returned one, so a deferred re-check never
+        // wipes a duration already captured from playback.
+        if (! empty($result['duration_seconds'])) {
+            $columns['duration_seconds'] = $result['duration_seconds'];
+        }
+
+        return [$columns, $banner];
     }
 
     private function savedRedirect(string $status, ?string $banner = null): RedirectResponse

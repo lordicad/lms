@@ -32,7 +32,7 @@ class OwnershipService
     public function attributeYoutube(string $youtubeId, User $teacher): array
     {
         try {
-            $channelId = $this->api->videoChannelId($youtubeId);
+            $info = $this->api->videoInfo($youtubeId);
         } catch (Throwable $e) {
             report($e);
 
@@ -41,19 +41,21 @@ class OwnershipService
                 'ownership' => Lesson::OWNERSHIP_REFERENCE,
                 'counts_for_talent' => false,
                 'youtube_channel_id' => null,
+                'duration_seconds' => null,
             ];
         }
 
-        if ($channelId === null) {
+        if ($info === null) {
             return [
                 'status' => self::STATUS_BLOCKED,
                 'ownership' => null,
                 'counts_for_talent' => false,
                 'youtube_channel_id' => null,
+                'duration_seconds' => null,
             ];
         }
 
-        $owned = $teacher->youtubeChannels()->where('channel_id', $channelId)->exists();
+        $owned = $teacher->youtubeChannels()->where('channel_id', $info['channel_id'])->exists();
 
         return [
             'status' => $owned ? self::STATUS_OWNED : self::STATUS_REFERENCE,
@@ -61,7 +63,8 @@ class OwnershipService
             'counts_for_talent' => $owned,
             // Snapshot the channelId even for references, so re-attribution on a later connect is a
             // pure DB comparison (no extra API call).
-            'youtube_channel_id' => $channelId,
+            'youtube_channel_id' => $info['channel_id'],
+            'duration_seconds' => $info['duration_seconds'],
         ];
     }
 
