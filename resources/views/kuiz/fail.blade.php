@@ -28,8 +28,6 @@
                     <x-icon name="download" class="h-5 w-5" />
                     {{ __('Muat Turun Kuiz') }}
                 </a>
-
-                <p class="help text-center">{{ $quiz->original_name }}</p>
             @else
                 <x-alert type="warn" class="mt-6">{{ __('Fail kuiz tidak dijumpai. Sila hubungi cikgu anda.') }}</x-alert>
             @endif
