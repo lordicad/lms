@@ -23,7 +23,7 @@
                     </div>
                     <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px">
                         @foreach ($items as $lesson)
-                            <x-vid-card :lesson="$lesson" :thumbHeight="104" />
+                            <x-vid-card :lesson="$lesson" :thumbHeight="104" :showViews="true" />
                         @endforeach
                     </div>
                 </div>
