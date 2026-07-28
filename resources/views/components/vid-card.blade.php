@@ -57,7 +57,7 @@
                 <span style="background:{{ $tagBg }};color:{{ $tagColor }};border-radius:999px;padding:3px 10px;font-family:'Geist',sans-serif;font-size:11.5px;font-weight:800">{{ $subject->displayName() }}</span>
                 <span style="font-size:12px;font-weight:700;color:var(--wl-muted)">Bab {{ $lesson->chapter->number }}</span>
                 @if ($showViews)
-                    <span style="margin-left:auto;font-size:12px;font-weight:700;color:var(--wl-muted)">👁 {{ $lesson->views_count }}</span>
+                    <span style="display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;color:var(--wl-muted)"><x-icon name="eye" class="h-[14px] w-[14px]" />{{ $lesson->views_count }}</span>
                 @endif
             </div>
         @endif
