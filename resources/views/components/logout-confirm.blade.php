@@ -17,12 +17,12 @@
     <div @click="open = true" style="display:contents">{{ $slot }}</div>
 
     <template x-teleport="body">
-        <div x-show="open" x-cloak x-transition.opacity.duration.150ms
+        <div x-show="open" x-cloak x-transition.opacity
              @keydown.escape.window="open = false" @click="open = false"
-             style="position:fixed;inset:0;z-index:200;background:rgba(20,20,35,.55);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;padding:24px">
-            <div @click.stop x-show="open" x-transition.scale.origin.center
-                 style="width:min(380px,100%);background:#fff;border-radius:22px;box-shadow:0 24px 70px rgba(20,20,40,.35);padding:30px 28px;display:flex;flex-direction:column;align-items:center;text-align:center">
-                <span style="width:60px;height:60px;border-radius:50%;background:#FDE7E0;color:#C24936;display:grid;place-items:center;margin-bottom:14px"><x-icon name="logout" class="h-7 w-7" /></span>
+             style="position:fixed;top:0;left:0;right:0;bottom:0;width:100vw;height:100vh;box-sizing:border-box;z-index:9999;background:rgba(20,20,35,.55);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;padding:24px">
+            <div @click.stop x-show="open" x-transition
+                 style="width:min(380px,100%);max-width:380px;margin:auto;box-sizing:border-box;background:#fff;border-radius:22px;box-shadow:0 24px 70px rgba(20,20,40,.35);padding:30px 28px;display:flex;flex-direction:column;align-items:center;text-align:center">
+                <span style="width:60px;height:60px;flex-shrink:0;margin:0 auto 14px;border-radius:50%;background:#FDE7E0;color:#C24936;display:grid;place-items:center"><x-icon name="logout" class="h-7 w-7" /></span>
                 <h3 style="margin:0 0 6px;font-family:'Geist',sans-serif;font-weight:800;font-size:19px;color:#28293F">{{ __('Log keluar?') }}</h3>
                 <p style="margin:0 0 20px;font-size:14px;color:#6C6F87;line-height:1.5">{{ __('Anda akan dilog keluar daripada akaun anda.') }}</p>
                 <div style="display:flex;gap:10px;width:100%">
