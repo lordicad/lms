@@ -2,30 +2,25 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Grade;
 use App\Models\Subject;
 use App\Services\LeaderboardService;
+use App\Support\ActiveGrade;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class RankingController extends Controller
 {
     /**
-     * Student leaderboard. A Tahun and (optional) Subjek are chosen from the filters: the student
-     * defaults to their own Tahun but can look at any year's board, on its own or narrowed to a
-     * subject. Ranks stay continuous and absolute because LeaderboardService ranks the full set
+     * Student leaderboard. The Tahun follows the header's Tahun switcher (ActiveGrade), so the
+     * board matches whatever year the student is browsing elsewhere; the Subjek filter narrows it
+     * further. Ranks stay continuous and absolute because LeaderboardService ranks the full set
      * before applying the limit.
      */
     public function __invoke(Request $request, LeaderboardService $leaderboard): View
     {
         $user = $request->user();
 
-        $grades = Grade::orderBy('level')->get();
-
-        // The Tahun being viewed — the chosen one, falling back to the student's own.
-        $grade = ($request->filled('tahun')
-            ? $grades->firstWhere('level', $request->integer('tahun'))
-            : null) ?? $user->grade;
+        $grade = ActiveGrade::for($user);
 
         $subject = $request->filled('subjek')
             ? Subject::where('slug', $request->string('subjek'))->first()
@@ -49,7 +44,6 @@ class RankingController extends Controller
             'showMyRow' => $myRow && ! $top->contains(fn ($row) => $row->student->id === $user->id),
             'subjects' => Subject::orderBy('sort_order')->get(),
             'subject' => $subject,
-            'grades' => $grades,
             'grade' => $grade,
         ]);
     }
