@@ -86,6 +86,6 @@
             @endforeach
         </div>
 
-        <a href="{{ route('bab.show', $quiz->chapter) }}" class="wl-btn-secondary" style="align-self:center;min-height:48px;display:inline-flex;align-items:center;border-radius:13px;border:1.5px solid var(--wl-line-2);background:var(--wl-surface);color:var(--wl-ink);font-family:'Geist',sans-serif;font-weight:800;font-size:14.5px;padding:0 24px;text-decoration:none">← {{ __('Kembali ke Bab') }}</a>
+        <a href="{{ route('kuiz-saya.index') }}" class="wl-btn-secondary" style="align-self:center;min-height:48px;display:inline-flex;align-items:center;border-radius:13px;border:1.5px solid var(--wl-line-2);background:var(--wl-surface);color:var(--wl-ink);font-family:'Geist',sans-serif;font-weight:800;font-size:14.5px;padding:0 24px;text-decoration:none">← {{ __('Kembali') }}</a>
     </div>
 </x-student-layout>
