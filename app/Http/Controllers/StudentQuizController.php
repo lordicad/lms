@@ -23,7 +23,7 @@ class StudentQuizController extends Controller
         $quizzes = $grade
             ? Quiz::published()
                 ->whereHas('chapter', fn ($q) => $q->where('grade_id', $grade->id)->where('is_active', true))
-                ->with('chapter.subject')
+                ->with('chapter.subject', 'chapter.grade')
                 ->withCount('questions')
                 ->orderByDesc('id')
                 ->get()
