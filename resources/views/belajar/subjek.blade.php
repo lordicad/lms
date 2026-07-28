@@ -29,33 +29,43 @@
                 <span style="font-size:13.5px;color:var(--wl-muted)">{{ __('Cikgu belum menyediakan bab untuk :subject :grade.', ['subject' => $subject->name, 'grade' => $grade->name]) }}</span>
             </div>
         @else
+            {{-- Same card design as the teacher Bab page: a colour cycles per chapter (accent bar
+                 and number badge), with an icon-led meta row. The whole card is the link, and a
+                 watch-progress bar shows once a chapter has videos. --}}
+            @php($palette = [
+                ['accent' => '#17907B', 'tint' => '#DCF2EE'],
+                ['accent' => '#2E6CA8', 'tint' => '#E4EEF9'],
+                ['accent' => '#7C5CBF', 'tint' => '#EDE7F9'],
+                ['accent' => '#D9862B', 'tint' => '#FBEAD3'],
+                ['accent' => '#D9548A', 'tint' => '#FBE0EC'],
+            ])
             <div style="display:flex;flex-direction:column;gap:14px">
                 @foreach ($chapters as $chapter)
                     @php($total = $chapter->lessons_count)
                     @php($watched = (int) ($watchedByChapter[$chapter->id] ?? 0))
                     @php($wpct = $total > 0 ? (int) round($watched / $total * 100) : 0)
+                    @php($c = $palette[$loop->index % count($palette)])
                     <a href="{{ route('bab.show', $chapter) }}" class="wl-row-lift"
-                       style="background:var(--wl-surface);border:1px solid var(--wl-line);border-radius:16px;padding:18px 22px;display:flex;align-items:center;gap:18px;box-shadow:0 3px 12px rgba(46,44,80,.04);cursor:pointer;text-decoration:none">
-                        <span style="width:44px;height:44px;border-radius:12px;background:#E4EEF9;display:grid;place-items:center;font-family:'Geist',sans-serif;font-weight:800;font-size:16px;color:#2E6CA8;flex-shrink:0">{{ $chapter->number }}</span>
-                        <div style="display:flex;flex-direction:column;gap:4px;margin-right:auto;min-width:0">
-                            <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:15.5px;color:var(--wl-ink)">Bab {{ $chapter->number }}: {{ $chapter->title }}</span>
-                            <div style="display:flex;gap:16px;font-size:13px;color:var(--wl-muted-2);flex-wrap:wrap">
-                                <span>🎬 {{ $chapter->lessons_count }} video</span>
-                                <span>📄 {{ $chapter->materials_count }} {{ __('bahan') }}</span>
-                                <span>📝 {{ $chapter->quizzes_count }} {{ __('kuiz') }}</span>
+                       style="background:var(--wl-surface);border:1px solid var(--wl-line);border-left:4px solid {{ $c['accent'] }};border-radius:16px;padding:16px 20px;display:flex;align-items:center;gap:18px;box-shadow:0 3px 12px rgba(46,44,80,.04);cursor:pointer;text-decoration:none">
+                        <span style="width:52px;height:52px;border-radius:14px;background:{{ $c['tint'] }};color:{{ $c['accent'] }};display:grid;place-items:center;font-family:'Geist',sans-serif;font-weight:800;font-size:20px;flex-shrink:0">{{ $chapter->number }}</span>
+                        <div style="display:flex;flex-direction:column;gap:7px;margin-right:auto;min-width:0">
+                            <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:17px;color:var(--wl-ink)">{{ $chapter->title }}</span>
+                            <div style="display:flex;align-items:center;gap:18px;font-size:13px;font-weight:700;color:var(--wl-muted-2);flex-wrap:wrap">
+                                <span style="display:inline-flex;align-items:center;gap:6px"><x-icon name="video" style="width:16px;height:16px;color:#17907B" />{{ $chapter->lessons_count }} video</span>
+                                <span style="display:inline-flex;align-items:center;gap:6px"><x-icon name="file" style="width:16px;height:16px;color:#2E6CA8" />{{ $chapter->materials_count }} {{ __('bahan') }}</span>
+                                <span style="display:inline-flex;align-items:center;gap:6px"><x-icon name="help-circle" style="width:16px;height:16px;color:#7C5CBF" />{{ $chapter->quizzes_count }} {{ __('kuiz') }}</span>
                             </div>
                         </div>
                         @if (auth()->user()->isStudent() && $total > 0)
-                            <div style="display:flex;flex-direction:column;gap:6px;width:160px;flex-shrink:0">
+                            <div style="display:flex;flex-direction:column;gap:6px;width:150px;flex-shrink:0">
                                 <div style="display:flex;justify-content:space-between;font-family:'Geist',sans-serif;font-size:12.5px;font-weight:800;color:var(--wl-muted-2)">
                                     <span>{{ __('Ditonton') }}</span><span>{{ $watched }}/{{ $total }}</span>
                                 </div>
                                 <div style="height:6px;border-radius:999px;background:#EFEEE6;overflow:hidden">
-                                    <div style="height:100%;border-radius:999px;background:#2BB39B;width:{{ $wpct }}%"></div>
+                                    <div style="height:100%;border-radius:999px;background:{{ $c['accent'] }};width:{{ $wpct }}%"></div>
                                 </div>
                             </div>
                         @endif
-                        <span style="color:var(--wl-muted);font-size:16px;flex-shrink:0">›</span>
                     </a>
                 @endforeach
             </div>
