@@ -94,8 +94,8 @@
 
         /* Sits in the header, so its default fill is transparent — it shows the header colour
            behind it — and it turns to the white surface on hover. */
-        .wl-iconbtn { width: 44px; height: 44px; flex-shrink: 0; border-radius: 50%; border: 1px solid var(--line-strong); background: var(--surface); color: var(--muted); cursor: pointer; display: grid; place-items: center; transition: background .15s, color .15s; }
-        .wl-iconbtn:hover { background: var(--brand-soft); color: var(--brand-ink); }
+        .wl-iconbtn { width: 44px; height: 44px; flex-shrink: 0; border-radius: 50%; border: 1px solid var(--line-strong); background: var(--brand-soft); color: var(--brand-ink); cursor: pointer; display: grid; place-items: center; transition: background .15s, color .15s; }
+        .wl-iconbtn:hover { background: var(--brand); color: #fff; }
         .wl-iconbtn svg { width: 20px; height: 20px; }
 
         .wl-btn { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 16px; border-radius: 12px; font-family: 'Geist', sans-serif; font-weight: 700; font-size: 14px; white-space: nowrap; transition: background .15s, transform .15s, color .15s; }
