@@ -17,7 +17,7 @@
             <h3 style="margin:0;font-family:'Geist',sans-serif;font-size:17px;font-weight:800;color:var(--wl-ink)">{{ __('Video pelajaran') }}</h3>
             @if ($lessons->isEmpty())
                 <div style="background:var(--wl-surface);border:1px solid var(--wl-line);border-radius:18px;padding:44px;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center">
-                    <span style="width:44px;height:44px;border-radius:50%;background:#F1F0E8;display:grid;place-items:center;font-size:18px">🎬</span>
+                    <span style="width:44px;height:44px;border-radius:50%;background:#F1F0E8;display:grid;place-items:center;color:var(--wl-muted-2)"><x-icon name="video" style="width:22px;height:22px" /></span>
                     <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:15px;color:var(--wl-ink)">{{ __('Tiada video untuk bab ini lagi') }}</span>
                     <span style="font-size:13.5px;color:var(--wl-muted)">{{ __('Cikgu belum memuat naik sebarang video untuk bab ini.') }}</span>
                 </div>
@@ -54,7 +54,7 @@
             <h3 style="margin:0;font-family:'Geist',sans-serif;font-size:17px;font-weight:800;color:var(--wl-ink)">{{ __('Bahan sokongan') }}</h3>
             @if ($materials->isEmpty())
                 <div style="background:var(--wl-surface);border:1px solid var(--wl-line);border-radius:18px;padding:44px;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center">
-                    <span style="width:44px;height:44px;border-radius:50%;background:#F1F0E8;display:grid;place-items:center;font-size:18px">📄</span>
+                    <span style="width:44px;height:44px;border-radius:50%;background:#F1F0E8;display:grid;place-items:center;color:var(--wl-muted-2)"><x-icon name="file" style="width:22px;height:22px" /></span>
                     <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:15px;color:var(--wl-ink)">{{ __('Tiada bahan untuk bab ini lagi') }}</span>
                     <span style="font-size:13.5px;color:var(--wl-muted)">{{ __('Cikgu belum memuat naik slaid, PDF atau lembaran kerja untuk bab ini.') }}</span>
                 </div>
@@ -79,7 +79,7 @@
             <h3 style="margin:0;font-family:'Geist',sans-serif;font-size:17px;font-weight:800;color:var(--wl-ink)">{{ __('Kuiz') }}</h3>
             @if ($quizzes->isEmpty())
                 <div style="background:var(--wl-surface);border:1px solid var(--wl-line);border-radius:18px;padding:44px;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center">
-                    <span style="width:44px;height:44px;border-radius:50%;background:#F1F0E8;display:grid;place-items:center;font-size:18px">📝</span>
+                    <span style="width:44px;height:44px;border-radius:50%;background:#F1F0E8;display:grid;place-items:center;color:var(--wl-muted-2)"><x-icon name="quiz" style="width:22px;height:22px" /></span>
                     <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:15px;color:var(--wl-ink)">{{ __('Tiada kuiz untuk bab ini lagi') }}</span>
                     <span style="font-size:13.5px;color:var(--wl-muted)">{{ __('Tonton video dahulu. Kuiz akan muncul di sini apabila cikgu menyediakannya.') }}</span>
                 </div>
