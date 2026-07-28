@@ -18,21 +18,21 @@
             {{-- Stats strip --}}
             <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px">
                 <div style="background:#DCF2EE;border-radius:18px;padding:18px 20px;display:flex;align-items:center;gap:14px">
-                    <span style="width:44px;height:44px;border-radius:14px;background:var(--wl-surface);display:grid;place-items:center;font-size:19px">✅</span>
+                    <span style="width:44px;height:44px;border-radius:14px;background:var(--wl-surface);color:#0F7A68;display:grid;place-items:center"><x-icon name="check-circle" style="width:22px;height:22px" /></span>
                     <div style="display:flex;flex-direction:column">
                         <span style="font-family:'Geist',sans-serif;font-size:22px;font-weight:800;color:#0F7A68">{{ $doneCount }}</span>
                         <span style="font-size:12.5px;font-weight:700;color:#0F7A68">{{ __('Kuiz selesai') }}</span>
                     </div>
                 </div>
                 <div style="background:#FEF0CE;border-radius:18px;padding:18px 20px;display:flex;align-items:center;gap:14px">
-                    <span style="width:44px;height:44px;border-radius:14px;background:var(--wl-surface);display:grid;place-items:center;font-size:19px">⭐</span>
+                    <span style="width:44px;height:44px;border-radius:14px;background:var(--wl-surface);color:#8A6A12;display:grid;place-items:center"><x-icon name="star" style="width:22px;height:22px" /></span>
                     <div style="display:flex;flex-direction:column">
                         <span style="font-family:'Geist',sans-serif;font-size:22px;font-weight:800;color:#8A6A12">{{ $avgScore !== null ? $avgScore.'%' : '—' }}</span>
                         <span style="font-size:12.5px;font-weight:700;color:#8A6A12">{{ __('Purata markah') }}</span>
                     </div>
                 </div>
                 <div style="background:#E4EEF9;border-radius:18px;padding:18px 20px;display:flex;align-items:center;gap:14px">
-                    <span style="width:44px;height:44px;border-radius:14px;background:var(--wl-surface);display:grid;place-items:center;font-size:19px">🏆</span>
+                    <span style="width:44px;height:44px;border-radius:14px;background:var(--wl-surface);color:#2E6CA8;display:grid;place-items:center"><x-icon name="trophy" style="width:22px;height:22px" /></span>
                     <div style="display:flex;flex-direction:column">
                         <span style="font-family:'Geist',sans-serif;font-size:22px;font-weight:800;color:#2E6CA8">{{ $rank ? '#'.$rank : '—' }}</span>
                         <span style="font-size:12.5px;font-weight:700;color:#2E6CA8">{{ __('Ranking') }}</span>
