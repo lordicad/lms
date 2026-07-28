@@ -33,6 +33,9 @@
                 {{-- Object syntax so the binding does not wipe the static pill styles. --}}
                 <span :style="secondsLeft < 60 ? { background: '#FDE7E0', color: '#C24936' } : { background: '#FBEECB', color: '#8A6A12' }"
                       style="display:inline-flex;align-items:center;gap:7px;border-radius:999px;padding:8px 16px;font-family:'Geist',sans-serif;font-weight:800;font-size:15px"><x-icon name="clock" style="width:17px;height:17px" /><span x-text="clock()">{{ gmdate('i:s', $secondsLeft) }}</span></span>
+            @else
+                {{-- No time limit: an infinity mark rather than a misleading 00:00. --}}
+                <span title="{{ __('Tiada had masa') }}" style="display:inline-flex;align-items:center;gap:7px;border-radius:999px;padding:8px 16px;font-family:'Geist',sans-serif;font-weight:800;font-size:16px;background:#EDECF2;color:#6C6F87"><x-icon name="clock" style="width:17px;height:17px" />∞</span>
             @endif
         </div>
 
