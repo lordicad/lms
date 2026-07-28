@@ -37,7 +37,7 @@
             </div>
             <div style="display:flex;gap:12px;margin-top:8px;flex-wrap:wrap;justify-content:center">
                 <a href="{{ route('kuiz.intro', $quiz) }}" class="wl-btn-secondary" style="min-height:48px;display:inline-flex;align-items:center;border-radius:13px;border:1.5px solid var(--wl-line-2);background:var(--wl-surface);color:var(--wl-ink);font-family:'Geist',sans-serif;font-weight:800;font-size:14.5px;padding:0 22px;text-decoration:none">{{ __('Cuba Lagi (Latihan)') }}</a>
-                <a href="{{ route('ranking.index') }}" class="wl-btn-primary" style="min-height:48px;display:inline-flex;align-items:center;border-radius:13px;background:#17907B;color:#fff;font-family:'Geist',sans-serif;font-weight:800;font-size:14.5px;padding:0 22px;text-decoration:none">🏆&nbsp; {{ __('Lihat Ranking') }}</a>
+                <a href="{{ route('ranking.index') }}" class="wl-btn-primary" style="min-height:48px;display:inline-flex;align-items:center;gap:8px;border-radius:13px;background:#17907B;color:#fff;font-family:'Geist',sans-serif;font-weight:800;font-size:14.5px;padding:0 22px;text-decoration:none"><x-icon name="trophy" style="width:18px;height:18px" />{{ __('Lihat Ranking') }}</a>
             </div>
         </div>
 
