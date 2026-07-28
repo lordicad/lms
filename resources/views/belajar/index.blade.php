@@ -110,7 +110,7 @@
                     </div>
                     <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px">
                         @foreach ($newest->take(4) as $lesson)
-                            <x-vid-card :lesson="$lesson" :thumbHeight="104" />
+                            <x-vid-card :lesson="$lesson" :thumbHeight="104" :showViews="true" />
                         @endforeach
                     </div>
                 </div>
@@ -122,7 +122,7 @@
                     <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:21px;font-weight:800;color:var(--wl-ink)">{{ __('Anda mungkin suka') }}</h2>
                     <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px">
                         @foreach ($suggested->take(4) as $lesson)
-                            <x-vid-card :lesson="$lesson" :thumbHeight="104" />
+                            <x-vid-card :lesson="$lesson" :thumbHeight="104" :showViews="true" />
                         @endforeach
                     </div>
                 </div>
