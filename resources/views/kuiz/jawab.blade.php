@@ -26,29 +26,29 @@
          x-data="quizRunner({ total: {{ $questions->count() }}, secondsLeft: {{ $secondsLeft === null ? 'null' : $secondsLeft }}, labels: { answered: @js(__('dijawab')) } })"
          x-init="start()">
 
-        {{-- Header: title + timer --}}
-        <div style="display:flex;align-items:center;gap:16px">
-            <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:22px;font-weight:800;letter-spacing:-.01em;color:var(--wl-ink);flex:1;min-width:0">{{ $quiz->title }}</h2>
-            @if ($secondsLeft !== null)
-                {{-- Object syntax so the binding does not wipe the static pill styles. --}}
-                <span :style="secondsLeft < 60 ? { background: '#FDE7E0', color: '#C24936' } : { background: '#FBEECB', color: '#8A6A12' }"
-                      style="display:inline-flex;align-items:center;gap:7px;border-radius:999px;padding:8px 16px;font-family:'Geist',sans-serif;font-weight:800;font-size:15px"><x-icon name="clock" style="width:17px;height:17px" /><span x-text="clock()">{{ gmdate('i:s', $secondsLeft) }}</span></span>
-            @else
-                {{-- No time limit: an infinity mark rather than a misleading 00:00. --}}
-                <span title="{{ __('Tiada had masa') }}" style="display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:9px 16px;font-family:'Geist',sans-serif;font-weight:800;background:#EDECF2;color:#6C6F87"><x-icon name="clock" style="width:18px;height:18px" /><x-icon name="infinity" style="width:22px;height:22px" /></span>
-            @endif
-        </div>
-
         <noscript>
             <div style="background:#FEF0CE;border-radius:14px;padding:14px 18px;font-weight:700;font-size:14px;color:#8A6A12">{{ __('JavaScript perlu dihidupkan untuk menjawab kuiz ini.') }}</div>
         </noscript>
 
         <form method="POST" action="{{ route('kuiz.hantar', $attempt) }}" x-ref="form" @submit="submitting = true"
-              style="display:flex;flex-direction:column;gap:18px;margin-top:10px">
+              style="display:flex;flex-direction:column;gap:18px">
             @csrf
             @foreach ($questions as $index => $question)
                 <section x-show="current === {{ $index }}" @if ($index > 0) x-cloak @endif class="qcard"
                          style="background:var(--wl-surface);border:1px solid var(--wl-line);border-radius:24px;padding:32px;box-shadow:0 10px 30px var(--wl-line)">
+                    {{-- Title + timer, at the top of the card. --}}
+                    <div style="display:flex;align-items:center;gap:16px">
+                        <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:22px;font-weight:800;letter-spacing:-.01em;color:var(--wl-ink);flex:1;min-width:0">{{ $quiz->title }}</h2>
+                        @if ($secondsLeft !== null)
+                            {{-- Object syntax so the binding does not wipe the static pill styles. --}}
+                            <span :style="secondsLeft < 60 ? { background: '#FDE7E0', color: '#C24936' } : { background: '#FBEECB', color: '#8A6A12' }"
+                                  style="display:inline-flex;align-items:center;gap:7px;border-radius:999px;padding:8px 16px;font-family:'Geist',sans-serif;font-weight:800;font-size:15px"><x-icon name="clock" style="width:17px;height:17px" /><span x-text="clock()">{{ gmdate('i:s', $secondsLeft) }}</span></span>
+                        @else
+                            {{-- No time limit: an infinity mark rather than a misleading 00:00. --}}
+                            <span title="{{ __('Tiada had masa') }}" style="display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:9px 16px;font-family:'Geist',sans-serif;font-weight:800;background:#EDECF2;color:#6C6F87"><x-icon name="clock" style="width:18px;height:18px" /><x-icon name="infinity" style="width:22px;height:22px" /></span>
+                        @endif
+                    </div>
+
                     {{-- Position + points + answered count --}}
                     <div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap">
                         <span style="background:#17907B;color:#fff;border-radius:999px;padding:6px 15px;font-family:'Geist',sans-serif;font-weight:800;font-size:13.5px">{{ $index + 1 }} / {{ $questions->count() }}</span>
