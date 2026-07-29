@@ -45,9 +45,9 @@
             {{-- Each rank: a gold/silver/bronze medal + a soft card tint; the avatar and points pill
                  keep the green/blue/pink palette. Rendered 2 · 1 · 3 with the champion raised. --}}
             @php($podiumMeta = [
-                0 => ['cardBg' => '#FDF3DE', 'cardBorder' => '#F1E1B4', 'disc' => '#F4B63F', 'ring' => '#DE9F22', 'ribA' => '#E8A63A', 'ribB' => '#C7891D', 'num' => '#fff', 'shadow' => true],
-                1 => ['cardBg' => '#ECF2FB', 'cardBorder' => '#D6E3F4', 'disc' => '#C7CCD4', 'ring' => '#A9AFB9', 'ribA' => '#C0C5CE', 'ribB' => '#9EA4AF', 'num' => '#5A5F68', 'shadow' => false],
-                2 => ['cardBg' => '#FBEDF2', 'cardBorder' => '#F4D8E3', 'disc' => '#D69A5F', 'ring' => '#BC8146', 'ribA' => '#CD9155', 'ribB' => '#A6723B', 'num' => '#fff', 'shadow' => true],
+                0 => ['cardBg' => '#FCF6E6', 'cardBorder' => '#F0E2BC', 'disc' => '#F4B63F', 'discHi' => '#F9CB63', 'ring' => '#E0A11F', 'ribA' => '#E89A2E', 'ribB' => '#D9861C', 'num' => '#8A5A12', 'sparkle' => '#E7C877'],
+                1 => ['cardBg' => '#EEF2F8', 'cardBorder' => '#DBE4F0', 'disc' => '#C9CDD6', 'discHi' => '#E6E9EE', 'ring' => '#A9AFB9', 'ribA' => '#BABFC8', 'ribB' => '#A7ADB7', 'num' => '#5A5F68', 'sparkle' => '#C6CDD8'],
+                2 => ['cardBg' => '#FBEEF3', 'cardBorder' => '#F3D9E3', 'disc' => '#D69A5F', 'discHi' => '#E7BB8B', 'ring' => '#BC8146', 'ribA' => '#C98A50', 'ribB' => '#B0733C', 'num' => '#7A4A1E', 'sparkle' => '#EFBFD5'],
             ])
             @php($arrange = collect([
                 ['idx' => 1, 'row' => $podiumRows[1] ?? null],
@@ -63,19 +63,24 @@
                     @php($pal = $palette[$idx])
                     @php($m = $podiumMeta[$idx])
                     @php($big = $idx === 0)
-                    <div style="position:relative;background:{{ $m['cardBg'] }};border:1.5px solid {{ $m['cardBorder'] }};border-radius:22px;padding:{{ $big ? '32px 18px 22px' : '26px 16px 18px' }};margin-top:{{ $big ? '0' : '26px' }};display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;box-shadow:0 10px 26px rgba(46,44,80,.07)">
-                        {{-- Ribbon medal, overlapping the top edge. --}}
-                        <span style="position:absolute;top:{{ $big ? '-20px' : '-18px' }};left:50%;transform:translateX(-50%);width:{{ $big ? 42 : 36 }}px;height:{{ $big ? 51 : 44 }}px">
-                            <svg width="{{ $big ? 42 : 36 }}" height="{{ $big ? 51 : 44 }}" viewBox="0 0 28 34" fill="none" style="display:block">
-                                <path d="M6 1 L11 1 L18 16 L13 16 Z" fill="{{ $m['ribB'] }}" />
-                                <path d="M22 1 L17 1 L10 16 L15 16 Z" fill="{{ $m['ribA'] }}" />
-                                <circle cx="14" cy="23" r="10.5" fill="{{ $m['disc'] }}" stroke="{{ $m['ring'] }}" stroke-width="1.5" />
-                                <circle cx="14" cy="23" r="7.5" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="1" />
+                    <div style="position:relative;overflow:hidden;background:{{ $m['cardBg'] }};border:1.5px solid {{ $m['cardBorder'] }};border-radius:22px;padding:{{ $big ? '34px 18px 22px' : '28px 16px 18px' }};margin-top:{{ $big ? '0' : '26px' }};display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;box-shadow:0 10px 26px rgba(46,44,80,.07)">
+                        {{-- Sparkles. --}}
+                        <svg width="{{ $big ? 15 : 13 }}" height="{{ $big ? 15 : 13 }}" viewBox="0 0 16 16" fill="{{ $m['sparkle'] }}" style="position:absolute;top:{{ $big ? '34px' : '30px' }};left:16px;opacity:.85"><path d="M8 0c0 4.4-3.6 8-8 8 4.4 0 8 3.6 8 8 0-4.4 3.6-8 8-8-4.4 0-8-3.6-8-8z"/></svg>
+                        <svg width="{{ $big ? 11 : 9 }}" height="{{ $big ? 11 : 9 }}" viewBox="0 0 16 16" fill="{{ $m['sparkle'] }}" style="position:absolute;top:{{ $big ? '28px' : '24px' }};right:18px;opacity:.7"><path d="M8 0c0 4.4-3.6 8-8 8 4.4 0 8 3.6 8 8 0-4.4 3.6-8 8-8-4.4 0-8-3.6-8-8z"/></svg>
+
+                        {{-- Rosette medal: a gold/silver/bronze disc with the rank number, ribbon tails
+                             hanging below, overlapping the top edge. --}}
+                        <span style="position:absolute;top:{{ $big ? '-22px' : '-18px' }};left:50%;transform:translateX(-50%);width:{{ $big ? 48 : 40 }}px;height:{{ $big ? 57 : 47 }}px;z-index:1">
+                            <svg width="{{ $big ? 48 : 40 }}" height="{{ $big ? 57 : 47 }}" viewBox="0 0 44 52" fill="none" style="display:block">
+                                <path d="M15 22 L22 22 L18 48 L14.5 43.5 L11 48 Z" fill="{{ $m['ribB'] }}" />
+                                <path d="M22 22 L29 22 L33 48 L29.5 43.5 L26 48 Z" fill="{{ $m['ribA'] }}" />
+                                <circle cx="22" cy="17" r="13" fill="{{ $m['disc'] }}" stroke="{{ $m['ring'] }}" stroke-width="2" />
+                                <circle cx="22" cy="17" r="9.5" fill="none" stroke="{{ $m['discHi'] }}" stroke-width="1.5" />
                             </svg>
-                            <span style="position:absolute;left:0;top:{{ $big ? 16 : 14 }}px;width:{{ $big ? 42 : 36 }}px;height:{{ $big ? 37 : 32 }}px;display:grid;place-items:center;font-family:'Geist',sans-serif;font-weight:800;font-size:{{ $big ? 13 : 11 }}px;color:{{ $m['num'] }};{{ $m['shadow'] ? 'text-shadow:0 1px 1px rgba(0,0,0,.25)' : '' }}">{{ $idx + 1 }}</span>
+                            <span style="position:absolute;left:0;top:{{ $big ? 5 : 3 }}px;width:{{ $big ? 48 : 40 }}px;height:{{ $big ? 28 : 25 }}px;display:grid;place-items:center;font-family:'Geist',sans-serif;font-weight:800;font-size:{{ $big ? 16 : 14 }}px;color:{{ $m['num'] }}">{{ $idx + 1 }}</span>
                         </span>
 
-                        <span style="margin-top:{{ $big ? '16px' : '12px' }};width:{{ $big ? '74px' : '60px' }};height:{{ $big ? '74px' : '60px' }};border-radius:50%;background:{{ $pal[0] }};display:grid;place-items:center;font-family:'Geist',sans-serif;font-size:{{ $big ? '28px' : '22px' }};font-weight:800;color:{{ $pal[1] }};border:3px solid {{ $pal[2] }}">{{ $initial($row->student->name) }}</span>
+                        <span style="margin-top:{{ $big ? '18px' : '13px' }};width:{{ $big ? '74px' : '60px' }};height:{{ $big ? '74px' : '60px' }};border-radius:50%;background:{{ $pal[0] }};display:grid;place-items:center;font-family:'Geist',sans-serif;font-size:{{ $big ? '28px' : '22px' }};font-weight:800;color:{{ $pal[1] }};border:3px solid {{ $pal[2] }}">{{ $initial($row->student->name) }}</span>
                         <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:{{ $big ? '17px' : '15px' }};color:var(--wl-ink)">{{ \Illuminate\Support\Str::before($row->student->name, ' ') }}</span>
                         <span style="font-size:12.5px;color:var(--wl-muted)">{{ __(':count kuiz', ['count' => $row->quizzes]) }}</span>
                         <span style="margin-top:2px;background:{{ $pal[0] }};color:{{ $pal[1] }};border-radius:999px;padding:5px 16px;font-family:'Geist',sans-serif;font-size:13.5px;font-weight:800">{{ __(':count mata', ['count' => number_format($row->points)]) }}</span>
