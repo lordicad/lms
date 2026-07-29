@@ -67,23 +67,21 @@
                 <div style="position:relative;overflow:hidden;background:var(--wl-surface);border:1px solid var(--wl-line);border-radius:18px;padding:24px 20px;box-shadow:0 4px 16px rgba(46,44,80,.04)">
                     {{-- Background: botanical leaf sprigs in the corners + scattered sparkles. --}}
                     <div aria-hidden="true" style="position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden">
-                        <svg style="position:absolute;left:-12px;bottom:-22px;opacity:.45" width="150" height="175" viewBox="0 0 150 175" fill="#C4E0D3">
-                            <path d="M18 172 C 38 135 52 92 64 40" fill="none" stroke="#C4E0D3" stroke-width="3" stroke-linecap="round"/>
-                            <ellipse cx="0" cy="0" rx="17" ry="7" transform="translate(28 146) rotate(-40)"/>
-                            <ellipse cx="0" cy="0" rx="17" ry="7" transform="translate(36 118) rotate(40)"/>
-                            <ellipse cx="0" cy="0" rx="16" ry="6.5" transform="translate(44 96) rotate(-42)"/>
-                            <ellipse cx="0" cy="0" rx="16" ry="6.5" transform="translate(52 74) rotate(42)"/>
-                            <ellipse cx="0" cy="0" rx="14" ry="6" transform="translate(58 52) rotate(-45)"/>
-                            <ellipse cx="0" cy="0" rx="12" ry="5" transform="translate(63 34) rotate(35)"/>
+                        @php($leaf = 'M0 0 C -15 -20 -15 -54 0 -72 C 15 -54 15 -20 0 0 Z')
+                        @php($vein = 'M0 -9 L0 -63')
+                        <svg style="position:absolute;left:6px;bottom:2px;opacity:.5" width="165" height="160" viewBox="0 0 165 160" fill="#C4E0D3">
+                            <g transform="translate(30 152)">
+                                <g transform="rotate(-16)"><path d="{{ $leaf }}"/><path d="{{ $vein }}" fill="none" stroke="#A6CFBC" stroke-width="1.6"/></g>
+                                <g transform="rotate(18) scale(1.3)"><path d="{{ $leaf }}"/><path d="{{ $vein }}" fill="none" stroke="#A6CFBC" stroke-width="1.3"/></g>
+                                <g transform="rotate(52) scale(1.04)"><path d="{{ $leaf }}"/><path d="{{ $vein }}" fill="none" stroke="#A6CFBC" stroke-width="1.6"/></g>
+                            </g>
                         </svg>
-                        <svg style="position:absolute;right:-12px;bottom:-22px;opacity:.45;transform:scaleX(-1)" width="150" height="175" viewBox="0 0 150 175" fill="#C4E0D3">
-                            <path d="M18 172 C 38 135 52 92 64 40" fill="none" stroke="#C4E0D3" stroke-width="3" stroke-linecap="round"/>
-                            <ellipse cx="0" cy="0" rx="17" ry="7" transform="translate(28 146) rotate(-40)"/>
-                            <ellipse cx="0" cy="0" rx="17" ry="7" transform="translate(36 118) rotate(40)"/>
-                            <ellipse cx="0" cy="0" rx="16" ry="6.5" transform="translate(44 96) rotate(-42)"/>
-                            <ellipse cx="0" cy="0" rx="16" ry="6.5" transform="translate(52 74) rotate(42)"/>
-                            <ellipse cx="0" cy="0" rx="14" ry="6" transform="translate(58 52) rotate(-45)"/>
-                            <ellipse cx="0" cy="0" rx="12" ry="5" transform="translate(63 34) rotate(35)"/>
+                        <svg style="position:absolute;right:6px;bottom:2px;opacity:.5;transform:scaleX(-1)" width="165" height="160" viewBox="0 0 165 160" fill="#C4E0D3">
+                            <g transform="translate(30 152)">
+                                <g transform="rotate(-16)"><path d="{{ $leaf }}"/><path d="{{ $vein }}" fill="none" stroke="#A6CFBC" stroke-width="1.6"/></g>
+                                <g transform="rotate(18) scale(1.3)"><path d="{{ $leaf }}"/><path d="{{ $vein }}" fill="none" stroke="#A6CFBC" stroke-width="1.3"/></g>
+                                <g transform="rotate(52) scale(1.04)"><path d="{{ $leaf }}"/><path d="{{ $vein }}" fill="none" stroke="#A6CFBC" stroke-width="1.6"/></g>
+                            </g>
                         </svg>
                         <svg style="position:absolute;top:28px;left:21%;opacity:.55" width="13" height="13" viewBox="0 0 16 16" fill="#9FD0BF"><path d="M8 0c0 4.4-3.6 8-8 8 4.4 0 8 3.6 8 8 0-4.4 3.6-8 8-8-4.4 0-8-3.6-8-8z"/></svg>
                         <svg style="position:absolute;top:64px;left:33%;opacity:.4" width="10" height="10" viewBox="0 0 16 16" fill="#B9CFEA"><path d="M8 0c0 4.4-3.6 8-8 8 4.4 0 8 3.6 8 8 0-4.4 3.6-8 8-8-4.4 0-8-3.6-8-8z"/></svg>
