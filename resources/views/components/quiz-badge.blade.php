@@ -1,6 +1,6 @@
 @props([
     'badge',            // badge key from App\Support\QuizBadges
-    'isNew' => false,   // just earned on this attempt — shows a "Baru" tag
+    'isNew' => false,   // just earned on this attempt — pops in with a sparkle burst
     'count' => null,    // times earned across quizzes — shows ×N on the profile
     'muted' => false,   // not yet earned — greyed on the profile collection
 ])
@@ -8,10 +8,39 @@
 @php($m = \App\Support\QuizBadges::meta($badge))
 @php($grey = $muted ? 'filter:grayscale(1)' : '')
 
+{{-- Animations, emitted once per page however many badges render. Earned badges pop in and throw
+     a sparkle burst; any badge wiggles and lifts on hover/tap. All off under reduced motion. --}}
+@once
+    <style>
+        .qb-badge { transition: transform .18s ease-out; }
+        .qb-badge:hover, .qb-badge:active { transform: translateY(-4px) scale(1.06); }
+        .qb-badge:hover .qb-medal, .qb-badge:active .qb-medal { animation: qbWiggle .5s ease-in-out; }
+        .qb-pop { animation: qbPop .55s cubic-bezier(.2,.8,.3,1.3) both; }
+        .qb-spark { position: absolute; z-index: 2; pointer-events: none; opacity: 0; animation: qbSpark .9s ease-out both; }
+        @keyframes qbPop { from { opacity: 0; transform: scale(.5) translateY(8px); } to { opacity: 1; transform: none; } }
+        @keyframes qbWiggle { 0%, 100% { transform: rotate(0); } 20% { transform: rotate(-8deg); } 60% { transform: rotate(8deg); } 80% { transform: rotate(-4deg); } }
+        @keyframes qbSpark { 0% { opacity: 0; transform: translate(0, 0) scale(.2); } 35% { opacity: 1; } 100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(1); } }
+        @media (prefers-reduced-motion: reduce) {
+            .qb-pop, .qb-spark, .qb-badge:hover .qb-medal, .qb-badge:active .qb-medal { animation: none; }
+            .qb-spark { display: none; }
+            .qb-badge:hover, .qb-badge:active { transform: none; }
+        }
+    </style>
+@endonce
+
 {{-- Rosette medal: ribbon tails + scalloped medal (three rotated squares) + tinted disc + icon,
      matching the "Lencana Saya" badges. --}}
-<div style="display:flex;flex-direction:column;align-items:center;gap:6px;width:104px;{{ $muted ? 'opacity:.85' : '' }}">
-    <div class="{{ $isNew ? 'qb-pop' : '' }}" style="position:relative;width:78px;height:90px;display:flex;justify-content:center">
+<div class="qb-badge" style="display:flex;flex-direction:column;align-items:center;gap:6px;width:104px;{{ $muted ? 'opacity:.85' : '' }}">
+    <div class="qb-medal {{ $isNew ? 'qb-pop' : '' }}" style="position:relative;width:78px;height:90px;display:flex;justify-content:center">
+        @if ($isNew)
+            {{-- Sparkle burst, each shard flung to its own offset. --}}
+            @foreach ([['-30','-20','0s'], ['32','-16','.05s'], ['-22','24','.1s'], ['26','26','.04s'], ['2','-34','.08s'], ['-6','32','.13s']] as [$dx, $dy, $delay])
+                <span class="qb-spark" style="top:28px;left:33px;--dx:{{ $dx }}px;--dy:{{ $dy }}px;animation-delay:{{ $delay }};color:{{ $m['ring'] }}">
+                    <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0c0 4.4-3.6 8-8 8 4.4 0 8 3.6 8 8 0-4.4 3.6-8 8-8-4.4 0-8-3.6-8-8z"/></svg>
+                </span>
+            @endforeach
+        @endif
+
         <span style="position:absolute;top:36px;left:21px;width:26px;height:46px;background:{{ $m['ribbon'] }};filter:brightness(.82) saturate(1.15){{ $muted ? ' grayscale(1)' : '' }};transform:rotate(28deg);transform-origin:50% 0;clip-path:polygon(0 0,100% 0,100% 100%,50% 74%,0 100%)"></span>
         <span style="position:absolute;top:36px;right:21px;width:26px;height:46px;background:{{ $m['ribbon'] }};filter:brightness(.82) saturate(1.15){{ $muted ? ' grayscale(1)' : '' }};transform:rotate(-28deg);transform-origin:50% 0;clip-path:polygon(0 0,100% 0,100% 100%,50% 74%,0 100%)"></span>
         <span style="position:absolute;top:6px;left:13px;width:52px;height:52px;background:{{ $m['ribbon'] }};border-radius:9px;{{ $grey }}"></span>

@@ -1,11 +1,4 @@
 <x-student-layout :title="__('Keputusan')">
-    <style>
-        @media (prefers-reduced-motion: no-preference) {
-            .qb-pop { animation: qbPop .5s cubic-bezier(.2,.8,.3,1.3) both; }
-        }
-        @keyframes qbPop { from { opacity: 0; transform: scale(.5) translateY(6px); } to { opacity: 1; transform: none; } }
-    </style>
-
     @php($pct = $attempt->percentage())
     @php($good = $pct >= 80)
     @php($mid = $pct >= 50)
