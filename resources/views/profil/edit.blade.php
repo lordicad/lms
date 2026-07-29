@@ -93,9 +93,9 @@
                 <div class="pf-badges">
                     @foreach ($badges as $b)
                         @php($filter = $b['got'] ? 'none' : 'grayscale(1) opacity(.45)')
-                        <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:6px 0;{{ $b['got'] ? '' : 'opacity:.75' }}">
+                        <div class="qb-badge" style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:6px 0;{{ $b['got'] ? '' : 'opacity:.75' }}">
                             {{-- Rosette medal (ribbon tails + scalloped medal + tinted disc + emoji) --}}
-                            <div style="position:relative;width:78px;height:90px;display:flex;justify-content:center">
+                            <div class="qb-medal" style="position:relative;width:78px;height:90px;display:flex;justify-content:center">
                                 <span style="position:absolute;top:36px;left:21px;width:26px;height:46px;background:{{ $b['ribbon'] }};filter:brightness(.82) saturate(1.15);transform:rotate(28deg);transform-origin:50% 0;clip-path:polygon(0 0,100% 0,100% 100%,50% 74%,0 100%)"></span>
                                 <span style="position:absolute;top:36px;right:21px;width:26px;height:46px;background:{{ $b['ribbon'] }};filter:brightness(.82) saturate(1.15);transform:rotate(-28deg);transform-origin:50% 0;clip-path:polygon(0 0,100% 0,100% 100%,50% 74%,0 100%)"></span>
                                 <span style="position:absolute;top:6px;left:13px;width:52px;height:52px;background:{{ $b['ribbon'] }};border-radius:9px"></span>
