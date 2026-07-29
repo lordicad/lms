@@ -13,9 +13,9 @@
         ])
         @php($cheer = match (true) {
             $pct >= 100 => ['icon' => 'target', 'bg' => '#EEF3FC', 'ink' => '#2E6CA8', 'title' => __('Hebat! Semua jawapan betul.'), 'sub' => __('Teruskan mencabar diri untuk mencapai lebih!')],
-            $pct >= 80 => ['icon' => 'trending-up', 'bg' => '#E4F4EF', 'ink' => '#0F7A68', 'title' => __('Bagus! Prestasi cemerlang.'), 'sub' => __('Sedikit lagi untuk markah sempurna!')],
-            $pct >= 50 => ['icon' => 'rocket', 'bg' => '#FBF3DD', 'ink' => '#8A6A12', 'title' => __('Usaha yang baik!'), 'sub' => __('Ulang kaji dan cuba tingkatkan markah anda.')],
-            default => ['icon' => 'rocket', 'bg' => '#FBEAE4', 'ink' => '#C24936', 'title' => __('Jangan putus asa!'), 'sub' => __('Tonton semula video dan cuba lagi — anda pasti boleh!')],
+            $pct >= 80 => ['icon' => 'target', 'bg' => '#E4F4EF', 'ink' => '#0F7A68', 'title' => __('Bagus! Prestasi cemerlang.'), 'sub' => __('Sedikit lagi untuk markah sempurna!')],
+            $pct >= 50 => ['icon' => 'target', 'bg' => '#FBF3DD', 'ink' => '#8A6A12', 'title' => __('Usaha yang baik!'), 'sub' => __('Ulang kaji dan cuba tingkatkan markah anda.')],
+            default => ['icon' => 'target', 'bg' => '#FBEAE4', 'ink' => '#C24936', 'title' => __('Jangan putus asa!'), 'sub' => __('Tonton semula video dan cuba lagi — anda pasti boleh!')],
         })
         @php($star = 'M12 3l2.35 4.76 5.25.76-3.8 3.7.9 5.23L12 15.9l-4.7 2.47.9-5.23-3.8-3.7 5.25-.76z')
         <div style="position:relative;overflow:hidden;background:var(--wl-surface);border:1px solid var(--wl-line);border-radius:22px;padding:32px;box-shadow:0 8px 24px var(--wl-line)">
