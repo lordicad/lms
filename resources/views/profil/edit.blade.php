@@ -332,7 +332,7 @@
         @if ($stats)
             {{-- Encouragement, full width under both columns. --}}
             <div style="background:#DCF2EE;border:1px solid rgba(15,122,104,.2);border-radius:22px;padding:22px 26px;display:flex;align-items:center;gap:18px;flex-wrap:wrap">
-                <span style="font-size:30px" aria-hidden="true">🚀</span>
+                <span style="width:44px;height:44px;flex-shrink:0;border-radius:50%;background:#fff;display:grid;place-items:center;color:#0F7A68" aria-hidden="true"><x-icon name="rocket" style="width:24px;height:24px" /></span>
                 <span style="min-width:0;flex:1;display:flex;flex-direction:column;gap:4px">
                     <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:16px;color:#0F7A68">{{ __('Teruskan usaha, :name!', ['name' => $user->username ?: $user->name]) }}</span>
                     <span style="font-size:13.5px;color:#0F7A68;line-height:1.55">{{ __('Tonton video dan jawab kuiz untuk mengumpul mata, membuka lencana dan menaiki ranking.') }}</span>
