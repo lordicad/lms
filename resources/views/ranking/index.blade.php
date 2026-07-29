@@ -1,7 +1,7 @@
 <x-student-layout :title="__('Ranking')">
     <style>
         /* Top-3 podium. Rank colours are passed per card as --c-* custom properties. */
-        .lb-podium-wrap { position: relative; width: 100%; max-width: 780px; margin: 4px auto 0; }
+        .lb-podium-wrap { position: relative; width: 100%; max-width: 720px; margin: 4px auto 0; }
         .lb-podium { position: relative; z-index: 1; display: grid; grid-template-columns: 1fr 1.12fr 1fr; gap: clamp(16px, 2.6vw, 38px); align-items: end; }
 
         /* Cream podium steps peeking out beneath the cards. */
@@ -11,33 +11,33 @@
         .lb-step--side { width: 30%; height: 36px; }
 
         .lb-card { position: relative; overflow: hidden; border-radius: 28px; background: linear-gradient(180deg, var(--c-bg), var(--c-bg2)); border: 1.5px solid var(--c-border); box-shadow: 0 18px 45px rgba(36,43,67,.08), 0 4px 12px rgba(36,43,67,.04); display: flex; flex-direction: column; align-items: center; text-align: center; }
-        .lb-card--first { min-height: 282px; padding: 16px 18px 20px; gap: 8px; }
-        .lb-card--second, .lb-card--third { min-height: 226px; padding: 15px 16px 16px; gap: 7px; }
+        .lb-card--first { min-height: 260px; padding: 15px 16px 18px; gap: 8px; }
+        .lb-card--second, .lb-card--third { min-height: 208px; padding: 14px 14px 15px; gap: 7px; }
         /* Warm glow behind the champion's avatar. */
         .lb-card--first::before { content: ''; position: absolute; top: 62px; left: 50%; width: 210px; height: 210px; transform: translateX(-50%); border-radius: 50%; background: radial-gradient(circle, rgba(246,185,26,.15), transparent 68%); z-index: 0; pointer-events: none; }
 
         .lb-medal { position: relative; display: block; z-index: 2; }
         .lb-medal svg { display: block; width: 100%; height: 100%; }
         .lb-num { position: absolute; top: 0; left: 0; right: 0; height: 65%; display: grid; place-items: center; font-family: 'Geist', sans-serif; font-weight: 800; color: var(--c-mnum); }
-        .lb-card--first .lb-medal { width: 44px; height: 52px; }
-        .lb-card--first .lb-num { font-size: 14px; }
-        .lb-card--second .lb-medal, .lb-card--third .lb-medal { width: 38px; height: 45px; }
-        .lb-card--second .lb-num, .lb-card--third .lb-num { font-size: 12px; }
+        .lb-card--first .lb-medal { width: 40px; height: 47px; }
+        .lb-card--first .lb-num { font-size: 13px; }
+        .lb-card--second .lb-medal, .lb-card--third .lb-medal { width: 35px; height: 41px; }
+        .lb-card--second .lb-num, .lb-card--third .lb-num { font-size: 11px; }
 
         .lb-avatar { position: relative; z-index: 1; border-radius: 50%; display: grid; place-items: center; overflow: hidden; background: radial-gradient(circle at 50% 32%, #fff, var(--c-avfill) 80%); border: 3px solid var(--c-avring); color: var(--c-avink); font-family: 'Geist', sans-serif; font-weight: 800; }
         .lb-avatar img { width: 100%; height: 100%; object-fit: cover; }
-        .lb-card--first .lb-avatar { width: 78px; height: 78px; font-size: 30px; margin-top: -6px; }
-        .lb-card--second .lb-avatar, .lb-card--third .lb-avatar { width: 66px; height: 66px; font-size: 25px; margin-top: -5px; }
+        .lb-card--first .lb-avatar { width: 70px; height: 70px; font-size: 27px; margin-top: -6px; }
+        .lb-card--second .lb-avatar, .lb-card--third .lb-avatar { width: 60px; height: 60px; font-size: 22px; margin-top: -5px; }
 
         .lb-name { position: relative; z-index: 1; font-family: 'Geist', sans-serif; font-weight: 800; color: #10172F; letter-spacing: -.01em; }
         .lb-quizzes { position: relative; z-index: 1; font-weight: 600; color: #787B9D; }
         .lb-pill { position: relative; z-index: 1; border-radius: 999px; font-family: 'Geist', sans-serif; font-weight: 800; background: var(--c-pillbg); color: var(--c-pillink); }
-        .lb-card--first .lb-name { font-size: 20px; }
-        .lb-card--first .lb-quizzes { font-size: 13px; }
-        .lb-card--first .lb-pill { font-size: 14px; padding: 7px 20px; margin-top: 10px; }
-        .lb-card--second .lb-name, .lb-card--third .lb-name { font-size: 16px; }
-        .lb-card--second .lb-quizzes, .lb-card--third .lb-quizzes { font-size: 12px; }
-        .lb-card--second .lb-pill, .lb-card--third .lb-pill { font-size: 12.5px; padding: 5px 16px; margin-top: 8px; }
+        .lb-card--first .lb-name { font-size: 18px; }
+        .lb-card--first .lb-quizzes { font-size: 12px; }
+        .lb-card--first .lb-pill { font-size: 13px; padding: 6px 18px; margin-top: 10px; }
+        .lb-card--second .lb-name, .lb-card--third .lb-name { font-size: 15px; }
+        .lb-card--second .lb-quizzes, .lb-card--third .lb-quizzes { font-size: 11.5px; }
+        .lb-card--second .lb-pill, .lb-card--third .lb-pill { font-size: 11.5px; padding: 5px 14px; margin-top: 8px; }
 
         .lb-deco { position: absolute; pointer-events: none; z-index: 0; }
 
