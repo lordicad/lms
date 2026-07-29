@@ -64,8 +64,34 @@
                     <span style="width:34px;height:34px;border-radius:10px;background:#FEF0CE;color:#E0A21C;display:grid;place-items:center;flex-shrink:0"><x-icon name="trophy" style="width:19px;height:19px" /></span>
                     <h3 style="margin:0;font-family:'Geist',sans-serif;font-size:17px;font-weight:800;color:var(--wl-ink)">{{ __('Lencana Pencapaian') }}</h3>
                 </div>
-                <div style="background:var(--wl-surface);border:1px solid var(--wl-line);border-radius:18px;padding:24px 20px;box-shadow:0 4px 16px rgba(46,44,80,.04)">
-                    <div class="kz-ach">
+                <div style="position:relative;overflow:hidden;background:var(--wl-surface);border:1px solid var(--wl-line);border-radius:18px;padding:24px 20px;box-shadow:0 4px 16px rgba(46,44,80,.04)">
+                    {{-- Background: botanical leaf sprigs in the corners + scattered sparkles. --}}
+                    <div aria-hidden="true" style="position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden">
+                        <svg style="position:absolute;left:-12px;bottom:-22px;opacity:.45" width="150" height="175" viewBox="0 0 150 175" fill="#C4E0D3">
+                            <path d="M18 172 C 38 135 52 92 64 40" fill="none" stroke="#C4E0D3" stroke-width="3" stroke-linecap="round"/>
+                            <ellipse cx="0" cy="0" rx="17" ry="7" transform="translate(28 146) rotate(-40)"/>
+                            <ellipse cx="0" cy="0" rx="17" ry="7" transform="translate(36 118) rotate(40)"/>
+                            <ellipse cx="0" cy="0" rx="16" ry="6.5" transform="translate(44 96) rotate(-42)"/>
+                            <ellipse cx="0" cy="0" rx="16" ry="6.5" transform="translate(52 74) rotate(42)"/>
+                            <ellipse cx="0" cy="0" rx="14" ry="6" transform="translate(58 52) rotate(-45)"/>
+                            <ellipse cx="0" cy="0" rx="12" ry="5" transform="translate(63 34) rotate(35)"/>
+                        </svg>
+                        <svg style="position:absolute;right:-12px;bottom:-22px;opacity:.45;transform:scaleX(-1)" width="150" height="175" viewBox="0 0 150 175" fill="#C4E0D3">
+                            <path d="M18 172 C 38 135 52 92 64 40" fill="none" stroke="#C4E0D3" stroke-width="3" stroke-linecap="round"/>
+                            <ellipse cx="0" cy="0" rx="17" ry="7" transform="translate(28 146) rotate(-40)"/>
+                            <ellipse cx="0" cy="0" rx="17" ry="7" transform="translate(36 118) rotate(40)"/>
+                            <ellipse cx="0" cy="0" rx="16" ry="6.5" transform="translate(44 96) rotate(-42)"/>
+                            <ellipse cx="0" cy="0" rx="16" ry="6.5" transform="translate(52 74) rotate(42)"/>
+                            <ellipse cx="0" cy="0" rx="14" ry="6" transform="translate(58 52) rotate(-45)"/>
+                            <ellipse cx="0" cy="0" rx="12" ry="5" transform="translate(63 34) rotate(35)"/>
+                        </svg>
+                        <svg style="position:absolute;top:28px;left:21%;opacity:.55" width="13" height="13" viewBox="0 0 16 16" fill="#9FD0BF"><path d="M8 0c0 4.4-3.6 8-8 8 4.4 0 8 3.6 8 8 0-4.4 3.6-8 8-8-4.4 0-8-3.6-8-8z"/></svg>
+                        <svg style="position:absolute;top:64px;left:33%;opacity:.4" width="10" height="10" viewBox="0 0 16 16" fill="#B9CFEA"><path d="M8 0c0 4.4-3.6 8-8 8 4.4 0 8 3.6 8 8 0-4.4 3.6-8 8-8-4.4 0-8-3.6-8-8z"/></svg>
+                        <svg style="position:absolute;top:24px;left:51%;opacity:.5" width="12" height="12" viewBox="0 0 16 16" fill="#C9B6E6"><path d="M8 0c0 4.4-3.6 8-8 8 4.4 0 8 3.6 8 8 0-4.4 3.6-8 8-8-4.4 0-8-3.6-8-8z"/></svg>
+                        <svg style="position:absolute;top:66px;left:69%;opacity:.4" width="11" height="11" viewBox="0 0 16 16" fill="#B9CFEA"><path d="M8 0c0 4.4-3.6 8-8 8 4.4 0 8 3.6 8 8 0-4.4 3.6-8 8-8-4.4 0-8-3.6-8-8z"/></svg>
+                        <svg style="position:absolute;top:34px;left:82%;opacity:.55" width="12" height="12" viewBox="0 0 16 16" fill="#9FD0BF"><path d="M8 0c0 4.4-3.6 8-8 8 4.4 0 8 3.6 8 8 0-4.4 3.6-8 8-8-4.4 0-8-3.6-8-8z"/></svg>
+                    </div>
+                    <div class="kz-ach" style="position:relative;z-index:1">
                         @foreach (\App\Support\QuizBadges::milestones() as $key => $threshold)
                             <x-quiz-badge :badge="$key" :muted="$perfectCount < $threshold" />
                         @endforeach
