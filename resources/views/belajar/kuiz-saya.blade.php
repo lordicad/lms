@@ -24,29 +24,38 @@
             @php($recommended = $quizzes->reject(fn ($q) => $rankedAttempts->has($q->id)))
             @php($suggested = $recommended->first())
 
-            {{-- Stats strip --}}
+            {{-- Stats strip: left-accent gradient cards with a white icon disc. --}}
+            @php($statCards = [
+                ['accent' => '#17907B', 'bg' => 'linear-gradient(135deg,#EAF7F2,#D6EFE7)', 'ink' => '#0F7A68', 'spark' => '#A9DECF', 'type' => 'check', 'value' => $doneCount, 'label' => __('Kuiz selesai')],
+                ['accent' => '#E0A21C', 'bg' => 'linear-gradient(135deg,#FEF6E4,#FBE9C2)', 'ink' => '#8A6A12', 'spark' => '#F1D592', 'type' => 'star', 'value' => $avgScore !== null ? $avgScore.'%' : '—', 'label' => __('Purata markah')],
+                ['accent' => '#3E86C9', 'bg' => 'linear-gradient(135deg,#EFF4FC,#DFEAF7)', 'ink' => '#2E6CA8', 'spark' => '#B6CEEC', 'type' => 'trophy', 'value' => $rank ? '#'.$rank : '—', 'label' => __('Ranking'), 'leaf' => true],
+            ])
             <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px">
-                <div style="background:#DCF2EE;border-radius:18px;padding:18px 20px;display:flex;align-items:center;gap:14px">
-                    <span style="width:44px;height:44px;border-radius:14px;background:var(--wl-surface);color:#0F7A68;display:grid;place-items:center"><x-icon name="check-circle" style="width:22px;height:22px" /></span>
-                    <div style="display:flex;flex-direction:column">
-                        <span style="font-family:'Geist',sans-serif;font-size:22px;font-weight:800;color:#0F7A68">{{ $doneCount }}</span>
-                        <span style="font-size:12.5px;font-weight:700;color:#0F7A68">{{ __('Kuiz selesai') }}</span>
+                @foreach ($statCards as $c)
+                    <div style="position:relative;overflow:hidden;background:{{ $c['bg'] }};border-left:5px solid {{ $c['accent'] }};border-radius:18px;padding:18px 20px;display:flex;align-items:center;gap:16px">
+                        {{-- Decorations. --}}
+                        <svg style="position:absolute;top:14px;right:18px;opacity:.6" width="16" height="16" viewBox="0 0 16 16" fill="{{ $c['spark'] }}"><path d="M8 0c0 4.4-3.6 8-8 8 4.4 0 8 3.6 8 8 0-4.4 3.6-8 8-8-4.4 0-8-3.6-8-8z"/></svg>
+                        <span style="position:absolute;right:-34px;bottom:-46px;width:130px;height:100px;border-radius:50%;background:{{ $c['accent'] }};opacity:.07"></span>
+                        @if (! empty($c['leaf']))
+                            <svg style="position:absolute;right:6px;bottom:0;opacity:.4" width="54" height="54" viewBox="0 0 60 60" fill="{{ $c['spark'] }}"><path d="M8 52c0-15 11-26 27-28-2 7-6 12-11 16 6-2 12-1 17 2-8 4-17 3-24-1 4 6 3 13-2 18-4-3-7-9-7-15z"/></svg>
+                        @endif
+                        {{-- Icon disc. --}}
+                        <span style="position:relative;z-index:1;width:46px;height:46px;flex-shrink:0;border-radius:50%;background:#fff;display:grid;place-items:center;box-shadow:0 4px 12px rgba(46,44,80,.12)">
+                            @if ($c['type'] === 'check')
+                                <span style="width:27px;height:27px;border-radius:8px;background:{{ $c['accent'] }};display:grid;place-items:center;color:#fff"><x-icon name="check" style="width:16px;height:16px" /></span>
+                            @elseif ($c['type'] === 'star')
+                                <svg width="27" height="27" viewBox="0 0 24 24" fill="{{ $c['accent'] }}"><path d="M12 3l2.35 4.76 5.25.76-3.8 3.7.9 5.23L12 15.9l-4.7 2.47.9-5.23-3.8-3.7 5.25-.76z"/></svg>
+                            @else
+                                <span style="color:{{ $c['accent'] }}"><x-icon name="trophy" style="width:25px;height:25px" /></span>
+                            @endif
+                        </span>
+                        {{-- Value + label. --}}
+                        <div style="position:relative;z-index:1;display:flex;flex-direction:column;gap:1px;min-width:0">
+                            <span style="font-family:'Geist',sans-serif;font-size:23px;font-weight:800;color:{{ $c['ink'] }}">{{ $c['value'] }}</span>
+                            <span style="font-size:12.5px;font-weight:700;color:{{ $c['ink'] }}">{{ $c['label'] }}</span>
+                        </div>
                     </div>
-                </div>
-                <div style="background:#FEF0CE;border-radius:18px;padding:18px 20px;display:flex;align-items:center;gap:14px">
-                    <span style="width:44px;height:44px;border-radius:14px;background:var(--wl-surface);color:#8A6A12;display:grid;place-items:center"><x-icon name="star" style="width:22px;height:22px" /></span>
-                    <div style="display:flex;flex-direction:column">
-                        <span style="font-family:'Geist',sans-serif;font-size:22px;font-weight:800;color:#8A6A12">{{ $avgScore !== null ? $avgScore.'%' : '—' }}</span>
-                        <span style="font-size:12.5px;font-weight:700;color:#8A6A12">{{ __('Purata markah') }}</span>
-                    </div>
-                </div>
-                <div style="background:#E4EEF9;border-radius:18px;padding:18px 20px;display:flex;align-items:center;gap:14px">
-                    <span style="width:44px;height:44px;border-radius:14px;background:var(--wl-surface);color:#2E6CA8;display:grid;place-items:center"><x-icon name="trophy" style="width:22px;height:22px" /></span>
-                    <div style="display:flex;flex-direction:column">
-                        <span style="font-family:'Geist',sans-serif;font-size:22px;font-weight:800;color:#2E6CA8">{{ $rank ? '#'.$rank : '—' }}</span>
-                        <span style="font-size:12.5px;font-weight:700;color:#2E6CA8">{{ __('Ranking') }}</span>
-                    </div>
-                </div>
+                @endforeach
             </div>
 
             {{-- Achievements: perfect-score milestone badges, evenly spread. --}}
