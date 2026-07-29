@@ -2,7 +2,7 @@
     <style>
         /* Top-3 podium. Rank colours are passed per card as --c-* custom properties. */
         .lb-podium-wrap { position: relative; width: 100%; max-width: 840px; margin: 4px auto 0; }
-        .lb-podium { position: relative; z-index: 1; display: grid; grid-template-columns: 1fr 1.24fr 1fr; gap: clamp(16px, 2.6vw, 38px); align-items: end; }
+        .lb-podium { position: relative; z-index: 1; display: grid; grid-template-columns: 1fr 1.12fr 1fr; gap: clamp(16px, 2.6vw, 38px); align-items: end; }
 
         /* Cream podium steps peeking out beneath the cards. */
         .lb-base { position: absolute; left: 7%; right: 7%; bottom: -12px; height: 56px; z-index: 0; display: flex; align-items: flex-end; justify-content: center; pointer-events: none; }
@@ -11,7 +11,7 @@
         .lb-step--side { width: 30%; height: 36px; }
 
         .lb-card { position: relative; overflow: hidden; border-radius: 28px; background: linear-gradient(180deg, var(--c-bg), var(--c-bg2)); border: 1.5px solid var(--c-border); box-shadow: 0 18px 45px rgba(36,43,67,.08), 0 4px 12px rgba(36,43,67,.04); display: flex; flex-direction: column; align-items: center; text-align: center; }
-        .lb-card--first { min-height: 322px; padding: 28px 20px 22px; gap: 9px; }
+        .lb-card--first { min-height: 300px; padding: 26px 18px 20px; gap: 9px; }
         .lb-card--second, .lb-card--third { min-height: 240px; padding: 22px 16px 16px; gap: 7px; }
         /* Warm glow behind the champion's avatar. */
         .lb-card--first::before { content: ''; position: absolute; top: 62px; left: 50%; width: 210px; height: 210px; transform: translateX(-50%); border-radius: 50%; background: radial-gradient(circle, rgba(246,185,26,.15), transparent 68%); z-index: 0; pointer-events: none; }
@@ -19,14 +19,14 @@
         .lb-medal { position: relative; display: block; z-index: 2; }
         .lb-medal svg { display: block; width: 100%; height: 100%; }
         .lb-num { position: absolute; top: 0; left: 0; right: 0; height: 65%; display: grid; place-items: center; font-family: 'Geist', sans-serif; font-weight: 800; color: var(--c-mnum); }
-        .lb-card--first .lb-medal { width: 52px; height: 61px; }
+        .lb-card--first .lb-medal { width: 48px; height: 57px; }
         .lb-card--first .lb-num { font-size: 16px; }
         .lb-card--second .lb-medal, .lb-card--third .lb-medal { width: 42px; height: 50px; }
         .lb-card--second .lb-num, .lb-card--third .lb-num { font-size: 14px; }
 
         .lb-avatar { position: relative; z-index: 1; border-radius: 50%; display: grid; place-items: center; overflow: hidden; background: radial-gradient(circle at 50% 32%, #fff, var(--c-avfill) 80%); border: 3px solid var(--c-avring); color: var(--c-avink); font-family: 'Geist', sans-serif; font-weight: 800; }
         .lb-avatar img { width: 100%; height: 100%; object-fit: cover; }
-        .lb-card--first .lb-avatar { width: 96px; height: 96px; font-size: 38px; margin-top: -22px; }
+        .lb-card--first .lb-avatar { width: 86px; height: 86px; font-size: 34px; margin-top: -20px; }
         .lb-card--second .lb-avatar, .lb-card--third .lb-avatar { width: 74px; height: 74px; font-size: 28px; margin-top: -17px; }
 
         .lb-name { position: relative; z-index: 1; font-family: 'Geist', sans-serif; font-weight: 800; color: #10172F; letter-spacing: -.01em; }
