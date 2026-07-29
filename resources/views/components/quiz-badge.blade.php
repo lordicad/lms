@@ -1,6 +1,7 @@
 @props([
     'badge',            // badge key from App\Support\QuizBadges
     'isNew' => false,   // just earned on this attempt — pops in with a sparkle burst
+    'tag' => true,      // show the built-in "Baru" pill (off when the wrapper draws its own)
     'count' => null,    // times earned across quizzes — shows ×N on the profile
     'muted' => false,   // not yet earned — greyed on the profile collection
 ])
@@ -52,9 +53,9 @@
             </span>
         </span>
 
-        @if ($isNew)
+        @if ($isNew && $tag)
             <span style="position:absolute;top:-3px;right:-8px;background:#EB5E5A;color:#fff;border-radius:999px;padding:2px 9px;font-family:'Geist',sans-serif;font-size:10px;font-weight:800;box-shadow:0 3px 8px rgba(235,94,90,.4);z-index:3">{{ __('Baru') }}</span>
-        @elseif ($count !== null && $count > 1)
+        @elseif (! $isNew && $count !== null && $count > 1)
             <span style="position:absolute;top:40px;right:0;background:{{ $m['ring'] }};color:#fff;border-radius:999px;min-width:23px;height:23px;padding:0 6px;display:grid;place-items:center;font-family:'Geist',sans-serif;font-size:11px;font-weight:800;border:2px solid var(--wl-surface);z-index:3">×{{ $count }}</span>
         @endif
     </div>
