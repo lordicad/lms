@@ -134,12 +134,16 @@ class QuizAttemptController extends Controller
             'answers',
         ]);
 
+        $badges = app(\App\Services\BadgeService::class)->forAttempt($attempt);
+
         return view('kuiz.keputusan', [
             'attempt' => $attempt,
             'quiz' => $attempt->quiz,
             'subject' => $attempt->quiz->chapter->subject,
             'questions' => $attempt->quiz->questions,
             'answersByQuestion' => $attempt->answers->keyBy('question_id'),
+            'badgesEarned' => $badges['earned'],
+            'badgesNew' => $badges['new'],
         ]);
     }
 

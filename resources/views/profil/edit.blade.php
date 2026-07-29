@@ -113,6 +113,16 @@
                     @endforeach
                 </div>
             </div>
+
+            {{-- Quiz badges collected across every quiz. Greyed until earned; ×N once repeated. --}}
+            <div style="{{ $cardStyle }};display:flex;flex-direction:column;gap:16px">
+                <h3 style="margin:0;font-family:'Geist',sans-serif;font-size:17px;font-weight:800;color:var(--wl-ink)">{{ __('Lencana Kuiz') }}</h3>
+                <div style="display:flex;flex-wrap:wrap;gap:16px 18px;justify-content:center">
+                    @foreach (\App\Support\QuizBadges::order() as $key)
+                        <x-quiz-badge :badge="$key" :count="$quizBadges[$key] ?? 0" :muted="(($quizBadges[$key] ?? 0) === 0)" />
+                    @endforeach
+                </div>
+            </div>
         @else
             <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:24px;font-weight:800;color:var(--wl-ink)">{{ __('Profil Saya') }}</h2>
         @endif

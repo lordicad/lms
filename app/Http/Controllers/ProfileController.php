@@ -60,6 +60,8 @@ class ProfileController extends Controller
             'user' => $user,
             'homeroomTeacher' => $user->homeroomTeacher(),
             'stats' => $stats,
+            // Quiz badges the student has collected across every quiz, keyed by badge → count.
+            'quizBadges' => $user->isStudent() ? app(\App\Services\BadgeService::class)->collectionFor($user) : [],
             'activity' => $user->isStudent() ? $this->recentActivity($user) : collect(),
             'recommended' => $user->isStudent() ? $this->recommended($user) : collect(),
         ]);

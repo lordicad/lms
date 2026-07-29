@@ -1,4 +1,11 @@
 <x-student-layout :title="__('Keputusan')">
+    <style>
+        @media (prefers-reduced-motion: no-preference) {
+            .qb-pop { animation: qbPop .5s cubic-bezier(.2,.8,.3,1.3) both; }
+        }
+        @keyframes qbPop { from { opacity: 0; transform: scale(.5) translateY(6px); } to { opacity: 1; transform: none; } }
+    </style>
+
     @php($pct = $attempt->percentage())
     @php($good = $pct >= 80)
     @php($mid = $pct >= 50)
@@ -40,6 +47,23 @@
                 <a href="{{ route('ranking.index') }}" class="wl-btn-primary" style="min-height:48px;display:inline-flex;align-items:center;gap:8px;border-radius:13px;background:#17907B;color:#fff;font-family:'Geist',sans-serif;font-weight:800;font-size:14.5px;padding:0 22px;text-decoration:none"><x-icon name="trophy" style="width:18px;height:18px" />{{ __('Lihat Ranking') }}</a>
             </div>
         </div>
+
+        {{-- Badges earned --}}
+        @if (! empty($badgesEarned))
+            <div style="background:var(--wl-surface);border:1px solid var(--wl-line);border-radius:22px;padding:26px;display:flex;flex-direction:column;gap:18px;box-shadow:0 8px 24px var(--wl-line)">
+                <div style="display:flex;align-items:center;justify-content:center;gap:10px">
+                    <h3 style="margin:0;font-family:'Geist',sans-serif;font-size:18px;font-weight:800;color:var(--wl-ink)">{{ __('Lencana Diperoleh') }}</h3>
+                    @if (count($badgesNew))
+                        <span style="background:#DCF2EE;color:#0F7A68;border-radius:999px;padding:4px 12px;font-family:'Geist',sans-serif;font-size:12px;font-weight:800">+{{ count($badgesNew) }} {{ __('baru') }}</span>
+                    @endif
+                </div>
+                <div style="display:flex;flex-wrap:wrap;gap:14px 20px;justify-content:center">
+                    @foreach ($badgesEarned as $key)
+                        <x-quiz-badge :badge="$key" :is-new="in_array($key, $badgesNew, true)" />
+                    @endforeach
+                </div>
+            </div>
+        @endif
 
         {{-- Answer review --}}
         <div style="display:flex;flex-direction:column;gap:14px">
