@@ -10,9 +10,12 @@
     @php($initial = fn ($name) => mb_strtoupper(mb_substr($name, 0, 1)))
 
     <div style="display:flex;flex-direction:column;gap:20px">
-        <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap">
-            <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:22px;font-weight:800;color:var(--wl-ink)">{{ __('Ranking Kuiz') }}</h2>
-            <span style="font-size:14px;color:var(--wl-muted)">{{ $grade?->name ?? __('tahun anda') }}</span>
+        <div style="display:flex;align-items:center;gap:16px">
+            <span style="width:56px;height:56px;border-radius:16px;background:#DCF2EE;color:#0F7A68;display:grid;place-items:center;flex-shrink:0"><x-icon name="trophy" style="width:28px;height:28px" /></span>
+            <div style="display:flex;flex-direction:column;gap:2px;min-width:0">
+                <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:26px;font-weight:800;letter-spacing:-.01em;color:var(--wl-ink)">{{ __('Ranking Kuiz') }}</h2>
+                <span style="font-size:14px;font-weight:600;color:var(--wl-muted)">{{ __('Murid berprestasi terbaik') }}{{ $grade ? ' · '.$grade->name : '' }}</span>
+            </div>
         </div>
 
         <form method="GET" action="{{ route('ranking.index') }}" style="display:flex;align-items:center;gap:10px">
