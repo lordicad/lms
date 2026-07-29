@@ -42,23 +42,43 @@
             </div>
         @else
             @php($podiumRows = $top->take(3)->values())
+            {{-- Each rank: a gold/silver/bronze medal + a soft card tint; the avatar and points pill
+                 keep the green/blue/pink palette. Rendered 2 · 1 · 3 with the champion raised. --}}
+            @php($podiumMeta = [
+                0 => ['cardBg' => '#FDF3DE', 'cardBorder' => '#F1E1B4', 'disc' => '#F4B63F', 'ring' => '#DE9F22', 'ribA' => '#E8A63A', 'ribB' => '#C7891D', 'num' => '#fff', 'shadow' => true],
+                1 => ['cardBg' => '#ECF2FB', 'cardBorder' => '#D6E3F4', 'disc' => '#C7CCD4', 'ring' => '#A9AFB9', 'ribA' => '#C0C5CE', 'ribB' => '#9EA4AF', 'num' => '#5A5F68', 'shadow' => false],
+                2 => ['cardBg' => '#FBEDF2', 'cardBorder' => '#F4D8E3', 'disc' => '#D69A5F', 'ring' => '#BC8146', 'ribA' => '#CD9155', 'ribB' => '#A6723B', 'num' => '#fff', 'shadow' => true],
+            ])
             @php($arrange = collect([
-                ['row' => $podiumRows[1] ?? null, 'idx' => 1, 'medal' => '🥈', 'pad' => '10px'],
-                ['row' => $podiumRows[0] ?? null, 'idx' => 0, 'medal' => '🥇', 'pad' => '30px'],
-                ['row' => $podiumRows[2] ?? null, 'idx' => 2, 'medal' => '🥉', 'pad' => '10px'],
+                ['idx' => 1, 'row' => $podiumRows[1] ?? null],
+                ['idx' => 0, 'row' => $podiumRows[0] ?? null],
+                ['idx' => 2, 'row' => $podiumRows[2] ?? null],
             ])->filter(fn ($p) => $p['row']))
 
             {{-- Podium --}}
             <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;align-items:end">
                 @foreach ($arrange as $p)
                     @php($row = $p['row'])
-                    @php($pal = $palette[$p['idx'] % count($palette)])
-                    <div style="background:var(--wl-surface);border:1px solid var(--wl-line);border-radius:20px;padding:20px 16px {{ $p['pad'] }};display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;box-shadow:0 6px 20px var(--wl-line);position:relative">
-                        <span style="position:absolute;top:-14px;font-size:26px">{{ $p['medal'] }}</span>
-                        <span style="width:56px;height:56px;border-radius:50%;background:{{ $pal[0] }};display:grid;place-items:center;font-family:'Geist',sans-serif;font-size:20px;font-weight:800;color:{{ $pal[1] }};border:3px solid {{ $pal[2] }}">{{ $initial($row->student->name) }}</span>
-                        <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:15px;color:var(--wl-ink)">{{ \Illuminate\Support\Str::before($row->student->name, ' ') }}</span>
+                    @php($idx = $p['idx'])
+                    @php($pal = $palette[$idx])
+                    @php($m = $podiumMeta[$idx])
+                    @php($big = $idx === 0)
+                    <div style="position:relative;background:{{ $m['cardBg'] }};border:1.5px solid {{ $m['cardBorder'] }};border-radius:22px;padding:{{ $big ? '32px 18px 22px' : '26px 16px 18px' }};margin-top:{{ $big ? '0' : '26px' }};display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;box-shadow:0 10px 26px rgba(46,44,80,.07)">
+                        {{-- Ribbon medal, overlapping the top edge. --}}
+                        <span style="position:absolute;top:{{ $big ? '-20px' : '-18px' }};left:50%;transform:translateX(-50%);width:{{ $big ? 42 : 36 }}px;height:{{ $big ? 51 : 44 }}px">
+                            <svg width="{{ $big ? 42 : 36 }}" height="{{ $big ? 51 : 44 }}" viewBox="0 0 28 34" fill="none" style="display:block">
+                                <path d="M6 1 L11 1 L18 16 L13 16 Z" fill="{{ $m['ribB'] }}" />
+                                <path d="M22 1 L17 1 L10 16 L15 16 Z" fill="{{ $m['ribA'] }}" />
+                                <circle cx="14" cy="23" r="10.5" fill="{{ $m['disc'] }}" stroke="{{ $m['ring'] }}" stroke-width="1.5" />
+                                <circle cx="14" cy="23" r="7.5" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="1" />
+                            </svg>
+                            <span style="position:absolute;left:0;top:{{ $big ? 16 : 14 }}px;width:{{ $big ? 42 : 36 }}px;height:{{ $big ? 37 : 32 }}px;display:grid;place-items:center;font-family:'Geist',sans-serif;font-weight:800;font-size:{{ $big ? 13 : 11 }}px;color:{{ $m['num'] }};{{ $m['shadow'] ? 'text-shadow:0 1px 1px rgba(0,0,0,.25)' : '' }}">{{ $idx + 1 }}</span>
+                        </span>
+
+                        <span style="margin-top:{{ $big ? '16px' : '12px' }};width:{{ $big ? '74px' : '60px' }};height:{{ $big ? '74px' : '60px' }};border-radius:50%;background:{{ $pal[0] }};display:grid;place-items:center;font-family:'Geist',sans-serif;font-size:{{ $big ? '28px' : '22px' }};font-weight:800;color:{{ $pal[1] }};border:3px solid {{ $pal[2] }}">{{ $initial($row->student->name) }}</span>
+                        <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:{{ $big ? '17px' : '15px' }};color:var(--wl-ink)">{{ \Illuminate\Support\Str::before($row->student->name, ' ') }}</span>
                         <span style="font-size:12.5px;color:var(--wl-muted)">{{ __(':count kuiz', ['count' => $row->quizzes]) }}</span>
-                        <span style="background:{{ $pal[0] }};color:{{ $pal[1] }};border-radius:999px;padding:4px 14px;font-family:'Geist',sans-serif;font-size:13px;font-weight:800">{{ __(':count mata', ['count' => number_format($row->points)]) }}</span>
+                        <span style="margin-top:2px;background:{{ $pal[0] }};color:{{ $pal[1] }};border-radius:999px;padding:5px 16px;font-family:'Geist',sans-serif;font-size:13.5px;font-weight:800">{{ __(':count mata', ['count' => number_format($row->points)]) }}</span>
                     </div>
                 @endforeach
             </div>
