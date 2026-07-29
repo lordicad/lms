@@ -1,7 +1,7 @@
 <x-student-layout :title="__('Ranking')">
     <style>
         /* Top-3 podium. Rank colours are passed per card as --c-* custom properties. */
-        .lb-podium-wrap { position: relative; width: 100%; max-width: 920px; margin: 4px auto 0; }
+        .lb-podium-wrap { position: relative; width: 100%; max-width: 840px; margin: 4px auto 0; }
         .lb-podium { position: relative; z-index: 1; display: grid; grid-template-columns: 1fr 1.24fr 1fr; gap: clamp(16px, 2.6vw, 38px); align-items: end; }
 
         /* Cream podium steps peeking out beneath the cards. */
@@ -11,8 +11,8 @@
         .lb-step--side { width: 30%; height: 36px; }
 
         .lb-card { position: relative; overflow: hidden; border-radius: 28px; background: linear-gradient(180deg, var(--c-bg), var(--c-bg2)); border: 1.5px solid var(--c-border); box-shadow: 0 18px 45px rgba(36,43,67,.08), 0 4px 12px rgba(36,43,67,.04); display: flex; flex-direction: column; align-items: center; text-align: center; }
-        .lb-card--first { min-height: 344px; padding: 30px 22px 24px; gap: 9px; }
-        .lb-card--second, .lb-card--third { min-height: 256px; padding: 24px 18px 18px; gap: 7px; }
+        .lb-card--first { min-height: 322px; padding: 28px 20px 22px; gap: 9px; }
+        .lb-card--second, .lb-card--third { min-height: 240px; padding: 22px 16px 16px; gap: 7px; }
         /* Warm glow behind the champion's avatar. */
         .lb-card--first::before { content: ''; position: absolute; top: 62px; left: 50%; width: 210px; height: 210px; transform: translateX(-50%); border-radius: 50%; background: radial-gradient(circle, rgba(246,185,26,.15), transparent 68%); z-index: 0; pointer-events: none; }
 
