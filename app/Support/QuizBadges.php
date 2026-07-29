@@ -52,6 +52,22 @@ class QuizBadges
     }
 
     /**
+     * Account-level milestone badges on the Quizzes page, keyed by how many perfect (100%) scores
+     * they take, in order.
+     *
+     * @return array<string, int>
+     */
+    public static function milestones(): array
+    {
+        return [
+            'quiz_explorer' => 10,
+            'quiz_adventurer' => 25,
+            'quiz_expert' => 40,
+            'quiz_master' => 60,
+        ];
+    }
+
+    /**
      * Copy + rosette colours for one badge key. `ribbon` draws the scalloped medal and its tails,
      * `tint` the disc behind the icon, `ring` the inner circle border, `ink` the icon itself.
      *
@@ -67,6 +83,10 @@ class QuizBadges
             'perfect' => ['label' => __('Sempurna'), 'desc' => __('Skor 100%'), 'icon' => 'crown', 'ribbon' => '#A88FE4', 'tint' => '#E9E4F9', 'ring' => '#7C5CBF', 'ink' => '#5B3E9E'],
             'never_give_up' => ['label' => __('Pantang Menyerah'), 'desc' => __('3+ percubaan pada kuiz sama'), 'icon' => 'flame', 'ribbon' => '#F0885A', 'tint' => '#FDE7DE', 'ring' => '#E5733D', 'ink' => '#C24936'],
             'comeback' => ['label' => __('Bangkit Semula'), 'desc' => __('Lulus selepas gagal'), 'icon' => 'trending-up', 'ribbon' => '#6FA8E0', 'tint' => '#DCEBF8', 'ring' => '#3E86C9', 'ink' => '#2E6CA8'],
+            'quiz_explorer' => ['label' => __('Peneroka Kuiz'), 'desc' => __(':count markah penuh', ['count' => 10]), 'icon' => 'rocket', 'ribbon' => '#6FA8E0', 'tint' => '#DCEBF8', 'ring' => '#3E86C9', 'ink' => '#2E6CA8'],
+            'quiz_adventurer' => ['label' => __('Pengembara Kuiz'), 'desc' => __(':count markah penuh', ['count' => 25]), 'icon' => 'star', 'ribbon' => '#58C4AC', 'tint' => '#DCF2EE', 'ring' => '#23A98F', 'ink' => '#0F7A68'],
+            'quiz_expert' => ['label' => __('Pakar Kuiz'), 'desc' => __(':count markah penuh', ['count' => 40]), 'icon' => 'trophy', 'ribbon' => '#F3B94C', 'tint' => '#FEF0CE', 'ring' => '#E0A21C', 'ink' => '#956409'],
+            'quiz_master' => ['label' => __('Sarjana Kuiz'), 'desc' => __(':count markah penuh', ['count' => 60]), 'icon' => 'crown', 'ribbon' => '#A88FE4', 'tint' => '#E9E4F9', 'ring' => '#7C5CBF', 'ink' => '#5B3E9E'],
             default => ['label' => $key, 'desc' => '', 'icon' => 'check', 'ribbon' => '#C9C8D4', 'tint' => '#EDEDF1', 'ring' => '#B9B8C6', 'ink' => '#555555'],
         };
     }

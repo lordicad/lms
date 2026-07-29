@@ -69,6 +69,21 @@ class BadgeService
     }
 
     /**
+     * How many quizzes the student has a perfect (100%) first-attempt score on. Drives the
+     * milestone badges on the Quizzes page. One ranked attempt per quiz, so this is a distinct
+     * quiz count.
+     */
+    public function perfectQuizCount(User $student): int
+    {
+        return QuizAttempt::query()
+            ->where('student_id', $student->id)
+            ->where('counts_for_ranking', true)
+            ->where('max_score', '>', 0)
+            ->whereColumn('score', 'max_score')
+            ->count();
+    }
+
+    /**
      * @return Collection<int, QuizAttempt>
      */
     private function completedAttempts(int $studentId, int $quizId): Collection

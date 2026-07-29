@@ -48,6 +48,8 @@ class StudentQuizController extends Controller
             'doneCount' => $doneCount,
             'avgScore' => $avgScore,
             'rank' => $myRow?->rank,
+            // Perfect-score tally that drives the milestone badges below the stats strip.
+            'perfectCount' => app(\App\Services\BadgeService::class)->perfectQuizCount($user),
         ]);
     }
 }

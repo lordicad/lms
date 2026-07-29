@@ -40,6 +40,18 @@
                 </div>
             </div>
 
+            {{-- Milestone badges: one per perfect-score tier. Greyed until the tally reaches it. --}}
+            <div style="display:flex;flex-direction:column;gap:12px">
+                <h3 style="margin:0;font-family:'Geist',sans-serif;font-size:17px;font-weight:800;color:var(--wl-ink)">{{ __('Lencana Pencapaian') }}</h3>
+                <div style="background:var(--wl-surface);border:1px solid var(--wl-line);border-radius:18px;padding:24px 22px;box-shadow:0 4px 16px rgba(46,44,80,.04)">
+                    <div style="display:flex;flex-wrap:wrap;gap:16px 24px;justify-content:center">
+                        @foreach (\App\Support\QuizBadges::milestones() as $key => $threshold)
+                            <x-quiz-badge :badge="$key" :muted="$perfectCount < $threshold" />
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+
             {{-- Telah Selesai --}}
             @if ($done->isNotEmpty())
                 <div style="display:flex;flex-direction:column;gap:12px">

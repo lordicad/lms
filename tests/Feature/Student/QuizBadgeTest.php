@@ -78,6 +78,22 @@ class QuizBadgeTest extends TestCase
         $this->assertEqualsCanonicalizing(['never_give_up', 'comeback'], $result['new']);
     }
 
+    public function test_perfect_quiz_count_only_counts_perfect_first_attempts(): void
+    {
+        $student = User::factory()->student()->create();
+
+        // Two quizzes aced on the first attempt.
+        $this->attempt(Quiz::factory()->create(), $student, 100, ranked: true);
+        $this->attempt(Quiz::factory()->create(), $student, 100, ranked: true);
+
+        // A first attempt short of perfect — even if a practice retry later hits 100%.
+        $quiz = Quiz::factory()->create();
+        $this->attempt($quiz, $student, 90, ranked: true, when: '-20 minutes');
+        $this->attempt($quiz, $student, 100, when: '-10 minutes');
+
+        $this->assertSame(2, app(BadgeService::class)->perfectQuizCount($student));
+    }
+
     public function test_the_profile_collection_counts_each_badge_once_per_quiz(): void
     {
         $student = User::factory()->student()->create();
