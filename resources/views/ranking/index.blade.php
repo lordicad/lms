@@ -43,7 +43,7 @@
 
         /* Ranks 4+ table. */
         .lb-tbl { background: var(--wl-surface); border: 1px solid var(--wl-line); border-radius: 18px; overflow: hidden; box-shadow: 0 4px 16px rgba(46,44,80,.04); }
-        .lb-tbl-head, .lb-tr { display: grid; grid-template-columns: 58px minmax(0,1fr) 218px 104px; align-items: center; gap: 16px; padding: 14px 22px; }
+        .lb-tbl-head, .lb-tr { display: grid; grid-template-columns: 58px minmax(0,1fr) 218px 104px; align-items: center; gap: 16px; padding: 14px 32px 14px 22px; }
         .lb-tbl-head { border-bottom: 1px solid var(--wl-line); }
         .lb-th { font-family: 'Geist', sans-serif; font-size: 12.5px; font-weight: 700; color: var(--wl-muted); }
         .lb-th.c { text-align: center; }
