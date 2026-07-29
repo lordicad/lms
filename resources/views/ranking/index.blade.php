@@ -75,13 +75,13 @@
 
             {{-- Podium: the champion's column is wider, and centre-aligned so its bigger card rises
                  above the two side cards. --}}
-            <div style="display:grid;grid-template-columns:1fr 1.24fr 1fr;gap:20px;align-items:center">
+            <div style="display:grid;grid-template-columns:1fr 1.18fr 1fr;gap:16px;align-items:center">
                 @foreach ($arrange as $p)
                     @php($row = $p['row'])
                     @php($idx = $p['idx'])
                     @php($m = $podiumMeta[$idx])
                     @php($big = $idx === 0)
-                    <div style="position:relative;background:{{ $m['cardBg'] }};border:1.5px solid {{ $m['cardBorder'] }};border-radius:28px;padding:{{ $big ? '46px 24px 30px' : '32px 20px 22px' }};display:flex;flex-direction:column;align-items:center;gap:{{ $big ? 11 : 9 }}px;text-align:center;box-shadow:0 14px 34px rgba(46,44,80,.09)">
+                    <div style="position:relative;background:{{ $m['cardBg'] }};border:1.5px solid {{ $m['cardBorder'] }};border-radius:22px;padding:{{ $big ? '32px 18px 22px' : '24px 14px 16px' }};display:flex;flex-direction:column;align-items:center;gap:{{ $big ? 9 : 7 }}px;text-align:center;box-shadow:0 10px 26px rgba(46,44,80,.07)">
                         {{-- Faint leaf sprigs in two corners. --}}
                         <svg width="46" height="46" viewBox="0 0 46 46" fill="{{ $m['sparkle'] }}" style="position:absolute;left:4px;bottom:4px;opacity:.4">
                             <path d="M12 34c-2-4 0-8 5-9 1 4-1 8-5 9zM18 28c-2-4 0-8 5-9 1 4-1 8-5 9zM8 38c-2-4 0-8 5-9 1 4-1 8-5 9z" />
@@ -95,21 +95,21 @@
 
                         {{-- Rosette medal: metal disc + rank number, ribbon tails below, overlapping
                              the top edge. --}}
-                        <span style="position:absolute;top:{{ $big ? '-27px' : '-20px' }};left:50%;transform:translateX(-50%);width:{{ $big ? 54 : 42 }}px;height:{{ $big ? 64 : 50 }}px;z-index:1">
-                            <svg width="{{ $big ? 54 : 42 }}" height="{{ $big ? 64 : 50 }}" viewBox="0 0 44 52" fill="none" style="display:block">
+                        <span style="position:absolute;top:{{ $big ? '-22px' : '-18px' }};left:50%;transform:translateX(-50%);width:{{ $big ? 44 : 36 }}px;height:{{ $big ? 52 : 43 }}px;z-index:1">
+                            <svg width="{{ $big ? 44 : 36 }}" height="{{ $big ? 52 : 43 }}" viewBox="0 0 44 52" fill="none" style="display:block">
                                 <path d="M15 22 L22 22 L18 48 L14.5 43.5 L11 48 Z" fill="{{ $m['ribB'] }}" />
                                 <path d="M22 22 L29 22 L33 48 L29.5 43.5 L26 48 Z" fill="{{ $m['ribA'] }}" />
                                 <circle cx="22" cy="17" r="13" fill="{{ $m['disc'] }}" stroke="{{ $m['ring'] }}" stroke-width="2" />
                                 <circle cx="22" cy="17" r="9.5" fill="none" stroke="{{ $m['discHi'] }}" stroke-width="1.5" />
                                 <ellipse cx="18" cy="12" rx="4.5" ry="3" fill="#fff" opacity=".5" />
                             </svg>
-                            <span style="position:absolute;left:0;top:{{ $big ? 7 : 3 }}px;width:{{ $big ? 54 : 42 }}px;height:{{ $big ? 30 : 26 }}px;display:grid;place-items:center;font-family:'Geist',sans-serif;font-weight:800;font-size:{{ $big ? 18 : 15 }}px;color:{{ $m['num'] }}">{{ $idx + 1 }}</span>
+                            <span style="position:absolute;left:0;top:{{ $big ? 4 : 2 }}px;width:{{ $big ? 44 : 36 }}px;height:{{ $big ? 26 : 24 }}px;display:grid;place-items:center;font-family:'Geist',sans-serif;font-weight:800;font-size:{{ $big ? 15 : 13 }}px;color:{{ $m['num'] }}">{{ $idx + 1 }}</span>
                         </span>
 
-                        <span style="margin-top:{{ $big ? '22px' : '14px' }};width:{{ $big ? '98px' : '74px' }};height:{{ $big ? '98px' : '74px' }};border-radius:50%;background:radial-gradient(circle at 50% 32%, #fff, {{ $m['avBg'] }} 80%);display:grid;place-items:center;font-family:'Geist',sans-serif;font-size:{{ $big ? '38px' : '28px' }};font-weight:800;color:{{ $m['avInk'] }};border:{{ $big ? '4px' : '3px' }} solid {{ $m['avRing'] }};position:relative;z-index:1">{{ $initial($row->student->name) }}</span>
-                        <span style="margin-top:{{ $big ? '4px' : '2px' }};font-family:'Geist',sans-serif;font-weight:800;font-size:{{ $big ? '22px' : '17px' }};color:var(--wl-ink);position:relative;z-index:1">{{ \Illuminate\Support\Str::before($row->student->name, ' ') }}</span>
-                        <span style="font-size:{{ $big ? '14px' : '13px' }};color:var(--wl-muted);position:relative;z-index:1">{{ __(':count kuiz', ['count' => $row->quizzes]) }}</span>
-                        <span style="margin-top:{{ $big ? '6px' : '3px' }};background:{{ $m['pillBg'] }};color:{{ $m['pillInk'] }};border-radius:999px;padding:{{ $big ? '9px 24px' : '7px 18px' }};font-family:'Geist',sans-serif;font-size:{{ $big ? '16px' : '14px' }};font-weight:800;position:relative;z-index:1">{{ __(':count mata', ['count' => number_format($row->points)]) }}</span>
+                        <span style="margin-top:{{ $big ? '16px' : '12px' }};width:{{ $big ? '74px' : '58px' }};height:{{ $big ? '74px' : '58px' }};border-radius:50%;background:radial-gradient(circle at 50% 32%, #fff, {{ $m['avBg'] }} 80%);display:grid;place-items:center;font-family:'Geist',sans-serif;font-size:{{ $big ? '28px' : '22px' }};font-weight:800;color:{{ $m['avInk'] }};border:3px solid {{ $m['avRing'] }};position:relative;z-index:1">{{ $initial($row->student->name) }}</span>
+                        <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:{{ $big ? '17px' : '15px' }};color:var(--wl-ink);position:relative;z-index:1">{{ \Illuminate\Support\Str::before($row->student->name, ' ') }}</span>
+                        <span style="font-size:12.5px;color:var(--wl-muted);position:relative;z-index:1">{{ __(':count kuiz', ['count' => $row->quizzes]) }}</span>
+                        <span style="margin-top:2px;background:{{ $m['pillBg'] }};color:{{ $m['pillInk'] }};border-radius:999px;padding:{{ $big ? '6px 18px' : '5px 15px' }};font-family:'Geist',sans-serif;font-size:{{ $big ? '14px' : '13px' }};font-weight:800;position:relative;z-index:1">{{ __(':count mata', ['count' => number_format($row->points)]) }}</span>
                     </div>
                 @endforeach
             </div>
