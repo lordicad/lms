@@ -7,7 +7,7 @@
         @media (max-width: 900px) { .kz-cols { grid-template-columns: 1fr; } }
     </style>
 
-    <div style="display:flex;flex-direction:column;gap:32px">
+    <div style="display:flex;flex-direction:column;gap:44px">
         <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap">
             <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:22px;font-weight:800;color:var(--wl-ink)">{{ __('Kuiz') }}</h2>
             <span style="font-size:14px;color:var(--wl-muted)">{{ $grade?->name ?? __('Tahun anda belum ditetapkan') }}</span>
