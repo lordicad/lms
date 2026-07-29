@@ -228,7 +228,7 @@
                                 <span class="lb-pav" style="background:{{ $pal[0] }};color:{{ $pal[1] }}">{{ $initial($row->student->name) }}</span>
                                 <div class="lb-pinfo">
                                     <span class="lb-pname">{{ $row->student->name }}@if ($isMe) <span style="color:#0F7A68">{{ __('(Anda)') }}</span>@endif</span>
-                                    <span class="lb-psub">{{ __(':count kuiz', ['count' => $row->quizzes]) }} · {{ $row->accuracy }}% {{ __('purata') }}</span>
+                                    <span class="lb-psub">{{ __(':count kuiz', ['count' => $row->quizzes]) }}</span>
                                 </div>
                             </div>
                             <div class="lb-score">
