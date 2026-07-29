@@ -50,17 +50,17 @@
         .lb-th.r { text-align: right; }
         .lb-tr + .lb-tr { border-top: 1px solid var(--wl-line); }
         .lb-tr--me { background: #DCF2EE; }
-        .lb-rank { width: 40px; height: 40px; border-radius: 12px; background: #EEF0F4; display: grid; place-items: center; font-family: 'Geist', sans-serif; font-weight: 800; font-size: 15px; color: #4A4B63; }
+        .lb-rank { justify-self: center; width: 40px; height: 40px; border-radius: 12px; background: #EEF0F4; display: grid; place-items: center; font-family: 'Geist', sans-serif; font-weight: 800; font-size: 15px; color: #4A4B63; }
         .lb-part { display: flex; align-items: center; gap: 13px; min-width: 0; }
         .lb-pav { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; font-family: 'Geist', sans-serif; font-weight: 800; font-size: 15px; flex-shrink: 0; }
         .lb-pinfo { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
         .lb-pname { font-family: 'Geist', sans-serif; font-weight: 800; font-size: 14.5px; color: var(--wl-ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .lb-psub { font-size: 12px; color: var(--wl-muted); }
-        .lb-score { display: flex; align-items: center; gap: 12px; }
-        .lb-bar { flex: 1; height: 8px; border-radius: 999px; background: #EAECEF; overflow: hidden; }
+        .lb-score { display: flex; align-items: center; justify-content: center; gap: 12px; }
+        .lb-bar { flex: 0 0 132px; height: 8px; border-radius: 999px; background: #EAECEF; overflow: hidden; }
         .lb-bar > span { display: block; height: 100%; border-radius: 999px; }
         .lb-pct { font-size: 13px; font-weight: 700; color: #4A4B63; min-width: 46px; text-align: right; }
-        .lb-pts { font-family: 'Geist', sans-serif; font-weight: 800; font-size: 14.5px; color: #17907B; text-align: right; }
+        .lb-pts { font-family: 'Geist', sans-serif; font-weight: 800; font-size: 14.5px; color: #17907B; text-align: center; }
         .lb-chev { color: var(--wl-muted-2); display: grid; place-items: center; }
 
         @media (max-width: 720px) {
@@ -213,10 +213,10 @@
             @if ($listRows->isNotEmpty())
                 <div class="lb-tbl">
                     <div class="lb-tbl-head">
-                        <span class="lb-th">{{ __('Kedudukan') }}</span>
+                        <span class="lb-th c">{{ __('Kedudukan') }}</span>
                         <span class="lb-th">{{ __('Peserta') }}</span>
                         <span class="lb-th c score">{{ __('Skor Purata') }}</span>
-                        <span class="lb-th r">{{ __('Jumlah Mata') }}</span>
+                        <span class="lb-th c">{{ __('Jumlah Mata') }}</span>
                     </div>
                     @foreach ($listRows as $i => $row)
                         @php($pal = $palette[($i + 3) % count($palette)])
