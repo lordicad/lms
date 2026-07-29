@@ -155,8 +155,8 @@
                             {{-- Medal: metal disc + rank number, ribbon tails below. --}}
                             <span class="lb-medal" aria-hidden="true">
                                 <svg viewBox="0 0 44 52" fill="none">
-                                    <path d="M15 22 L22 22 L18 48 L14.5 43.5 L11 48 Z" fill="var(--c-mribB)"/>
-                                    <path d="M22 22 L29 22 L33 48 L29.5 43.5 L26 48 Z" fill="var(--c-mribA)"/>
+                                    <path d="M16 22 L22 22 L18.5 43 L15 39.5 L12 43 Z" fill="var(--c-mribB)"/>
+                                    <path d="M22 22 L28 22 L32 43 L28.5 39.5 L25 43 Z" fill="var(--c-mribA)"/>
                                     <circle cx="22" cy="17" r="13" fill="var(--c-disc)" stroke="var(--c-dring)" stroke-width="2"/>
                                     <circle cx="22" cy="17" r="9.5" fill="none" stroke="var(--c-dhi)" stroke-width="1.5"/>
                                     <ellipse cx="18" cy="12" rx="4.5" ry="3" fill="#fff" opacity=".5"/>
