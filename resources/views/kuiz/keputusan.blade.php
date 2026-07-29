@@ -35,28 +35,28 @@
                 <span style="color:#0F7A68;font-size:15px">✓</span>
                 <span style="font-family:'Geist',sans-serif;font-size:13.5px;font-weight:700;color:#0F7A68;text-align:left">{{ $attempt->counts_for_ranking ? __('Ini percubaan pertama anda, jadi :score mata dikira untuk ranking.', ['score' => $attempt->score]) : __('Ini latihan semula. Markah ini tidak menjejaskan ranking anda.') }}</span>
             </div>
+            {{-- Badges earned, between the ranking note and the actions. --}}
+            @if (! empty($badgesEarned))
+                <div style="width:100%;border-top:1px solid var(--wl-line);margin-top:8px;padding-top:18px;display:flex;flex-direction:column;gap:14px">
+                    <div style="display:flex;align-items:center;justify-content:center;gap:10px">
+                        <h3 style="margin:0;font-family:'Geist',sans-serif;font-size:16px;font-weight:800;color:var(--wl-ink)">{{ __('Lencana Diperoleh') }}</h3>
+                        @if (count($badgesNew))
+                            <span style="background:#DCF2EE;color:#0F7A68;border-radius:999px;padding:4px 12px;font-family:'Geist',sans-serif;font-size:12px;font-weight:800">+{{ count($badgesNew) }} {{ __('baru') }}</span>
+                        @endif
+                    </div>
+                    <div style="display:flex;flex-wrap:wrap;gap:14px 20px;justify-content:center">
+                        @foreach ($badgesEarned as $key)
+                            <x-quiz-badge :badge="$key" :is-new="in_array($key, $badgesNew, true)" />
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+
             <div style="display:flex;gap:12px;margin-top:8px;flex-wrap:wrap;justify-content:center">
                 <a href="{{ route('kuiz.intro', $quiz) }}" class="wl-btn-secondary" style="min-height:48px;display:inline-flex;align-items:center;border-radius:14px;border:2px solid #17907B;background:#fff;color:#0F7A68;font-family:'Geist',sans-serif;font-weight:800;font-size:14.5px;padding:0 22px;text-decoration:none">{{ __('Cuba Lagi (Latihan)') }}</a>
                 <a href="{{ route('ranking.index') }}" class="wl-btn-primary" style="min-height:48px;display:inline-flex;align-items:center;gap:8px;border-radius:13px;background:#17907B;color:#fff;font-family:'Geist',sans-serif;font-weight:800;font-size:14.5px;padding:0 22px;text-decoration:none"><x-icon name="trophy" style="width:18px;height:18px" />{{ __('Lihat Ranking') }}</a>
             </div>
         </div>
-
-        {{-- Badges earned --}}
-        @if (! empty($badgesEarned))
-            <div style="background:var(--wl-surface);border:1px solid var(--wl-line);border-radius:22px;padding:26px;display:flex;flex-direction:column;gap:18px;box-shadow:0 8px 24px var(--wl-line)">
-                <div style="display:flex;align-items:center;justify-content:center;gap:10px">
-                    <h3 style="margin:0;font-family:'Geist',sans-serif;font-size:18px;font-weight:800;color:var(--wl-ink)">{{ __('Lencana Diperoleh') }}</h3>
-                    @if (count($badgesNew))
-                        <span style="background:#DCF2EE;color:#0F7A68;border-radius:999px;padding:4px 12px;font-family:'Geist',sans-serif;font-size:12px;font-weight:800">+{{ count($badgesNew) }} {{ __('baru') }}</span>
-                    @endif
-                </div>
-                <div style="display:flex;flex-wrap:wrap;gap:14px 20px;justify-content:center">
-                    @foreach ($badgesEarned as $key)
-                        <x-quiz-badge :badge="$key" :is-new="in_array($key, $badgesNew, true)" />
-                    @endforeach
-                </div>
-            </div>
-        @endif
 
         {{-- Answer review --}}
         <div style="display:flex;flex-direction:column;gap:14px">
