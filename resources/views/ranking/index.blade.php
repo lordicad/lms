@@ -43,7 +43,7 @@
 
         /* Ranks 4+ table. */
         .lb-tbl { background: var(--wl-surface); border: 1px solid var(--wl-line); border-radius: 18px; overflow: hidden; box-shadow: 0 4px 16px rgba(46,44,80,.04); }
-        .lb-tbl-head, .lb-tr { display: grid; grid-template-columns: 58px minmax(0,1fr) 218px 104px 18px; align-items: center; gap: 16px; padding: 14px 22px; }
+        .lb-tbl-head, .lb-tr { display: grid; grid-template-columns: 58px minmax(0,1fr) 218px 104px; align-items: center; gap: 16px; padding: 14px 22px; }
         .lb-tbl-head { border-bottom: 1px solid var(--wl-line); }
         .lb-th { font-family: 'Geist', sans-serif; font-size: 12.5px; font-weight: 700; color: var(--wl-muted); }
         .lb-th.c { text-align: center; }
@@ -217,7 +217,6 @@
                         <span class="lb-th">{{ __('Peserta') }}</span>
                         <span class="lb-th c score">{{ __('Skor Purata') }}</span>
                         <span class="lb-th r">{{ __('Jumlah Mata') }}</span>
-                        <span class="lb-chev"></span>
                     </div>
                     @foreach ($listRows as $i => $row)
                         @php($pal = $palette[($i + 3) % count($palette)])
@@ -237,7 +236,6 @@
                                 <span class="lb-pct">{{ $row->accuracy }}%</span>
                             </div>
                             <span class="lb-pts">{{ __(':count mata', ['count' => number_format($row->points)]) }}</span>
-                            <span class="lb-chev"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
                         </div>
                     @endforeach
                 </div>
