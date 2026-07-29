@@ -52,21 +52,22 @@ class QuizBadges
     }
 
     /**
-     * Copy + visual style for one badge key.
+     * Copy + rosette colours for one badge key. `ribbon` draws the scalloped medal and its tails,
+     * `tint` the disc behind the icon, `ring` the inner circle border, `ink` the icon itself.
      *
-     * @return array{label:string, desc:string, icon:string, bg:string, ring:string, ink:string}
+     * @return array{label:string, desc:string, icon:string, ribbon:string, tint:string, ring:string, ink:string}
      */
     public static function meta(string $key): array
     {
         return match ($key) {
-            'completed' => ['label' => __('Kuiz Selesai'), 'desc' => __('Menyelesaikan kuiz'), 'icon' => 'check-circle', 'bg' => 'linear-gradient(160deg,#DCF2EE,#C6E9DF)', 'ring' => '#17907B', 'ink' => '#0F7A68'],
-            'bronze' => ['label' => __('Gangsa'), 'desc' => __('Skor 70% ke atas'), 'icon' => 'star', 'bg' => 'linear-gradient(160deg,#F4E2CD,#E7CDAC)', 'ring' => '#B87333', 'ink' => '#8A5A2B'],
-            'silver' => ['label' => __('Perak'), 'desc' => __('Skor 80% ke atas'), 'icon' => 'star', 'bg' => 'linear-gradient(160deg,#EEF0F4,#D9DEE6)', 'ring' => '#98A0AC', 'ink' => '#5F6875'],
-            'gold' => ['label' => __('Emas'), 'desc' => __('Skor 90% ke atas'), 'icon' => 'star', 'bg' => 'linear-gradient(160deg,#FBEFC7,#F5DA8E)', 'ring' => '#E0A21C', 'ink' => '#956409'],
-            'perfect' => ['label' => __('Sempurna'), 'desc' => __('Skor 100%'), 'icon' => 'crown', 'bg' => 'linear-gradient(160deg,#EEE6FB,#DBCBF5)', 'ring' => '#7C5CBF', 'ink' => '#5B3E9E'],
-            'never_give_up' => ['label' => __('Pantang Menyerah'), 'desc' => __('3+ percubaan pada kuiz sama'), 'icon' => 'flame', 'bg' => 'linear-gradient(160deg,#FDE7DE,#F8CDBB)', 'ring' => '#E5733D', 'ink' => '#C24936'],
-            'comeback' => ['label' => __('Bangkit Semula'), 'desc' => __('Lulus selepas gagal'), 'icon' => 'trending-up', 'bg' => 'linear-gradient(160deg,#DCEBF8,#C3DCF3)', 'ring' => '#3E86C9', 'ink' => '#2E6CA8'],
-            default => ['label' => $key, 'desc' => '', 'icon' => 'check', 'bg' => '#EEEEEE', 'ring' => '#CCCCCC', 'ink' => '#555555'],
+            'completed' => ['label' => __('Kuiz Selesai'), 'desc' => __('Menyelesaikan kuiz'), 'icon' => 'check-circle', 'ribbon' => '#58C4AC', 'tint' => '#DCF2EE', 'ring' => '#23A98F', 'ink' => '#0F7A68'],
+            'bronze' => ['label' => __('Gangsa'), 'desc' => __('Skor 70% ke atas'), 'icon' => 'star', 'ribbon' => '#DCA268', 'tint' => '#F5E7D6', 'ring' => '#C0803F', 'ink' => '#8A5A2B'],
+            'silver' => ['label' => __('Perak'), 'desc' => __('Skor 80% ke atas'), 'icon' => 'star', 'ribbon' => '#C6CCD6', 'tint' => '#EEF0F4', 'ring' => '#9AA1AD', 'ink' => '#5F6875'],
+            'gold' => ['label' => __('Emas'), 'desc' => __('Skor 90% ke atas'), 'icon' => 'star', 'ribbon' => '#F3B94C', 'tint' => '#FEF0CE', 'ring' => '#E0A21C', 'ink' => '#956409'],
+            'perfect' => ['label' => __('Sempurna'), 'desc' => __('Skor 100%'), 'icon' => 'crown', 'ribbon' => '#A88FE4', 'tint' => '#E9E4F9', 'ring' => '#7C5CBF', 'ink' => '#5B3E9E'],
+            'never_give_up' => ['label' => __('Pantang Menyerah'), 'desc' => __('3+ percubaan pada kuiz sama'), 'icon' => 'flame', 'ribbon' => '#F0885A', 'tint' => '#FDE7DE', 'ring' => '#E5733D', 'ink' => '#C24936'],
+            'comeback' => ['label' => __('Bangkit Semula'), 'desc' => __('Lulus selepas gagal'), 'icon' => 'trending-up', 'ribbon' => '#6FA8E0', 'tint' => '#DCEBF8', 'ring' => '#3E86C9', 'ink' => '#2E6CA8'],
+            default => ['label' => $key, 'desc' => '', 'icon' => 'check', 'ribbon' => '#C9C8D4', 'tint' => '#EDEDF1', 'ring' => '#B9B8C6', 'ink' => '#555555'],
         };
     }
 }
