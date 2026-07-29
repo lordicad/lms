@@ -41,6 +41,33 @@
 
         .lb-deco { position: absolute; pointer-events: none; z-index: 0; }
 
+        /* Ranks 4+ table. */
+        .lb-tbl { background: var(--wl-surface); border: 1px solid var(--wl-line); border-radius: 18px; overflow: hidden; box-shadow: 0 4px 16px rgba(46,44,80,.04); }
+        .lb-tbl-head, .lb-tr { display: grid; grid-template-columns: 58px minmax(0,1fr) 218px 104px 18px; align-items: center; gap: 16px; padding: 14px 22px; }
+        .lb-tbl-head { border-bottom: 1px solid var(--wl-line); }
+        .lb-th { font-family: 'Geist', sans-serif; font-size: 12.5px; font-weight: 700; color: var(--wl-muted); }
+        .lb-th.c { text-align: center; }
+        .lb-th.r { text-align: right; }
+        .lb-tr + .lb-tr { border-top: 1px solid var(--wl-line); }
+        .lb-tr--me { background: #DCF2EE; }
+        .lb-rank { width: 40px; height: 40px; border-radius: 12px; background: #EEF0F4; display: grid; place-items: center; font-family: 'Geist', sans-serif; font-weight: 800; font-size: 15px; color: #4A4B63; }
+        .lb-part { display: flex; align-items: center; gap: 13px; min-width: 0; }
+        .lb-pav { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; font-family: 'Geist', sans-serif; font-weight: 800; font-size: 15px; flex-shrink: 0; }
+        .lb-pinfo { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+        .lb-pname { font-family: 'Geist', sans-serif; font-weight: 800; font-size: 14.5px; color: var(--wl-ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .lb-psub { font-size: 12px; color: var(--wl-muted); }
+        .lb-score { display: flex; align-items: center; gap: 12px; }
+        .lb-bar { flex: 1; height: 8px; border-radius: 999px; background: #EAECEF; overflow: hidden; }
+        .lb-bar > span { display: block; height: 100%; border-radius: 999px; }
+        .lb-pct { font-size: 13px; font-weight: 700; color: #4A4B63; min-width: 46px; text-align: right; }
+        .lb-pts { font-family: 'Geist', sans-serif; font-weight: 800; font-size: 14.5px; color: #17907B; text-align: right; }
+        .lb-chev { color: var(--wl-muted-2); display: grid; place-items: center; }
+
+        @media (max-width: 720px) {
+            .lb-tbl-head, .lb-tr { grid-template-columns: 42px minmax(0,1fr) auto; gap: 12px; padding: 12px 15px; }
+            .lb-th.score, .lb-score, .lb-chev { display: none; }
+        }
+
         @media (prefers-reduced-motion: no-preference) {
             .lb-card { opacity: 0; transform: translateY(8px); animation: lbIn .45s ease-out forwards; }
             .lb-card--second { animation-delay: .04s; }
@@ -184,18 +211,33 @@
             {{-- Ranks 4–10 --}}
             @php($listRows = $top->slice(3)->values())
             @if ($listRows->isNotEmpty())
-                <div style="background:var(--wl-surface);border:1px solid var(--wl-line);border-radius:18px;overflow:hidden;box-shadow:0 4px 16px rgba(46,44,80,.04)">
+                <div class="lb-tbl">
+                    <div class="lb-tbl-head">
+                        <span class="lb-th">{{ __('Kedudukan') }}</span>
+                        <span class="lb-th">{{ __('Peserta') }}</span>
+                        <span class="lb-th c score">{{ __('Skor Purata') }}</span>
+                        <span class="lb-th r">{{ __('Jumlah Mata') }}</span>
+                        <span class="lb-chev"></span>
+                    </div>
                     @foreach ($listRows as $i => $row)
                         @php($pal = $palette[($i + 3) % count($palette)])
                         @php($isMe = $row->student->id === $me->id)
-                        <div style="display:flex;align-items:center;gap:14px;padding:13px 20px;border-bottom:1px solid var(--wl-line);{{ $isMe ? 'background:#DCF2EE' : 'background:var(--wl-surface)' }}">
-                            <span style="width:32px;font-family:'Geist',sans-serif;font-weight:800;font-size:14px;color:var(--wl-muted);text-align:center">{{ $row->rank }}</span>
-                            <span style="width:38px;height:38px;border-radius:50%;background:{{ $pal[0] }};display:grid;place-items:center;font-family:'Geist',sans-serif;font-size:14px;font-weight:800;color:{{ $pal[1] }};flex-shrink:0">{{ $initial($row->student->name) }}</span>
-                            <div style="display:flex;flex-direction:column;gap:1px;min-width:0;flex:1">
-                                <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:14.5px;color:var(--wl-ink)">{{ $row->student->name }} @if ($isMe)<span style="color:#0F7A68">{{ __('(Anda)') }}</span>@endif</span>
-                                <span style="font-size:12px;color:var(--wl-muted)">{{ __(':count kuiz', ['count' => $row->quizzes]) }} · {{ $row->accuracy }}% {{ __('purata') }}</span>
+                        @php($acc = min(100, max(0, $row->accuracy)))
+                        <div class="lb-tr {{ $isMe ? 'lb-tr--me' : '' }}">
+                            <span class="lb-rank">{{ $row->rank }}</span>
+                            <div class="lb-part">
+                                <span class="lb-pav" style="background:{{ $pal[0] }};color:{{ $pal[1] }}">{{ $initial($row->student->name) }}</span>
+                                <div class="lb-pinfo">
+                                    <span class="lb-pname">{{ $row->student->name }}@if ($isMe) <span style="color:#0F7A68">{{ __('(Anda)') }}</span>@endif</span>
+                                    <span class="lb-psub">{{ __(':count kuiz', ['count' => $row->quizzes]) }} · {{ $row->accuracy }}% {{ __('purata') }}</span>
+                                </div>
                             </div>
-                            <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:14.5px;color:#17907B">{{ __(':count mata', ['count' => number_format($row->points)]) }}</span>
+                            <div class="lb-score">
+                                <span class="lb-bar"><span style="width:{{ $acc }}%;background:{{ $pal[2] }}"></span></span>
+                                <span class="lb-pct">{{ $row->accuracy }}%</span>
+                            </div>
+                            <span class="lb-pts">{{ __(':count mata', ['count' => number_format($row->points)]) }}</span>
+                            <span class="lb-chev"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
                         </div>
                     @endforeach
                 </div>
