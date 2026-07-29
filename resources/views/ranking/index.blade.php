@@ -1,4 +1,74 @@
 <x-student-layout :title="__('Ranking')">
+    <style>
+        /* Top-3 podium. Rank colours are passed per card as --c-* custom properties. */
+        .lb-podium-wrap { position: relative; width: 100%; max-width: 1040px; margin: 4px auto 0; }
+        .lb-podium { position: relative; z-index: 1; display: grid; grid-template-columns: 1fr 1.2fr 1fr; gap: clamp(16px, 2.6vw, 38px); align-items: end; }
+
+        /* Cream podium steps behind the cards' feet. */
+        .lb-base { position: absolute; left: 8%; right: 8%; bottom: -16px; height: 70px; z-index: 0; display: flex; align-items: flex-end; justify-content: center; pointer-events: none; }
+        .lb-step { background: linear-gradient(180deg, #FFF9EE, #FFF3D9); border-radius: 16px 16px 0 0; }
+        .lb-step--center { width: 40%; height: 70px; box-shadow: 0 14px 26px rgba(211, 162, 76, .14); }
+        .lb-step--side { width: 30%; height: 44px; }
+
+        .lb-card { position: relative; overflow: hidden; border-radius: 28px; background: linear-gradient(180deg, var(--c-bg), var(--c-bg2)); border: 1.5px solid var(--c-border); box-shadow: 0 18px 45px rgba(36,43,67,.08), 0 4px 12px rgba(36,43,67,.04); display: flex; flex-direction: column; align-items: center; text-align: center; }
+        .lb-card--first { min-height: 430px; padding: 34px 22px 26px; gap: 10px; }
+        .lb-card--second, .lb-card--third { min-height: 340px; padding: 26px 18px 20px; gap: 8px; }
+        /* Warm glow behind the champion's avatar. */
+        .lb-card--first::before { content: ''; position: absolute; top: 82px; left: 50%; width: 210px; height: 210px; transform: translateX(-50%); border-radius: 50%; background: radial-gradient(circle, rgba(246,185,26,.15), transparent 68%); z-index: 0; pointer-events: none; }
+
+        .lb-medal { position: relative; display: block; z-index: 2; }
+        .lb-medal svg { display: block; width: 100%; height: 100%; }
+        .lb-num { position: absolute; top: 0; left: 0; right: 0; height: 65%; display: grid; place-items: center; font-family: 'Geist', sans-serif; font-weight: 800; color: var(--c-mnum); }
+        .lb-card--first .lb-medal { width: 52px; height: 61px; }
+        .lb-card--first .lb-num { font-size: 16px; }
+        .lb-card--second .lb-medal, .lb-card--third .lb-medal { width: 42px; height: 50px; }
+        .lb-card--second .lb-num, .lb-card--third .lb-num { font-size: 14px; }
+
+        .lb-avatar { position: relative; z-index: 1; border-radius: 50%; display: grid; place-items: center; overflow: hidden; background: radial-gradient(circle at 50% 32%, #fff, var(--c-avfill) 80%); border: 3px solid var(--c-avring); color: var(--c-avink); font-family: 'Geist', sans-serif; font-weight: 800; }
+        .lb-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .lb-card--first .lb-avatar { width: 96px; height: 96px; font-size: 38px; margin-top: -4px; }
+        .lb-card--second .lb-avatar, .lb-card--third .lb-avatar { width: 74px; height: 74px; font-size: 28px; margin-top: -2px; }
+
+        .lb-name { position: relative; z-index: 1; font-family: 'Geist', sans-serif; font-weight: 800; color: #10172F; letter-spacing: -.01em; }
+        .lb-quizzes { position: relative; z-index: 1; font-weight: 600; color: #787B9D; }
+        .lb-pill { position: relative; z-index: 1; border-radius: 999px; font-family: 'Geist', sans-serif; font-weight: 800; background: var(--c-pillbg); color: var(--c-pillink); }
+        .lb-card--first .lb-name { font-size: 22px; }
+        .lb-card--first .lb-quizzes { font-size: 14px; }
+        .lb-card--first .lb-pill { font-size: 15px; padding: 8px 22px; margin-top: 4px; }
+        .lb-card--second .lb-name, .lb-card--third .lb-name { font-size: 18px; }
+        .lb-card--second .lb-quizzes, .lb-card--third .lb-quizzes { font-size: 13px; }
+        .lb-card--second .lb-pill, .lb-card--third .lb-pill { font-size: 13.5px; padding: 6px 18px; margin-top: 3px; }
+
+        .lb-deco { position: absolute; pointer-events: none; z-index: 0; }
+
+        @media (prefers-reduced-motion: no-preference) {
+            .lb-card { opacity: 0; transform: translateY(8px); animation: lbIn .45s ease-out forwards; }
+            .lb-card--second { animation-delay: .04s; }
+            .lb-card--third { animation-delay: .09s; }
+            .lb-card--first { animation-delay: .15s; }
+        }
+        @keyframes lbIn { to { opacity: 1; transform: none; } }
+
+        /* Tablet: shrink proportionally, keep three in a row. */
+        @media (max-width: 1100px) {
+            .lb-card--first { min-height: 384px; padding: 30px 16px 22px; }
+            .lb-card--second, .lb-card--third { min-height: 300px; padding: 22px 14px 16px; }
+            .lb-card--first .lb-avatar { width: 84px; height: 84px; font-size: 33px; }
+            .lb-card--second .lb-avatar, .lb-card--third .lb-avatar { width: 66px; height: 66px; font-size: 25px; }
+            .lb-card--first .lb-name { font-size: 20px; }
+            .lb-card--second .lb-name, .lb-card--third .lb-name { font-size: 16px; }
+        }
+
+        /* Mobile: stack, Rank 1 first, no elevation, hide the podium base. */
+        @media (max-width: 640px) {
+            .lb-podium { grid-template-columns: 1fr; gap: 32px; }
+            .lb-base { display: none; }
+            .lb-card { min-height: 0 !important; padding: 32px 20px 24px !important; }
+            .lb-card--first { order: -1; }
+            .lb-card--first::before { top: 68px; }
+        }
+    </style>
+
     @php($me = auth()->user())
     @php($palette = [
         ['#DCF2EE', '#0F7A68', '#2BB39B'],
@@ -41,78 +111,75 @@
                 <p style="margin:0;font-size:14.5px;color:var(--wl-muted);max-width:360px">{{ __('Belum ada murid yang menyelesaikan kuiz dalam :grade. Jadilah yang pertama!', ['grade' => $grade?->name ?? __('tahun anda')]) }}</p>
             </div>
         @else
+            {{-- Build the top-3 as plain records; the data order stays 1·2·3. --}}
             @php($podiumRows = $top->take(3)->values())
-            {{-- Per rank: gradient card, a metal medal with its own ribbon colour (amber / blue /
-                 red), a matching ringed avatar and points pill, and a sparkle set. --}}
-            @php($podiumMeta = [
-                0 => [
-                    'cardBg' => 'linear-gradient(180deg,#FDF8E7,#FAF0D0)', 'cardBorder' => '#EFDFA6',
-                    'disc' => '#F5B93E', 'discHi' => '#FCD277', 'ring' => '#DFA01E', 'num' => '#7C4E12',
-                    'ribA' => '#EDA130', 'ribB' => '#D68A1C',
-                    'avBg' => '#DBEFE6', 'avRing' => '#43B08C', 'avInk' => '#1E7C5F',
-                    'pillBg' => '#D3F0E4', 'pillInk' => '#178A67', 'sparkle' => '#EFCE7C',
-                ],
-                1 => [
-                    'cardBg' => 'linear-gradient(180deg,#F0F4FC,#E7EEF9)', 'cardBorder' => '#D9E3F2',
-                    'disc' => '#CBCFD8', 'discHi' => '#EBEEF2', 'ring' => '#A6ACB6', 'num' => '#484D56',
-                    'ribA' => '#4A7BC8', 'ribB' => '#3862A6',
-                    'avBg' => '#D8E6F7', 'avRing' => '#7CADE0', 'avInk' => '#2E6CA8',
-                    'pillBg' => '#D6E5F7', 'pillInk' => '#2E6CA8', 'sparkle' => '#BACFEB',
-                ],
-                2 => [
-                    'cardBg' => 'linear-gradient(180deg,#FDF1F6,#FBE7F0)', 'cardBorder' => '#F4D8E4',
-                    'disc' => '#CE8F55', 'discHi' => '#E5B584', 'ring' => '#B0733C', 'num' => '#6B3E18',
-                    'ribA' => '#DB4E86', 'ribB' => '#C23A6E',
-                    'avBg' => '#FBDDEB', 'avRing' => '#EB9BBB', 'avInk' => '#D6357F',
-                    'pillBg' => '#FAD8E7', 'pillInk' => '#D6357F', 'sparkle' => '#F0BFD4',
-                ],
+            @php($topStudents = $podiumRows->map(fn ($r, $i) => (object) [
+                'rank' => $i + 1,
+                'name' => $r->student->name,
+                'initial' => $initial($r->student->name),
+                'avatarUrl' => method_exists($r->student, 'avatarUrl') ? $r->student->avatarUrl() : null,
+                'quizzes' => $r->quizzes,
+                'points' => $r->points,
+            ]))
+            {{-- Display order is Rank 2 · Rank 1 · Rank 3 (derived, not a mutation of the data). --}}
+            @php($displayOrder = collect([1, 0, 2])->map(fn ($i) => $topStudents[$i] ?? null)->filter()->values())
+            {{-- Per-rank palette, handed to each card as CSS custom properties. --}}
+            @php($cfg = [
+                1 => ['cls' => 'lb-card--first', 'vars' => '--c-bg:#FFFBF2;--c-bg2:#FFF7E7;--c-border:#F4C45E;--c-disc:#F6B91A;--c-dring:#DDA00E;--c-dhi:#FCD277;--c-mnum:#7A4E10;--c-mribA:#EDA130;--c-mribB:#D68A1C;--c-avfill:#E9F8EF;--c-avring:#0DA77E;--c-avink:#07815E;--c-pillbg:#DDF4E7;--c-pillink:#087A58;--c-spark:#EFCE7C;--c-leaf:#EAD79A'],
+                2 => ['cls' => 'lb-card--second', 'vars' => '--c-bg:#F5F9FF;--c-bg2:#ECF5FF;--c-border:#91BAF3;--c-disc:#CBD3DF;--c-dring:#A6ADBA;--c-dhi:#E6EBF2;--c-mnum:#37414F;--c-mribA:#447FD4;--c-mribB:#3565B0;--c-avfill:#EAF3FF;--c-avring:#78A9EE;--c-avink:#1762B6;--c-pillbg:#E1EEFF;--c-pillink:#1761BB;--c-spark:#B9CFEA;--c-leaf:#C4D8F0'],
+                3 => ['cls' => 'lb-card--third', 'vars' => '--c-bg:#FFF6FA;--c-bg2:#FFEFF5;--c-border:#F1A8C1;--c-disc:#C87B48;--c-dring:#AE6636;--c-dhi:#E0A97A;--c-mnum:#6B3E18;--c-mribA:#C22A69;--c-mribB:#A82258;--c-avfill:#FFEAF2;--c-avring:#EC77A4;--c-avink:#C22A69;--c-pillbg:#FDE1EC;--c-pillink:#C32767;--c-spark:#F0BFD4;--c-leaf:#F3C9DC'],
             ])
-            @php($arrange = collect([
-                ['idx' => 1, 'row' => $podiumRows[1] ?? null],
-                ['idx' => 0, 'row' => $podiumRows[0] ?? null],
-                ['idx' => 2, 'row' => $podiumRows[2] ?? null],
-            ])->filter(fn ($p) => $p['row']))
 
-            {{-- Podium: the champion's column is wider, and centre-aligned so its bigger card rises
-                 above the two side cards. --}}
-            <div style="display:grid;grid-template-columns:1fr 1.18fr 1fr;gap:16px;align-items:center">
-                @foreach ($arrange as $p)
-                    @php($row = $p['row'])
-                    @php($idx = $p['idx'])
-                    @php($m = $podiumMeta[$idx])
-                    @php($big = $idx === 0)
-                    <div style="position:relative;background:{{ $m['cardBg'] }};border:1.5px solid {{ $m['cardBorder'] }};border-radius:22px;padding:{{ $big ? '32px 18px 22px' : '24px 14px 16px' }};display:flex;flex-direction:column;align-items:center;gap:{{ $big ? 9 : 7 }}px;text-align:center;box-shadow:0 10px 26px rgba(46,44,80,.07)">
-                        {{-- Faint leaf sprigs in two corners. --}}
-                        <svg width="46" height="46" viewBox="0 0 46 46" fill="{{ $m['sparkle'] }}" style="position:absolute;left:4px;bottom:4px;opacity:.4">
-                            <path d="M12 34c-2-4 0-8 5-9 1 4-1 8-5 9zM18 28c-2-4 0-8 5-9 1 4-1 8-5 9zM8 38c-2-4 0-8 5-9 1 4-1 8-5 9z" />
-                        </svg>
-                        <svg width="40" height="40" viewBox="0 0 46 46" fill="{{ $m['sparkle'] }}" style="position:absolute;right:4px;top:6px;opacity:.35;transform:rotate(180deg)">
-                            <path d="M12 34c-2-4 0-8 5-9 1 4-1 8-5 9zM18 28c-2-4 0-8 5-9 1 4-1 8-5 9zM8 38c-2-4 0-8 5-9 1 4-1 8-5 9z" />
-                        </svg>
-                        {{-- Sparkles. --}}
-                        <svg width="{{ $big ? 15 : 13 }}" height="{{ $big ? 15 : 13 }}" viewBox="0 0 16 16" fill="{{ $m['sparkle'] }}" style="position:absolute;top:{{ $big ? '42px' : '34px' }};left:{{ $big ? '24px' : '18px' }};opacity:.9"><path d="M8 0c0 4.4-3.6 8-8 8 4.4 0 8 3.6 8 8 0-4.4 3.6-8 8-8-4.4 0-8-3.6-8-8z"/></svg>
-                        <svg width="{{ $big ? 11 : 9 }}" height="{{ $big ? 11 : 9 }}" viewBox="0 0 16 16" fill="{{ $m['sparkle'] }}" style="position:absolute;top:{{ $big ? '34px' : '28px' }};right:{{ $big ? '28px' : '20px' }};opacity:.7"><path d="M8 0c0 4.4-3.6 8-8 8 4.4 0 8 3.6 8 8 0-4.4 3.6-8 8-8-4.4 0-8-3.6-8-8z"/></svg>
+            <section class="lb-podium-wrap" aria-label="{{ __('Murid berprestasi terbaik') }}">
+                <h3 class="sr-only">{{ __('Murid berprestasi terbaik') }}</h3>
 
-                        {{-- Rosette medal: metal disc + rank number, ribbon tails below, overlapping
-                             the top edge. --}}
-                        <span style="position:absolute;top:{{ $big ? '-22px' : '-18px' }};left:50%;transform:translateX(-50%);width:{{ $big ? 44 : 36 }}px;height:{{ $big ? 52 : 43 }}px;z-index:1">
-                            <svg width="{{ $big ? 44 : 36 }}" height="{{ $big ? 52 : 43 }}" viewBox="0 0 44 52" fill="none" style="display:block">
-                                <path d="M15 22 L22 22 L18 48 L14.5 43.5 L11 48 Z" fill="{{ $m['ribB'] }}" />
-                                <path d="M22 22 L29 22 L33 48 L29.5 43.5 L26 48 Z" fill="{{ $m['ribA'] }}" />
-                                <circle cx="22" cy="17" r="13" fill="{{ $m['disc'] }}" stroke="{{ $m['ring'] }}" stroke-width="2" />
-                                <circle cx="22" cy="17" r="9.5" fill="none" stroke="{{ $m['discHi'] }}" stroke-width="1.5" />
-                                <ellipse cx="18" cy="12" rx="4.5" ry="3" fill="#fff" opacity=".5" />
-                            </svg>
-                            <span style="position:absolute;left:0;top:{{ $big ? 4 : 2 }}px;width:{{ $big ? 44 : 36 }}px;height:{{ $big ? 26 : 24 }}px;display:grid;place-items:center;font-family:'Geist',sans-serif;font-weight:800;font-size:{{ $big ? 15 : 13 }}px;color:{{ $m['num'] }}">{{ $idx + 1 }}</span>
-                        </span>
+                {{-- Decorative cream podium steps behind the cards' feet. --}}
+                <div class="lb-base" aria-hidden="true">
+                    <span class="lb-step lb-step--side"></span>
+                    <span class="lb-step lb-step--center"></span>
+                    <span class="lb-step lb-step--side"></span>
+                </div>
 
-                        <span style="margin-top:{{ $big ? '16px' : '12px' }};width:{{ $big ? '74px' : '58px' }};height:{{ $big ? '74px' : '58px' }};border-radius:50%;background:radial-gradient(circle at 50% 32%, #fff, {{ $m['avBg'] }} 80%);display:grid;place-items:center;font-family:'Geist',sans-serif;font-size:{{ $big ? '28px' : '22px' }};font-weight:800;color:{{ $m['avInk'] }};border:3px solid {{ $m['avRing'] }};position:relative;z-index:1">{{ $initial($row->student->name) }}</span>
-                        <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:{{ $big ? '17px' : '15px' }};color:var(--wl-ink);position:relative;z-index:1">{{ \Illuminate\Support\Str::before($row->student->name, ' ') }}</span>
-                        <span style="font-size:12.5px;color:var(--wl-muted);position:relative;z-index:1">{{ __(':count kuiz', ['count' => $row->quizzes]) }}</span>
-                        <span style="margin-top:2px;background:{{ $m['pillBg'] }};color:{{ $m['pillInk'] }};border-radius:999px;padding:{{ $big ? '6px 18px' : '5px 15px' }};font-family:'Geist',sans-serif;font-size:{{ $big ? '14px' : '13px' }};font-weight:800;position:relative;z-index:1">{{ __(':count mata', ['count' => number_format($row->points)]) }}</span>
-                    </div>
-                @endforeach
-            </div>
+                <div class="lb-podium">
+                    @foreach ($displayOrder as $s)
+                        @php($c = $cfg[$s->rank])
+                        <article class="lb-card {{ $c['cls'] }}" style="{{ $c['vars'] }}">
+                            <span class="sr-only">{{ __('Kedudukan :rank', ['rank' => $s->rank]) }}</span>
+
+                            {{-- Decorations: two sparkles, a corner leaf sprig, a soft corner blob. --}}
+                            <svg class="lb-deco" style="top:13%;left:12%;opacity:.85" width="14" height="14" viewBox="0 0 16 16" fill="var(--c-spark)" aria-hidden="true"><path d="M8 0c0 4.4-3.6 8-8 8 4.4 0 8 3.6 8 8 0-4.4 3.6-8 8-8-4.4 0-8-3.6-8-8z"/></svg>
+                            <svg class="lb-deco" style="top:10%;right:13%;opacity:.6" width="10" height="10" viewBox="0 0 16 16" fill="var(--c-spark)" aria-hidden="true"><path d="M8 0c0 4.4-3.6 8-8 8 4.4 0 8 3.6 8 8 0-4.4 3.6-8 8-8-4.4 0-8-3.6-8-8z"/></svg>
+                            <svg class="lb-deco" style="bottom:-4px;{{ $s->rank === 3 ? 'right:-2px;transform:scaleX(-1)' : 'left:-2px' }};opacity:.38" width="62" height="62" viewBox="0 0 60 60" fill="var(--c-leaf)" aria-hidden="true"><path d="M8 52c0-15 11-26 27-28-2 7-6 12-11 16 6-2 12-1 17 2-8 4-17 3-24-1 4 6 3 13-2 18-4-3-7-9-7-15z"/></svg>
+                            <svg class="lb-deco" style="bottom:-20px;{{ $s->rank === 3 ? 'left:-18px' : 'right:-18px' }};opacity:.3" width="94" height="72" viewBox="0 0 94 72" fill="var(--c-spark)" aria-hidden="true"><path d="M0 72C0 40 22 22 52 26c30 4 42 26 42 46H0z"/></svg>
+
+                            {{-- Medal: metal disc + rank number, ribbon tails below. --}}
+                            <span class="lb-medal" aria-hidden="true">
+                                <svg viewBox="0 0 44 52" fill="none">
+                                    <path d="M15 22 L22 22 L18 48 L14.5 43.5 L11 48 Z" fill="var(--c-mribB)"/>
+                                    <path d="M22 22 L29 22 L33 48 L29.5 43.5 L26 48 Z" fill="var(--c-mribA)"/>
+                                    <circle cx="22" cy="17" r="13" fill="var(--c-disc)" stroke="var(--c-dring)" stroke-width="2"/>
+                                    <circle cx="22" cy="17" r="9.5" fill="none" stroke="var(--c-dhi)" stroke-width="1.5"/>
+                                    <ellipse cx="18" cy="12" rx="4.5" ry="3" fill="#fff" opacity=".5"/>
+                                </svg>
+                                <span class="lb-num">{{ $s->rank }}</span>
+                            </span>
+
+                            {{-- Avatar: image when present, first initial otherwise. --}}
+                            <span class="lb-avatar">
+                                @if ($s->avatarUrl)
+                                    <img src="{{ $s->avatarUrl }}" alt="{{ $s->name }}">
+                                @else
+                                    <span aria-hidden="true">{{ $s->initial }}</span>
+                                @endif
+                            </span>
+
+                            <span class="lb-name">{{ \Illuminate\Support\Str::before($s->name, ' ') ?: $s->name }}</span>
+                            <span class="lb-quizzes">{{ __(':count kuiz', ['count' => $s->quizzes]) }}</span>
+                            <span class="lb-pill">{{ __(':count mata', ['count' => number_format($s->points)]) }}</span>
+                        </article>
+                    @endforeach
+                </div>
+            </section>
 
             {{-- Ranks 4–10 --}}
             @php($listRows = $top->slice(3)->values())
