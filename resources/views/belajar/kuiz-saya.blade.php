@@ -7,7 +7,7 @@
         @media (max-width: 900px) { .kz-cols { grid-template-columns: 1fr; } }
     </style>
 
-    <div style="display:flex;flex-direction:column;gap:60px">
+    <div style="display:flex;flex-direction:column;gap:24px">
         <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap">
             <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:22px;font-weight:800;color:var(--wl-ink)">{{ __('Kuiz') }}</h2>
             <span style="font-size:14px;color:var(--wl-muted)">{{ $grade?->name ?? __('Tahun anda belum ditetapkan') }}</span>
@@ -59,7 +59,7 @@
             </div>
 
             {{-- Achievements: perfect-score milestone badges, evenly spread. --}}
-            <div style="display:flex;flex-direction:column;gap:12px">
+            <div style="display:flex;flex-direction:column;gap:12px;margin-top:34px">
                 <div style="display:flex;align-items:center;gap:12px">
                     <span style="width:34px;height:34px;border-radius:10px;background:#FEF0CE;color:#E0A21C;display:grid;place-items:center;flex-shrink:0"><x-icon name="trophy" style="width:19px;height:19px" /></span>
                     <h3 style="margin:0;font-family:'Geist',sans-serif;font-size:17px;font-weight:800;color:var(--wl-ink)">{{ __('Lencana Pencapaian') }}</h3>
@@ -74,7 +74,7 @@
             </div>
 
             {{-- Completed (left) beside Suggested Quiz (right). --}}
-            <div class="kz-cols">
+            <div class="kz-cols" style="margin-top:34px">
                 {{-- Completed --}}
                 <div style="display:flex;flex-direction:column;gap:12px;min-width:0">
                     <div style="display:flex;align-items:center;gap:10px">
