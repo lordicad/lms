@@ -26,8 +26,8 @@
 
         .lb-avatar { position: relative; z-index: 1; border-radius: 50%; display: grid; place-items: center; overflow: hidden; background: radial-gradient(circle at 50% 32%, #fff, var(--c-avfill) 80%); border: 3px solid var(--c-avring); color: var(--c-avink); font-family: 'Geist', sans-serif; font-weight: 800; }
         .lb-avatar img { width: 100%; height: 100%; object-fit: cover; }
-        .lb-card--first .lb-avatar { width: 78px; height: 78px; font-size: 30px; margin-top: -18px; }
-        .lb-card--second .lb-avatar, .lb-card--third .lb-avatar { width: 66px; height: 66px; font-size: 25px; margin-top: -15px; }
+        .lb-card--first .lb-avatar { width: 78px; height: 78px; font-size: 30px; margin-top: -6px; }
+        .lb-card--second .lb-avatar, .lb-card--third .lb-avatar { width: 66px; height: 66px; font-size: 25px; margin-top: -5px; }
 
         .lb-name { position: relative; z-index: 1; font-family: 'Geist', sans-serif; font-weight: 800; color: #10172F; letter-spacing: -.01em; }
         .lb-quizzes { position: relative; z-index: 1; font-weight: 600; color: #787B9D; }
