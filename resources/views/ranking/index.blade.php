@@ -11,8 +11,8 @@
         .lb-step--side { width: 30%; height: 36px; }
 
         .lb-card { position: relative; overflow: hidden; border-radius: 28px; background: linear-gradient(180deg, var(--c-bg), var(--c-bg2)); border: 1.5px solid var(--c-border); box-shadow: 0 18px 45px rgba(36,43,67,.08), 0 4px 12px rgba(36,43,67,.04); display: flex; flex-direction: column; align-items: center; text-align: center; }
-        .lb-card--first { min-height: 452px; padding: 32px 22px 26px; gap: 10px; }
-        .lb-card--second, .lb-card--third { min-height: 344px; padding: 26px 18px 20px; gap: 8px; }
+        .lb-card--first { min-height: 344px; padding: 30px 22px 24px; gap: 9px; }
+        .lb-card--second, .lb-card--third { min-height: 256px; padding: 24px 18px 18px; gap: 7px; }
         /* Warm glow behind the champion's avatar. */
         .lb-card--first::before { content: ''; position: absolute; top: 62px; left: 50%; width: 210px; height: 210px; transform: translateX(-50%); border-radius: 50%; background: radial-gradient(circle, rgba(246,185,26,.15), transparent 68%); z-index: 0; pointer-events: none; }
 
@@ -51,8 +51,8 @@
 
         /* Tablet: shrink proportionally, keep three in a row. */
         @media (max-width: 1100px) {
-            .lb-card--first { min-height: 384px; padding: 30px 16px 22px; }
-            .lb-card--second, .lb-card--third { min-height: 300px; padding: 22px 14px 16px; }
+            .lb-card--first { min-height: 316px; padding: 28px 16px 22px; }
+            .lb-card--second, .lb-card--third { min-height: 236px; padding: 22px 14px 16px; }
             .lb-card--first .lb-avatar { width: 84px; height: 84px; font-size: 33px; }
             .lb-card--second .lb-avatar, .lb-card--third .lb-avatar { width: 66px; height: 66px; font-size: 25px; }
             .lb-card--first .lb-name { font-size: 20px; }
