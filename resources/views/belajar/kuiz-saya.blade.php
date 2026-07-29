@@ -63,7 +63,6 @@
                 <div style="display:flex;align-items:center;gap:12px">
                     <span style="width:34px;height:34px;border-radius:10px;background:#FEF0CE;color:#E0A21C;display:grid;place-items:center;flex-shrink:0"><x-icon name="trophy" style="width:19px;height:19px" /></span>
                     <h3 style="margin:0;font-family:'Geist',sans-serif;font-size:17px;font-weight:800;color:var(--wl-ink)">{{ __('Lencana Pencapaian') }}</h3>
-                    <a href="{{ route('profile.edit') }}" style="margin-left:auto;display:inline-flex;align-items:center;gap:4px;font-family:'Geist',sans-serif;font-size:13px;font-weight:700;color:var(--wl-muted);text-decoration:none">{{ __('Lihat semua') }}<x-icon name="arrow-right" style="width:15px;height:15px" /></a>
                 </div>
                 <div style="background:var(--wl-surface);border:1px solid var(--wl-line);border-radius:18px;padding:24px 20px;box-shadow:0 4px 16px rgba(46,44,80,.04)">
                     <div class="kz-ach">
