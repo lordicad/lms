@@ -30,6 +30,9 @@ class LeaderboardService
         // leaves this null and stays platform-wide; a teacher's board sets it, so the standings
         // describe the work they actually set rather than every quiz in the system.
         ?int $teacherId = null,
+        // Only count attempts completed on/after this instant. Used for the weekly badge board,
+        // which resets each week; left null for the all-time standings.
+        ?\Illuminate\Support\Carbon $since = null,
     ): Collection {
         $rows = DB::table('quiz_attempts')
             ->join('users', 'users.id', '=', 'quiz_attempts.student_id')
@@ -42,6 +45,7 @@ class LeaderboardService
             ->when($subjectId, fn ($q) => $q->where('chapters.subject_id', $subjectId))
             ->when($quizId, fn ($q) => $q->where('quizzes.id', $quizId))
             ->when($teacherId, fn ($q) => $q->where('quizzes.teacher_id', $teacherId))
+            ->when($since, fn ($q) => $q->where('quiz_attempts.completed_at', '>=', $since))
             ->groupBy('users.id')
             ->select([
                 'users.id as student_id',

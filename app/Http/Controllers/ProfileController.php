@@ -29,17 +29,30 @@ class ProfileController extends Controller
             $row = app(LeaderboardService::class)->rowFor($user);
             $quizzesDone = QuizAttempt::where('student_id', $user->id)->completed()->count();
             $videosWatched = $user->lessonViews()->count();
-            $hasPerfect = QuizAttempt::where('student_id', $user->id)
-                ->where('max_score', '>', 0)
-                ->whereColumn('score', 'max_score')
-                ->exists();
+
+            // The "Lencana Saya" badges are weekly challenges: they only count activity from the
+            // current week (Monday onward) and so reset on their own when a new week begins.
+            $weekStart = now()->startOfWeek();
+            $weeklyRow = app(LeaderboardService::class)
+                ->ranking(gradeId: $user->grade_id, since: $weekStart)
+                ->firstWhere('student.id', $user->id);
 
             $stats = [
+                // Lifetime totals for the header stat cards.
                 'points' => $row?->points ?? 0,
                 'rank' => $row?->rank,
                 'quizzes' => $quizzesDone,
                 'videos' => $videosWatched,
-                'perfect' => $hasPerfect,
+                // This-week figures for the weekly badges.
+                'w_quizzes' => QuizAttempt::where('student_id', $user->id)->completed()
+                    ->where('completed_at', '>=', $weekStart)->count(),
+                'w_videos' => $user->lessonViews()->where('created_at', '>=', $weekStart)->count(),
+                'w_perfect' => QuizAttempt::where('student_id', $user->id)
+                    ->where('max_score', '>', 0)
+                    ->whereColumn('score', 'max_score')
+                    ->where('completed_at', '>=', $weekStart)
+                    ->exists(),
+                'w_rank' => $weeklyRow?->rank,
             ];
         }
 

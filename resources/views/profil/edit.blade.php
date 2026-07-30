@@ -83,13 +83,16 @@
 
             {{-- Badges --}}
             @php($badges = [
-                ['icon' => '🔥', 'name' => __('Rajin Belajar'), 'desc' => __('5 kuiz selesai'), 'got' => $stats['quizzes'] >= 5, 'tint' => '#FEF0CE', 'ring' => '#E8A33D', 'ribbon' => '#F3B94C'],
-                ['icon' => '🎯', 'name' => __('Markah Penuh'), 'desc' => __('100% dalam kuiz'), 'got' => $stats['perfect'], 'tint' => '#FBE4ED', 'ring' => '#D96A96', 'ribbon' => '#E886AC'],
-                ['icon' => '🎬', 'name' => __('Penonton Setia'), 'desc' => __('25 video ditonton'), 'got' => $stats['videos'] >= 25, 'tint' => '#E9E4F9', 'ring' => '#8A6FD0', 'ribbon' => '#A48CE0'],
-                ['icon' => '🚀', 'name' => __('10 Teratas'), 'desc' => __('Capai ranking top 10'), 'got' => $stats['rank'] && $stats['rank'] <= 10, 'tint' => '#EDEDF1', 'ring' => '#B9B8C6', 'ribbon' => '#C9C8D4'],
+                ['icon' => '🔥', 'name' => __('Rajin Belajar'), 'desc' => __('5 kuiz minggu ini'), 'got' => $stats['w_quizzes'] >= 5, 'tint' => '#FEF0CE', 'ring' => '#E8A33D', 'ribbon' => '#F3B94C'],
+                ['icon' => '🎯', 'name' => __('Markah Penuh'), 'desc' => __('100% minggu ini'), 'got' => $stats['w_perfect'], 'tint' => '#FBE4ED', 'ring' => '#D96A96', 'ribbon' => '#E886AC'],
+                ['icon' => '🎬', 'name' => __('Penonton Setia'), 'desc' => __('25 video minggu ini'), 'got' => $stats['w_videos'] >= 25, 'tint' => '#E9E4F9', 'ring' => '#8A6FD0', 'ribbon' => '#A48CE0'],
+                ['icon' => '🚀', 'name' => __('10 Teratas'), 'desc' => __('Top 10 minggu ini'), 'got' => $stats['w_rank'] && $stats['w_rank'] <= 10, 'tint' => '#EDEDF1', 'ring' => '#B9B8C6', 'ribbon' => '#C9C8D4'],
             ])
             <div style="{{ $cardStyle }};display:flex;flex-direction:column;gap:16px">
-                <h3 style="margin:0;font-family:'Geist',sans-serif;font-size:17px;font-weight:800;color:var(--wl-ink)">{{ __('Lencana Saya') }}</h3>
+                <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap">
+                    <h3 style="margin:0;font-family:'Geist',sans-serif;font-size:17px;font-weight:800;color:var(--wl-ink)">{{ __('Lencana Saya') }}</h3>
+                    <span style="font-size:12.5px;font-weight:700;color:var(--wl-muted)">{{ __('Cabaran mingguan · ditetapkan semula setiap Isnin') }}</span>
+                </div>
                 <div class="pf-badges">
                     @foreach ($badges as $b)
                         @php($filter = $b['got'] ? 'none' : 'grayscale(1) opacity(.45)')
