@@ -13,7 +13,7 @@
 
         <div style="background:var(--wl-surface);border:1px solid var(--wl-line);border-radius:22px;padding:28px;display:flex;flex-direction:column;gap:20px;box-shadow:0 8px 24px var(--wl-line)">
             <span style="align-self:flex-start;background:{{ $tagBg }};color:{{ $tagColor }};border-radius:999px;padding:5px 14px;font-family:'Geist',sans-serif;font-size:12.5px;font-weight:800"><x-subject-emoji :subject="$subject" class="text-sm" /> {{ $subject->name }}</span>
-            <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:26px;font-weight:800;letter-spacing:-.01em;color:var(--wl-ink)">{{ $quiz->title }}</h2>
+            <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:26px;font-weight:800;letter-spacing:-.01em;color:var(--wl-ink)">{{ $quiz->localizedTitle() }}</h2>
 
             <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px">
                 <div style="background:#F6F3EC;border-radius:14px;padding:14px 18px;display:flex;flex-direction:column;gap:3px">

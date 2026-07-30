@@ -65,6 +65,51 @@ class QuestionTranslator
         return $this->parse($response->json('content.0.text', ''), count($items));
     }
 
+    /**
+     * Translate a flat list of standalone strings (e.g. a quiz title and description). Each result
+     * carries its own detected source language, aligned by index with the input.
+     *
+     * @param  array<int, string>  $strings
+     * @return array<int, array{source_locale: string, text: string}>
+     *
+     * @throws RuntimeException on an API or parsing failure.
+     */
+    public function translateStrings(array $strings): array
+    {
+        $strings = array_values(array_filter($strings, fn ($s) => trim((string) $s) !== ''));
+
+        if (! $this->enabled() || $strings === []) {
+            return [];
+        }
+
+        $response = Http::withHeaders([
+            'x-api-key' => config('services.anthropic.key'),
+            'anthropic-version' => '2023-06-01',
+            'content-type' => 'application/json',
+        ])->timeout(120)->post(self::ENDPOINT, [
+            'model' => config('services.anthropic.model'),
+            'max_tokens' => 2048,
+            'system' => $this->stringsSystemPrompt(),
+            'messages' => [
+                ['role' => 'user', 'content' => "Translate these strings:\n\n".json_encode(
+                    ['strings' => $strings],
+                    JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT
+                )],
+            ],
+        ]);
+
+        if ($response->failed()) {
+            Log::warning('QuestionTranslator strings call failed', [
+                'status' => $response->status(),
+                'body' => $response->body(),
+            ]);
+
+            throw new RuntimeException('Translation API returned '.$response->status());
+        }
+
+        return $this->parseStrings($response->json('content.0.text', ''), count($strings));
+    }
+
     private function systemPrompt(): string
     {
         return <<<'PROMPT'
@@ -85,6 +130,56 @@ class QuestionTranslator
         question, and "options" are the translated options in order. The items array must be the
         same length and order as the input.
         PROMPT;
+    }
+
+    private function stringsSystemPrompt(): string
+    {
+        return <<<'PROMPT'
+        You translate short text for a Malaysian primary school learning app (quiz titles and
+        descriptions). Each string is in either Bahasa Melayu ("ms") or English ("en").
+
+        For every string:
+        - Detect the source language.
+        - Translate it into the OTHER language, accurately and in natural, grade-appropriate wording.
+        - Preserve numbers, units, and proper nouns.
+
+        Return ONLY a JSON object, no prose and no markdown fences, in exactly this shape:
+        {"strings":[{"source":"en","text":"..."}]}
+        where "source" is the detected source ("ms" or "en") and "text" is the translation. The
+        strings array must be the same length and order as the input.
+        PROMPT;
+    }
+
+    /**
+     * @return array<int, array{source_locale: string, text: string}>
+     *
+     * @throws RuntimeException
+     */
+    private function parseStrings(string $text, int $expected): array
+    {
+        $text = trim($text);
+        $text = preg_replace('/^```(?:json)?\s*|\s*```$/', '', $text) ?? $text;
+
+        $data = json_decode($text, true);
+
+        if (! is_array($data) || ! isset($data['strings']) || ! is_array($data['strings'])) {
+            throw new RuntimeException('Translation response was not valid JSON.');
+        }
+
+        $out = [];
+
+        foreach ($data['strings'] as $item) {
+            $out[] = [
+                'source_locale' => ($item['source'] ?? null) === 'en' ? 'en' : 'ms',
+                'text' => (string) ($item['text'] ?? ''),
+            ];
+        }
+
+        if (count($out) !== $expected) {
+            throw new RuntimeException('Translation returned '.count($out)." strings, expected {$expected}.");
+        }
+
+        return $out;
     }
 
     /**

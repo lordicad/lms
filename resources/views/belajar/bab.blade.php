@@ -93,7 +93,7 @@
                                     <span style="font-size:12px;font-weight:700;color:var(--wl-muted)">{{ __('Kuiz Bercetak') }}</span>
                                 @endif
                             </div>
-                            <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:15.5px;color:var(--wl-ink)">{{ $quiz->title }}</span>
+                            <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:15.5px;color:var(--wl-ink)">{{ $quiz->localizedTitle() }}</span>
                             <div style="display:flex;align-items:center;gap:12px;margin-top:auto">
                                 @if ($quiz->my_attempts_count > 0)
                                     <span style="font-size:12.5px;font-weight:700;color:var(--wl-muted)">{{ __('Dicuba :count kali', ['count' => $quiz->my_attempts_count]) }}</span>

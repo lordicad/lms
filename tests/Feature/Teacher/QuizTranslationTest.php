@@ -121,4 +121,38 @@ class QuizTranslationTest extends TestCase
         app()->setLocale('ms');
         $this->assertSame('Soalan asal', $question->localizedText());
     }
+
+    public function test_quiz_title_and_description_follow_the_locale(): void
+    {
+        $this->quiz->update([
+            'title' => 'Living Things',
+            'description' => 'A short quiz.',
+            'source_locale' => 'en',
+            'title_translated' => 'Benda Hidup',
+            'description_translated' => 'Kuiz ringkas.',
+        ]);
+
+        app()->setLocale('ms');
+        $this->assertSame('Benda Hidup', $this->quiz->localizedTitle());
+        $this->assertSame('Kuiz ringkas.', $this->quiz->localizedDescription());
+
+        app()->setLocale('en');
+        $this->assertSame('Living Things', $this->quiz->localizedTitle());
+        $this->assertSame('A short quiz.', $this->quiz->localizedDescription());
+    }
+
+    public function test_untranslated_quiz_title_shows_the_original_in_both_languages(): void
+    {
+        $this->quiz->update([
+            'title' => 'Tajuk asal',
+            'source_locale' => null,
+            'title_translated' => null,
+        ]);
+
+        app()->setLocale('en');
+        $this->assertSame('Tajuk asal', $this->quiz->localizedTitle());
+
+        app()->setLocale('ms');
+        $this->assertSame('Tajuk asal', $this->quiz->localizedTitle());
+    }
 }

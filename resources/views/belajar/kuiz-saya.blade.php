@@ -114,7 +114,7 @@
                                 <div style="display:flex;align-items:center;gap:14px;padding:14px 20px;border-bottom:1px solid var(--wl-line)">
                                     <span style="width:40px;height:40px;border-radius:12px;background:{{ $tagBg }};display:grid;place-items:center;flex-shrink:0"><x-subject-emoji :subject="$sub" class="text-base" /></span>
                                     <div style="display:flex;flex-direction:column;gap:6px;min-width:0;flex:1">
-                                        <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:14.5px;color:var(--wl-ink)">{{ $quiz->title }}</span>
+                                        <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:14.5px;color:var(--wl-ink)">{{ $quiz->localizedTitle() }}</span>
                                         <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
                                             <span style="background:{{ $tagBg }};color:{{ $tagColor }};border-radius:999px;padding:3px 11px;font-family:'Geist',sans-serif;font-size:11.5px;font-weight:800">{{ $sub->displayName() }}</span>
                                             <span style="display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:700;color:var(--wl-muted)"><x-icon name="book" style="width:15px;height:15px;color:#0F7A68" />Bab {{ $quiz->chapter->number }}</span>

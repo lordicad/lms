@@ -92,7 +92,7 @@
                     @else
                         @foreach ($quizzes as $quiz)
                             <div style="background:var(--wl-surface);border:1px solid var(--wl-line);border-radius:16px;padding:16px 18px;display:flex;flex-direction:column;gap:6px;box-shadow:0 3px 12px rgba(46,44,80,.04)">
-                                <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:14.5px;color:var(--wl-ink)">{{ $quiz->title }}</span>
+                                <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:14.5px;color:var(--wl-ink)">{{ $quiz->localizedTitle() }}</span>
                                 <span style="font-size:12.5px;color:var(--wl-muted)">{{ $quiz->isFile() ? __('Kuiz bercetak') : __('Kuiz interaktif') }}</span>
                                 <a href="{{ route('kuiz.intro', $quiz) }}" class="wl-btn-primary" style="align-self:flex-start;margin-top:6px;min-height:42px;display:inline-flex;align-items:center;border-radius:12px;background:#17907B;color:#fff;font-family:'Geist',sans-serif;font-weight:800;font-size:13.5px;padding:0 18px;text-decoration:none">{{ $quiz->isFile() ? __('Lihat') : __('Cuba Kuiz') }}</a>
                             </div>

@@ -38,7 +38,7 @@
                          style="background:var(--wl-surface);border:1px solid var(--wl-line);border-radius:22px;padding:26px;box-shadow:0 10px 30px var(--wl-line)">
                     {{-- Title + timer, at the top of the card. --}}
                     <div style="display:flex;align-items:center;gap:16px">
-                        <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:22px;font-weight:800;letter-spacing:-.01em;color:var(--wl-ink);flex:1;min-width:0">{{ $quiz->title }}</h2>
+                        <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:22px;font-weight:800;letter-spacing:-.01em;color:var(--wl-ink);flex:1;min-width:0">{{ $quiz->localizedTitle() }}</h2>
                         @if ($secondsLeft !== null)
                             {{-- Object syntax so the binding does not wipe the static pill styles. --}}
                             <span :style="secondsLeft < 60 ? { background: '#FDE7E0', color: '#C24936' } : { background: '#FBEECB', color: '#8A6A12' }"

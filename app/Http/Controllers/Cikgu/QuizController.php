@@ -7,11 +7,15 @@ use App\Http\Requests\QuizRequest;
 use App\Models\Grade;
 use App\Models\Quiz;
 use App\Models\Subject;
+use App\Services\QuestionTranslator;
 use App\Support\Uploads;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
+use Throwable;
 
 class QuizController extends Controller
 {
@@ -64,6 +68,7 @@ class QuizController extends Controller
             'subjects' => Subject::orderBy('sort_order')->get(),
             'grades' => Grade::orderBy('level')->get(),
             'chapter' => null,
+            'translatorEnabled' => app(QuestionTranslator::class)->enabled(),
         ]);
     }
 
@@ -86,6 +91,7 @@ class QuizController extends Controller
             'is_published' => $request->boolean('is_published'),
             'duration_minutes' => $request->input('duration_minutes') ?: null,
             'shuffle_options' => $request->boolean('shuffle_options'),
+            ...$this->metaTranslation($request),
         ]);
 
         // An interactive quiz is not usable until it has questions, so go straight there.
@@ -143,6 +149,7 @@ class QuizController extends Controller
             'grades' => Grade::orderBy('level')->get(),
             'chapter' => $quiz->chapter,
             'hasAttempts' => $quiz->hasAttempts(),
+            'translatorEnabled' => app(QuestionTranslator::class)->enabled(),
         ]);
     }
 
@@ -163,6 +170,7 @@ class QuizController extends Controller
                 ? ($request->input('duration_minutes') ?: null)
                 : null,
             'shuffle_options' => $type === Quiz::TYPE_INTERACTIVE && $request->boolean('shuffle_options'),
+            ...$this->metaTranslation($request),
         ]);
 
         $staleFile = null;
@@ -204,5 +212,91 @@ class QuizController extends Controller
         return redirect()
             ->route('cikgu.kuiz.index')
             ->with('status', __('Kuiz ":title" telah dipadam.', ['title' => $title]));
+    }
+
+    /**
+     * Live translation for the quiz form's "Terjemah automatik" button: translates the title and
+     * description as typed, for the teacher to review and edit before saving.
+     */
+    public function translateMeta(Request $request, QuestionTranslator $translator): JsonResponse
+    {
+        $this->authorize('create', Quiz::class);
+
+        if (! $translator->enabled()) {
+            return response()->json(['message' => __('Terjemahan automatik tidak tersedia.')], 422);
+        }
+
+        $validated = $request->validate([
+            'title' => ['required', 'string', 'max:255'],
+            'description' => ['nullable', 'string', 'max:2000'],
+        ]);
+
+        $hasDescription = filled($validated['description'] ?? null);
+        $strings = $hasDescription ? [$validated['title'], $validated['description']] : [$validated['title']];
+
+        try {
+            $results = $translator->translateStrings($strings);
+        } catch (Throwable $e) {
+            Log::warning('Quiz meta live-translate failed', ['error' => $e->getMessage()]);
+
+            return response()->json(['message' => __('Terjemahan gagal. Sila cuba lagi.')], 502);
+        }
+
+        return response()->json([
+            'source_locale' => $results[0]['source_locale'] ?? 'ms',
+            'title' => $results[0]['text'] ?? '',
+            'description' => $hasDescription ? ($results[1]['text'] ?? '') : '',
+        ]);
+    }
+
+    /**
+     * The title/description translation fields to save with a quiz. Uses the teacher's reviewed
+     * translation from the form when present, otherwise auto-translates on save. Best-effort: any
+     * API failure returns nulls so the quiz still saves.
+     *
+     * @return array{source_locale: ?string, title_translated: ?string, description_translated: ?string}
+     */
+    private function metaTranslation(Request $request): array
+    {
+        $none = ['source_locale' => null, 'title_translated' => null, 'description_translated' => null];
+
+        // Teacher reviewed a translation in the form — keep it verbatim.
+        $providedLocale = $request->input('source_locale');
+        $providedTitle = $request->input('title_translated');
+
+        if (in_array($providedLocale, ['ms', 'en'], true) && filled($providedTitle)) {
+            $providedDescription = $request->input('description_translated');
+
+            return [
+                'source_locale' => $providedLocale,
+                'title_translated' => $providedTitle,
+                'description_translated' => filled($providedDescription) ? $providedDescription : null,
+            ];
+        }
+
+        $title = (string) $request->input('title');
+        $description = (string) $request->input('description');
+        $translator = app(QuestionTranslator::class);
+
+        if (! $translator->enabled() || trim($title) === '') {
+            return $none;
+        }
+
+        $hasDescription = trim($description) !== '';
+        $strings = $hasDescription ? [$title, $description] : [$title];
+
+        try {
+            $results = $translator->translateStrings($strings);
+        } catch (Throwable $e) {
+            Log::warning('Quiz meta auto-translate on save failed', ['error' => $e->getMessage()]);
+
+            return $none;
+        }
+
+        return [
+            'source_locale' => $results[0]['source_locale'] ?? null,
+            'title_translated' => $results[0]['text'] ?? null,
+            'description_translated' => $hasDescription ? ($results[1]['text'] ?? null) : null,
+        ];
     }
 }

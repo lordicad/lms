@@ -10,7 +10,21 @@
     <form method="POST"
           action="{{ $editing ? route('cikgu.kuiz.update', $quiz) : route('cikgu.kuiz.store') }}"
           enctype="multipart/form-data" class="tp-formwrap"
-          x-data="{ type: '{{ $type }}' }">
+          x-data="quizForm({{ Js::from([
+              'type' => $type,
+              'translate' => [
+                  'enabled' => $translatorEnabled,
+                  'url' => route('cikgu.kuiz.terjemah-meta'),
+                  'failed' => __('Terjemahan gagal. Sila cuba lagi.'),
+                  'needTitle' => __('Isi tajuk dahulu.'),
+                  'en2ms' => __('English → Bahasa Melayu'),
+                  'ms2en' => __('Bahasa Melayu → English'),
+                  'hint' => __('Terjemah tajuk & penerangan. Semak sebelum simpan.'),
+              ],
+              'titleT' => old('title_translated', $quiz->title_translated),
+              'descriptionT' => old('description_translated', $quiz->description_translated),
+              'sourceLocale' => old('source_locale', $quiz->source_locale),
+          ]) }})"
         @csrf
         @if ($editing) @method('PUT') @endif
         <input type="hidden" name="type" :value="type">
@@ -70,6 +84,39 @@
                 <textarea id="description" name="description" rows="3" class="tp-textarea">{{ old('description', $quiz->description) }}</textarea>
                 @error('description') <span class="tp-error">{{ $message }}</span> @enderror
             </div>
+
+            @if ($translatorEnabled)
+                {{-- Auto-translate the title + description for the language toggle. Editable so a
+                     wrong machine translation is corrected before students see it; runs on save too,
+                     so it is optional. Follows the title field's visibility (title-per-file quizzes
+                     translate their titles in the drop zone instead). --}}
+                <div x-show="type === 'interactive' || {{ $editing ? 'true' : 'false' }}" @unless ($editing) x-cloak @endunless
+                     style="border-top:1px solid var(--tp-line);padding-top:14px;display:flex;flex-direction:column;gap:12px">
+                    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+                        <div style="flex:1;min-width:180px;display:flex;flex-direction:column;gap:2px">
+                            <span class="tp-g" style="font-size:14px;font-weight:800;color:var(--tp-ink)">{{ __('Terjemahan automatik') }}</span>
+                            <span style="font-size:12.5px;color:var(--tp-muted)"
+                                  x-text="sourceLocale ? (sourceLocale === 'en' ? translate.en2ms : translate.ms2en) : translate.hint"></span>
+                        </div>
+                        <span style="font-size:12.5px;font-weight:700;color:#C24936" x-show="translateError" x-cloak x-text="translateError"></span>
+                        <button type="button" class="tp-btn-outline tp-btn-sm" @click="translateMeta()" :disabled="translating">
+                            <span x-show="! translating">✦ {{ __('Terjemah automatik') }}</span>
+                            <span x-show="translating" x-cloak>{{ __('Menterjemah...') }}</span>
+                        </button>
+                    </div>
+
+                    <input type="hidden" name="source_locale" :value="sourceLocale || ''">
+
+                    <div class="tp-field">
+                        <label for="title_translated" class="tp-label">{{ __('Tajuk (terjemahan)') }}</label>
+                        <input id="title_translated" name="title_translated" type="text" x-model="titleT" class="tp-input" placeholder="{{ __('Terjemahan tajuk') }}">
+                    </div>
+                    <div class="tp-field">
+                        <label for="description_translated" class="tp-label">{{ __('Penerangan (terjemahan)') }}</label>
+                        <textarea id="description_translated" name="description_translated" rows="3" x-model="descriptionT" class="tp-textarea" placeholder="{{ __('Terjemahan penerangan') }}"></textarea>
+                    </div>
+                </div>
+            @endif
 
             {{-- Interactive only --}}
             <div x-show="type === 'interactive'" x-cloak class="tp-field">
@@ -145,4 +192,48 @@
             <a href="{{ route('cikgu.kuiz.index') }}" class="tp-btn-outline" style="min-height:48px">{{ __('Batal') }}</a>
         </div>
     </form>
+
+    @push('scripts')
+        <script>
+            function quizForm({ type, translate, titleT, descriptionT, sourceLocale }) {
+                return {
+                    type,
+                    translate,
+                    titleT: titleT ?? '',
+                    descriptionT: descriptionT ?? '',
+                    sourceLocale: sourceLocale ?? '',
+                    translating: false,
+                    translateError: '',
+                    csrf() { return document.querySelector('input[name="_token"]')?.value ?? ''; },
+                    async translateMeta() {
+                        if (! this.translate.enabled || this.translating) return;
+                        const title = document.getElementById('title')?.value?.trim() ?? '';
+                        const description = document.getElementById('description')?.value?.trim() ?? '';
+                        if (! title) { this.translateError = this.translate.needTitle; return; }
+                        this.translateError = '';
+                        this.translating = true;
+                        try {
+                            const res = await fetch(this.translate.url, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': this.csrf() },
+                                body: JSON.stringify({ title, description }),
+                            });
+                            if (! res.ok) {
+                                const err = await res.json().catch(() => ({}));
+                                throw new Error(err.message || this.translate.failed);
+                            }
+                            const data = await res.json();
+                            this.titleT = data.title ?? '';
+                            this.descriptionT = data.description ?? '';
+                            this.sourceLocale = data.source_locale ?? '';
+                        } catch (e) {
+                            this.translateError = e.message || this.translate.failed;
+                        } finally {
+                            this.translating = false;
+                        }
+                    },
+                };
+            }
+        </script>
+    @endpush
 </x-cikgu-layout>

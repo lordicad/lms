@@ -26,6 +26,9 @@ class Quiz extends Model
         'teacher_id',
         'title',
         'description',
+        'source_locale',
+        'title_translated',
+        'description_translated',
         'type',
         'file_path',
         'original_name',
@@ -78,6 +81,28 @@ class Quiz extends Model
     public function isInteractive(): bool
     {
         return $this->type === self::TYPE_INTERACTIVE;
+    }
+
+    /**
+     * The title in the reader's language: the translation only when the reader's locale differs
+     * from the one the teacher typed AND a translation exists; otherwise the original.
+     */
+    public function localizedTitle(): string
+    {
+        if (! $this->source_locale || app()->getLocale() === $this->source_locale) {
+            return $this->title;
+        }
+
+        return $this->title_translated ?: $this->title;
+    }
+
+    public function localizedDescription(): ?string
+    {
+        if (! $this->source_locale || app()->getLocale() === $this->source_locale) {
+            return $this->description;
+        }
+
+        return $this->description_translated ?: $this->description;
     }
 
     public function isFile(): bool

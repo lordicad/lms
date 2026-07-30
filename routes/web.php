@@ -141,6 +141,8 @@ Route::middleware(['auth', 'role:teacher'])
 
         // Step 1 of quiz creation is picking the mode (file or interactive).
         Route::get('kuiz/mod', [QuizController::class, 'mode'])->name('kuiz.mod');
+        // Live BM⇄EN translation of a quiz's title + description for the form's review button.
+        Route::post('kuiz/terjemah-meta', [QuizController::class, 'translateMeta'])->name('kuiz.terjemah-meta');
         Route::resource('kuiz', QuizController::class)->parameters(['kuiz' => 'quiz']);
 
         Route::get('kuiz/{quiz}/soalan', [QuizBuilderController::class, 'edit'])->name('kuiz.soalan');

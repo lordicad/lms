@@ -15,10 +15,10 @@
                 <span class="chip bg-surface-2 text-ink-2">{{ __('Kuiz Bercetak') }}</span>
             </div>
 
-            <h1 class="mt-3 text-3xl font-extrabold text-ink">{{ $quiz->title }}</h1>
+            <h1 class="mt-3 text-3xl font-extrabold text-ink">{{ $quiz->localizedTitle() }}</h1>
 
             @if ($quiz->description)
-                <p class="mt-3 max-w-prose text-ink-2">{{ $quiz->description }}</p>
+                <p class="mt-3 max-w-prose text-ink-2">{{ $quiz->localizedDescription() }}</p>
             @endif
 
             {{-- File facts: format, page count (when the PDF exposes it) and when it was created. --}}
