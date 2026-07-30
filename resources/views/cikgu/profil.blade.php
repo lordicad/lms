@@ -50,10 +50,13 @@
 
                 <div style="display:flex;align-items:center;gap:16px" x-data="{ name: '', preview: '' }">
                     <label for="avatar" title="{{ $user->avatarUrl() ? __('Tukar gambar profil') : __('Tambah gambar profil') }}"
-                           style="width:64px;height:64px;border-radius:50%;background:#DCF2EE;color:#0F7A68;display:flex;align-items:center;justify-content:center;font-family:'Geist',sans-serif;font-weight:800;font-size:20px;flex-shrink:0;overflow:hidden;cursor:pointer;position:relative">
-                        <span x-show="! preview" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center">
-                            @if ($user->avatarUrl())<img src="{{ $user->avatarUrl() }}" alt="" style="width:100%;height:100%;object-fit:cover">@else{{ $user->initials() }}@endif
-                        </span>
+                           style="width:64px;height:64px;border-radius:50%;background:#DCF2EE;color:#0F7A68;display:flex;align-items:center;justify-content:center;font-family:'Geist',sans-serif;font-weight:800;font-size:20px;line-height:1;flex-shrink:0;overflow:hidden;cursor:pointer;position:relative">
+                        {{-- Initials sit directly in the flex-centred circle. A saved photo or a
+                             pre-save preview overlays them, covering the whole circle. --}}
+                        <span x-show="! preview">{{ $user->initials() }}</span>
+                        @if ($user->avatarUrl())
+                            <img src="{{ $user->avatarUrl() }}" alt="" x-show="! preview" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+                        @endif
                         <template x-if="preview">
                             <img :src="preview" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
                         </template>
