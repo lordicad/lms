@@ -8,7 +8,7 @@
     </style>
 
     <div style="display:flex;flex-direction:column;gap:24px">
-        <div style="display:flex;align-items:center;gap:16px">
+        <div style="display:flex;align-items:flex-start;gap:16px">
             <span style="width:48px;height:48px;border-radius:14px;background:#DCF2EE;color:#0F7A68;display:grid;place-items:center;flex-shrink:0"><x-icon name="quiz" style="width:24px;height:24px" /></span>
             <div style="display:flex;flex-direction:column;gap:2px;min-width:0">
                 <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:22px;font-weight:800;letter-spacing:-.01em;color:var(--wl-ink)">{{ __('Kuiz') }}</h2>
