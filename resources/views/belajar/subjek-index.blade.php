@@ -14,9 +14,12 @@
 
     @if ($grade && $subjectsByCategory->isNotEmpty())
         <div style="display:flex;flex-direction:column;gap:18px">
-            <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap">
-                <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:22px;font-weight:800;color:var(--wl-ink)">{{ __('Subjek — :grade', ['grade' => $grade->name]) }}</h2>
-                <span style="font-size:14px;color:var(--wl-muted)">{{ __('Pilih subjek untuk melihat bab dan video') }}</span>
+            <div style="display:flex;align-items:flex-start;gap:16px">
+                <span style="width:48px;height:48px;border-radius:14px;background:#DCF2EE;color:#0F7A68;display:grid;place-items:center;flex-shrink:0"><x-icon name="book" style="width:24px;height:24px" /></span>
+                <div style="display:flex;flex-direction:column;gap:2px;min-width:0">
+                    <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:22px;font-weight:800;letter-spacing:-.01em;color:var(--wl-ink)">{{ __('Subjek') }}</h2>
+                    <span style="font-size:14px;font-weight:600;color:var(--wl-muted)">{{ $grade->name }} · {{ __('Pilih subjek untuk melihat bab dan video') }}</span>
+                </div>
             </div>
 
             @foreach (\App\Models\Subject::CATEGORIES as $category)
