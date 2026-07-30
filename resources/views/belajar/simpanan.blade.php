@@ -1,10 +1,13 @@
 <x-student-layout :title="__('Simpanan Offline')">
     <div x-data="offlineDownloads()">
         <header class="mb-6">
-            <h1 class="text-2xl font-extrabold text-ink">{{ __('Simpanan Offline') }}</h1>
-            <p class="mt-1 max-w-prose text-ink-2">
-                {{ __('Muat turun video yang dimuat naik dan bahan sokongan untuk ditonton atau dibaca tanpa internet. Video YouTube hanya boleh ditonton dalam talian.') }}
-            </p>
+            <div style="display:flex;align-items:center;gap:16px">
+                <span style="width:48px;height:48px;border-radius:14px;background:#DCF2EE;color:#0F7A68;display:grid;place-items:center;flex-shrink:0"><x-icon name="download" style="width:24px;height:24px" /></span>
+                <div style="display:flex;flex-direction:column;gap:3px;min-width:0">
+                    <h1 style="margin:0;font-family:'Geist',sans-serif;font-size:22px;font-weight:800;letter-spacing:-.01em;color:var(--wl-ink)">{{ __('Simpanan Offline') }}</h1>
+                    <p style="margin:0;max-width:62ch;font-size:14px;font-weight:600;color:var(--wl-muted);line-height:1.5">{{ __('Muat turun video yang dimuat naik dan bahan sokongan untuk ditonton atau dibaca tanpa internet. Video YouTube hanya boleh ditonton dalam talian.') }}</p>
+                </div>
+            </div>
         </header>
 
         {{-- Dependent Year -> Subject filter (brief §3.1). Defaults to the student's active Tahun. --}}
