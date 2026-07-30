@@ -2,7 +2,7 @@
     :heading="$quiz->title"
     :sub="__('Prestasi murid pada kuiz ini')">
 
-    <div style="display:flex;flex-direction:column;gap:20px;max-width:1000px">
+    <div style="display:flex;flex-direction:column;gap:20px">
         <a href="{{ route('cikgu.kuiz.index') }}" class="tp-back">← {{ __('Kuiz Saya') }}</a>
 
         <span style="align-self:flex-start;background:#E4EEF9;color:#2E6CA8;border-radius:999px;padding:5px 14px;font-family:'Geist',sans-serif;font-size:12.5px;font-weight:800;display:inline-flex;align-items:center;gap:6px"><x-icon :name="$subject->iconName()" class="h-[15px] w-[15px]" />{{ $subject->name }}. {{ $chapter->grade->name }}. Bab {{ $chapter->number }}</span>
