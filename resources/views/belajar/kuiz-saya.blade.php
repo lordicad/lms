@@ -73,7 +73,7 @@
                         <div style="position:absolute;right:-44px;bottom:-30px;width:146px;height:167px;border-radius:42% 58% 52% 48% / 58% 45% 55% 42%;background:#E7EEE8;opacity:.36;filter:blur(12px)"></div>
                         {{-- Leaf branches from the uploaded illustration, cropped into each corner. --}}
                         <div style="position:absolute;left:0;bottom:0;width:90px;height:117px;opacity:.92;background:url('{{ asset('images/leaf.png') }}') no-repeat -10px -24px / 238px 158px"></div>
-                        <div style="position:absolute;right:-18px;bottom:0;width:77px;height:90px;opacity:.92;transform:rotate(-9deg);transform-origin:50% 100%;background:url('{{ asset('images/leaf.png') }}') no-repeat -172px -52px / 275px 183px"></div>
+                        <div style="position:absolute;right:-18px;bottom:0;width:77px;height:100px;opacity:.92;transform:scaleX(-1) rotate(9deg);transform-origin:50% 100%;background:url('{{ asset('images/leaf.png') }}') no-repeat -9px -20px / 203px 135px"></div>
                         <svg style="position:absolute;top:30px;left:9%" width="11" height="11" viewBox="0 0 16 16" fill="#7FC8B8"><path d="{{ $spk }}"/></svg>
                         <svg style="position:absolute;top:20px;left:17%" width="18" height="18" viewBox="0 0 16 16" fill="#93A3E8"><path d="{{ $spk }}"/></svg>
                         <svg style="position:absolute;top:64px;left:13%" width="12" height="12" viewBox="0 0 16 16" fill="#7FC8B8"><path d="{{ $spk }}"/></svg>
