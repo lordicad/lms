@@ -108,9 +108,9 @@
 
     <div style="display:flex;flex-direction:column;gap:20px">
         <div style="display:flex;align-items:center;gap:16px">
-            <span style="width:56px;height:56px;border-radius:16px;background:#DCF2EE;color:#0F7A68;display:grid;place-items:center;flex-shrink:0"><x-icon name="trophy" style="width:28px;height:28px" /></span>
+            <span style="width:48px;height:48px;border-radius:14px;background:#DCF2EE;color:#0F7A68;display:grid;place-items:center;flex-shrink:0"><x-icon name="trophy" style="width:24px;height:24px" /></span>
             <div style="display:flex;flex-direction:column;gap:2px;min-width:0">
-                <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:26px;font-weight:800;letter-spacing:-.01em;color:var(--wl-ink)">{{ __('Ranking') }}</h2>
+                <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:22px;font-weight:800;letter-spacing:-.01em;color:var(--wl-ink)">{{ __('Ranking') }}</h2>
                 <span style="font-size:14px;font-weight:600;color:var(--wl-muted)">{{ __('Murid berprestasi terbaik') }}{{ $grade ? ' · '.$grade->name : '' }}</span>
             </div>
         </div>
