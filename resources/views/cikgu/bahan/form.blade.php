@@ -56,7 +56,7 @@
                 </div>
                 <div class="tp-field">
                     <label for="file" class="tp-label">{{ __('Fail bahan') }}</label>
-                    <input id="file" name="file" type="file" accept=".pdf,.ppt,.pptx,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg" class="tp-file" aria-describedby="file-help" @error('file') aria-invalid="true" @enderror>
+                    <x-file-input id="file" name="file" accept=".pdf,.ppt,.pptx,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg" aria-describedby="file-help" @error('file') aria-invalid="true" @enderror />
                     <p id="file-help" class="tp-hint">
                         {{ __('PDF, PowerPoint, Word, Excel atau imej.') }} {{ __('Had saiz :max MB.', ['max' => config('lms.material_max_mb')]) }}
                         {{ __('Biarkan kosong untuk mengekalkan fail sedia ada.') }}

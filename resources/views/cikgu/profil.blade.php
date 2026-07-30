@@ -48,8 +48,7 @@
                 </span>
                 <div style="{{ $field }};flex:1">
                     <label for="avatar" style="{{ $label }}">{{ __('Gambar profil') }}</label>
-                    <input id="avatar" name="avatar" type="file" accept="image/*" class="wl-file"
-                           style="min-height:46px;border:1.5px solid var(--tp-line-2);border-radius:12px;padding:10px 14px;background:var(--tp-input);font-family:'Nunito',sans-serif;font-size:13.5px;color:var(--tp-ink);box-sizing:border-box;width:100%">
+                    <x-file-input id="avatar" name="avatar" accept="image/*" @error('avatar') aria-invalid="true" @enderror />
                     @error('avatar')<p style="{{ $err }}">{{ $message }}</p>@enderror
                 </div>
             </div>

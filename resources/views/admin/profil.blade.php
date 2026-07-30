@@ -20,7 +20,7 @@
                     </span>
                     <div class="tp-field" style="flex:1">
                         <label for="avatar" class="tp-label">{{ __('Gambar profil') }}</label>
-                        <input id="avatar" name="avatar" type="file" accept="image/*" class="tp-file">
+                        <x-file-input id="avatar" name="avatar" accept="image/*" @error('avatar') aria-invalid="true" @enderror />
                         @error('avatar')<span class="tp-hint" style="color:#C24936;font-weight:700">{{ $message }}</span>@enderror
                     </div>
                 </div>
