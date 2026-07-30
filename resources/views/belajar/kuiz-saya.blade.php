@@ -69,11 +69,11 @@
                     {{-- Botanical corners (soft blob + olive-branch sprig) and scattered sparkles, redrawn from the reference. --}}
                     <div aria-hidden="true" style="position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden">
                         {{-- Soft pastel-green shade behind each branch. --}}
-                        <div style="position:absolute;left:-24px;bottom:-26px;width:168px;height:158px;border-radius:50%;background:#DCEDE3;opacity:.65;filter:blur(16px)"></div>
-                        <div style="position:absolute;right:-24px;bottom:-26px;width:150px;height:142px;border-radius:50%;background:#DCEDE3;opacity:.6;filter:blur(16px)"></div>
+                        <div style="position:absolute;left:-20px;bottom:-22px;width:138px;height:130px;border-radius:50%;background:#DCEDE3;opacity:.65;filter:blur(15px)"></div>
+                        <div style="position:absolute;right:-20px;bottom:-22px;width:124px;height:118px;border-radius:50%;background:#DCEDE3;opacity:.6;filter:blur(15px)"></div>
                         {{-- Leaf branches from the uploaded illustration, cropped into each corner. --}}
-                        <div style="position:absolute;left:0;bottom:0;width:150px;height:196px;opacity:.92;background:url('{{ asset('images/leaf.png') }}') no-repeat -16px -40px / 400px 266px"></div>
-                        <div style="position:absolute;right:0;bottom:0;width:130px;height:150px;opacity:.92;background:url('{{ asset('images/leaf.png') }}') no-repeat -289px -87px / 461px 307px"></div>
+                        <div style="position:absolute;left:0;bottom:0;width:117px;height:153px;opacity:.92;background:url('{{ asset('images/leaf.png') }}') no-repeat -13px -31px / 312px 207px"></div>
+                        <div style="position:absolute;right:0;bottom:0;width:101px;height:117px;opacity:.92;background:url('{{ asset('images/leaf.png') }}') no-repeat -225px -68px / 360px 239px"></div>
                         <svg style="position:absolute;top:30px;left:9%" width="11" height="11" viewBox="0 0 16 16" fill="#7FC8B8"><path d="{{ $spk }}"/></svg>
                         <svg style="position:absolute;top:20px;left:17%" width="18" height="18" viewBox="0 0 16 16" fill="#93A3E8"><path d="{{ $spk }}"/></svg>
                         <svg style="position:absolute;top:64px;left:13%" width="12" height="12" viewBox="0 0 16 16" fill="#7FC8B8"><path d="{{ $spk }}"/></svg>
