@@ -90,35 +90,52 @@
                     {{ __('Tiada bahan sokongan untuk Tahun ini lagi.') }}
                 </p>
             @else
-                <div class="space-y-6">
+                <ul style="display:flex;flex-direction:column;gap:12px">
                     @foreach ($materialsByChapter as $materials)
-                        @php($chapter = $materials->first()->chapter)
+                        @foreach ($materials as $material)
+                            @php($chapter = $material->chapter)
+                            @php($ac = $chapter->subject->color ?: '#17907B')
+                            @php($tint = "color-mix(in oklab, {$ac} 14%, #fff)")
+                            @php($tintInk = "color-mix(in oklab, {$ac} 80%, #000)")
+                            @php($grad = "linear-gradient(135deg, color-mix(in oklab, {$ac} 10%, #fff), color-mix(in oklab, {$ac} 22%, #fff))")
+                            <li style="position:relative;overflow:hidden;display:flex;align-items:center;gap:16px;background:var(--wl-surface);border:1px solid var(--wl-line);border-radius:16px;padding:12px 16px;box-shadow:0 4px 16px rgba(46,44,80,.04)">
+                                {{-- Faint leaf flourish. --}}
+                                <svg aria-hidden="true" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);opacity:.18;pointer-events:none;z-index:0" width="92" height="74" viewBox="0 0 92 74" fill="{{ $ac }}">
+                                    <path d="M8 68 C 26 54 46 42 84 12" fill="none" stroke="{{ $ac }}" stroke-width="1.5"/>
+                                    <ellipse cx="0" cy="0" rx="10" ry="4.5" transform="translate(26 54) rotate(-32)"/>
+                                    <ellipse cx="0" cy="0" rx="10" ry="4.5" transform="translate(40 47) rotate(28)"/>
+                                    <ellipse cx="0" cy="0" rx="9" ry="4" transform="translate(52 37) rotate(-32)"/>
+                                    <ellipse cx="0" cy="0" rx="9" ry="4" transform="translate(64 30) rotate(28)"/>
+                                    <ellipse cx="0" cy="0" rx="8" ry="3.6" transform="translate(76 19) rotate(-30)"/>
+                                </svg>
 
-                        <div class="card card-pad" style="--sc: {{ $chapter->subject->rgb }}">
-                            <h3 class="mb-3 flex items-center gap-2 font-extrabold text-ink">
-                                <span class="chip bg-subject-wash text-subject-ink"><x-subject-icon :subject="$chapter->subject" class="h-4 w-4" /> {{ $chapter->subject->displayName() }}</span>
-                                Bab {{ $chapter->number }}: {{ $chapter->title }}
-                            </h3>
+                                {{-- File-type icon on a soft gradient. --}}
+                                <span style="position:relative;z-index:1;flex-shrink:0;width:96px;height:66px;border-radius:13px;background:{{ $grad }};display:grid;place-items:center;color:{{ $ac }}"><x-icon :name="$material->iconName()" style="width:30px;height:30px" /></span>
 
-                            <ul class="divide-y divide-line">
-                                @foreach ($materials as $material)
-                                    <li>
-                                        <a href="{{ route('muat-turun.bahan', $material) }}"
-                                           @click="remember(@js($material->title))"
-                                           class="flex items-center gap-3 py-2.5 hover:text-brand">
-                                            <span class="text-ink-2" aria-hidden="true"><x-icon :name="$material->iconName()" class="h-5 w-5" /></span>
-                                            <span class="min-w-0 flex-1">
-                                                <span class="block truncate text-sm font-bold text-ink">{{ $material->title }}</span>
-                                                <span class="block text-xs text-ink-2">{{ $material->humanSize() }}@if ($material->teacher) · {{ __('Guru: :name', ['name' => $material->teacher->name]) }}@endif</span>
-                                            </span>
-                                            <x-icon name="download" class="h-5 w-5 shrink-0 text-brand" />
-                                        </a>
-                                    </li>
-                                @endforeach
-                            </ul>
-                        </div>
+                                <span style="position:relative;z-index:1;min-width:0;flex:1;display:flex;flex-direction:column;gap:5px">
+                                    <span style="display:inline-flex;align-items:center;gap:9px;flex-wrap:wrap">
+                                        <span style="display:inline-flex;align-items:center;gap:6px;background:{{ $tint }};color:{{ $tintInk }};border-radius:999px;padding:3px 11px;font-family:'Geist',sans-serif;font-size:12px;font-weight:800"><x-subject-icon :subject="$chapter->subject" :size="14" />{{ $chapter->subject->displayName() }}</span>
+                                        <span style="font-size:12.5px;font-weight:700;color:var(--wl-muted)">· Bab {{ $chapter->number }}: {{ $chapter->title }}</span>
+                                    </span>
+                                    <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:15.5px;color:var(--wl-ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $material->title }}</span>
+                                    <span style="display:inline-flex;align-items:center;gap:10px;font-size:12.5px;color:var(--wl-muted)">
+                                        <span style="display:inline-flex;align-items:center;gap:5px"><x-icon name="file" style="width:14px;height:14px" />{{ $material->humanSize() }}</span>
+                                        @if ($material->teacher)
+                                            <span style="width:4px;height:4px;border-radius:50%;background:var(--wl-line-2)"></span>
+                                            <span style="display:inline-flex;align-items:center;gap:5px"><x-icon name="user" style="width:14px;height:14px" />{{ __('Guru: :name', ['name' => $material->teacher->name]) }}</span>
+                                        @endif
+                                    </span>
+                                </span>
+
+                                <span style="position:relative;z-index:1;flex-shrink:0;align-self:stretch;width:1px;background:var(--wl-line);margin:4px 0"></span>
+                                <a href="{{ route('muat-turun.bahan', $material) }}" @click="remember(@js($material->title))"
+                                   style="position:relative;z-index:1;flex-shrink:0;display:inline-flex;align-items:center;gap:8px;min-height:42px;padding:0 20px;border-radius:12px;background:var(--wl-surface);border:1.5px solid color-mix(in oklab, {{ $ac }} 32%, #fff);color:{{ $ac }};font-family:'Geist',sans-serif;font-weight:800;font-size:14px;text-decoration:none">
+                                    <x-icon name="download" style="width:17px;height:17px" />{{ __('Muat Turun') }}
+                                </a>
+                            </li>
+                        @endforeach
                     @endforeach
-                </div>
+                </ul>
             @endif
         </section>
 
