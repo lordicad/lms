@@ -1,6 +1,7 @@
 <x-cikgu-layout
     :title="__('Video')"
     :heading="__('Video')"
+    heading-icon="video"
     :sub="__('Rakaman kelas yang anda muat naik atau pautkan dari YouTube')">
 
     {{-- Total videos uploaded by this teacher (all-time, not the filtered count). --}}
