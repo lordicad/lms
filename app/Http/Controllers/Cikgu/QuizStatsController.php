@@ -27,6 +27,9 @@ class QuizStatsController extends Controller
         $aggregate = $quiz->attempts()->completed()
             ->selectRaw('COUNT(*) as total')
             ->selectRaw('AVG(score) as avg_score')
+            // The average of each attempt's OWN max, so the score fraction stays consistent even if
+            // the quiz's total marks changed after students attempted it.
+            ->selectRaw('AVG(max_score) as avg_max')
             ->selectRaw('AVG(CASE WHEN max_score > 0 THEN (score / max_score) * 100 ELSE 0 END) as avg_percent')
             ->first();
 
@@ -62,6 +65,7 @@ class QuizStatsController extends Controller
             'attempts' => $attempts,
             'completedCount' => $completed,
             'averageScore' => $completed > 0 ? round((float) $aggregate->avg_score, 1) : 0,
+            'averageMax' => $completed > 0 ? (int) round((float) $aggregate->avg_max) : $quiz->maxScore(),
             'averagePercent' => $completed > 0 ? (int) round((float) $aggregate->avg_percent) : 0,
             'perQuestion' => $perQuestion,
         ]);

@@ -21,7 +21,7 @@
                     <span class="tp-stat-ico" style="background:#FEF0CE"><x-icon name="trophy" class="h-5 w-5" style="color:#8A6A12" /></span>
                     <span class="tp-stat-label">{{ __('Purata markah') }}</span>
                 </div>
-                <span class="tp-stat-value">{{ $averageScore }}<span style="font-size:18px;color:var(--tp-muted)">/{{ $quiz->maxScore() }}</span></span>
+                <span class="tp-stat-value">{{ $averageScore }}<span style="font-size:18px;color:var(--tp-muted)">/{{ $averageMax }}</span></span>
             </div>
             <div class="tp-stat">
                 <div style="display:flex;align-items:center;gap:10px">
