@@ -1,6 +1,7 @@
 @props([
     'title' => null,
     'heading' => null,
+    'headingIcon' => null,
     'sub' => null,
 ])
 
@@ -325,6 +326,9 @@
     {{-- MAIN --}}
     <main class="tp-main">
         <div class="tp-head">
+            @if ($headingIcon)
+                <span style="width:48px;height:48px;border-radius:14px;background:#DCF2EE;display:grid;place-items:center;flex-shrink:0;font-size:26px;line-height:1" aria-hidden="true">{{ $headingIcon }}</span>
+            @endif
             <div style="display:flex;flex-direction:column;gap:2px;flex:1;min-width:200px">
                 <h1 class="tp-h1">{{ $heading }}</h1>
                 @if ($sub)
