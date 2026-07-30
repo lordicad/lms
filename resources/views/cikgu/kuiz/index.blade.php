@@ -1,6 +1,7 @@
 <x-cikgu-layout
     :title="__('Kuiz Saya')"
     :heading="__('Kuiz Saya')"
+    heading-icon="quiz"
     :sub="__('Kuiz interaktif yang menanda sendiri, dan kuiz bercetak')">
 
     {{-- Total quizzes created by this teacher (all-time, not the filtered count). --}}

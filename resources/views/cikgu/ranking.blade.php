@@ -1,6 +1,7 @@
 <x-cikgu-layout
     :title="__('Ranking Murid')"
     :heading="__('Ranking Murid')"
+    heading-icon="trophy"
     :sub="__('Murid yang menjawab kuiz anda. Mata hanya daripada percubaan pertama setiap kuiz, jadi latihan ulangan tidak menaikkan ranking.')">
 
     @php

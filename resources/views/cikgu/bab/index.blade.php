@@ -1,6 +1,7 @@
 <x-cikgu-layout
     :title="__('Pengurusan Bab')"
     :heading="__('Bab')"
+    heading-icon="book"
     :sub="__('Bab dikongsi oleh semua guru mengikut sukatan Kurikulum 2027.')">
 
     <div style="display:flex;flex-direction:column;gap:18px;max-width:1200px">
