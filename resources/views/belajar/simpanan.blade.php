@@ -56,9 +56,6 @@
                                 @endif
                             </span>
 
-                            {{-- Subject chip with a left accent. --}}
-                            <span style="position:relative;z-index:1;flex-shrink:0;width:40px;height:40px;border-radius:11px;background:{{ $p['tint'] }};border-left:3px solid {{ $p['accent'] }};color:{{ $p['accent'] }};display:grid;place-items:center"><x-subject-icon :subject="$lesson->chapter->subject" :size="20" /></span>
-
                             <span style="position:relative;z-index:1;min-width:0;flex:1;display:flex;flex-direction:column;gap:3px">
                                 <a href="{{ route('video.show', $lesson) }}" style="font-family:'Geist',sans-serif;font-weight:800;font-size:15px;color:var(--wl-ink);text-decoration:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $lesson->title }}</a>
                                 <span style="display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--wl-muted)">{{ $lesson->chapter->subject->displayName() }}<span style="width:5px;height:5px;border-radius:50%;background:{{ $p['accent'] }}"></span>Bab {{ $lesson->chapter->number }}</span>
