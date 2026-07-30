@@ -20,7 +20,7 @@
         ['route' => 'subjek.index',    'active' => request()->routeIs('subjek.index', 'belajar.subjek', 'bab.show'),             'icon' => 'book',    'label' => __('Subjek')],
         ['route' => 'kegemaran.index', 'active' => request()->routeIs('kegemaran.index'),                                        'icon' => 'save',    'label' => __('Kegemaran')],
         ['route' => 'simpanan.index',  'active' => request()->routeIs('simpanan.index'),                                         'icon' => 'offline', 'label' => __('Simpanan Offline')],
-        ['route' => 'ranking.index',   'active' => request()->routeIs('ranking.index'),                                          'icon' => 'trophy',  'label' => __('Ranking')],
+        ['route' => 'ranking.index',   'active' => request()->routeIs('ranking.index'),                                          'icon' => 'trophy',  'label' => app()->getLocale() === 'en' ? 'Leaderboard' : 'Kedudukan'],
         ['route' => 'kuiz-saya.index', 'active' => request()->routeIs('kuiz-saya.index', 'kuiz.intro', 'kuiz.jawab', 'keputusan.show'), 'icon' => 'quiz', 'label' => __('Kuiz')],
     ];
 @endphp

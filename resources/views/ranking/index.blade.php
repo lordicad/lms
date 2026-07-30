@@ -1,4 +1,4 @@
-<x-student-layout :title="__('Ranking')">
+<x-student-layout :title="app()->getLocale() === 'en' ? 'Leaderboard' : 'Kedudukan'">
     <style>
         /* Top-3 podium. Rank colours are passed per card as --c-* custom properties. */
         .lb-podium-wrap { position: relative; width: 100%; max-width: 720px; margin: 4px auto 0; }

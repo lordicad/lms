@@ -74,7 +74,7 @@
                     <x-nav-link :href="route('admin.murid')" :active="request()->routeIs('admin.murid')" pill>{{ __('Murid') }}</x-nav-link>
                 @else
                     <x-nav-link :href="route('belajar.index')" :active="request()->routeIs('belajar.*')" pill>{{ __('Belajar') }}</x-nav-link>
-                    <x-nav-link :href="route('ranking.index')" :active="request()->routeIs('ranking.index')" pill>{{ __('Ranking') }}</x-nav-link>
+                    <x-nav-link :href="route('ranking.index')" :active="request()->routeIs('ranking.index')" pill>{{ app()->getLocale() === 'en' ? 'Leaderboard' : 'Kedudukan' }}</x-nav-link>
                 @endif
             </div>
 
@@ -151,7 +151,7 @@
                     <x-nav-link :href="route('admin.murid')" :active="request()->routeIs('admin.murid')" block>{{ __('Murid') }}</x-nav-link>
                 @else
                     <x-nav-link :href="route('belajar.index')" :active="request()->routeIs('belajar.*')" block>{{ __('Belajar') }}</x-nav-link>
-                    <x-nav-link :href="route('ranking.index')" :active="request()->routeIs('ranking.index')" block>{{ __('Ranking') }}</x-nav-link>
+                    <x-nav-link :href="route('ranking.index')" :active="request()->routeIs('ranking.index')" block>{{ app()->getLocale() === 'en' ? 'Leaderboard' : 'Kedudukan' }}</x-nav-link>
                 @endif
 
                 <div class="flex items-stretch gap-2 border-t border-line pt-3">
