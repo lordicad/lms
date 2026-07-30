@@ -25,40 +25,57 @@
                     {{ __('Tiada video untuk Tahun ini lagi.') }}
                 </p>
             @else
-                <ul class="space-y-3">
+                @php($vpal = [
+                    ['accent' => '#17907B', 'tint' => '#DCF2EE', 'grad' => 'linear-gradient(135deg,#E6F4EE,#CFEADD)'],
+                    ['accent' => '#3E86C9', 'tint' => '#E4EEF9', 'grad' => 'linear-gradient(135deg,#E9F1FB,#D3E4F6)'],
+                    ['accent' => '#C8901C', 'tint' => '#FBEFCF', 'grad' => 'linear-gradient(135deg,#FDF4DC,#FBE7B8)'],
+                    ['accent' => '#7C5CBF', 'tint' => '#E9E4F9', 'grad' => 'linear-gradient(135deg,#EEE8FB,#DDD1F3)'],
+                    ['accent' => '#17907B', 'tint' => '#DCF2EE', 'grad' => 'linear-gradient(135deg,#E6F4EE,#CFEADD)'],
+                    ['accent' => '#D6357F', 'tint' => '#FBE0EC', 'grad' => 'linear-gradient(135deg,#FCE7F1,#F8D2E3)'],
+                ])
+                <ul style="display:flex;flex-direction:column;gap:12px">
                     @foreach ($lessons as $lesson)
-                        <li class="card flex flex-wrap items-center gap-4 p-4" style="--sc: {{ $lesson->chapter->subject->rgb }}">
-                            {{-- Video thumbnail at the existing 44px size; falls back to the subject icon. --}}
-                            <span class="inline-flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-control bg-subject-wash"
-                                  aria-hidden="true">
+                        @php($p = $vpal[$loop->index % 6])
+                        <li style="position:relative;overflow:hidden;display:flex;align-items:center;gap:14px;background:var(--wl-surface);border:1px solid var(--wl-line);border-radius:16px;padding:12px 16px;box-shadow:0 4px 16px rgba(46,44,80,.04)">
+                            {{-- Faint leaf flourish on the right. --}}
+                            <svg aria-hidden="true" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);opacity:.2;pointer-events:none;z-index:0" width="92" height="74" viewBox="0 0 92 74" fill="{{ $p['accent'] }}">
+                                <path d="M8 68 C 26 54 46 42 84 12" fill="none" stroke="{{ $p['accent'] }}" stroke-width="1.5"/>
+                                <ellipse cx="0" cy="0" rx="10" ry="4.5" transform="translate(26 54) rotate(-32)"/>
+                                <ellipse cx="0" cy="0" rx="10" ry="4.5" transform="translate(40 47) rotate(28)"/>
+                                <ellipse cx="0" cy="0" rx="9" ry="4" transform="translate(52 37) rotate(-32)"/>
+                                <ellipse cx="0" cy="0" rx="9" ry="4" transform="translate(64 30) rotate(28)"/>
+                                <ellipse cx="0" cy="0" rx="8" ry="3.6" transform="translate(76 19) rotate(-30)"/>
+                            </svg>
+
+                            {{-- Thumbnail on a soft gradient (video image, or the subject icon). --}}
+                            <span style="position:relative;z-index:1;flex-shrink:0;width:104px;height:66px;border-radius:13px;overflow:hidden;background:{{ $p['grad'] }};display:grid;place-items:center">
                                 @if ($lesson->thumbnailUrl())
-                                    <img src="{{ $lesson->thumbnailUrl() }}" alt="" loading="lazy" class="h-full w-full object-cover">
+                                    <img src="{{ $lesson->thumbnailUrl() }}" alt="" loading="lazy" style="width:100%;height:100%;object-fit:cover">
                                 @else
-                                    <x-subject-icon :subject="$lesson->chapter->subject" class="h-5 w-5" />
+                                    <span style="color:{{ $p['accent'] }}"><x-subject-icon :subject="$lesson->chapter->subject" :size="30" /></span>
                                 @endif
                             </span>
 
-                            <span class="min-w-0 flex-1">
-                                <a href="{{ route('video.show', $lesson) }}" class="block truncate font-extrabold text-ink hover:text-brand">{{ $lesson->title }}</a>
-                                <span class="block text-sm text-ink-2">{{ $lesson->chapter->subject->displayName() }} · Bab {{ $lesson->chapter->number }}</span>
+                            {{-- Subject chip with a left accent. --}}
+                            <span style="position:relative;z-index:1;flex-shrink:0;width:40px;height:40px;border-radius:11px;background:{{ $p['tint'] }};border-left:3px solid {{ $p['accent'] }};color:{{ $p['accent'] }};display:grid;place-items:center"><x-subject-icon :subject="$lesson->chapter->subject" :size="20" /></span>
+
+                            <span style="position:relative;z-index:1;min-width:0;flex:1;display:flex;flex-direction:column;gap:3px">
+                                <a href="{{ route('video.show', $lesson) }}" style="font-family:'Geist',sans-serif;font-weight:800;font-size:15px;color:var(--wl-ink);text-decoration:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $lesson->title }}</a>
+                                <span style="display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--wl-muted)">{{ $lesson->chapter->subject->displayName() }}<span style="width:5px;height:5px;border-radius:50%;background:{{ $p['accent'] }}"></span>Bab {{ $lesson->chapter->number }}</span>
                                 @if ($lesson->teacher)
-                                    <span class="block text-xs text-ink-2">{{ __('Guru: :name', ['name' => $lesson->teacher->name]) }}</span>
+                                    <span style="display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--wl-muted)"><x-icon name="user" style="width:14px;height:14px" />{{ __('Guru: :name', ['name' => $lesson->teacher->name]) }}</span>
                                 @endif
                             </span>
 
                             @if ($lesson->isUpload())
-                                <a href="{{ route('muat-turun.video', $lesson) }}"
-                                   @click="remember(@js($lesson->title))" class="btn-secondary btn-sm shrink-0">
-                                    <x-icon name="download" class="h-4 w-4" />
-                                    {{ __('Muat Turun') }}
+                                <a href="{{ route('muat-turun.video', $lesson) }}" @click="remember(@js($lesson->title))"
+                                   style="position:relative;z-index:1;flex-shrink:0;display:inline-flex;align-items:center;gap:8px;min-height:42px;padding:0 20px;border-radius:12px;background:var(--wl-surface);border:1.5px solid color-mix(in oklab, {{ $p['accent'] }} 32%, #fff);color:{{ $p['accent'] }};font-family:'Geist',sans-serif;font-weight:800;font-size:14px;text-decoration:none">
+                                    <x-icon name="download" style="width:17px;height:17px" />{{ __('Muat Turun') }}
                                 </a>
                             @else
-                                <span class="shrink-0 text-right">
-                                    <span class="btn-secondary btn-sm pointer-events-none opacity-50" aria-disabled="true">
-                                        <x-icon name="youtube" class="h-4 w-4" />
-                                        {{ __('Dalam talian sahaja') }}
-                                    </span>
-                                    <span class="mt-1 block text-xs text-ink-2">{{ __('Video ini hanya boleh ditonton dalam talian.') }}</span>
+                                <span style="position:relative;z-index:1;flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;gap:5px">
+                                    <span style="display:inline-flex;align-items:center;gap:8px;min-height:42px;padding:0 18px;border-radius:12px;background:{{ $p['tint'] }};color:{{ $p['accent'] }};font-family:'Geist',sans-serif;font-weight:800;font-size:14px"><x-icon name="play" style="width:16px;height:16px" />{{ __('Dalam talian sahaja') }}</span>
+                                    <span style="font-size:12px;color:var(--wl-muted);text-align:right">{{ __('Video ini hanya boleh ditonton dalam talian.') }}</span>
                                 </span>
                             @endif
                         </li>
