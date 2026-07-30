@@ -4,6 +4,7 @@ namespace Tests\Feature\Teacher;
 
 use App\Models\Chapter;
 use App\Models\Grade;
+use App\Models\Question;
 use App\Models\Quiz;
 use App\Models\QuizAttempt;
 use App\Models\User;
@@ -22,6 +23,10 @@ class QuizStatsPaginationTest extends TestCase
             'teacher_id' => $teacher->id,
             'type' => Quiz::TYPE_INTERACTIVE,
         ]);
+
+        // Ten questions worth ten points each = the current version the passed() attempts below were
+        // graded against (question_count 10, max_score 100), so they count toward the stats.
+        Question::factory()->count(10)->for($quiz)->create();
 
         QuizAttempt::factory()->count($completed)->for($quiz)->passed()->create();
 
