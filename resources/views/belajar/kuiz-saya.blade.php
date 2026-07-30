@@ -68,6 +68,9 @@
                 <div style="position:relative;overflow:hidden;background:var(--wl-surface);border:1px solid var(--wl-line);border-radius:18px;padding:24px 20px;box-shadow:0 4px 16px rgba(46,44,80,.04)">
                     {{-- Botanical corners (soft blob + olive-branch sprig) and scattered sparkles, redrawn from the reference. --}}
                     <div aria-hidden="true" style="position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden">
+                        {{-- Soft pastel-green shade behind each branch. --}}
+                        <div style="position:absolute;left:-24px;bottom:-26px;width:168px;height:158px;border-radius:50%;background:#DCEDE3;opacity:.65;filter:blur(16px)"></div>
+                        <div style="position:absolute;right:-24px;bottom:-26px;width:150px;height:142px;border-radius:50%;background:#DCEDE3;opacity:.6;filter:blur(16px)"></div>
                         {{-- Leaf branches from the uploaded illustration, cropped into each corner. --}}
                         <div style="position:absolute;left:0;bottom:0;width:150px;height:196px;opacity:.92;background:url('{{ asset('images/leaf.png') }}') no-repeat -16px -40px / 400px 266px"></div>
                         <div style="position:absolute;right:0;bottom:0;width:130px;height:150px;opacity:.92;background:url('{{ asset('images/leaf.png') }}') no-repeat -289px -87px / 461px 307px"></div>
