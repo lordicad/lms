@@ -64,7 +64,7 @@
                     <span style="width:34px;height:34px;border-radius:10px;background:#FEF0CE;color:#E0A21C;display:grid;place-items:center;flex-shrink:0"><x-icon name="trophy" style="width:19px;height:19px" /></span>
                     <h3 style="margin:0;font-family:'Geist',sans-serif;font-size:17px;font-weight:800;color:var(--wl-ink)">{{ __('Lencana Pencapaian') }}</h3>
                 </div>
-                <div style="position:relative;overflow:hidden;background:#fff url('{{ asset('images/achievements-bg.png') }}') center / 100% 100% no-repeat;border:1px solid var(--wl-line);border-radius:18px;padding:24px 20px;box-shadow:0 4px 16px rgba(46,44,80,.04)">
+                <div style="position:relative;overflow:hidden;background:#fff url('{{ asset('images/achievement-bg.png') }}') center / 100% 100% no-repeat;border:1px solid var(--wl-line);border-radius:18px;padding:24px 20px;box-shadow:0 4px 16px rgba(46,44,80,.04)">
                     <div class="kz-ach" style="position:relative;z-index:1">
                         @foreach (\App\Support\QuizBadges::milestones() as $key => $threshold)
                             <x-quiz-badge :badge="$key" :muted="$perfectCount < $threshold" />
