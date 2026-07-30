@@ -58,7 +58,7 @@
 
                             <span style="position:relative;z-index:1;min-width:0;flex:1;display:flex;flex-direction:column;gap:3px">
                                 <a href="{{ route('video.show', $lesson) }}" style="font-family:'Geist',sans-serif;font-weight:800;font-size:15px;color:var(--wl-ink);text-decoration:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $lesson->title }}</a>
-                                <span style="display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--wl-muted)">{{ $lesson->chapter->subject->displayName() }}<span style="width:5px;height:5px;border-radius:50%;background:{{ $p['accent'] }}"></span>Bab {{ $lesson->chapter->number }}</span>
+                                <span style="display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--wl-muted)"><span style="color:{{ $p['accent'] }};font-weight:800">{{ $lesson->chapter->subject->displayName() }}</span><span style="width:5px;height:5px;border-radius:50%;background:{{ $p['accent'] }}"></span>Bab {{ $lesson->chapter->number }}</span>
                                 @if ($lesson->teacher)
                                     <span style="display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--wl-muted)"><x-icon name="user" style="width:14px;height:14px" />{{ __('Guru: :name', ['name' => $lesson->teacher->name]) }}</span>
                                 @endif
