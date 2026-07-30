@@ -122,27 +122,6 @@
             @endif
         </section>
 
-        {{-- A local, informational record of what the student downloaded (not a real cache). --}}
-        <section x-show="downloads.length" x-cloak>
-            <div class="mb-4 flex items-center justify-between gap-3">
-                <h2 class="text-lg font-extrabold text-ink">{{ __('Muat Turun Saya') }}</h2>
-                <button type="button" @click="clearAll()" class="text-sm font-bold text-danger hover:underline">{{ __('Kosongkan') }}</button>
-            </div>
-
-            <p class="mb-3 text-sm text-ink-2">{{ __('Fail yang anda muat turun tersimpan dalam folder Muat Turun peranti anda.') }}</p>
-
-            <ul class="card divide-y divide-line">
-                <template x-for="item in downloads" :key="item.title + item.at">
-                    <li class="flex items-center gap-3 p-3">
-                        <x-icon name="download" class="h-5 w-5 shrink-0 text-ink-2" />
-                        <span class="min-w-0 flex-1">
-                            <span class="block truncate text-sm font-bold text-ink" x-text="item.title"></span>
-                            <span class="block text-xs text-ink-2" x-text="item.at"></span>
-                        </span>
-                    </li>
-                </template>
-            </ul>
-        </section>
     </div>
 
     @push('scripts')
