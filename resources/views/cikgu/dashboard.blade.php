@@ -21,13 +21,6 @@
         }
     </style>
 
-    {{-- The one action a teacher opens this page to take. --}}
-    <div style="display:flex;justify-content:flex-end;margin-top:-8px">
-        <a href="{{ route('cikgu.video.create') }}" class="tp-btn" style="min-height:46px">
-            <x-icon name="plus" class="h-4 w-4" />{{ __('Video Baru') }}
-        </a>
-    </div>
-
     {{-- Engagement summary. The "this week" line only appears where something actually records a
          date — materials keep a running count and nothing more, so that card shows the total alone
          rather than a figure nobody could stand behind. --}}
