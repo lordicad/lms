@@ -64,31 +64,7 @@
                     <span style="width:34px;height:34px;border-radius:10px;background:#FEF0CE;color:#E0A21C;display:grid;place-items:center;flex-shrink:0"><x-icon name="trophy" style="width:19px;height:19px" /></span>
                     <h3 style="margin:0;font-family:'Geist',sans-serif;font-size:17px;font-weight:800;color:var(--wl-ink)">{{ __('Lencana Pencapaian') }}</h3>
                 </div>
-                <div style="position:relative;overflow:hidden;background:var(--wl-surface);border:1px solid var(--wl-line);border-radius:18px;padding:24px 20px;box-shadow:0 4px 16px rgba(46,44,80,.04)">
-                    {{-- Background: botanical leaf sprigs in the corners + scattered sparkles. --}}
-                    <div aria-hidden="true" style="position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden">
-                        @php($leaf = 'M0 0 C -15 -20 -15 -54 0 -72 C 15 -54 15 -20 0 0 Z')
-                        @php($vein = 'M0 -9 L0 -63')
-                        <svg style="position:absolute;left:6px;bottom:2px;opacity:.5" width="165" height="160" viewBox="0 0 165 160" fill="#C4E0D3">
-                            <g transform="translate(30 152)">
-                                <g transform="rotate(-16)"><path d="{{ $leaf }}"/><path d="{{ $vein }}" fill="none" stroke="#A6CFBC" stroke-width="1.6"/></g>
-                                <g transform="rotate(18) scale(1.3)"><path d="{{ $leaf }}"/><path d="{{ $vein }}" fill="none" stroke="#A6CFBC" stroke-width="1.3"/></g>
-                                <g transform="rotate(52) scale(1.04)"><path d="{{ $leaf }}"/><path d="{{ $vein }}" fill="none" stroke="#A6CFBC" stroke-width="1.6"/></g>
-                            </g>
-                        </svg>
-                        <svg style="position:absolute;right:6px;bottom:2px;opacity:.5;transform:scaleX(-1)" width="165" height="160" viewBox="0 0 165 160" fill="#C4E0D3">
-                            <g transform="translate(30 152)">
-                                <g transform="rotate(-16)"><path d="{{ $leaf }}"/><path d="{{ $vein }}" fill="none" stroke="#A6CFBC" stroke-width="1.6"/></g>
-                                <g transform="rotate(18) scale(1.3)"><path d="{{ $leaf }}"/><path d="{{ $vein }}" fill="none" stroke="#A6CFBC" stroke-width="1.3"/></g>
-                                <g transform="rotate(52) scale(1.04)"><path d="{{ $leaf }}"/><path d="{{ $vein }}" fill="none" stroke="#A6CFBC" stroke-width="1.6"/></g>
-                            </g>
-                        </svg>
-                        <svg style="position:absolute;top:28px;left:21%;opacity:.55" width="13" height="13" viewBox="0 0 16 16" fill="#9FD0BF"><path d="M8 0c0 4.4-3.6 8-8 8 4.4 0 8 3.6 8 8 0-4.4 3.6-8 8-8-4.4 0-8-3.6-8-8z"/></svg>
-                        <svg style="position:absolute;top:64px;left:33%;opacity:.4" width="10" height="10" viewBox="0 0 16 16" fill="#B9CFEA"><path d="M8 0c0 4.4-3.6 8-8 8 4.4 0 8 3.6 8 8 0-4.4 3.6-8 8-8-4.4 0-8-3.6-8-8z"/></svg>
-                        <svg style="position:absolute;top:24px;left:51%;opacity:.5" width="12" height="12" viewBox="0 0 16 16" fill="#C9B6E6"><path d="M8 0c0 4.4-3.6 8-8 8 4.4 0 8 3.6 8 8 0-4.4 3.6-8 8-8-4.4 0-8-3.6-8-8z"/></svg>
-                        <svg style="position:absolute;top:66px;left:69%;opacity:.4" width="11" height="11" viewBox="0 0 16 16" fill="#B9CFEA"><path d="M8 0c0 4.4-3.6 8-8 8 4.4 0 8 3.6 8 8 0-4.4 3.6-8 8-8-4.4 0-8-3.6-8-8z"/></svg>
-                        <svg style="position:absolute;top:34px;left:82%;opacity:.55" width="12" height="12" viewBox="0 0 16 16" fill="#9FD0BF"><path d="M8 0c0 4.4-3.6 8-8 8 4.4 0 8 3.6 8 8 0-4.4 3.6-8 8-8-4.4 0-8-3.6-8-8z"/></svg>
-                    </div>
+                <div style="position:relative;overflow:hidden;background:#fff url('{{ asset('images/achievements-bg.png') }}') center / 100% 100% no-repeat;border:1px solid var(--wl-line);border-radius:18px;padding:24px 20px;box-shadow:0 4px 16px rgba(46,44,80,.04)">
                     <div class="kz-ach" style="position:relative;z-index:1">
                         @foreach (\App\Support\QuizBadges::milestones() as $key => $threshold)
                             <x-quiz-badge :badge="$key" :muted="$perfectCount < $threshold" />
