@@ -50,11 +50,13 @@
 
                 <div style="display:flex;align-items:center;gap:16px" x-data="{ name: '', preview: '' }">
                     <label for="avatar" title="{{ $user->avatarUrl() ? __('Tukar gambar profil') : __('Tambah gambar profil') }}"
-                           style="width:64px;height:64px;border-radius:50%;background:#DCF2EE;color:#0F7A68;display:grid;place-items:center;font-family:'Geist',sans-serif;font-weight:800;font-size:20px;flex-shrink:0;overflow:hidden;cursor:pointer;position:relative">
-                        <span x-show="! preview" style="width:100%;height:100%;display:grid;place-items:center">
+                           style="width:64px;height:64px;border-radius:50%;background:#DCF2EE;color:#0F7A68;display:flex;align-items:center;justify-content:center;font-family:'Geist',sans-serif;font-weight:800;font-size:20px;flex-shrink:0;overflow:hidden;cursor:pointer;position:relative">
+                        <span x-show="! preview" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center">
                             @if ($user->avatarUrl())<img src="{{ $user->avatarUrl() }}" alt="" style="width:100%;height:100%;object-fit:cover">@else{{ $user->initials() }}@endif
                         </span>
-                        <img x-show="preview" x-cloak :src="preview" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+                        <template x-if="preview">
+                            <img :src="preview" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+                        </template>
                     </label>
 
                     <div style="display:flex;flex-direction:column;gap:6px;min-width:0">
