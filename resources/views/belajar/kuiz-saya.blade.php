@@ -64,7 +64,6 @@
                     <span style="width:34px;height:34px;border-radius:10px;background:#FEF0CE;color:#E0A21C;display:grid;place-items:center;flex-shrink:0"><x-icon name="trophy" style="width:19px;height:19px" /></span>
                     <h3 style="margin:0;font-family:'Geist',sans-serif;font-size:17px;font-weight:800;color:var(--wl-ink)">{{ __('Lencana Pencapaian') }}</h3>
                 </div>
-                @php($leaf = 'M0 0 C -8 -12 -8 -27 0 -38 C 8 -27 8 -12 0 0 Z')
                 @php($spk = 'M8 0c0 4.4-3.6 8-8 8 4.4 0 8 3.6 8 8 0-4.4 3.6-8 8-8-4.4 0-8-3.6-8-8z')
                 <div style="position:relative;overflow:hidden;background:var(--wl-surface);border:1px solid var(--wl-line);border-radius:18px;padding:24px 20px;box-shadow:0 4px 16px rgba(46,44,80,.04)">
                     {{-- Botanical corners (soft blob + olive-branch sprig) and scattered sparkles, redrawn from the reference. --}}
@@ -81,16 +80,21 @@
                             <svg style="position:absolute;{{ $b['pos'] }};bottom:-8px{{ $b['flip'] }}" width="{{ $b['w'] }}" height="{{ $b['h'] }}" viewBox="0 0 210 240">
                                 <ellipse cx="62" cy="200" rx="95" ry="128" fill="#E9F2EC" opacity=".5" filter="url(#lvBlob)"/>
                                 <ellipse cx="34" cy="224" rx="72" ry="94" fill="#F5F2EB" opacity=".45" filter="url(#lvBlob)"/>
-                                <g opacity="0.32" filter="url(#lvBlur)">
-                                    <path d="M46 236 C 70 186 106 120 150 46" fill="none" stroke="#A9CFBB" stroke-width="1.6" stroke-linecap="round"/>
+                                {{-- Eucalyptus sprig: round coin leaves in opposite pairs up a thin stem. --}}
+                                <g opacity="0.35" filter="url(#lvBlur)">
+                                    <path d="M52 236 C 72 190 106 124 150 48" fill="none" stroke="#A9CFBB" stroke-width="1.6" stroke-linecap="round"/>
                                     <g fill="url(#lvGrad)">
-                                        <g transform="translate(56 214) rotate(-50) scale(1.15)"><path d="{{ $leaf }}"/></g>
-                                        <g transform="translate(72 189) rotate(48) scale(1.1)"><path d="{{ $leaf }}"/></g>
-                                        <g transform="translate(88 159) rotate(-52) scale(1.05)"><path d="{{ $leaf }}"/></g>
-                                        <g transform="translate(104 131) rotate(46) scale(0.98)"><path d="{{ $leaf }}"/></g>
-                                        <g transform="translate(119 105) rotate(-50) scale(0.9)"><path d="{{ $leaf }}"/></g>
-                                        <g transform="translate(133 79) rotate(44) scale(0.8)"><path d="{{ $leaf }}"/></g>
-                                        <g transform="translate(148 53) rotate(-26) scale(0.7)"><path d="{{ $leaf }}"/></g>
+                                        <ellipse cx="40" cy="214" rx="14" ry="16" transform="rotate(-30 40 214)"/>
+                                        <ellipse cx="80" cy="208" rx="14" ry="16" transform="rotate(32 80 208)"/>
+                                        <ellipse cx="56" cy="181" rx="13" ry="15" transform="rotate(-31 56 181)"/>
+                                        <ellipse cx="96" cy="175" rx="13" ry="15" transform="rotate(33 96 175)"/>
+                                        <ellipse cx="73" cy="152" rx="12" ry="14" transform="rotate(-32 73 152)"/>
+                                        <ellipse cx="112" cy="146" rx="12" ry="14" transform="rotate(34 112 146)"/>
+                                        <ellipse cx="94" cy="123" rx="11" ry="13" transform="rotate(-33 94 123)"/>
+                                        <ellipse cx="130" cy="116" rx="11" ry="13" transform="rotate(34 130 116)"/>
+                                        <ellipse cx="113" cy="94" rx="10" ry="12" transform="rotate(-34 113 94)"/>
+                                        <ellipse cx="144" cy="87" rx="10" ry="12" transform="rotate(34 144 87)"/>
+                                        <ellipse cx="150" cy="58" rx="8" ry="10" transform="rotate(-6 150 58)"/>
                                     </g>
                                 </g>
                             </svg>
