@@ -48,15 +48,17 @@ class LanguageTest extends TestCase
         $this->get(route('belajar.index'))->assertOk()->assertSee('Selamat datang');
     }
 
-    /** An account that has chosen English keeps it — the reset is only for the guest's session. */
-    public function test_an_account_that_prefers_english_still_gets_english(): void
+    /** Language is session-only, so every sign-in starts in Bahasa Melayu — even for an account
+     *  that previously toggled to English. English returns only when they toggle again. */
+    public function test_sign_in_always_starts_in_bahasa_melayu_even_with_a_saved_english_preference(): void
     {
         $student = $this->student(['locale' => 'en']);
 
         $this->post(route('login'), ['login' => $student->email, 'password' => 'secret123']);
 
-        $this->assertSame('en', session('locale'));
-        $this->get(route('belajar.index'))->assertOk()->assertSee('Welcome');
+        $this->assertNull(session('locale'));
+        $this->assertSame('ms', app()->getLocale());
+        $this->get(route('belajar.index'))->assertOk()->assertSee('Selamat datang');
     }
 
     public function test_the_toggle_translates_the_page_both_ways(): void

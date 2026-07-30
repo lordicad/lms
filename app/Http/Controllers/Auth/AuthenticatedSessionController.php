@@ -28,15 +28,10 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        // Signing in starts in Bahasa Melayu unless this account has chosen otherwise. Dropping the
-        // session override matters because it survives sign-in: without this, a visitor who flipped
-        // the toggle to English on the login screen would carry English into someone else's account
-        // on a shared computer. SetLocale then falls back to the user's own saved language, or ms.
+        // Every sign-in starts in Bahasa Melayu. The language toggle only changes the current
+        // session (see LocaleController), so it never carries into the next login — clearing the
+        // session override here drops any choice made on the login screen too.
         $request->session()->forget('locale');
-
-        if ($locale = $request->user()->locale) {
-            $request->session()->put('locale', $locale);
-        }
 
         // Teachers land on /cikgu, students on /belajar.
         return redirect()->intended($request->user()->homeRoute());
