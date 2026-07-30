@@ -64,8 +64,8 @@
                     <span style="width:34px;height:34px;border-radius:10px;background:#FEF0CE;color:#E0A21C;display:grid;place-items:center;flex-shrink:0"><x-icon name="trophy" style="width:19px;height:19px" /></span>
                     <h3 style="margin:0;font-family:'Geist',sans-serif;font-size:17px;font-weight:800;color:var(--wl-ink)">{{ __('Lencana Pencapaian') }}</h3>
                 </div>
-                @php($leaf = 'M0 0 C -8 -16 -9 -38 0 -54 C 9 -38 8 -16 0 0 Z')
-                @php($vein = 'M0 -5 Q 1 -28 1 -50')
+                @php($leaf = 'M0 0 C -7 -11 -7 -27 0 -38 C 7 -27 7 -11 0 0 Z')
+                @php($vein = 'M0 -4 Q 1 -20 1 -34')
                 @php($spk = 'M8 0c0 4.4-3.6 8-8 8 4.4 0 8 3.6 8 8 0-4.4 3.6-8 8-8-4.4 0-8-3.6-8-8z')
                 <div style="position:relative;overflow:hidden;background:var(--wl-surface);border:1px solid var(--wl-line);border-radius:18px;padding:24px 20px;box-shadow:0 4px 16px rgba(46,44,80,.04)">
                     {{-- Botanical corners (soft blob + olive-branch sprig) and scattered sparkles, redrawn from the reference. --}}
