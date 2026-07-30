@@ -14,7 +14,7 @@
 
         {{-- Videos --}}
         <section style="display:flex;flex-direction:column;gap:12px">
-            <h2 class="tp-g" style="font-size:17px;font-weight:800;color:var(--tp-ink)">🎬 {{ __('Video') }} <span style="color:var(--tp-muted)">({{ $lessons->count() }})</span></h2>
+            <h2 class="tp-g" style="display:flex;align-items:center;gap:8px;font-size:17px;font-weight:800;color:var(--tp-ink)"><x-icon name="video" style="width:19px;height:19px;color:#0F7A68" />{{ __('Video') }} <span style="color:var(--tp-muted)">({{ $lessons->count() }})</span></h2>
 
             @if ($lessons->isEmpty())
                 <div class="tp-empty" style="padding:26px">
@@ -25,7 +25,7 @@
                 <div class="tp-list">
                     @foreach ($lessons as $lesson)
                         <div class="tp-listcard">
-                            <span style="width:40px;height:40px;border-radius:12px;background:#DCF2EE;color:#0F7A68;display:grid;place-items:center;flex-shrink:0">🎬</span>
+                            <span style="width:40px;height:40px;border-radius:12px;background:#DCF2EE;color:#0F7A68;display:grid;place-items:center;flex-shrink:0"><x-icon name="video" style="width:20px;height:20px" /></span>
                             <div style="display:flex;flex-direction:column;gap:4px;min-width:0;flex:1">
                                 <span class="tp-g" style="font-weight:800;font-size:15px;color:var(--tp-ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ $lesson->title }}</span>
                                 <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px">
@@ -48,7 +48,7 @@
 
         {{-- Materials --}}
         <section style="display:flex;flex-direction:column;gap:12px">
-            <h2 class="tp-g" style="font-size:17px;font-weight:800;color:var(--tp-ink)">📄 {{ __('Bahan') }} <span style="color:var(--tp-muted)">({{ $materials->count() }})</span></h2>
+            <h2 class="tp-g" style="display:flex;align-items:center;gap:8px;font-size:17px;font-weight:800;color:var(--tp-ink)"><x-icon name="file" style="width:19px;height:19px;color:#0F7A68" />{{ __('Bahan') }} <span style="color:var(--tp-muted)">({{ $materials->count() }})</span></h2>
 
             @if ($materials->isEmpty())
                 <div class="tp-empty" style="padding:26px">
