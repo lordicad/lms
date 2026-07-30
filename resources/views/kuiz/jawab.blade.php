@@ -67,7 +67,7 @@
 
                     <div style="display:flex;flex-direction:column;gap:8px">
                         <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--wl-muted)">{{ $question->isMultiple() ? __('Pilih semua jawapan betul') : __('Pilih satu jawapan') }}</span>
-                        <h3 style="margin:0;font-family:'Geist',sans-serif;font-size:20px;font-weight:800;line-height:1.35;color:var(--wl-ink)">{{ $question->question_text }}</h3>
+                        <h3 style="margin:0;font-family:'Geist',sans-serif;font-size:20px;font-weight:800;line-height:1.35;color:var(--wl-ink)">{{ $question->localizedText() }}</h3>
                     </div>
 
                     {{-- Answer options, one per row. --}}
@@ -82,7 +82,7 @@
                             <label class="qopt2 {{ $question->isMultiple() ? 'check' : 'radio' }}" style="--tint:{{ $pal['tint'] }};--solid:{{ $pal['solid'] }}">
                                 <input type="{{ $question->isMultiple() ? 'checkbox' : 'radio' }}" name="answers[{{ $question->id }}][]" value="{{ $option->id }}" @change="touch({{ $index }})">
                                 <span class="q2letter">{{ chr(65 + $oIndex) }}</span>
-                                <span class="q2text">{{ $option->option_text }}</span>
+                                <span class="q2text">{{ $option->localizedText($question->source_locale) }}</span>
                                 <span class="q2radio"><x-icon name="check" style="width:15px;height:15px" /></span>
                             </label>
                         @endforeach

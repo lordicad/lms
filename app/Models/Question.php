@@ -17,7 +17,10 @@ class Question extends Model
 
     public const TYPE_MULTIPLE = 'multiple';  // checkbox
 
-    protected $fillable = ['quiz_id', 'question_text', 'question_type', 'points', 'sort_order'];
+    protected $fillable = [
+        'quiz_id', 'question_text', 'source_locale', 'question_text_translated',
+        'question_type', 'points', 'sort_order',
+    ];
 
     protected function casts(): array
     {
@@ -41,6 +44,20 @@ class Question extends Model
     public function isMultiple(): bool
     {
         return $this->question_type === self::TYPE_MULTIPLE;
+    }
+
+    /**
+     * The question text in the reader's language. Shows the translation only when the reader's
+     * locale differs from the one the teacher typed in AND a translation exists; otherwise falls
+     * back to the original, so nothing ever renders blank.
+     */
+    public function localizedText(): string
+    {
+        if (! $this->source_locale || app()->getLocale() === $this->source_locale) {
+            return $this->question_text;
+        }
+
+        return $this->question_text_translated ?: $this->question_text;
     }
 
     /**

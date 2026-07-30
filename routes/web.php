@@ -145,6 +145,8 @@ Route::middleware(['auth', 'role:teacher'])
 
         Route::get('kuiz/{quiz}/soalan', [QuizBuilderController::class, 'edit'])->name('kuiz.soalan');
         Route::put('kuiz/{quiz}/soalan', [QuizBuilderController::class, 'update'])->name('kuiz.soalan.simpan');
+        // Auto-translate (BM⇄EN) the questions in the builder, for the teacher to review before saving.
+        Route::post('kuiz/{quiz}/soalan/terjemah', [QuizBuilderController::class, 'translate'])->name('kuiz.soalan.terjemah');
         // Leaving the builder: a quiz with no questions yet is a discarded draft, so it is removed.
         Route::delete('kuiz/{quiz}/soalan', [QuizBuilderController::class, 'cancel'])->name('kuiz.soalan.batal');
         Route::get('kuiz/{quiz}/statistik', QuizStatsController::class)->name('kuiz.statistik');

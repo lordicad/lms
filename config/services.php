@@ -47,4 +47,13 @@ return [
         'key' => env('YOUTUBE_API_KEY'),
     ],
 
+    // Anthropic (Claude) — powers the automatic BM⇄EN translation of quiz questions. The API key
+    // lives in the SERVER .env only, never committed. With no key set, translation silently no-ops
+    // and quizzes save exactly as before. Model is overridable so cost can be tuned (e.g. a cheaper
+    // Haiku model) without a code change.
+    'anthropic' => [
+        'key' => env('ANTHROPIC_API_KEY'),
+        'model' => env('ANTHROPIC_MODEL', 'claude-opus-5'),
+    ],
+
 ];

@@ -35,6 +35,11 @@
               x-data="quizBuilder({{ Js::from([
                   'questions' => old('questions', $questions),
                   'defaults' => config('lms.quiz'),
+                  'translate' => [
+                      'enabled' => $translatorEnabled,
+                      'url' => route('cikgu.kuiz.soalan.terjemah', $quiz),
+                      'failed' => __('Terjemahan gagal. Sila cuba lagi.'),
+                  ],
                   'labels' => [
                       'optionAria' => __('Teks pilihan :letter'),
                       'radioError' => __('Soalan radio mesti ada tepat satu jawapan betul.'),
@@ -44,6 +49,23 @@
               @submit="onSubmit($event)">
             @csrf
             @method('PUT')
+
+            @if ($translatorEnabled)
+                {{-- Auto-translate the whole quiz BM⇄EN in one click. Fills the editable
+                     "Terjemahan" panel under each question so the teacher can review and correct
+                     the machine translation before saving. Runs on save too, so it is optional. --}}
+                <div class="tp-card" style="border-radius:16px;padding:16px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+                    <div style="flex:1;min-width:200px;display:flex;flex-direction:column;gap:2px">
+                        <span class="tp-g" style="font-size:14px;font-weight:800;color:var(--tp-ink)">{{ __('Terjemahan automatik') }}</span>
+                        <span style="font-size:12.5px;color:var(--tp-muted)">{{ __('Terjemah soalan antara Bahasa Melayu dan English. Semak & betulkan sebelum simpan.') }}</span>
+                    </div>
+                    <span style="font-size:12.5px;font-weight:700;color:#C24936" x-show="translateError" x-cloak x-text="translateError"></span>
+                    <button type="button" class="tp-btn tp-btn-sm" @click="translateAll()" :disabled="translating">
+                        <span x-show="! translating">✦ {{ __('Terjemah automatik') }}</span>
+                        <span x-show="translating" x-cloak>{{ __('Menterjemah...') }}</span>
+                    </button>
+                </div>
+            @endif
 
             <template x-for="(question, qIndex) in questions" :key="question.uid">
                 <div class="tp-panelform" style="padding:24px">
@@ -111,6 +133,41 @@
 
                         <span style="font-size:13px;font-weight:700;color:#C24936" x-show="! isQuestionValid(question)" x-cloak x-text="questionError(question)"></span>
                     </fieldset>
+
+                    {{-- Translation review: the auto-translated question + options, editable, so a
+                         wrong machine translation is corrected before students see it. Submitted
+                         with the question so the toggle can pick it later. --}}
+                    <template x-if="translate.enabled">
+                        <div style="border-top:1px solid var(--tp-line);padding-top:14px;display:flex;flex-direction:column;gap:10px">
+                            <input type="hidden" :name="`questions[${qIndex}][source_locale]`" :value="question.source_locale || ''">
+
+                            <button type="button" @click="question._showT = ! question._showT"
+                                    class="tp-g" style="align-self:flex-start;display:inline-flex;align-items:center;gap:6px;border:none;background:transparent;cursor:pointer;color:#2E6CA8;font-weight:800;font-size:13px;padding:0">
+                                <span x-text="question._showT ? '▾' : '▸'"></span>
+                                {{ __('Terjemahan') }}
+                                <span x-show="question.source_locale" x-cloak style="font-weight:700;color:var(--tp-muted)"
+                                      x-text="question.source_locale === 'en' ? '· English → Bahasa Melayu' : '· Bahasa Melayu → English'"></span>
+                            </button>
+
+                            <div x-show="question._showT" x-cloak style="display:flex;flex-direction:column;gap:12px;background:#F4F7FB;border:1px solid var(--tp-line-2);border-radius:12px;padding:14px">
+                                <span x-show="! question.source_locale" x-cloak style="font-size:12.5px;color:var(--tp-muted)">{{ __('Klik "Terjemah automatik" di atas untuk menjana terjemahan.') }}</span>
+
+                                <div class="tp-field">
+                                    <label class="tp-label" :for="`q-${question.uid}-ttext`">{{ __('Teks soalan (terjemahan)') }}</label>
+                                    <textarea :id="`q-${question.uid}-ttext`" :name="`questions[${qIndex}][question_text_translated]`" x-model="question.question_text_translated"
+                                              rows="2" class="tp-textarea" placeholder="{{ __('Terjemahan soalan') }}"></textarea>
+                                </div>
+
+                                <template x-for="(option, oIndex) in question.options" :key="`t-${option.uid}`">
+                                    <div style="display:flex;align-items:center;gap:10px">
+                                        <span style="width:26px;height:26px;border-radius:50%;flex-shrink:0;display:grid;place-items:center;font-family:'Geist',sans-serif;font-weight:800;font-size:12px;background:#F1F0E8;color:var(--tp-muted-2)" x-text="String.fromCharCode(65 + oIndex)"></span>
+                                        <input type="text" :name="`questions[${qIndex}][options][${oIndex}][option_text_translated]`" x-model="option.option_text_translated"
+                                               style="flex:1;min-height:40px;border:1.5px solid var(--tp-line-3);border-radius:10px;padding:0 12px;background:var(--tp-input);font-family:'Nunito',sans-serif;font-size:14px;color:var(--tp-ink);min-width:0" placeholder="{{ __('Terjemahan jawapan') }}">
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                    </template>
                 </div>
             </template>
 
@@ -143,26 +200,32 @@
 
     @push('scripts')
         <script>
-            function quizBuilder({ questions, defaults, labels }) {
+            function quizBuilder({ questions, defaults, translate, labels }) {
                 let counter = 0;
                 const uid = () => `u${++counter}`;
-                const blankOption = (text = '', correct = false) => ({ uid: uid(), option_text: text, is_correct: correct });
+                const blankOption = (text = '', correct = false, translated = '') => ({ uid: uid(), option_text: text, option_text_translated: translated, is_correct: correct });
                 const blankQuestion = () => ({
                     uid: uid(), question_text: '', question_type: 'single', points: defaults.default_points,
+                    source_locale: '', question_text_translated: '', _showT: false,
                     options: Array.from({ length: defaults.default_options }, () => blankOption()),
                 });
                 const hydrate = (raw) => (raw ?? []).map((question) => ({
                     uid: uid(),
                     question_text: question.question_text ?? '',
+                    source_locale: question.source_locale ?? '',
+                    question_text_translated: question.question_text_translated ?? '',
+                    _showT: false,
                     question_type: question.question_type ?? 'single',
                     points: Number(question.points ?? defaults.default_points),
                     options: (question.options ?? []).map((option) => blankOption(
                         option.option_text ?? '',
                         option.is_correct === true || option.is_correct === 1 || option.is_correct === '1',
+                        option.option_text_translated ?? '',
                     )),
                 }));
                 return {
-                    defaults, labels, submitting: false, showError: false,
+                    defaults, labels, translate, submitting: false, showError: false,
+                    translating: false, translateError: '',
                     questions: questions.length ? hydrate(questions) : [blankQuestion()],
                     onSubmit(event) {
                         // Block the save and surface the reason instead of silently doing nothing.
@@ -196,6 +259,42 @@
                     questionError(question) { return question.question_type === 'single' ? labels.radioError : labels.checkboxError; },
                     isValid() { return this.questions.length > 0 && this.questions.every((question) => this.isQuestionValid(question)); },
                     totalPoints() { return this.questions.reduce((sum, question) => sum + (Number(question.points) || 0), 0); },
+                    csrf() { return document.querySelector('input[name="_token"]')?.value ?? ''; },
+                    async translateAll() {
+                        if (! this.translate.enabled || this.translating) return;
+                        this.translateError = '';
+                        this.translating = true;
+                        try {
+                            const payload = {
+                                questions: this.questions.map((q) => ({
+                                    question_text: q.question_text,
+                                    options: q.options.map((o) => ({ option_text: o.option_text })),
+                                })),
+                            };
+                            const res = await fetch(this.translate.url, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': this.csrf() },
+                                body: JSON.stringify(payload),
+                            });
+                            if (! res.ok) {
+                                const err = await res.json().catch(() => ({}));
+                                throw new Error(err.message || this.translate.failed);
+                            }
+                            const data = await res.json();
+                            (data.items ?? []).forEach((item, i) => {
+                                const q = this.questions[i];
+                                if (! q) return;
+                                q.source_locale = item.source_locale;
+                                q.question_text_translated = item.question;
+                                q.options.forEach((o, j) => { o.option_text_translated = (item.options ?? [])[j] ?? ''; });
+                                q._showT = true;
+                            });
+                        } catch (e) {
+                            this.translateError = e.message || this.translate.failed;
+                        } finally {
+                            this.translating = false;
+                        }
+                    },
                 };
             }
         </script>

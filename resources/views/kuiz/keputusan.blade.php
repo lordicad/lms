@@ -114,7 +114,7 @@
                             <span style="border-radius:999px;padding:5px 14px;font-family:'Geist',sans-serif;font-size:12.5px;font-weight:800;background:#FDE7E0;color:#C24936">✗ {{ __('Salah. 0 mata') }}</span>
                         @endif
                     </div>
-                    <h4 style="margin:0;font-family:'Geist',sans-serif;font-size:17px;font-weight:800;line-height:1.4;color:var(--wl-ink)">{{ $question->question_text }}</h4>
+                    <h4 style="margin:0;font-family:'Geist',sans-serif;font-size:17px;font-weight:800;line-height:1.4;color:var(--wl-ink)">{{ $question->localizedText() }}</h4>
                     <div style="display:flex;flex-direction:column;gap:10px">
                         @foreach ($question->options as $option)
                             @php($sel = $answer?->selected($option->id) ?? false)
@@ -133,7 +133,7 @@
                             @endif
                             <div style="display:flex;align-items:center;gap:14px;border-radius:14px;padding:14px 18px;border:1.5px solid {{ $border }};background:{{ $bg }}">
                                 <span style="width:30px;height:30px;border-radius:50%;flex-shrink:0;display:grid;place-items:center;font-family:'Geist',sans-serif;font-weight:800;font-size:13px;{{ $letterStyle }}">{{ $option->letter() }}</span>
-                                <span style="font-family:'Geist',sans-serif;font-weight:700;font-size:14.5px;color:var(--wl-ink);flex:1">{{ $option->option_text }}</span>
+                                <span style="font-family:'Geist',sans-serif;font-weight:700;font-size:14.5px;color:var(--wl-ink);flex:1">{{ $option->localizedText($question->source_locale) }}</span>
                                 @if ($tagTxt)
                                     <span style="border-radius:999px;padding:4px 12px;font-family:'Geist',sans-serif;font-size:11.5px;font-weight:800;{{ $tagStyle }}">{{ $tagTxt }}</span>
                                 @endif
