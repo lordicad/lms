@@ -102,7 +102,7 @@
                                     </div>
                                     <span class="tp-meta">{{ $attempt->student->grade?->name ?? '-' }}</span>
                                     <span><span class="tp-g" style="font-weight:800;color:var(--tp-ink)">{{ $attempt->percentage() }}%</span> <span class="tp-meta">({{ $attempt->score }}/{{ $attempt->max_score }})</span></span>
-                                    <span class="tp-meta">{{ $attempt->correct_count }}/{{ $attempt->question_count }}</span>
+                                    <span><span class="tp-g" style="font-weight:800;color:var(--tp-ink)">{{ $attempt->question_count > 0 ? round($attempt->correct_count / $attempt->question_count * 100) : 0 }}%</span> <span class="tp-meta">({{ $attempt->correct_count }}/{{ $attempt->question_count }})</span></span>
                                     <span class="tp-meta">{{ $attempt->humanDuration() }}</span>
                                     <span>
                                         @if ($attempt->counts_for_ranking)
