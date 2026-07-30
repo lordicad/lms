@@ -1,6 +1,7 @@
 <x-cikgu-layout
     :title="__('Bahan Bantu Mengajar')"
     :heading="__('Bahan Bantu Mengajar')"
+    heading-icon="file"
     :sub="__('Slaid, PDF dan lembaran kerja yang menyokong video anda')">
 
     {{-- Total materials uploaded by this teacher (all-time, not the filtered count). --}}
