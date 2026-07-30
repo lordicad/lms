@@ -64,42 +64,13 @@
                     <span style="width:34px;height:34px;border-radius:10px;background:#FEF0CE;color:#E0A21C;display:grid;place-items:center;flex-shrink:0"><x-icon name="trophy" style="width:19px;height:19px" /></span>
                     <h3 style="margin:0;font-family:'Geist',sans-serif;font-size:17px;font-weight:800;color:var(--wl-ink)">{{ __('Lencana Pencapaian') }}</h3>
                 </div>
-                @php($leaf = 'M0 0 C -7 -11 -7 -27 0 -38 C 7 -27 7 -11 0 0 Z')
-                @php($vein = 'M0 -4 Q 1 -20 1 -34')
                 @php($spk = 'M8 0c0 4.4-3.6 8-8 8 4.4 0 8 3.6 8 8 0-4.4 3.6-8 8-8-4.4 0-8-3.6-8-8z')
                 <div style="position:relative;overflow:hidden;background:var(--wl-surface);border:1px solid var(--wl-line);border-radius:18px;padding:24px 20px;box-shadow:0 4px 16px rgba(46,44,80,.04)">
                     {{-- Botanical corners (soft blob + olive-branch sprig) and scattered sparkles, redrawn from the reference. --}}
                     <div aria-hidden="true" style="position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden">
-                        <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
-                            <linearGradient id="lvGrad" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="0" stop-color="#E3F1E9"/>
-                                <stop offset="0.55" stop-color="#BFDDCC"/>
-                                <stop offset="1" stop-color="#98C3AD"/>
-                            </linearGradient>
-                            <filter id="lvBlur" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="0.7"/></filter>
-                            <filter id="lvBlob" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="6"/></filter>
-                        </defs></svg>
-                        @foreach ([['pos' => 'left:-4px', 'w' => 172, 'h' => 196, 'flip' => ''], ['pos' => 'right:-4px', 'w' => 128, 'h' => 146, 'flip' => ';transform:scaleX(-1)']] as $b)
-                            <svg style="position:absolute;{{ $b['pos'] }};bottom:-6px{{ $b['flip'] }}" width="{{ $b['w'] }}" height="{{ $b['h'] }}" viewBox="0 0 210 240">
-                                <ellipse cx="62" cy="200" rx="95" ry="128" fill="#E9F2EC" opacity=".4" filter="url(#lvBlob)"/>
-                                <ellipse cx="34" cy="224" rx="72" ry="94" fill="#F5F2EB" opacity=".38" filter="url(#lvBlob)"/>
-                                {{-- Watercolour botanical sprig: lanceolate leaves with a midrib, alternating up a curved stem. --}}
-                                <g opacity="0.6" filter="url(#lvBlur)">
-                                    <path d="M60 236 C 78 188 108 120 150 40" fill="none" stroke="#A6CDB6" stroke-width="1.5" stroke-linecap="round"/>
-                                    <g fill="url(#lvGrad)">
-                                        <g transform="translate(62 230) rotate(-106) scale(0.8)"><path d="{{ $leaf }}"/><path d="{{ $vein }}" fill="none" stroke="#9BC0AA" stroke-opacity=".55" stroke-width="1.1"/></g>
-                                        <g transform="translate(66 214) rotate(-42) scale(1.1)"><path d="{{ $leaf }}"/><path d="{{ $vein }}" fill="none" stroke="#9BC0AA" stroke-opacity=".55" stroke-width="1.1"/></g>
-                                        <g transform="translate(76 192) rotate(46) scale(1.15)"><path d="{{ $leaf }}"/><path d="{{ $vein }}" fill="none" stroke="#9BC0AA" stroke-opacity=".55" stroke-width="1.1"/></g>
-                                        <g transform="translate(88 166) rotate(-44) scale(1.15)"><path d="{{ $leaf }}"/><path d="{{ $vein }}" fill="none" stroke="#9BC0AA" stroke-opacity=".55" stroke-width="1.1"/></g>
-                                        <g transform="translate(100 140) rotate(46) scale(1.08)"><path d="{{ $leaf }}"/><path d="{{ $vein }}" fill="none" stroke="#9BC0AA" stroke-opacity=".55" stroke-width="1.1"/></g>
-                                        <g transform="translate(112 114) rotate(-44) scale(1.0)"><path d="{{ $leaf }}"/><path d="{{ $vein }}" fill="none" stroke="#9BC0AA" stroke-opacity=".55" stroke-width="1.1"/></g>
-                                        <g transform="translate(123 90) rotate(46) scale(0.9)"><path d="{{ $leaf }}"/><path d="{{ $vein }}" fill="none" stroke="#9BC0AA" stroke-opacity=".55" stroke-width="1.1"/></g>
-                                        <g transform="translate(134 66) rotate(-42) scale(0.8)"><path d="{{ $leaf }}"/><path d="{{ $vein }}" fill="none" stroke="#9BC0AA" stroke-opacity=".55" stroke-width="1.1"/></g>
-                                        <g transform="translate(150 40) rotate(4) scale(0.95)"><path d="{{ $leaf }}"/><path d="{{ $vein }}" fill="none" stroke="#9BC0AA" stroke-opacity=".55" stroke-width="1.1"/></g>
-                                    </g>
-                                </g>
-                            </svg>
-                        @endforeach
+                        {{-- Leaf branches from the uploaded illustration, cropped into each corner. --}}
+                        <div style="position:absolute;left:0;bottom:0;width:150px;height:196px;opacity:.92;background:url('{{ asset('images/leaf.png') }}') no-repeat -16px -40px / 400px 266px"></div>
+                        <div style="position:absolute;right:0;bottom:0;width:130px;height:150px;opacity:.92;background:url('{{ asset('images/leaf.png') }}') no-repeat -289px -87px / 461px 307px"></div>
                         <svg style="position:absolute;top:30px;left:9%" width="11" height="11" viewBox="0 0 16 16" fill="#7FC8B8"><path d="{{ $spk }}"/></svg>
                         <svg style="position:absolute;top:20px;left:17%" width="18" height="18" viewBox="0 0 16 16" fill="#93A3E8"><path d="{{ $spk }}"/></svg>
                         <svg style="position:absolute;top:64px;left:13%" width="12" height="12" viewBox="0 0 16 16" fill="#7FC8B8"><path d="{{ $spk }}"/></svg>
