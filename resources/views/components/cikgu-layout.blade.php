@@ -24,7 +24,7 @@
         ['label' => __('Bahan'),   'icon' => 'file',     'route' => 'cikgu.bahan.index', 'active' => request()->routeIs('cikgu.bahan.*')],
         ['label' => __('Kuiz'),    'icon' => 'quiz',     'route' => 'cikgu.kuiz.index', 'active' => request()->routeIs('cikgu.kuiz.*')],
         ['label' => __('Bab'),     'icon' => 'book',     'route' => 'cikgu.bab.index', 'active' => request()->routeIs('cikgu.bab.*')],
-        ['label' => __('Ranking'), 'icon' => 'trophy',   'route' => 'cikgu.ranking', 'active' => request()->routeIs('cikgu.ranking')],
+        ['label' => app()->getLocale() === 'en' ? 'Leaderboard' : 'Kedudukan', 'icon' => 'trophy',   'route' => 'cikgu.ranking', 'active' => request()->routeIs('cikgu.ranking')],
     ];
 @endphp
 

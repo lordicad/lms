@@ -59,7 +59,7 @@
                     <x-nav-link :href="route('cikgu.bahan.index')" :active="request()->routeIs('cikgu.bahan.*')" pill>{{ __('Bahan') }}</x-nav-link>
                     <x-nav-link :href="route('cikgu.kuiz.index')" :active="request()->routeIs('cikgu.kuiz.*')" pill>{{ __('Kuiz') }}</x-nav-link>
                     <x-nav-link :href="route('cikgu.bab.index')" :active="request()->routeIs('cikgu.bab.*')" pill>{{ __('Bab') }}</x-nav-link>
-                    <x-nav-link :href="route('cikgu.ranking')" :active="request()->routeIs('cikgu.ranking')" pill>{{ __('Ranking') }}</x-nav-link>
+                    <x-nav-link :href="route('cikgu.ranking')" :active="request()->routeIs('cikgu.ranking')" pill>{{ app()->getLocale() === 'en' ? 'Leaderboard' : 'Kedudukan' }}</x-nav-link>
                     <x-nav-link :href="route('cikgu.bakat')" :active="request()->routeIs('cikgu.bakat')" pill>{{ __('Bakat') }}</x-nav-link>
                 @elseif ($user->isAdmin())
                     {{-- The dropdown draws its own highlight on its button: the sliding pill only
@@ -140,7 +140,7 @@
                     <x-nav-link :href="route('cikgu.bahan.index')" :active="request()->routeIs('cikgu.bahan.*')" block>{{ __('Bahan') }}</x-nav-link>
                     <x-nav-link :href="route('cikgu.kuiz.index')" :active="request()->routeIs('cikgu.kuiz.*')" block>{{ __('Kuiz') }}</x-nav-link>
                     <x-nav-link :href="route('cikgu.bab.index')" :active="request()->routeIs('cikgu.bab.*')" block>{{ __('Bab') }}</x-nav-link>
-                    <x-nav-link :href="route('cikgu.ranking')" :active="request()->routeIs('cikgu.ranking')" block>{{ __('Ranking') }}</x-nav-link>
+                    <x-nav-link :href="route('cikgu.ranking')" :active="request()->routeIs('cikgu.ranking')" block>{{ app()->getLocale() === 'en' ? 'Leaderboard' : 'Kedudukan' }}</x-nav-link>
                     <x-nav-link :href="route('cikgu.bakat')" :active="request()->routeIs('cikgu.bakat')" block>{{ __('Bakat') }}</x-nav-link>
                 @elseif ($user->isAdmin())
                     {{-- Flattened on mobile: a hover menu has no meaning on touch. --}}
