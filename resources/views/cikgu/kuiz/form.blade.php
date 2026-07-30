@@ -114,6 +114,15 @@
             @endif
         </div>
 
+        {{-- Scramble answer options (interactive quizzes only). --}}
+        <label for="shuffle_options" class="tp-checkrow" x-show="type === 'interactive'" x-cloak>
+            <input id="shuffle_options" name="shuffle_options" type="checkbox" value="1" @checked(old('shuffle_options', $quiz->shuffle_options ?? false)) style="width:20px;height:20px;margin-top:2px;accent-color:#17907B">
+            <span style="display:flex;flex-direction:column;gap:2px">
+                <span class="tp-g" style="font-weight:800;font-size:14.5px;color:var(--tp-ink)">{{ __('Acak susunan jawapan') }}</span>
+                <span style="font-size:12.5px;color:var(--tp-muted)">{{ __('Setiap murid melihat pilihan jawapan dalam susunan rawak.') }}</span>
+            </span>
+        </label>
+
         {{-- Publish --}}
         <label for="is_published" class="tp-checkrow">
             <input id="is_published" name="is_published" type="checkbox" value="1" @checked(old('is_published', $quiz->is_published ?? true)) style="width:20px;height:20px;margin-top:2px;accent-color:#17907B">

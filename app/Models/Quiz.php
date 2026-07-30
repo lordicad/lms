@@ -30,6 +30,7 @@ class Quiz extends Model
         'file_path',
         'original_name',
         'duration_minutes',
+        'shuffle_options',
         'is_published',
     ];
 
@@ -40,6 +41,7 @@ class Quiz extends Model
             'teacher_id' => 'integer',
             'is_published' => 'boolean',
             'duration_minutes' => 'integer',
+            'shuffle_options' => 'boolean',
         ];
     }
 

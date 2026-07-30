@@ -81,7 +81,7 @@
                             ][$oIndex % 4])
                             <label class="qopt2 {{ $question->isMultiple() ? 'check' : 'radio' }}" style="--tint:{{ $pal['tint'] }};--solid:{{ $pal['solid'] }}">
                                 <input type="{{ $question->isMultiple() ? 'checkbox' : 'radio' }}" name="answers[{{ $question->id }}][]" value="{{ $option->id }}" @change="touch({{ $index }})">
-                                <span class="q2letter">{{ $option->letter() }}</span>
+                                <span class="q2letter">{{ chr(65 + $oIndex) }}</span>
                                 <span class="q2text">{{ $option->option_text }}</span>
                                 <span class="q2radio"><x-icon name="check" style="width:15px;height:15px" /></span>
                             </label>

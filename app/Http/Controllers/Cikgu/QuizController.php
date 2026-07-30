@@ -85,6 +85,7 @@ class QuizController extends Controller
             'type' => Quiz::TYPE_INTERACTIVE,
             'is_published' => $request->boolean('is_published'),
             'duration_minutes' => $request->input('duration_minutes') ?: null,
+            'shuffle_options' => $request->boolean('shuffle_options'),
         ]);
 
         // An interactive quiz is not usable until it has questions, so go straight there.
@@ -161,6 +162,7 @@ class QuizController extends Controller
             'duration_minutes' => $type === Quiz::TYPE_INTERACTIVE
                 ? ($request->input('duration_minutes') ?: null)
                 : null,
+            'shuffle_options' => $type === Quiz::TYPE_INTERACTIVE && $request->boolean('shuffle_options'),
         ]);
 
         $staleFile = null;

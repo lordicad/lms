@@ -82,6 +82,15 @@ class QuizAttemptController extends Controller
 
         $attempt->load('quiz.chapter.subject', 'quiz.questions.options');
 
+        // Randomise the option order when the quiz asks for it. Seeded by the attempt + question so
+        // it stays the same on reload for this student, but differs between students.
+        if ($attempt->quiz->shuffle_options) {
+            $attempt->quiz->questions->each(fn ($question) => $question->setRelation(
+                'options',
+                $question->options->shuffle($attempt->id * 1000 + $question->id),
+            ));
+        }
+
         return view('kuiz.jawab', [
             'attempt' => $attempt,
             'quiz' => $attempt->quiz,
