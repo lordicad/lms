@@ -76,7 +76,7 @@
                         </span>
                         <div style="display:flex;flex-direction:column;gap:2px;min-width:0;flex:1">
                             <a href="{{ route('video.show', $lesson) }}" class="tp-g" style="font-weight:800;font-size:14.5px;color:var(--tp-ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $lesson->title }}</a>
-                            <span style="font-size:12.5px;color:var(--tp-muted)">{{ $lesson->chapter->subject->name }} · {{ $lesson->chapter->grade->name }} · Bab {{ $lesson->chapter->number }}</span>
+                            <span style="font-size:12.5px;color:var(--tp-muted)"><span style="display:inline-block;vertical-align:middle;background:color-mix(in oklab, {{ $lesson->chapter->subject->color ?: '#17907B' }} 15%, #fff);color:color-mix(in oklab, {{ $lesson->chapter->subject->color ?: '#17907B' }} 78%, #000);border-radius:999px;padding:2px 9px;font-weight:800;font-size:11px">{{ $lesson->chapter->subject->name }}</span> · {{ $lesson->chapter->grade->name }} · Bab {{ $lesson->chapter->number }}</span>
                         </div>
                         <span class="tp-meta" style="flex-shrink:0">👁 {{ $lesson->views_count }}</span>
                         <span class="tp-meta" style="flex-shrink:0">{{ $lesson->updated_at->translatedFormat('j M Y') }}</span>
@@ -102,7 +102,7 @@
                         </span>
                         <div style="display:flex;flex-direction:column;gap:2px;min-width:0;flex:1">
                             <span class="tp-g" style="font-weight:800;font-size:14.5px;color:var(--tp-ink)">{{ $quiz->title }}</span>
-                            <span style="font-size:12.5px;color:var(--tp-muted)">{{ $quiz->chapter->subject->name }} · Bab {{ $quiz->chapter->number }} · {{ $quiz->isInteractive() ? __('Interaktif') : __('Bercetak') }}</span>
+                            <span style="font-size:12.5px;color:var(--tp-muted)"><span style="display:inline-block;vertical-align:middle;background:color-mix(in oklab, {{ $quiz->chapter->subject->color ?: '#17907B' }} 15%, #fff);color:color-mix(in oklab, {{ $quiz->chapter->subject->color ?: '#17907B' }} 78%, #000);border-radius:999px;padding:2px 9px;font-weight:800;font-size:11px">{{ $quiz->chapter->subject->name }}</span> · Bab {{ $quiz->chapter->number }} · {{ $quiz->isInteractive() ? __('Interaktif') : __('Bercetak') }}</span>
                         </div>
                         <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0">
                             <span class="tp-meta">{{ __(':taken/:total murid', ['taken' => $quiz->taken_students_count, 'total' => $totalStudents]) }}</span>
