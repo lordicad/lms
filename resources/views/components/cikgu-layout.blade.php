@@ -328,7 +328,7 @@
         <div class="tp-head">
             @if ($headingIcon)
                 {{-- Accepts an icon name (rendered as a line icon) or an emoji. --}}
-                <span style="width:48px;height:48px;border-radius:14px;background:#DCF2EE;color:#0F7A68;display:grid;place-items:center;flex-shrink:0" aria-hidden="true">@if (preg_match('/^[a-z0-9-]+$/', $headingIcon))<x-icon :name="$headingIcon" style="width:24px;height:24px" />@else<span style="font-size:26px;line-height:1">{{ $headingIcon }}</span>@endif</span>
+                <span style="width:48px;height:48px;border-radius:14px;background:#DCF2EE;color:#0F7A68;display:grid;place-items:center;flex-shrink:0;align-self:flex-start" aria-hidden="true">@if (preg_match('/^[a-z0-9-]+$/', $headingIcon))<x-icon :name="$headingIcon" style="width:24px;height:24px" />@else<span style="font-size:26px;line-height:1">{{ $headingIcon }}</span>@endif</span>
             @endif
             <div style="display:flex;flex-direction:column;gap:2px;flex:1;min-width:200px">
                 <h1 class="tp-h1">{{ $heading }}</h1>
