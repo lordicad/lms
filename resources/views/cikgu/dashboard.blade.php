@@ -24,7 +24,7 @@
     {{-- Engagement summary. The "this week" line only appears where something actually records a
          date — materials keep a running count and nothing more, so that card shows the total alone
          rather than a figure nobody could stand behind. --}}
-    <div class="dash-kpis">
+    <div class="dash-kpis" style="margin-top:26px">
         @foreach ($summary as $s)
             <div class="tp-stat">
                 <div style="display:flex;align-items:center;gap:10px">
