@@ -127,7 +127,6 @@
                                     </span>
                                 </span>
 
-                                <span style="position:relative;z-index:1;flex-shrink:0;align-self:stretch;width:1px;background:var(--wl-line);margin:4px 0"></span>
                                 <a href="{{ route('muat-turun.bahan', $material) }}" @click="remember(@js($material->title))"
                                    style="position:relative;z-index:1;flex-shrink:0;display:inline-flex;align-items:center;gap:8px;min-height:42px;padding:0 20px;border-radius:12px;background:var(--wl-surface);border:1.5px solid color-mix(in oklab, {{ $ac }} 32%, #fff);color:{{ $ac }};font-family:'Geist',sans-serif;font-weight:800;font-size:14px;text-decoration:none">
                                     <x-icon name="download" style="width:17px;height:17px" />{{ __('Muat Turun') }}
