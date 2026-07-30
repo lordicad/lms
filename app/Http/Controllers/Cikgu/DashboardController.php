@@ -118,7 +118,7 @@ class DashboardController extends Controller
         $mapItem = fn ($model, $value) => [
             'subject' => $model->chapter->subject,
             'title' => $model->title,
-            'detail' => $model->chapter->subject->name.' · Bab '.$model->chapter->number,
+            'detail' => 'Bab '.$model->chapter->number,
             'value' => $value,
         ];
 

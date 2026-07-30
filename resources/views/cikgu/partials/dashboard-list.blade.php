@@ -35,7 +35,7 @@
             <span style="width:36px;height:36px;border-radius:10px;background:rgb({{ $item['subject']->rgb }} / .14);display:grid;place-items:center;flex-shrink:0"><x-icon :name="$item['subject']->iconName()" class="h-[18px] w-[18px]" style="color:rgb({{ $item['subject']->rgb }})" /></span>
             <div style="display:flex;flex-direction:column;gap:1px;min-width:0;flex:1">
                 <span class="tp-g" style="font-weight:800;font-size:14px;color:var(--tp-ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $item['title'] }}</span>
-                <span style="font-size:12px;color:var(--tp-muted)">{{ $item['detail'] }}</span>
+                <span style="font-size:12px;color:var(--tp-muted)"><span style="color:rgb({{ $item['subject']->rgb }});font-weight:800">{{ $item['subject']->name }}</span> · {{ $item['detail'] }}</span>
             </div>
             <span class="tp-g" style="font-weight:800;font-size:14.5px;color:var(--tp-ink);flex-shrink:0">{{ $item['value'] }}</span>
         </div>
