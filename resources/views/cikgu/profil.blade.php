@@ -42,32 +42,37 @@
             @method('PATCH')
             <h2 style="{{ $h2 }}">{{ __('Butiran akaun') }}</h2>
 
-            {{-- Clickable avatar + button both open the one hidden file input. The chosen image
-                 previews live in the circle before saving, and the button reads "Tambah" when there
-                 is no photo yet, "Tukar" when replacing one. --}}
-            <div style="display:flex;align-items:center;gap:16px" x-data="{ name: '', preview: '' }">
-                <label for="avatar" title="{{ $user->avatarUrl() ? __('Tukar gambar profil') : __('Tambah gambar profil') }}"
-                       style="width:64px;height:64px;border-radius:50%;background:#DCF2EE;color:#0F7A68;display:grid;place-items:center;font-family:'Geist',sans-serif;font-weight:800;font-size:20px;flex-shrink:0;overflow:hidden;cursor:pointer;position:relative">
-                    <span x-show="! preview" style="width:100%;height:100%;display:grid;place-items:center">
-                        @if ($user->avatarUrl())<img src="{{ $user->avatarUrl() }}" alt="" style="width:100%;height:100%;object-fit:cover">@else{{ $user->initials() }}@endif
-                    </span>
-                    <img x-show="preview" x-cloak :src="preview" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
-                </label>
+            {{-- The label heads the whole field; the avatar and the button sit together on one
+                 centred row beneath it. Clicking either the circle or the button opens the same
+                 hidden input, and the chosen image previews live in the circle before saving. --}}
+            <div style="{{ $field }}">
+                <span style="{{ $label }}">{{ __('Gambar profil') }}</span>
 
-                <div style="{{ $field }};flex:1">
-                    <span style="{{ $label }}">{{ __('Gambar profil') }}</span>
-                    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-                        <label for="avatar" class="wl-avatarbtn tp-g" style="align-self:flex-start;display:inline-flex;align-items:center;min-height:38px;border-radius:10px;background:#17907B;color:#fff;font-weight:800;font-size:13px;padding:0 16px;cursor:pointer">
-                            {{ $user->avatarUrl() ? __('Tukar gambar') : __('Tambah gambar') }}
-                        </label>
-                        <span style="font-size:13px;color:var(--tp-muted)" x-text="name || '{{ __('Tiada fail dipilih') }}'"></span>
+                <div style="display:flex;align-items:center;gap:16px" x-data="{ name: '', preview: '' }">
+                    <label for="avatar" title="{{ $user->avatarUrl() ? __('Tukar gambar profil') : __('Tambah gambar profil') }}"
+                           style="width:64px;height:64px;border-radius:50%;background:#DCF2EE;color:#0F7A68;display:grid;place-items:center;font-family:'Geist',sans-serif;font-weight:800;font-size:20px;flex-shrink:0;overflow:hidden;cursor:pointer;position:relative">
+                        <span x-show="! preview" style="width:100%;height:100%;display:grid;place-items:center">
+                            @if ($user->avatarUrl())<img src="{{ $user->avatarUrl() }}" alt="" style="width:100%;height:100%;object-fit:cover">@else{{ $user->initials() }}@endif
+                        </span>
+                        <img x-show="preview" x-cloak :src="preview" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+                    </label>
+
+                    <div style="display:flex;flex-direction:column;gap:6px;min-width:0">
+                        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+                            <label for="avatar" class="wl-avatarbtn tp-g" style="display:inline-flex;align-items:center;min-height:38px;border-radius:10px;background:#17907B;color:#fff;font-weight:800;font-size:13px;padding:0 16px;cursor:pointer">
+                                {{ $user->avatarUrl() ? __('Tukar gambar') : __('Tambah gambar') }}
+                            </label>
+                            <span style="font-size:13px;color:var(--tp-muted)" x-text="name || '{{ __('Tiada fail dipilih') }}'"></span>
+                        </div>
+                        <span style="{{ $note }}">{{ __('JPG atau PNG. Klik bulatan atau butang untuk pilih gambar.') }}</span>
                     </div>
-                    <span style="{{ $note }}">{{ __('JPG atau PNG. Klik bulatan atau butang untuk pilih gambar.') }}</span>
+
                     <input type="file" id="avatar" name="avatar" accept="image/*" class="sr-only"
                            x-on:change="name = $event.target.files[0]?.name || ''; preview = $event.target.files[0] ? URL.createObjectURL($event.target.files[0]) : ''"
                            @error('avatar') aria-invalid="true" @enderror>
-                    @error('avatar')<p style="{{ $err }}">{{ $message }}</p>@enderror
                 </div>
+
+                @error('avatar')<p style="{{ $err }}">{{ $message }}</p>@enderror
             </div>
 
             <div style="{{ $field }}">
