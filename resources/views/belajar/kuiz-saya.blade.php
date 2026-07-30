@@ -64,28 +64,34 @@
                     <span style="width:34px;height:34px;border-radius:10px;background:#FEF0CE;color:#E0A21C;display:grid;place-items:center;flex-shrink:0"><x-icon name="trophy" style="width:19px;height:19px" /></span>
                     <h3 style="margin:0;font-family:'Geist',sans-serif;font-size:17px;font-weight:800;color:var(--wl-ink)">{{ __('Lencana Pencapaian') }}</h3>
                 </div>
-                @php($leaf = 'M0 0 C -9 -14 -9 -30 0 -44 C 9 -30 9 -14 0 0 Z')
-                @php($vein = 'M0 -6 L0 -38')
+                @php($leaf = 'M0 0 C -8 -14 -8 -33 0 -46 C 8 -33 8 -14 0 0 Z')
                 @php($spk = 'M8 0c0 4.4-3.6 8-8 8 4.4 0 8 3.6 8 8 0-4.4 3.6-8 8-8-4.4 0-8-3.6-8-8z')
                 <div style="position:relative;overflow:hidden;background:var(--wl-surface);border:1px solid var(--wl-line);border-radius:18px;padding:24px 20px;box-shadow:0 4px 16px rgba(46,44,80,.04)">
                     {{-- Botanical corners (soft blob + olive-branch sprig) and scattered sparkles, redrawn from the reference. --}}
                     <div aria-hidden="true" style="position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden">
-                        @foreach ([['side' => 'left:-8px', 'flip' => ''], ['side' => 'right:-8px', 'flip' => ';transform:scaleX(-1)']] as $b)
-                            <svg style="position:absolute;{{ $b['side'] }};bottom:-8px{{ $b['flip'] }}" width="210" height="240" viewBox="0 0 210 240">
-                                <path d="M-10 240 C -10 155 2 124 40 103 C 76 84 66 30 106 22 C 144 15 156 60 150 106 C 143 162 122 212 86 240 Z" fill="#E6F0E9"/>
-                                <path d="M50 236 C 72 184 108 116 152 42" fill="none" stroke="#9DC4AA" stroke-width="2.2" stroke-linecap="round"/>
-                                <g fill="#A9CEB6" fill-opacity="0.82">
-                                    <g transform="translate(60 218) rotate(-55) scale(1.15)"><path d="{{ $leaf }}"/><path d="{{ $vein }}" fill="none" stroke="#7FAE95" stroke-opacity=".55" stroke-width="1.2"/></g>
-                                    <g transform="translate(58 234) rotate(-80)"><path d="{{ $leaf }}"/><path d="{{ $vein }}" fill="none" stroke="#7FAE95" stroke-opacity=".55" stroke-width="1.2"/></g>
-                                    <g transform="translate(72 202) rotate(44) scale(1.1)"><path d="{{ $leaf }}"/><path d="{{ $vein }}" fill="none" stroke="#7FAE95" stroke-opacity=".55" stroke-width="1.2"/></g>
-                                    <g transform="translate(82 180) rotate(-58) scale(1.12)"><path d="{{ $leaf }}"/><path d="{{ $vein }}" fill="none" stroke="#7FAE95" stroke-opacity=".55" stroke-width="1.2"/></g>
-                                    <g transform="translate(93 157) rotate(46) scale(1.02)"><path d="{{ $leaf }}"/><path d="{{ $vein }}" fill="none" stroke="#7FAE95" stroke-opacity=".55" stroke-width="1.2"/></g>
-                                    <g transform="translate(104 134) rotate(-55) scale(1.02)"><path d="{{ $leaf }}"/><path d="{{ $vein }}" fill="none" stroke="#7FAE95" stroke-opacity=".55" stroke-width="1.2"/></g>
-                                    <g transform="translate(115 112) rotate(44) scale(0.92)"><path d="{{ $leaf }}"/><path d="{{ $vein }}" fill="none" stroke="#7FAE95" stroke-opacity=".55" stroke-width="1.2"/></g>
-                                    <g transform="translate(126 90) rotate(-50) scale(0.86)"><path d="{{ $leaf }}"/><path d="{{ $vein }}" fill="none" stroke="#7FAE95" stroke-opacity=".55" stroke-width="1.2"/></g>
-                                    <g transform="translate(136 70) rotate(42) scale(0.78)"><path d="{{ $leaf }}"/><path d="{{ $vein }}" fill="none" stroke="#7FAE95" stroke-opacity=".55" stroke-width="1.2"/></g>
-                                    <g transform="translate(145 52) rotate(-46) scale(0.7)"><path d="{{ $leaf }}"/><path d="{{ $vein }}" fill="none" stroke="#7FAE95" stroke-opacity=".55" stroke-width="1.2"/></g>
-                                    <g transform="translate(152 42) rotate(8) scale(0.6)"><path d="{{ $leaf }}"/><path d="{{ $vein }}" fill="none" stroke="#7FAE95" stroke-opacity=".55" stroke-width="1.2"/></g>
+                        <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+                            <linearGradient id="lvGrad" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0" stop-color="#DCEEE4"/>
+                                <stop offset="1" stop-color="#A9CFBB"/>
+                            </linearGradient>
+                            <filter id="lvBlur" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="0.7"/></filter>
+                            <filter id="lvBlob" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="6"/></filter>
+                        </defs></svg>
+                        @foreach ([['pos' => 'left:-6px', 'w' => 210, 'h' => 240, 'flip' => ''], ['pos' => 'right:-6px', 'w' => 182, 'h' => 208, 'flip' => ';transform:scaleX(-1)']] as $b)
+                            <svg style="position:absolute;{{ $b['pos'] }};bottom:-8px{{ $b['flip'] }}" width="{{ $b['w'] }}" height="{{ $b['h'] }}" viewBox="0 0 210 240">
+                                <ellipse cx="62" cy="200" rx="95" ry="128" fill="#E9F2EC" opacity=".5" filter="url(#lvBlob)"/>
+                                <ellipse cx="34" cy="224" rx="72" ry="94" fill="#F5F2EB" opacity=".45" filter="url(#lvBlob)"/>
+                                <g opacity="0.32" filter="url(#lvBlur)">
+                                    <path d="M46 236 C 70 186 106 120 150 46" fill="none" stroke="#A9CFBB" stroke-width="1.6" stroke-linecap="round"/>
+                                    <g fill="url(#lvGrad)">
+                                        <g transform="translate(56 214) rotate(-50) scale(1.15)"><path d="{{ $leaf }}"/></g>
+                                        <g transform="translate(72 189) rotate(48) scale(1.1)"><path d="{{ $leaf }}"/></g>
+                                        <g transform="translate(88 159) rotate(-52) scale(1.05)"><path d="{{ $leaf }}"/></g>
+                                        <g transform="translate(104 131) rotate(46) scale(0.98)"><path d="{{ $leaf }}"/></g>
+                                        <g transform="translate(119 105) rotate(-50) scale(0.9)"><path d="{{ $leaf }}"/></g>
+                                        <g transform="translate(133 79) rotate(44) scale(0.8)"><path d="{{ $leaf }}"/></g>
+                                        <g transform="translate(148 53) rotate(-26) scale(0.7)"><path d="{{ $leaf }}"/></g>
+                                    </g>
                                 </g>
                             </svg>
                         @endforeach
