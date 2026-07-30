@@ -27,9 +27,7 @@
 
     <div style="display:flex;flex-direction:column;gap:20px;max-width:720px">
 
-        @if (session('status'))
-            <div style="background:#DCF2EE;border:1px solid rgba(15,122,104,.25);border-radius:12px;padding:12px 16px;font-family:'Geist',sans-serif;font-size:13.5px;font-weight:700;color:#0F7A68">{{ session('status') }}</div>
-        @endif
+        {{-- The success message is rendered once by the layout's <x-flash>; no local copy here. --}}
 
         {{-- Account details.
 
