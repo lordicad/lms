@@ -31,19 +31,18 @@ return Application::configure(basePath: dirname(__DIR__))
         // they came from with a clear message and their input preserved, so they can just submit
         // again. JSON callers (the auto-translate fetch) get a 419 with a message to surface.
         $exceptions->render(function (\Illuminate\Session\TokenMismatchException $e, \Illuminate\Http\Request $request) {
-            // Diagnostic: record *why* the CSRF check failed so a single reproduction reveals the
-            // real cause (missing session cookie, empty POST body from a size limit, or a genuine
-            // token mismatch). Safe to leave on — it logs no secrets, only lengths and presence.
+            // Diagnostic: record *why* the CSRF check failed. Deliberately touches NO session state
+            // (an earlier version read $request->session() and could throw in the error context,
+            // which silently aborted the whole handler). Only request/cookie data, no secrets.
             try {
                 \Illuminate\Support\Facades\Log::warning('419 CSRF diagnostic', [
                     'url' => $request->fullUrl(),
                     'method' => $request->method(),
                     'has_token_field' => $request->has('_token'),
-                    'token_field_len' => strlen((string) $request->input('_token')),
-                    'session_id_head' => substr((string) $request->session()->getId(), 0, 8),
-                    'session_token_len' => strlen((string) $request->session()->token()),
-                    'tokens_match' => hash_equals((string) $request->session()->token(), (string) $request->input('_token', '')),
-                    'has_session_cookie' => $request->cookies->has(config('session.cookie')),
+                    'token_field_len' => strlen((string) $request->input('_token', '')),
+                    'session_cookie_name' => config('session.cookie'),
+                    'has_session_cookie' => $request->cookies->has((string) config('session.cookie')),
+                    'cookie_names' => array_keys($request->cookies->all()),
                     'content_length' => $request->header('Content-Length'),
                     'content_type' => $request->header('Content-Type'),
                     'post_keys' => array_keys($request->post()),
@@ -56,8 +55,10 @@ return Application::configure(basePath: dirname(__DIR__))
                 return response()->json(['message' => __('Sesi tamat tempoh. Sila muat semula halaman.')], 419);
             }
 
-            return redirect()->back()
-                ->withInput($request->except(['_token', 'password', 'password_confirmation', 'current_password']))
-                ->with('status', __('Sesi anda tamat tempoh. Sila cuba semula.'));
+            // Redirect via the referer header, not redirect()->back() or a session flash — both use
+            // the session, which is the thing under suspicion here.
+            $back = $request->headers->get('referer') ?: url('/');
+
+            return redirect($back);
         });
     })->create();
