@@ -6,7 +6,7 @@
         {{-- The "now add questions" message comes from the layout flash after the quiz is created;
              no duplicate banner here. --}}
 
-        <a href="{{ route('cikgu.kuiz.index') }}" class="tp-back">← {{ __('Kuiz Saya') }}</a>
+        <a href="{{ route('cikgu.kuiz.edit', $quiz) }}" class="tp-back">← {{ __('Kembali') }}</a>
 
         <div style="display:flex;flex-direction:column;gap:6px">
             <span style="align-self:flex-start;background:#E4EEF9;color:#2E6CA8;border-radius:999px;padding:5px 14px;font-family:'Geist',sans-serif;font-size:12.5px;font-weight:800;display:inline-flex;align-items:center;gap:6px"><x-icon :name="$chapter->subject->iconName()" class="h-[15px] w-[15px]" />{{ $chapter->subject->name }}. {{ $chapter->grade->name }}. Bab {{ $chapter->number }}</span>
