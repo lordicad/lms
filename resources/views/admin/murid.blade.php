@@ -11,6 +11,7 @@
 
 <x-admin-layout :title="__('Murid')"
                 :heading="__('Murid')"
+                heading-icon="graduation"
                 :sub="__('Gambaran keseluruhan murid dan aktiviti mereka di platform')">
 
     <div style="display:flex;flex-direction:column;gap:22px">
