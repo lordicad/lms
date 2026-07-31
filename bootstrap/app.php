@@ -26,5 +26,17 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        // A 419 (the CSRF token expired because the page sat open past the session lifetime)
+        // should not dump the user on the bare "Page Expired" screen. Send them back to the page
+        // they came from with a clear message and their input preserved, so they can just submit
+        // again. JSON callers (the auto-translate fetch) get a 419 with a message to surface.
+        $exceptions->render(function (\Illuminate\Session\TokenMismatchException $e, \Illuminate\Http\Request $request) {
+            if ($request->expectsJson()) {
+                return response()->json(['message' => __('Sesi tamat tempoh. Sila muat semula halaman.')], 419);
+            }
+
+            return redirect()->back()
+                ->withInput($request->except(['_token', 'password', 'password_confirmation', 'current_password']))
+                ->with('status', __('Sesi anda tamat tempoh. Sila cuba semula.'));
+        });
     })->create();
