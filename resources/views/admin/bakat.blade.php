@@ -22,6 +22,7 @@
 
 <x-admin-layout :title="__('Cikgu')"
                 :heading="__('Cikgu')"
+                heading-icon="presentation"
                 :sub="__('Gambaran keseluruhan cikgu, penyumbang terbaik dan kandungan paling berjaya')">
 
     <div style="display:flex;flex-direction:column;gap:48px">
