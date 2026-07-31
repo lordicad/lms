@@ -10,6 +10,9 @@
         return $extra > 0 ? $names.' +'.$extra : $names;
     };
 
+    // The teacher's subject models, in the canonical order, for colour-tinted pills in the table.
+    $teacherSubjects = fn ($teacherId) => $subjects->whereIn('id', $subjectsByTeacher[$teacherId] ?? collect())->values();
+
     // Podium chrome per rank (gold / silver / bronze) — exact palette + raised-middle sizing.
     $podiumMeta = [
         1 => ['medal' => '🥇', 'ring' => '#F0C24B', 'bg' => '#FEF3D3', 'fg' => '#8A6A12', 'pad' => '34px', 'order' => 1],
@@ -24,6 +27,25 @@
                 :heading="__('Cikgu')"
                 heading-icon="presentation"
                 :sub="__('Gambaran keseluruhan cikgu, penyumbang terbaik dan kandungan paling berjaya')">
+
+    <style>
+        /* Subject pills in the teacher list. The "+N" chip reveals the full subject list on hover. */
+        .subj-cell { position:relative; display:flex; flex-wrap:wrap; gap:5px; justify-content:center; align-items:center; }
+        .subj-pill { display:inline-flex; align-items:center; border-radius:999px; padding:3px 10px; font-size:12px; font-weight:800; line-height:1.2; white-space:nowrap; }
+        .subj-more { position:relative; cursor:default; background:var(--tp-line); color:var(--tp-muted-2); }
+        .subj-tip {
+            position:absolute; bottom:calc(100% + 8px); left:50%; transform:translateX(-50%) translateY(4px);
+            z-index:20; display:flex; flex-wrap:wrap; gap:5px; justify-content:center; width:max-content; max-width:240px;
+            padding:9px; border-radius:12px; background:var(--tp-surface); border:1px solid var(--tp-line-2);
+            box-shadow:0 10px 26px rgba(46,44,80,.16); opacity:0; visibility:hidden;
+            transition:opacity .15s ease, transform .15s ease;
+        }
+        .subj-tip::after {
+            content:''; position:absolute; top:100%; left:50%; transform:translateX(-50%);
+            border:6px solid transparent; border-top-color:var(--tp-surface);
+        }
+        .subj-more:hover .subj-tip, .subj-more:focus-visible .subj-tip { opacity:1; visibility:visible; transform:translateX(-50%) translateY(0); }
+    </style>
 
     <div style="display:flex;flex-direction:column;gap:48px">
 
@@ -121,7 +143,25 @@
                                             <span style="font-size:11.5px;color:var(--tp-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $teacher->email }}</span>
                                         @endif
                                     </a>
-                                    <span style="font-size:13px;font-weight:700;color:#4276AE;text-align:center">{{ $subjectLabel($teacher->id) }}</span>
+                                    @php($tsubs = $teacherSubjects($teacher->id))
+                                    <div class="subj-cell" style="justify-self:center">
+                                        @forelse ($tsubs->take(2) as $s)
+                                            <span class="subj-pill" style="background:rgb({{ $s->rgb }} / .14);color:rgb({{ $s->rgb }})">{{ $s->displayName() }}</span>
+                                        @empty
+                                            <span style="color:var(--tp-muted-2);font-weight:700">—</span>
+                                        @endforelse
+
+                                        @if ($tsubs->count() > 2)
+                                            <span class="subj-pill subj-more" tabindex="0" aria-label="{{ $tsubs->map->displayName()->join(', ') }}">
+                                                +{{ $tsubs->count() - 2 }}
+                                                <span class="subj-tip">
+                                                    @foreach ($tsubs as $s)
+                                                        <span class="subj-pill" style="background:rgb({{ $s->rgb }} / .14);color:rgb({{ $s->rgb }})">{{ $s->displayName() }}</span>
+                                                    @endforeach
+                                                </span>
+                                            </span>
+                                        @endif
+                                    </div>
                                     <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2);text-align:center">{{ number_format($teacher->video_count) }}</span>
                                     <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2);text-align:center">{{ number_format($teacher->material_count) }}</span>
                                     <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2);text-align:center">{{ number_format($teacher->quiz_count) }}</span>
