@@ -1,5 +1,6 @@
 <x-admin-layout :title="__('Pengurusan Pengguna')"
                 :heading="__('Pengurusan Pengguna')"
+                heading-icon="users"
                 :sub="__('Cipta, sunting dan urus akaun cikgu dan murid')">
 
     {{-- When the admin filters to teachers, the "Year" column (a student attribute) becomes "Position". --}}
