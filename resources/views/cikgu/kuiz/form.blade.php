@@ -24,7 +24,7 @@
               'titleT' => old('title_translated', $quiz->title_translated),
               'descriptionT' => old('description_translated', $quiz->description_translated),
               'sourceLocale' => old('source_locale', $quiz->source_locale),
-          ]) }})"
+          ]) }})">
         @csrf
         @if ($editing) @method('PUT') @endif
         <input type="hidden" name="type" :value="type">

@@ -30,33 +30,16 @@ return Application::configure(basePath: dirname(__DIR__))
         // should not dump the user on the bare "Page Expired" screen. Send them back to the page
         // they came from with a clear message and their input preserved, so they can just submit
         // again. JSON callers (the auto-translate fetch) get a 419 with a message to surface.
-        // Catch ANY 419 (a raw TokenMismatchException OR the HttpException(419) it gets converted
-        // into before typed render callbacks run) so the diagnostic reliably fires. Everything else
-        // returns null and keeps Laravel's default handling. Touches no session state.
+        // A 419 (expired or missing CSRF token) should not dump the user on the bare dark "Page
+        // Expired" screen — send them back to the page they came from. Catches both the raw
+        // TokenMismatchException and the HttpException(419) it is converted into. Touches no session
+        // state (a session-flash version could throw in the error context).
         $exceptions->render(function (\Throwable $e, \Illuminate\Http\Request $request) {
             $is419 = $e instanceof \Illuminate\Session\TokenMismatchException
                 || ($e instanceof \Symfony\Component\HttpKernel\Exception\HttpExceptionInterface && $e->getStatusCode() === 419);
 
             if (! $is419) {
                 return null;
-            }
-
-            try {
-                \Illuminate\Support\Facades\Log::warning('419 CSRF diagnostic', [
-                    'exc' => get_class($e),
-                    'url' => $request->fullUrl(),
-                    'method' => $request->method(),
-                    'has_token_field' => $request->has('_token'),
-                    'token_field_len' => strlen((string) $request->input('_token', '')),
-                    'session_cookie_name' => config('session.cookie'),
-                    'has_session_cookie' => $request->cookies->has((string) config('session.cookie')),
-                    'cookie_names' => array_keys($request->cookies->all()),
-                    'content_length' => $request->header('Content-Length'),
-                    'content_type' => $request->header('Content-Type'),
-                    'post_keys' => array_keys($request->post()),
-                ]);
-            } catch (\Throwable $ignore) {
-                // Never let diagnostics break the response.
             }
 
             if ($request->expectsJson()) {
