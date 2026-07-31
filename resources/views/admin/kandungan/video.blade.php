@@ -69,7 +69,8 @@
                                     <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:13.5px;color:var(--tp-ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $lesson->title }}</span>
                                     <span style="font-size:11.5px;color:var(--tp-muted)">{{ $lesson->teacher?->name }}</span>
                                 </div>
-                                <span style="font-size:13px;font-weight:700;color:#4276AE;text-align:center">{{ $lesson->chapter->subject->displayName() }}</span>
+                                @php($vsub = $lesson->chapter->subject)
+                                <span style="justify-self:center;display:inline-flex;align-items:center;text-align:center;border-radius:999px;padding:4px 12px;font-size:12.5px;font-weight:800;line-height:1.25;background:rgb({{ $vsub->rgb }} / .14);color:rgb({{ $vsub->rgb }})">{{ $vsub->displayName() }}</span>
                                 <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2);text-align:center">{{ $lesson->chapter->grade->name }}</span>
                                 <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2);text-align:center">{{ number_format($lesson->views_count) }}</span>
                                 <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2);text-align:center">{{ $lesson->created_at->translatedFormat('j M Y') }}</span>
