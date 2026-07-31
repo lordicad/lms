@@ -31,6 +31,27 @@ return Application::configure(basePath: dirname(__DIR__))
         // they came from with a clear message and their input preserved, so they can just submit
         // again. JSON callers (the auto-translate fetch) get a 419 with a message to surface.
         $exceptions->render(function (\Illuminate\Session\TokenMismatchException $e, \Illuminate\Http\Request $request) {
+            // Diagnostic: record *why* the CSRF check failed so a single reproduction reveals the
+            // real cause (missing session cookie, empty POST body from a size limit, or a genuine
+            // token mismatch). Safe to leave on — it logs no secrets, only lengths and presence.
+            try {
+                \Illuminate\Support\Facades\Log::warning('419 CSRF diagnostic', [
+                    'url' => $request->fullUrl(),
+                    'method' => $request->method(),
+                    'has_token_field' => $request->has('_token'),
+                    'token_field_len' => strlen((string) $request->input('_token')),
+                    'session_id_head' => substr((string) $request->session()->getId(), 0, 8),
+                    'session_token_len' => strlen((string) $request->session()->token()),
+                    'tokens_match' => hash_equals((string) $request->session()->token(), (string) $request->input('_token', '')),
+                    'has_session_cookie' => $request->cookies->has(config('session.cookie')),
+                    'content_length' => $request->header('Content-Length'),
+                    'content_type' => $request->header('Content-Type'),
+                    'post_keys' => array_keys($request->post()),
+                ]);
+            } catch (\Throwable $ignore) {
+                // Never let diagnostics break the response.
+            }
+
             if ($request->expectsJson()) {
                 return response()->json(['message' => __('Sesi tamat tempoh. Sila muat semula halaman.')], 419);
             }
