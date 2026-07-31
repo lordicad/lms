@@ -9,6 +9,7 @@
 
 <x-admin-layout :title="__('Kandungan Video')"
                 :heading="__('Kandungan Video')"
+                heading-icon="video"
                 :sub="__('Setiap video yang dimuat naik oleh cikgu, merentas semua subjek dan Tahun')">
 
     <div style="display:flex;flex-direction:column;gap:18px"
