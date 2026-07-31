@@ -26,7 +26,9 @@
         ];
     @endphp
 
-    <div class="tp-formwrap">
+    {{-- Centre the card block within the wide content column (the shared .tp-formwrap is normally
+         left-aligned; centred here only). --}}
+    <div class="tp-formwrap" style="margin:0 auto;width:100%">
         <a href="{{ route('cikgu.kuiz.index') }}" class="tp-back">← {{ __('Kuiz Saya') }}</a>
 
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px">
