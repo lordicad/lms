@@ -22,6 +22,18 @@ class QuizController extends Controller
     public function index(Request $request): View
     {
         $teacher = $request->user();
+
+        // Discard abandoned drafts. An interactive quiz needs at least one question to be usable;
+        // a teacher who created one and left the builder without adding any — via "Batal", the
+        // "← Kuiz Saya" link, the nav, or the browser back button — should not be left with an
+        // empty quiz. Cleaning up here catches every exit path that lands back on this page.
+        // Scoped to interactive quizzes so printed (file) quizzes, which never have questions,
+        // are untouched.
+        $teacher->quizzes()
+            ->where('type', Quiz::TYPE_INTERACTIVE)
+            ->whereDoesntHave('questions')
+            ->delete();
+
         $filter = \App\Support\ContentFilter::fromRequest($request);
 
         $quizzes = $filter->apply(
