@@ -48,37 +48,48 @@
             <h2 class="tp-g" style="font-size:17px;font-weight:800;color:var(--tp-ink)">{{ __('Fail') }}</h2>
 
             @if ($editing)
-                {{-- Editing replaces the one file this material points at, so it stays single. --}}
-                <div class="tp-field">
-                    <label for="title" class="tp-label">{{ __('Tajuk') }}</label>
-                    <input id="title" name="title" type="text" value="{{ old('title', $material->title) }}" required class="tp-input" @error('title') aria-invalid="true" @enderror>
-                    @error('title') <span class="tp-error">{{ $message }}</span> @enderror
-                </div>
-                <div class="tp-field" x-data="{ removed: false, picked: '' }"
-                     @change="if ($event.target.files) picked = $event.target.files[0] ? $event.target.files[0].name : ''">
-                    <label for="file" class="tp-label">{{ __('Fail bahan') }}</label>
-
-                    {{-- The current file, with a Buang button. Removing it shows a notice and requires
-                         a replacement to be uploaded — a material always keeps a downloadable file. --}}
-                    <div x-show="! removed" style="display:flex;align-items:center;gap:10px;background:var(--tp-input);border:1px solid var(--tp-line-2);border-radius:12px;padding:12px 14px">
-                        <x-icon :name="$material->iconName()" class="h-5 w-5" style="color:var(--tp-muted-2);flex-shrink:0" />
-                        <span style="flex:1;min-width:0;font-size:13.5px;color:var(--tp-ink);font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ __('Fail semasa:') }} {{ $material->original_name }} <span style="color:var(--tp-muted);font-weight:400">({{ $material->humanSize() }})</span></span>
-                        <button type="button" @click="removed = true" style="display:inline-flex;align-items:center;gap:5px;border:none;background:transparent;cursor:pointer;color:#C24936;font-weight:800;font-size:13px;flex-shrink:0">× {{ __('Buang') }}</button>
+                <div x-data="{ del: false }" style="display:flex;flex-direction:column;gap:16px">
+                    {{-- This material's own title. --}}
+                    <div class="tp-field">
+                        <label for="title" class="tp-label">{{ __('Tajuk') }}</label>
+                        <input id="title" name="title" type="text" value="{{ old('title', $material->title) }}" class="tp-input" :disabled="del" @error('title') aria-invalid="true" @enderror>
+                        @error('title') <span class="tp-error">{{ $message }}</span> @enderror
                     </div>
 
-                    <div x-show="removed && ! picked" x-cloak style="display:flex;align-items:center;gap:10px;background:#FDE7E0;border:1px solid rgba(194,73,54,.25);border-radius:12px;padding:12px 14px;font-size:13px;color:#C24936">
-                        <span style="flex:1">{{ __('Fail semasa akan dibuang — muat naik fail baharu untuk menggantikannya.') }}</span>
-                        <button type="button" @click="removed = false" style="border:none;background:transparent;cursor:pointer;color:#0F7A68;font-weight:800;font-size:13px;flex-shrink:0">{{ __('Kembalikan') }}</button>
+                    {{-- Drag & drop more files into this chapter — each becomes a new material, so a
+                         teacher can add a whole set of handouts from the edit page. --}}
+                    <div class="tp-field">
+                        <label class="tp-label">{{ __('Muat naik fail baharu (pilihan)') }}</label>
+                        <x-file-dropzone
+                            name="files[]"
+                            title-name="titles[]"
+                            :extensions="config('lms.material_mimes')"
+                            :accept="collect(config('lms.material_mimes'))->map(fn ($e) => '.'.$e)->implode(',')"
+                            :max-mb="config('lms.material_max_mb')"
+                            :max-files="\App\Http\Requests\MaterialRequest::MAX_FILES"
+                            :hint="__('Setiap fail menjadi bahan baharu dalam bab ini. Had saiz :max MB setiap fail.', ['max' => config('lms.material_max_mb')])"
+                            :title-label="__('Tajuk (untuk pelajar)')" />
+                        @error('files') <span class="tp-error">{{ $message }}</span> @enderror
+                        @foreach ($errors->get('files.*') as $messages)<span class="tp-error">{{ $messages[0] }}</span>@endforeach
                     </div>
 
-                    <input type="hidden" name="remove_file" :value="removed ? 1 : 0">
+                    {{-- The current file for this material, shown below, with a delete option. --}}
+                    <div class="tp-field">
+                        <label class="tp-label">{{ __('Fail semasa') }}</label>
 
-                    <x-file-input id="file" name="file" accept=".pdf,.ppt,.pptx,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg" aria-describedby="file-help" @error('file') aria-invalid="true" @enderror />
-                    <p id="file-help" class="tp-hint">
-                        {{ __('PDF, PowerPoint, Word, Excel atau imej.') }} {{ __('Had saiz :max MB.', ['max' => config('lms.material_max_mb')]) }}
-                        <span x-show="! removed">{{ __('Biarkan kosong untuk mengekalkan fail sedia ada.') }}</span>
-                    </p>
-                    @error('file') <span class="tp-error">{{ $message }}</span> @enderror
+                        <div x-show="! del" style="display:flex;align-items:center;gap:10px;background:var(--tp-input);border:1px solid var(--tp-line-2);border-radius:12px;padding:12px 14px">
+                            <x-icon :name="$material->iconName()" class="h-5 w-5" style="color:var(--tp-muted-2);flex-shrink:0" />
+                            <span style="flex:1;min-width:0;font-size:13.5px;color:var(--tp-ink);font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ $material->original_name }} <span style="color:var(--tp-muted);font-weight:400">({{ $material->humanSize() }})</span></span>
+                            <button type="button" @click="del = true" style="display:inline-flex;align-items:center;gap:5px;border:none;background:transparent;cursor:pointer;color:#C24936;font-weight:800;font-size:13px;flex-shrink:0">× {{ __('Padam bahan ini') }}</button>
+                        </div>
+
+                        <div x-show="del" x-cloak style="display:flex;align-items:center;gap:10px;background:#FDE7E0;border:1px solid rgba(194,73,54,.25);border-radius:12px;padding:12px 14px;font-size:13px;color:#C24936">
+                            <span style="flex:1">{{ __('Bahan ini akan dipadam apabila anda simpan.') }}</span>
+                            <button type="button" @click="del = false" style="border:none;background:transparent;cursor:pointer;color:#0F7A68;font-weight:800;font-size:13px;flex-shrink:0">{{ __('Kembalikan') }}</button>
+                        </div>
+                    </div>
+
+                    <input type="hidden" name="delete_material" :value="del ? 1 : 0">
                 </div>
             @else
                 <x-file-dropzone

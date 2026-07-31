@@ -70,16 +70,28 @@ class MaterialController extends Controller
     {
         $this->authorize('create', Material::class);
 
-        $titles = $request->input('titles', []);
-        $files = $request->file('files', []);
-        $chapterId = $request->integer('chapter_id');
-        $lessonId = $request->input('lesson_id') ?: null;
+        $created = $this->createMaterials($request, $request->integer('chapter_id'), $request->input('lesson_id') ?: null);
 
+        $status = count($created) === 1
+            ? __('Bahan ":title" berjaya dimuat naik.', ['title' => $created[0]->title])
+            : __(':count bahan berjaya dimuat naik.', ['count' => count($created)]);
+
+        return redirect()->route('cikgu.bahan.index')->with('status', $status);
+    }
+
+    /**
+     * Create one material per uploaded files[] entry in the chapter, titles paired by position —
+     * a blank title falls back to the file's own name with the extension dropped. Shared by
+     * store() and update(): the edit page can also drop in more files, each a new material.
+     *
+     * @return array<int, Material>
+     */
+    private function createMaterials(MaterialRequest $request, int $chapterId, ?int $lessonId): array
+    {
+        $titles = $request->input('titles', []);
         $created = [];
 
-        foreach ($files as $index => $file) {
-            // The title is paired to its file by position; blank falls back to the file's own
-            // name with the extension dropped, which is what a teacher would have typed.
+        foreach ($request->file('files', []) as $index => $file) {
             $given = trim((string) ($titles[$index] ?? ''));
 
             $created[] = Material::create([
@@ -94,11 +106,7 @@ class MaterialController extends Controller
             ]);
         }
 
-        $status = count($created) === 1
-            ? __('Bahan ":title" berjaya dimuat naik.', ['title' => $created[0]->title])
-            : __(':count bahan berjaya dimuat naik.', ['count' => count($created)]);
-
-        return redirect()->route('cikgu.bahan.index')->with('status', $status);
+        return $created;
     }
 
     public function edit(Request $request, Material $material): View
@@ -121,38 +129,33 @@ class MaterialController extends Controller
     {
         $this->authorize('update', $material);
 
-        $oldPath = $material->file_path;
+        $chapterId = $request->integer('chapter_id');
+        $lessonId = $request->input('lesson_id') ?: null;
+        $deleting = $request->boolean('delete_material');
 
-        $material->fill([
-            'chapter_id' => $request->integer('chapter_id'),
-            'lesson_id' => $request->input('lesson_id') ?: null,
-            'title' => $request->input('title'),
-        ]);
-
-        $replaced = false;
-
-        if ($request->hasFile('file')) {
-            $file = $request->file('file');
-
-            $material->fill([
-                'file_path' => Uploads::store($file, 'materials'),
-                'original_name' => $file->getClientOriginalName(),
-                'mime_type' => $file->getClientMimeType(),
-                'size_kb' => Uploads::sizeKb($file),
+        if ($deleting) {
+            // The teacher chose to remove this material outright (its file goes with it).
+            $material->deleteFile();
+            $material->delete();
+        } else {
+            $material->update([
+                'chapter_id' => $chapterId,
+                'lesson_id' => $lessonId,
+                'title' => $request->input('title'),
             ]);
-
-            $replaced = true;
         }
 
-        $material->save();
+        // Any files dropped on the edit page become new materials in the chapter.
+        $added = count($this->createMaterials($request, $chapterId, $lessonId));
 
-        if ($replaced) {
-            Storage::disk('uploads')->delete($oldPath);
-        }
+        $status = match (true) {
+            $deleting && $added > 0 => __('Bahan lama dipadam; :count fail baharu ditambah.', ['count' => $added]),
+            $deleting => __('Bahan dipadam.'),
+            $added > 0 => __('Bahan dikemas kini; :count fail baharu ditambah.', ['count' => $added]),
+            default => __('Bahan ":title" berjaya dikemas kini.', ['title' => $material->title]),
+        };
 
-        return redirect()
-            ->route('cikgu.bahan.index')
-            ->with('status', __('Bahan ":title" berjaya dikemas kini.', ['title' => $material->title]));
+        return redirect()->route('cikgu.bahan.index')->with('status', $status);
     }
 
     public function destroy(Material $material): RedirectResponse

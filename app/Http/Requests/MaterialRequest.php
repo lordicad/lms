@@ -44,17 +44,19 @@ class MaterialRequest extends FormRequest
             ];
         }
 
+        // Editing: rename/relocate this material, optionally drop in more files (each becomes a new
+        // material in the chapter), and/or delete this one. Title is not required when deleting.
         return $shared + [
-            'title' => ['required', 'string', 'max:255'],
-            'file' => [
-                // Optional normally (blank keeps the existing file), but required when the teacher
-                // removed the current file — a material must always keep a downloadable file.
-                $this->boolean('remove_file') ? 'required' : 'nullable',
+            'title' => [$this->boolean('delete_material') ? 'nullable' : 'required', 'string', 'max:255'],
+            'delete_material' => ['nullable', 'boolean'],
+            'files' => ['nullable', 'array', 'max:'.self::MAX_FILES],
+            'files.*' => [
                 'file',
                 'mimes:'.implode(',', config('lms.material_mimes')),
                 "max:{$max}",
             ],
-            'remove_file' => ['nullable', 'boolean'],
+            'titles' => ['nullable', 'array', 'max:'.self::MAX_FILES],
+            'titles.*' => ['nullable', 'string', 'max:255'],
         ];
     }
 
