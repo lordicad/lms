@@ -42,8 +42,8 @@
                 @else
                     <input type="hidden" name="role" :value="role">
                     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-                        <button type="button" class="role-opt" :class="{ 'is-on': role === 'teacher' }" @click="role = 'teacher'">🧑‍🏫 {{ __('Cikgu') }}</button>
-                        <button type="button" class="role-opt" :class="{ 'is-on': role === 'student' }" @click="role = 'student'">🧑‍🎓 {{ __('Murid') }}</button>
+                        <button type="button" class="role-opt" :class="{ 'is-on': role === 'teacher' }" @click="role = 'teacher'"><x-icon name="presentation" class="h-[18px] w-[18px]" /> {{ __('Cikgu') }}</button>
+                        <button type="button" class="role-opt" :class="{ 'is-on': role === 'student' }" @click="role = 'student'"><x-icon name="graduation" class="h-[18px] w-[18px]" /> {{ __('Murid') }}</button>
                     </div>
                 @endif
             </div>
