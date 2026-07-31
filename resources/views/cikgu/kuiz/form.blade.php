@@ -44,14 +44,14 @@
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
                 <button type="button" @click="type = 'interactive'" class="tp-typeopt" :class="{ 'is-on': type === 'interactive' }" :aria-pressed="type === 'interactive'">
                     <span class="tp-typeopt-head">
-                        <span style="font-size:16px;flex-shrink:0">📝</span>
+                        <x-icon name="quiz" class="h-[18px] w-[18px]" style="color:#17907B;flex-shrink:0" />
                         <span class="tp-g" style="font-weight:800;font-size:14px;color:var(--tp-ink)">{{ __('Kuiz Interaktif') }}</span>
                     </span>
                     <span style="font-size:12.5px;color:var(--tp-muted-2);line-height:1.45">{{ __('Ditanda secara automatik. Memberi mata ranking.') }}</span>
                 </button>
                 <button type="button" @click="type = 'file'" class="tp-typeopt" :class="{ 'is-on': type === 'file' }" :aria-pressed="type === 'file'">
                     <span class="tp-typeopt-head">
-                        <span style="font-size:16px;flex-shrink:0">📄</span>
+                        <x-icon name="file-text" class="h-[18px] w-[18px]" style="color:#2E6CA8;flex-shrink:0" />
                         <span class="tp-g" style="font-weight:800;font-size:14px;color:var(--tp-ink)">{{ __('Kuiz Bercetak') }}</span>
                     </span>
                     <span style="font-size:12.5px;color:var(--tp-muted-2);line-height:1.45">{{ __('Fail untuk dimuat turun. Tiada mata.') }}</span>
