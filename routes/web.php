@@ -52,6 +52,12 @@ Route::get('/bahasa/{locale}', LocaleController::class)->name('locale.switch');
 // Tukar tema (terang / gelap). Terbuka kepada tetamu dan pengguna berdaftar.
 Route::get('/tema/{theme}', ThemeController::class)->name('theme.switch');
 
+// Session keep-alive. The front-end pings this every few minutes while a page is open (see
+// resources/js/app.js) so the login session slides forward and does not idle-expire, which is what
+// leaves a long-open form submitting into a "419 Page Expired". A bare 204 through the web (session)
+// middleware is enough to refresh the session's last-activity timestamp.
+Route::get('/sesi-aktif', fn () => response()->noContent())->name('session.keepalive');
+
 /*
 |--------------------------------------------------------------------------
 | Kandungan (guru dan murid boleh melayari)

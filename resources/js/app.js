@@ -518,6 +518,18 @@ function watchForStyledSelects() {
     }).observe(document.body, { childList: true, subtree: true });
 }
 
+// ── Session keep-alive ───────────────────────────────────────────────────────
+// While a page is open, ping the server periodically so the login session slides forward and does
+// not idle-expire. Without this, a teacher who leaves a long form (e.g. the quiz builder) open past
+// the session lifetime submits into a "419 Page Expired". A GET through the web middleware refreshes
+// the session's last-activity stamp; no CSRF or auth is needed, and failures are ignored.
+(function keepSessionAlive() {
+    const EVERY = 5 * 60 * 1000; // 5 minutes — comfortably under the session lifetime
+    window.setInterval(() => {
+        fetch('/sesi-aktif', { method: 'GET', credentials: 'same-origin', cache: 'no-store' }).catch(() => {});
+    }, EVERY);
+})();
+
 Alpine.start();
 
 document.addEventListener('alpine:initialized', () => { enhanceStyledSelects(); watchForStyledSelects(); });
