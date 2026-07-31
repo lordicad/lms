@@ -29,7 +29,7 @@
         @if ($editing) @method('PUT') @endif
         <input type="hidden" name="type" :value="type">
 
-        <a href="{{ route('cikgu.kuiz.index') }}" class="tp-back">← {{ __('Kuiz Saya') }}</a>
+        <a href="{{ route('cikgu.kuiz.mod') }}" class="tp-back">← {{ __('Kembali') }}</a>
 
         @if ($editing && ($hasAttempts ?? false))
             <div style="display:flex;gap:10px;background:#FEF0CE;border:1px solid rgba(138,106,18,.25);border-radius:14px;padding:14px 18px;font-size:13.5px;color:#8A6A12">
