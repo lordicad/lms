@@ -30,12 +30,20 @@ return Application::configure(basePath: dirname(__DIR__))
         // should not dump the user on the bare "Page Expired" screen. Send them back to the page
         // they came from with a clear message and their input preserved, so they can just submit
         // again. JSON callers (the auto-translate fetch) get a 419 with a message to surface.
-        $exceptions->render(function (\Illuminate\Session\TokenMismatchException $e, \Illuminate\Http\Request $request) {
-            // Diagnostic: record *why* the CSRF check failed. Deliberately touches NO session state
-            // (an earlier version read $request->session() and could throw in the error context,
-            // which silently aborted the whole handler). Only request/cookie data, no secrets.
+        // Catch ANY 419 (a raw TokenMismatchException OR the HttpException(419) it gets converted
+        // into before typed render callbacks run) so the diagnostic reliably fires. Everything else
+        // returns null and keeps Laravel's default handling. Touches no session state.
+        $exceptions->render(function (\Throwable $e, \Illuminate\Http\Request $request) {
+            $is419 = $e instanceof \Illuminate\Session\TokenMismatchException
+                || ($e instanceof \Symfony\Component\HttpKernel\Exception\HttpExceptionInterface && $e->getStatusCode() === 419);
+
+            if (! $is419) {
+                return null;
+            }
+
             try {
                 \Illuminate\Support\Facades\Log::warning('419 CSRF diagnostic', [
+                    'exc' => get_class($e),
                     'url' => $request->fullUrl(),
                     'method' => $request->method(),
                     'has_token_field' => $request->has('_token'),
@@ -55,10 +63,6 @@ return Application::configure(basePath: dirname(__DIR__))
                 return response()->json(['message' => __('Sesi tamat tempoh. Sila muat semula halaman.')], 419);
             }
 
-            // Redirect via the referer header, not redirect()->back() or a session flash — both use
-            // the session, which is the thing under suspicion here.
-            $back = $request->headers->get('referer') ?: url('/');
-
-            return redirect($back);
+            return redirect($request->headers->get('referer') ?: url('/'));
         });
     })->create();
