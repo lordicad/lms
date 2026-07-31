@@ -32,7 +32,10 @@ return [
     |
     */
 
-    'lifetime' => (int) env('SESSION_LIFETIME', 120),
+    // 480 min (a full school day). Long enough that a teacher building a quiz across the day
+    // doesn't hit a "419 Page Expired" on submit from an idle-expired CSRF token. Override with
+    // SESSION_LIFETIME in .env if a shorter window is wanted.
+    'lifetime' => (int) env('SESSION_LIFETIME', 480),
 
     'expire_on_close' => env('SESSION_EXPIRE_ON_CLOSE', false),
 
