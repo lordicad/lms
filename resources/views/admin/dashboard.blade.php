@@ -76,7 +76,7 @@
 @endphp
 
 <x-admin-layout :title="__('Utama')"
-                :heading="__('Selamat datang, :name', ['name' => $user->name])"
+                :heading="__('Selamat datang, :name', ['name' => $user->username])"
                 heading-icon="👋"
                 :sub="__('Gambaran keseluruhan platform WeLearn pada hari ini')">
 
