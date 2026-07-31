@@ -38,7 +38,7 @@
 
             @if ($completedCount === 0)
                 <div class="tp-empty">
-                    <span style="font-size:30px">📊</span>
+                    <x-icon name="chart" class="h-[30px] w-[30px]" style="color:var(--tp-muted-2)" />
                     <h3 class="tp-g" style="font-size:19px;font-weight:800;color:var(--tp-ink)">{{ __('Belum ada data') }}</h3>
                     <p style="margin:0;font-size:14.5px;color:var(--tp-muted);max-width:420px">{{ __('Statistik akan muncul setelah murid mula menjawab kuiz ini.') }}</p>
                 </div>
@@ -78,7 +78,7 @@
 
             @if ($attempts->isEmpty())
                 <div class="tp-empty">
-                    <span style="font-size:30px">👋</span>
+                    <x-icon name="users" class="h-[30px] w-[30px]" style="color:var(--tp-muted-2)" />
                     <h3 class="tp-g" style="font-size:19px;font-weight:800;color:var(--tp-ink)">{{ __('Belum ada murid mencuba kuiz ini') }}</h3>
                     <p style="margin:0;font-size:14.5px;color:var(--tp-muted);max-width:420px">{{ __('Pastikan kuiz sudah diterbitkan dan mempunyai soalan.') }}</p>
                 </div>
