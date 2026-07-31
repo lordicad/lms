@@ -2,12 +2,11 @@
     :heading="__('Tambah Soalan')"
     :sub="__('Bina soalan aneka pilihan. Semua soalan disimpan serentak.')">
 
-    <div class="tp-formwrap">
-        {{-- The "now add questions" message comes from the layout flash after the quiz is created;
-             no duplicate banner here. --}}
+    {{-- Back link keeps its original left position; the content block below is centred in the wide
+         column. The "now add questions" message comes from the layout flash, no banner here. --}}
+    <a href="{{ route('cikgu.kuiz.edit', $quiz) }}" class="tp-back">← {{ __('Kembali') }}</a>
 
-        <a href="{{ route('cikgu.kuiz.edit', $quiz) }}" class="tp-back">← {{ __('Kembali') }}</a>
-
+    <div class="tp-formwrap" style="margin:0 auto;width:100%">
         <div style="display:flex;flex-direction:column;gap:6px">
             <span style="align-self:flex-start;background:#E4EEF9;color:#2E6CA8;border-radius:999px;padding:5px 14px;font-family:'Geist',sans-serif;font-size:12.5px;font-weight:800;display:inline-flex;align-items:center;gap:6px"><x-icon :name="$chapter->subject->iconName()" class="h-[15px] w-[15px]" />{{ $chapter->subject->name }}. {{ $chapter->grade->name }}. Bab {{ $chapter->number }}</span>
             <h2 class="tp-g" style="font-size:24px;font-weight:800;letter-spacing:-.01em;color:var(--tp-ink)">{{ $quiz->title }}</h2>
