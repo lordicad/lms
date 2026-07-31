@@ -3,12 +3,8 @@
     :sub="__('Bina soalan aneka pilihan. Semua soalan disimpan serentak.')">
 
     <div class="tp-formwrap">
-        @unless ($hasAttempts)
-            <div style="background:#DCF2EE;border:1px solid rgba(23,144,123,.3);border-radius:14px;padding:14px 18px;display:flex;align-items:center;gap:10px">
-                <span style="color:#0F7A68;font-size:15px">✓</span>
-                <span class="tp-g" style="font-size:13.5px;font-weight:700;color:#0F7A68">{{ __('Kuiz sedia dibina. Sekarang tambah soalan.') }}</span>
-            </div>
-        @endunless
+        {{-- The "now add questions" message comes from the layout flash after the quiz is created;
+             no duplicate banner here. --}}
 
         <a href="{{ route('cikgu.kuiz.index') }}" class="tp-back">← {{ __('Kuiz Saya') }}</a>
 
