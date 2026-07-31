@@ -45,18 +45,6 @@
      x-init="init()"
      style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px">
 
-    {{-- When editing, spell out the currently-saved Tahun / Subjek / Bab so the teacher can see
-         what was chosen before — the dropdowns below stay editable if they want to change it. --}}
-    @if ($chapter)
-        <div style="grid-column:1 / -1;display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:#EAF4F1;border:1px solid rgba(23,144,123,.22);border-radius:12px;padding:11px 15px">
-            <x-icon name="check-circle" class="h-[17px] w-[17px]" style="color:#0F7A68;flex-shrink:0" />
-            <span style="font-size:13px;color:var(--tp-muted-2)">
-                <span style="font-weight:800;color:#0F7A68">{{ __('Pilihan semasa:') }}</span>
-                <span style="font-weight:700;color:var(--tp-ink)">{{ $chapter->subject?->displayName() }} · {{ $chapter->grade?->name }} · {{ __('Bab') }} {{ $chapter->number }}@if ($chapter->title): {{ $chapter->title }}@endif</span>
-            </span>
-        </div>
-    @endif
-
     <div class="tp-field">
         <label for="grade_id" class="tp-label">{{ __('Tahun') }}</label>
 
@@ -136,6 +124,21 @@
                             this.chapter = this.saved.chapter;
 
                             if (this.subject && this.grade) this.reload(true);
+
+                            this.mirrorStyled();
+                        });
+                    },
+
+                    /*
+                     * The styled-select overlay (resources/js/app.js) mirrors its native <select>
+                     * through the value setter — but Alpine picks an option via option.selected,
+                     * which never trips that setter, so on edit the overlay keeps showing the
+                     * placeholder. Re-assigning `value` (a DOM no-op) fires the setter so the overlay
+                     * catches up. requestAnimationFrame lets the overlay build first.
+                     */
+                    mirrorStyled() {
+                        requestAnimationFrame(() => {
+                            this.$root.querySelectorAll('select').forEach((select) => { select.value = select.value; });
                         });
                     },
 
@@ -203,6 +206,7 @@
                                 // otherwise the select has nothing to bind the value to yet.
                                 this.$nextTick(() => {
                                     this.chapter = data.some(item => item.id === desired) ? desired : null;
+                                    this.mirrorStyled();
                                 });
                             })
                             .catch(() => { this.chapters = []; })
