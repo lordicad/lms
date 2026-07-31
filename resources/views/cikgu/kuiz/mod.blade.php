@@ -35,7 +35,6 @@
                     {{-- Decorative header: soft organic blob behind the icon tile, a botanical leaf in
                          the corner, and a sparkle + dot cluster. --}}
                     <div class="km-head">
-                        <span class="km-blob" style="background:{{ $c['blob'] }}"></span>
                         <span class="km-leaf" @if ($c['leaf']) style="filter:{{ $c['leaf'] }}" @endif></span>
                         <svg class="km-spark" viewBox="0 0 24 24" fill="currentColor" style="color:{{ $c['blob'] }}"><path d="M12 0c.7 6.3 5.7 11.3 12 12-6.3.7-11.3 5.7-12 12-.7-6.3-5.7-11.3-12-12C6.3 11.3 11.3 6.3 12 0z"/></svg>
                         <span class="km-dots" style="color:{{ $c['blob'] }}">
@@ -69,10 +68,6 @@
             .km-card:hover { transform:translateY(-3px); box-shadow:0 12px 26px rgba(46,44,80,.10); border-color:var(--ink); }
 
             .km-head { position:relative; height:104px; margin:0 -24px 16px; padding:22px 24px; overflow:hidden; }
-            .km-blob {
-                position:absolute; left:14px; top:6px; width:132px; height:118px; z-index:0;
-                border-radius:58% 42% 48% 52% / 62% 55% 45% 38%; opacity:.55; filter:blur(15px);
-            }
             .km-leaf {
                 position:absolute; right:-14px; top:-16px; width:120px; height:120px; z-index:1;
                 background:url('{{ asset('images/leaf.png') }}') center / contain no-repeat;
