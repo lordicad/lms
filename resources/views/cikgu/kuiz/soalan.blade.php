@@ -64,7 +64,7 @@
             @endif
 
             <template x-for="(question, qIndex) in questions" :key="question.uid">
-                <div class="tp-panelform" style="padding:24px">
+                <div class="tp-panelform" style="padding:26px;gap:24px">
                     <div style="display:flex;align-items:center;gap:12px">
                         <span class="qb-badge" x-text="qIndex + 1"></span>
                         <h3 class="tp-g" style="font-size:16px;font-weight:800;color:var(--tp-ink);flex:1">{{ __('Soalan') }} <span x-text="qIndex + 1"></span></h3>
