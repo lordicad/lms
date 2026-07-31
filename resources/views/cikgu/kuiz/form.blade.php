@@ -227,8 +227,8 @@
             }
             .kf-head  { display:flex; align-items:flex-start; gap:12px; }
             .kf-badge {
-                width:28px; height:28px; flex-shrink:0; border-radius:50%; background:#EDEEF3;
-                color:var(--tp-ink); display:grid; place-items:center;
+                width:28px; height:28px; flex-shrink:0; border-radius:50%; background:#DCF2EE;
+                color:#0F7A68; display:grid; place-items:center;
                 font-family:'Geist',sans-serif; font-weight:800; font-size:13px;
             }
             .kf-title { margin:0; font-size:17px; font-weight:800; color:var(--tp-ink); }
