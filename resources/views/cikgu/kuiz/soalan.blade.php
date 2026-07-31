@@ -65,7 +65,8 @@
 
             <template x-for="(question, qIndex) in questions" :key="question.uid">
                 <div class="tp-panelform" style="padding:24px">
-                    <div style="display:flex;align-items:center;gap:8px">
+                    <div style="display:flex;align-items:center;gap:12px">
+                        <span class="qb-badge" x-text="qIndex + 1"></span>
                         <h3 class="tp-g" style="font-size:16px;font-weight:800;color:var(--tp-ink);flex:1">{{ __('Soalan') }} <span x-text="qIndex + 1"></span></h3>
                         <button type="button" class="tp-icon-action" style="width:36px;height:36px;border:1.5px solid var(--tp-line-2)" @click="moveUp(qIndex)" :disabled="qIndex === 0" title="{{ __('Naik') }}"><x-icon name="arrow-up" class="h-4 w-4" /></button>
                         <button type="button" class="tp-icon-action" style="width:36px;height:36px;border:1.5px solid var(--tp-line-2)" @click="moveDown(qIndex)" :disabled="qIndex === questions.length - 1" title="{{ __('Turun') }}"><x-icon name="arrow-down" class="h-4 w-4" /></button>
@@ -102,7 +103,7 @@
                         </legend>
 
                         <template x-for="(option, oIndex) in question.options" :key="option.uid">
-                            <div class="tp-optrow" :class="{ 'is-correct': option.is_correct }">
+                            <div class="qb-optrow" :class="{ 'is-correct': option.is_correct }">
                                 <label style="display:flex;flex-shrink:0;cursor:pointer;align-items:center">
                                     <input :type="question.question_type === 'single' ? 'radio' : 'checkbox'"
                                            :name="`correct-${question.uid}`" :checked="option.is_correct"
@@ -111,21 +112,24 @@
                                     <span class="sr-only">{{ __('Tandakan pilihan ini sebagai jawapan betul') }}</span>
                                 </label>
 
-                                <span style="width:30px;height:30px;border-radius:50%;flex-shrink:0;display:grid;place-items:center;font-family:'Geist',sans-serif;font-weight:800;font-size:13px;background:#F1F0E8;color:var(--tp-muted-2)" x-text="String.fromCharCode(65 + oIndex)"></span>
+                                <span class="qb-letter" x-text="String.fromCharCode(65 + oIndex)"></span>
 
                                 <input type="text" :name="`questions[${qIndex}][options][${oIndex}][option_text]`" x-model="option.option_text" required
-                                       style="flex:1;min-height:42px;border:1.5px solid var(--tp-line-3);border-radius:10px;padding:0 12px;background:var(--tp-input);font-family:'Nunito',sans-serif;font-size:14px;color:var(--tp-ink);min-width:0"
+                                       class="qb-optinput"
                                        :aria-label="labels.optionAria.replace(':letter', String.fromCharCode(65 + oIndex))" placeholder="{{ __('Teks jawapan') }}">
 
                                 <input type="hidden" :name="`questions[${qIndex}][options][${oIndex}][is_correct]`" :value="option.is_correct ? 1 : 0">
 
                                 <button type="button" @click="removeOption(question, oIndex)" :disabled="question.options.length <= defaults.min_options"
-                                        style="width:34px;height:34px;border-radius:9px;border:none;cursor:pointer;background:transparent;color:#C24936;font-size:15px;flex-shrink:0" title="{{ __('Buang') }}">×</button>
+                                        class="qb-del" title="{{ __('Buang') }}">×</button>
                             </div>
                         </template>
 
                         <button type="button" @click="addOption(question)" :disabled="question.options.length >= defaults.max_options"
-                                class="tp-g" style="align-self:flex-start;min-height:40px;border:none;cursor:pointer;border-radius:10px;background:transparent;color:#17907B;font-weight:800;font-size:13.5px;padding:0 8px">+ {{ __('Tambah pilihan') }}</button>
+                                class="tp-g" style="align-self:flex-start;display:inline-flex;align-items:center;gap:8px;min-height:40px;border:none;cursor:pointer;border-radius:10px;background:transparent;color:#17907B;font-weight:800;font-size:13.5px;padding:0 4px">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M12 3 21 12 12 21 3 12z"/><line x1="12" y1="9" x2="12" y2="15"/><line x1="9" y1="12" x2="15" y2="12"/></svg>
+                            {{ __('Tambah pilihan') }}
+                        </button>
 
                         <span style="font-size:13px;font-weight:700;color:#C24936" x-show="! isQuestionValid(question)" x-cloak x-text="questionError(question)"></span>
                     </fieldset>
@@ -171,12 +175,14 @@
                     class="tp-g" style="min-height:52px;cursor:pointer;border-radius:14px;border:1.5px dashed rgba(46,44,80,.2);background:#F1F0E8;color:var(--tp-ink);font-weight:800;font-size:14.5px">+ {{ __('Tambah Soalan') }}</button>
 
             <div>
-                <div class="tp-card" style="border-radius:16px;padding:16px 20px;display:flex;align-items:center;gap:14px">
-                    <span style="font-size:13.5px;font-weight:700;color:var(--tp-muted-2);flex:1"><span x-text="questions.length"></span> {{ __('soalan.') }} <span x-text="totalPoints()"></span> {{ __('mata keseluruhan.') }}</span>
+                <div class="tp-card" style="border-radius:18px;padding:16px 22px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+                    <span style="width:38px;height:38px;border-radius:11px;background:#DCF2EE;color:#0F7A68;display:grid;place-items:center;flex-shrink:0"><x-icon name="quiz" class="h-[19px] w-[19px]" /></span>
+                    <span style="font-size:13.5px;font-weight:700;color:var(--tp-muted-2);flex:1;min-width:140px"><span x-text="questions.length"></span> {{ __('soalan.') }} <span x-text="totalPoints()"></span> {{ __('mata keseluruhan.') }}</span>
                     {{-- Cancel posts to the discard endpoint (a separate form, so it is not nested in
                          the questions form): an empty quiz is thrown away, one with questions is kept. --}}
                     <button type="submit" form="kuiz-batal" class="tp-btn-ghost">{{ __('Batal') }}</button>
-                    <button type="submit" class="tp-btn tp-btn-sm" :disabled="submitting">
+                    <button type="submit" class="tp-btn tp-btn-sm" :disabled="submitting" style="display:inline-flex;align-items:center;gap:8px">
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
                         <span x-show="! submitting">{{ __('Simpan Soalan') }}</span>
                         <span x-show="submitting" x-cloak>{{ __('Menyimpan...') }}</span>
                     </button>
@@ -193,6 +199,37 @@
             @method('DELETE')
         </form>
     </div>
+
+    @once
+        <style>
+            .qb-badge {
+                width:30px; height:30px; flex-shrink:0; border-radius:50%; background:#DCF2EE;
+                color:#0F7A68; display:grid; place-items:center;
+                font-family:'Geist',sans-serif; font-weight:800; font-size:14px;
+            }
+            .qb-optrow {
+                display:flex; align-items:center; gap:12px; border:1.5px solid var(--tp-line-2);
+                border-radius:14px; padding:10px 14px; background:var(--tp-surface);
+                transition:border-color .15s, background .15s;
+            }
+            .qb-optrow.is-correct { border-color:#17907B; background:#F4FBF8; }
+            .qb-letter {
+                width:30px; height:30px; border-radius:50%; flex-shrink:0; display:grid; place-items:center;
+                font-family:'Geist',sans-serif; font-weight:800; font-size:13px; background:#DCF2EE; color:#0F7A68;
+            }
+            .qb-optinput {
+                flex:1; min-width:0; min-height:44px; border:1.5px solid var(--tp-line-3); border-radius:10px;
+                padding:0 14px; background:var(--tp-input); font-family:'Nunito',sans-serif; font-size:14px; color:var(--tp-ink);
+            }
+            .qb-optinput:focus { outline:2px solid rgba(23,144,123,.28); outline-offset:1px; border-color:#17907B; }
+            .qb-del {
+                width:34px; height:34px; border-radius:9px; border:none; cursor:pointer; background:transparent;
+                color:#C24936; font-size:18px; flex-shrink:0; transition:background .15s;
+            }
+            .qb-del:hover:not(:disabled) { background:#FDE7E0; }
+            .qb-del:disabled { opacity:.35; cursor:default; }
+        </style>
+    @endonce
 
     @push('scripts')
         <script>
