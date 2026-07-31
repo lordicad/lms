@@ -77,24 +77,30 @@
                     <div class="tp-field">
                         <label class="tp-label">{{ __('Fail semasa') }}</label>
 
-                        <div x-show="! del" style="display:flex;align-items:center;gap:14px;background:var(--tp-surface);border:1px solid var(--tp-line-2);border-radius:16px;padding:14px 16px">
-                            <span style="width:46px;height:46px;border-radius:13px;background:#FBE4ED;color:#B84A75;display:grid;place-items:center;flex-shrink:0">
-                                <x-icon :name="$material->iconName()" class="h-[22px] w-[22px]" />
-                            </span>
-                            <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px">
-                                <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:14px;color:var(--tp-ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ $material->original_name }}</span>
-                                <span style="font-size:12.5px;color:var(--tp-muted-2);font-weight:700">{{ strtoupper(pathinfo($material->original_name, PATHINFO_EXTENSION)) }} · {{ $material->humanSize() }}</span>
+                        {{-- x-show lives on the wrapper so it never overrides the card's own
+                             display:flex (which would drop the row into a stacked column). --}}
+                        <div x-show="! del">
+                            <div style="display:flex;align-items:center;gap:14px;background:var(--tp-surface);border:1px solid var(--tp-line-2);border-radius:16px;padding:14px 16px">
+                                <span style="width:46px;height:46px;border-radius:13px;background:#FBE4ED;color:#B84A75;display:grid;place-items:center;flex-shrink:0">
+                                    <x-icon :name="$material->iconName()" class="h-[22px] w-[22px]" />
+                                </span>
+                                <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px">
+                                    <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:14px;color:var(--tp-ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ $material->original_name }}</span>
+                                    <span style="font-size:12.5px;color:var(--tp-muted-2);font-weight:700">{{ strtoupper(pathinfo($material->original_name, PATHINFO_EXTENSION)) }} · {{ $material->humanSize() }}</span>
+                                </div>
+                                <button type="button" @click="del = true" title="{{ __('Padam bahan ini') }}"
+                                        style="display:inline-flex;align-items:center;gap:7px;border:1.5px solid rgba(194,73,54,.28);background:#FDF1EE;cursor:pointer;color:#C24936;font-weight:800;font-size:13px;border-radius:11px;padding:9px 14px;flex-shrink:0">
+                                    <x-icon name="trash" class="h-4 w-4" />
+                                    {{ __('Padam') }}
+                                </button>
                             </div>
-                            <button type="button" @click="del = true" title="{{ __('Padam bahan ini') }}"
-                                    style="display:inline-flex;align-items:center;gap:7px;border:1.5px solid rgba(194,73,54,.28);background:#FDF1EE;cursor:pointer;color:#C24936;font-weight:800;font-size:13px;border-radius:11px;padding:9px 14px;flex-shrink:0">
-                                <x-icon name="trash" class="h-4 w-4" />
-                                {{ __('Padam') }}
-                            </button>
                         </div>
 
-                        <div x-show="del" x-cloak style="display:flex;align-items:center;gap:10px;background:#FDE7E0;border:1px solid rgba(194,73,54,.25);border-radius:12px;padding:12px 14px;font-size:13px;color:#C24936">
-                            <span style="flex:1">{{ __('Bahan ini akan dipadam apabila anda simpan.') }}</span>
-                            <button type="button" @click="del = false" style="border:none;background:transparent;cursor:pointer;color:#0F7A68;font-weight:800;font-size:13px;flex-shrink:0">{{ __('Kembalikan') }}</button>
+                        <div x-show="del" x-cloak>
+                            <div style="display:flex;align-items:center;gap:10px;background:#FDE7E0;border:1px solid rgba(194,73,54,.25);border-radius:12px;padding:12px 14px;font-size:13px;color:#C24936">
+                                <span style="flex:1">{{ __('Bahan ini akan dipadam apabila anda simpan.') }}</span>
+                                <button type="button" @click="del = false" style="border:none;background:transparent;cursor:pointer;color:#0F7A68;font-weight:800;font-size:13px;flex-shrink:0">{{ __('Kembalikan') }}</button>
+                            </div>
                         </div>
                     </div>
 
