@@ -47,11 +47,14 @@ class MaterialRequest extends FormRequest
         return $shared + [
             'title' => ['required', 'string', 'max:255'],
             'file' => [
-                'nullable',
+                // Optional normally (blank keeps the existing file), but required when the teacher
+                // removed the current file — a material must always keep a downloadable file.
+                $this->boolean('remove_file') ? 'required' : 'nullable',
                 'file',
                 'mimes:'.implode(',', config('lms.material_mimes')),
                 "max:{$max}",
             ],
+            'remove_file' => ['nullable', 'boolean'],
         ];
     }
 

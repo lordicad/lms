@@ -306,6 +306,8 @@
     "Had saiz :max MB.": "Size limit :max MB.",
     "Biarkan kosong untuk mengekalkan fail sedia ada.": "Leave empty to keep the existing file.",
     "Fail semasa:": "Current file:",
+    "Kembalikan": "Restore",
+    "Fail semasa akan dibuang — muat naik fail baharu untuk menggantikannya.": "The current file will be removed — upload a new one to replace it.",
     "Simpan Perubahan": "Save Changes",
     "Sunting Video": "Edit Video",
     "Lokasi video": "Video location",

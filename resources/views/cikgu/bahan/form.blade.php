@@ -54,18 +54,31 @@
                     <input id="title" name="title" type="text" value="{{ old('title', $material->title) }}" required class="tp-input" @error('title') aria-invalid="true" @enderror>
                     @error('title') <span class="tp-error">{{ $message }}</span> @enderror
                 </div>
-                <div class="tp-field">
+                <div class="tp-field" x-data="{ removed: false, picked: '' }"
+                     @change="if ($event.target.files) picked = $event.target.files[0] ? $event.target.files[0].name : ''">
                     <label for="file" class="tp-label">{{ __('Fail bahan') }}</label>
+
+                    {{-- The current file, with a Buang button. Removing it shows a notice and requires
+                         a replacement to be uploaded — a material always keeps a downloadable file. --}}
+                    <div x-show="! removed" style="display:flex;align-items:center;gap:10px;background:var(--tp-input);border:1px solid var(--tp-line-2);border-radius:12px;padding:12px 14px">
+                        <x-icon :name="$material->iconName()" class="h-5 w-5" style="color:var(--tp-muted-2);flex-shrink:0" />
+                        <span style="flex:1;min-width:0;font-size:13.5px;color:var(--tp-ink);font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ __('Fail semasa:') }} {{ $material->original_name }} <span style="color:var(--tp-muted);font-weight:400">({{ $material->humanSize() }})</span></span>
+                        <button type="button" @click="removed = true" style="display:inline-flex;align-items:center;gap:5px;border:none;background:transparent;cursor:pointer;color:#C24936;font-weight:800;font-size:13px;flex-shrink:0">× {{ __('Buang') }}</button>
+                    </div>
+
+                    <div x-show="removed && ! picked" x-cloak style="display:flex;align-items:center;gap:10px;background:#FDE7E0;border:1px solid rgba(194,73,54,.25);border-radius:12px;padding:12px 14px;font-size:13px;color:#C24936">
+                        <span style="flex:1">{{ __('Fail semasa akan dibuang — muat naik fail baharu untuk menggantikannya.') }}</span>
+                        <button type="button" @click="removed = false" style="border:none;background:transparent;cursor:pointer;color:#0F7A68;font-weight:800;font-size:13px;flex-shrink:0">{{ __('Kembalikan') }}</button>
+                    </div>
+
+                    <input type="hidden" name="remove_file" :value="removed ? 1 : 0">
+
                     <x-file-input id="file" name="file" accept=".pdf,.ppt,.pptx,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg" aria-describedby="file-help" @error('file') aria-invalid="true" @enderror />
                     <p id="file-help" class="tp-hint">
                         {{ __('PDF, PowerPoint, Word, Excel atau imej.') }} {{ __('Had saiz :max MB.', ['max' => config('lms.material_max_mb')]) }}
-                        {{ __('Biarkan kosong untuk mengekalkan fail sedia ada.') }}
+                        <span x-show="! removed">{{ __('Biarkan kosong untuk mengekalkan fail sedia ada.') }}</span>
                     </p>
                     @error('file') <span class="tp-error">{{ $message }}</span> @enderror
-                    <p style="display:flex;align-items:center;gap:8px;background:var(--tp-input);border-radius:12px;padding:12px 14px;font-size:13.5px;color:var(--tp-muted-2);margin:6px 0 0">
-                        <x-icon :name="$material->iconName()" class="h-5 w-5" style="color:var(--tp-muted-2)" />
-                        {{ __('Fail semasa:') }} {{ $material->original_name }} ({{ $material->humanSize() }})
-                    </p>
                 </div>
             @else
                 <x-file-dropzone
