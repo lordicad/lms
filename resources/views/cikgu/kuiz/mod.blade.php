@@ -26,12 +26,12 @@
         ];
     @endphp
 
-    {{-- Centre the card block within the wide content column (the shared .tp-formwrap is normally
-         left-aligned; centred here only). --}}
-    <div class="tp-formwrap" style="margin:0 auto;width:100%">
+    <div class="tp-formwrap">
         <a href="{{ route('cikgu.kuiz.index') }}" class="tp-back">← {{ __('Kuiz Saya') }}</a>
+    </div>
 
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px">
+    {{-- Cards centred in the wide content column; the back link above keeps its original left spot. --}}
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;max-width:860px;width:100%;margin:0 auto">
             @foreach ($cards as $c)
                 <a href="{{ $c['href'] }}" class="km-card" style="--ink:{{ $c['ink'] }}">
                     {{-- Decorative header: soft organic blob behind the icon tile, a botanical leaf in
@@ -55,7 +55,6 @@
                     </span>
                 </a>
             @endforeach
-        </div>
     </div>
 
     @once
