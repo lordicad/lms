@@ -7,7 +7,7 @@
 @php($en = app()->getLocale() === 'en')
 
 @if ($paginator->hasPages())
-    <nav role="navigation" aria-label="{{ $en ? 'Pagination Navigation' : 'Navigasi Halaman' }}">
+    <nav role="navigation" aria-label="{{ $en ? 'Pagination Navigation' : 'Navigasi Halaman' }}" style="margin-top:20px">
 
         <div class="flex gap-2 items-center justify-between sm:hidden">
 
