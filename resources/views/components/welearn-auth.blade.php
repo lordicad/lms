@@ -123,6 +123,19 @@
         }
         .wla-brand-foot { font-size: 12.5px; color: #8A9A80; }
 
+        /* Night mode: its own dark artwork (DMAuthPic) with a dark base behind it, and the panel
+           text lifted to light values so it stays legible over the dark image. */
+        html.theme-dark .wla-brand {
+            background:
+                linear-gradient(to right, transparent 42%, var(--bg) 100%),
+                #0E1A14 url('{{ asset('images/DMAuthPic.png') }}') left center / cover no-repeat;
+            color: #B8C8BC;
+        }
+        html.theme-dark .wla-brand h1 { color: #ECF2F4; }
+        html.theme-dark .wla-brand p { color: #B8C8BC; }
+        html.theme-dark .wla-brand-accent { color: #9DC284; }
+        html.theme-dark .wla-brand-foot { color: #8FA093; }
+
         /* ── Form panel ── */
         .wla-form {
             display: flex; flex-direction: column; align-items: center; justify-content: center;
