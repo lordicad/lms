@@ -110,7 +110,6 @@
                             <span class="sr-only">{{ __('Padam :title', ['title' => $lesson->title]) }}</span>
                         </button>
                     </x-confirm-modal>
-                    </form>
                 </div>
             @endforeach
         </div>
