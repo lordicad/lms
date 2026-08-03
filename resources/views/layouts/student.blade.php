@@ -55,7 +55,7 @@
             --wl-page:#0E1116; --wl-surface:#171E27; --wl-surface-2:#1E2731; --wl-input:#1E2731; --wl-chip:#232D38;
             --wl-ink:#EDF2F8; --wl-body:#C9D2DC; --wl-muted:#8A94A3; --wl-muted-2:#A6AFBC;
             --wl-line:rgba(255,255,255,.09); --wl-line-2:rgba(255,255,255,.12); --wl-line-3:rgba(255,255,255,.16);
-            --wl-hover:#232D38; --wl-active-bg:#123029; --wl-active-fg:#5EEAD4; --wl-teal:#1CB4A3;
+            --wl-hover:#232D38; --wl-active-bg:#123029; --wl-active-fg:#5EEAD4; --wl-teal:#17907B;
             --pill-bw:22%; --pill-bb:#10161C; --pill-fw:82%; --pill-fb:#fff;
         }
 
