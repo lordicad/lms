@@ -171,7 +171,7 @@
                                 <div style="display:flex;flex-direction:column;align-items:center;gap:6px;width:150px">
                                     <span style="position:relative">
                                         <span style="width:52px;height:52px;border-radius:50%;background:{{ $m['bg'] }};color:{{ $m['fg'] }};display:grid;place-items:center;font-family:'Geist',sans-serif;font-weight:800;font-size:15px;border:3px solid {{ $m['ring'] }}">{{ $student->initials() }}</span>
-                                        <span style="position:absolute;bottom:-8px;right:-8px;font-size:22px;filter:drop-shadow(0 2px 4px rgba(46,44,80,.25))">{{ $m['medal'] }}</span>
+                                        <span style="position:absolute;bottom:-10px;right:-10px;filter:drop-shadow(0 2px 4px rgba(46,44,80,.25))"><img src="{{ asset('images/medal'.$rank.'.png') }}" alt="" style="width:32px;height:32px;object-fit:contain;display:block"></span>
                                     </span>
                                     <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:13.5px;color:var(--tp-ink);text-align:center">{{ $student->name }}</span>
                                     <span style="font-size:11.5px;font-weight:700;color:var(--tp-muted);text-align:center">{{ $student->effort }} {{ __('mata aktiviti') }}</span>

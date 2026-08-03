@@ -19,9 +19,9 @@
         .lb-medal { position: relative; display: block; z-index: 2; }
         .lb-medal svg { display: block; width: 100%; height: 100%; }
         .lb-num { position: absolute; top: 0; left: 0; right: 0; height: 65%; display: grid; place-items: center; font-family: 'Geist', sans-serif; font-weight: 800; color: var(--c-mnum); }
-        .lb-card--first .lb-medal { width: 40px; height: 47px; }
+        .lb-card--first .lb-medal { width: 56px; height: 56px; }
         .lb-card--first .lb-num { font-size: 13px; }
-        .lb-card--second .lb-medal, .lb-card--third .lb-medal { width: 35px; height: 41px; }
+        .lb-card--second .lb-medal, .lb-card--third .lb-medal { width: 46px; height: 46px; }
         .lb-card--second .lb-num, .lb-card--third .lb-num { font-size: 11px; }
 
         .lb-avatar { position: relative; z-index: 1; border-radius: 50%; display: grid; place-items: center; overflow: hidden; background: radial-gradient(circle at 50% 32%, #fff, var(--c-avfill) 80%); border: 3px solid var(--c-avring); color: var(--c-avink); font-family: 'Geist', sans-serif; font-weight: 800; }
@@ -179,16 +179,9 @@
                             <svg class="lb-deco" style="bottom:-4px;{{ $s->rank === 3 ? 'right:-2px;transform:scaleX(-1)' : 'left:-2px' }};opacity:.38" width="62" height="62" viewBox="0 0 60 60" fill="var(--c-leaf)" aria-hidden="true"><path d="M8 52c0-15 11-26 27-28-2 7-6 12-11 16 6-2 12-1 17 2-8 4-17 3-24-1 4 6 3 13-2 18-4-3-7-9-7-15z"/></svg>
                             <svg class="lb-deco" style="bottom:-20px;{{ $s->rank === 3 ? 'left:-18px' : 'right:-18px' }};opacity:.3" width="94" height="72" viewBox="0 0 94 72" fill="var(--c-spark)" aria-hidden="true"><path d="M0 72C0 40 22 22 52 26c30 4 42 26 42 46H0z"/></svg>
 
-                            {{-- Medal: metal disc + rank number, ribbon tails below. --}}
+                            {{-- Medal: illustrated gold/silver/bronze PNG (rank number is drawn on it). --}}
                             <span class="lb-medal" aria-hidden="true">
-                                <svg viewBox="0 0 44 52" fill="none">
-                                    <path d="M16 22 L22 22 L18.5 43 L15 39.5 L12 43 Z" fill="var(--c-mribB)"/>
-                                    <path d="M22 22 L28 22 L32 43 L28.5 39.5 L25 43 Z" fill="var(--c-mribA)"/>
-                                    <circle cx="22" cy="17" r="13" fill="var(--c-disc)" stroke="var(--c-dring)" stroke-width="2"/>
-                                    <circle cx="22" cy="17" r="9.5" fill="none" stroke="var(--c-dhi)" stroke-width="1.5"/>
-                                    <ellipse cx="18" cy="12" rx="4.5" ry="3" fill="#fff" opacity=".5"/>
-                                </svg>
-                                <span class="lb-num">{{ $s->rank }}</span>
+                                <img src="{{ asset('images/medal'.$s->rank.'.png') }}" alt="" style="width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 3px 5px rgba(46,44,80,.22))">
                             </span>
 
                             {{-- Avatar: image when present, first initial otherwise. --}}

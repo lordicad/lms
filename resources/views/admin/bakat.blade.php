@@ -205,7 +205,7 @@
                     @foreach ($contributors->take(3) as $i => $teacher)
                         @php($m = $podiumMeta[$i + 1])
                         <div style="background:var(--tp-surface);border:1.5px solid {{ $m['ring'] }};border-radius:20px;padding:{{ $m['pad'] }} 20px 20px;display:flex;flex-direction:column;align-items:center;gap:7px;box-shadow:0 6px 20px var(--tp-line);order:{{ $m['order'] }}">
-                            <span style="font-size:30px;margin-top:-34px;filter:drop-shadow(0 3px 6px rgba(46,44,80,.2))">{{ $m['medal'] }}</span>
+                            <span style="margin-top:-40px;filter:drop-shadow(0 3px 6px rgba(46,44,80,.2))"><img src="{{ asset('images/medal'.($i + 1).'.png') }}" alt="" style="width:46px;height:46px;object-fit:contain;display:block"></span>
                             <span style="width:56px;height:56px;border-radius:50%;background:{{ $m['bg'] }};color:{{ $m['fg'] }};display:grid;place-items:center;font-family:'Geist',sans-serif;font-weight:800;font-size:18px;border:3px solid {{ $m['ring'] }}">{{ $teacher->initials() }}</span>
                             <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:15.5px;color:var(--tp-ink);text-align:center">{{ $teacher->name }}</span>
                             <span style="font-size:12.5px;font-weight:700;color:var(--tp-muted);text-align:center">{{ $subjectLabel($teacher->id, 1) }}</span>

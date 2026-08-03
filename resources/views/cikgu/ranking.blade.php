@@ -75,8 +75,8 @@
                         @php($accBg = $row->accuracy >= 70 ? '#DCF2EE' : ($row->accuracy >= 50 ? '#FEF0CE' : '#FDE7E0'))
                         @php($accFg = $row->accuracy >= 70 ? '#0F7A68' : ($row->accuracy >= 50 ? '#8A6A12' : '#C24936'))
                         <div class="tp-row" style="display:grid;grid-template-columns:{{ $cols }};gap:12px;align-items:center;padding:13px 20px">
-                            <span style="font-size:15px">
-                                @if ($row->rank === 1) 🥇 @elseif ($row->rank === 2) 🥈 @elseif ($row->rank === 3) 🥉 @else {{ $row->rank }} @endif
+                            <span style="font-size:15px;font-weight:800;color:var(--tp-muted)">
+                                @if ($row->rank <= 3)<img src="{{ asset('images/medal'.$row->rank.'.png') }}" alt="{{ $row->rank }}" style="width:26px;height:26px;object-fit:contain;display:inline-block;vertical-align:middle">@else {{ $row->rank }} @endif
                             </span>
                             <div style="display:flex;align-items:center;gap:12px;min-width:0">
                                 <span style="width:36px;height:36px;border-radius:10px;background:{{ $p[0] }};color:{{ $p[1] }};display:grid;place-items:center;font-family:'Geist',sans-serif;font-weight:800;font-size:12px;flex-shrink:0">{{ $row->student->initials() }}</span>
