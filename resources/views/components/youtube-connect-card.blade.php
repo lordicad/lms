@@ -45,15 +45,14 @@
                         <span class="block text-xs text-ink-2">{{ __('Disahkan :date', ['date' => $channel->verified_at->translatedFormat('d M Y')]) }}</span>
                     </span>
 
-                    <form method="POST" action="{{ route('oauth.youtube.disconnect', $channel) }}"
-                          onsubmit="return confirm(@js(__("Putuskan sambungan channel ini? Video YouTube dari channel ini tidak akan lagi dikira untuk skor bakat anda.")))">
-                        @csrf
-                        @method('DELETE')
-
-                        <button type="submit" class="btn-ghost btn-sm text-danger hover:bg-danger-soft">
+                    <x-confirm-modal id="yt-disconnect-card-{{ $channel->id }}" :action="route('oauth.youtube.disconnect', $channel)"
+                        icon="x" :confirm="__('Putuskan')"
+                        :title="__('Putuskan sambungan?')"
+                        :message="__('Putuskan sambungan channel ini? Video YouTube dari channel ini tidak akan lagi dikira untuk skor bakat anda.')">
+                        <button type="button" class="btn-ghost btn-sm text-danger hover:bg-danger-soft">
                             {{ __('Putuskan') }}
                         </button>
-                    </form>
+                    </x-confirm-modal>
                 </li>
             @endforeach
         </ul>

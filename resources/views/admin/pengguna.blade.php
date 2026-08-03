@@ -102,15 +102,14 @@
                                        style="width:34px;height:34px;border-radius:9px;border:1.5px solid var(--tp-line-2);background:var(--tp-surface);display:grid;place-items:center;color:#4A5A6B;text-decoration:none">
                                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
                                     </a>
-                                    <form method="POST" action="{{ route('admin.pengguna.destroy', $u) }}"
-                                          onsubmit="return confirm(@js(__("Padam akaun \":name\"? Tindakan ini kekal. Jika ini akaun cikgu, semua video, bahan dan kuiz mereka turut dipadam.", ["name" => $u->name])))">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" title="{{ __('Padam') }}"
+                                    <x-confirm-modal id="del-user-{{ $u->id }}" :action="route('admin.pengguna.destroy', $u)"
+                                        :title="__('Padam akaun?')"
+                                        :message="__('Padam akaun \":name\"? Tindakan ini kekal. Jika ini akaun cikgu, semua video, bahan dan kuiz mereka turut dipadam.', ['name' => $u->name])">
+                                        <button type="button" title="{{ __('Padam') }}"
                                                 style="width:34px;height:34px;border-radius:9px;border:1.5px solid rgba(194,73,54,.25);background:var(--tp-surface);cursor:pointer;display:grid;place-items:center;color:#C24936">
                                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
                                         </button>
-                                    </form>
+                                    </x-confirm-modal>
                                 </div>
                             </div>
                         @endforeach

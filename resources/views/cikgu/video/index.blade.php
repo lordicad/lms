@@ -102,14 +102,14 @@
                         <x-icon name="pencil" class="h-4 w-4" />{{ __('Sunting') }}
                     </a>
 
-                    <form method="POST" action="{{ route('cikgu.video.destroy', $lesson) }}" style="flex-shrink:0"
-                          onsubmit="return confirm(@js(__("Padam video \":title\"? Fail video juga akan dipadam. Tindakan ini tidak boleh dibatalkan.", ["title" => $lesson->title])))">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="tp-icon-action tp-icon-danger" title="{{ __('Padam') }}" style="background:#FDECEC;border:none;border-radius:14px">
+                    <x-confirm-modal id="del-video-{{ $lesson->id }}" :action="route('cikgu.video.destroy', $lesson)"
+                        :title="__('Padam video?')"
+                        :message="__('Padam video \":title\"? Fail video juga akan dipadam. Tindakan ini tidak boleh dibatalkan.', ['title' => $lesson->title])">
+                        <button type="button" class="tp-icon-action tp-icon-danger" title="{{ __('Padam') }}" style="flex-shrink:0;background:#FDECEC;border:none;border-radius:14px">
                             <x-icon name="trash" class="h-[18px] w-[18px]" />
                             <span class="sr-only">{{ __('Padam :title', ['title' => $lesson->title]) }}</span>
                         </button>
+                    </x-confirm-modal>
                     </form>
                 </div>
             @endforeach
