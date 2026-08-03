@@ -6,6 +6,12 @@
 --}}
 @php($en = app()->getLocale() === 'en')
 
+@once
+    {{-- App dark mode uses html.theme-dark (not Tailwind's dark: variant), so recolour the
+         summary line here to keep it readable on the dark page. --}}
+    <style>html.theme-dark .pg-summary { color:#EDF2F8 !important; }</style>
+@endonce
+
 @if ($paginator->hasPages())
     <nav role="navigation" aria-label="{{ $en ? 'Pagination Navigation' : 'Navigasi Halaman' }}" style="margin-top:20px">
 
@@ -36,7 +42,7 @@
         <div class="hidden sm:flex-1 sm:flex sm:gap-2 sm:items-center sm:justify-between">
 
             <div>
-                <p class="text-sm text-gray-700 leading-5 dark:text-gray-600">
+                <p class="pg-summary text-sm text-gray-700 leading-5">
                     {{ $en ? 'Showing' : 'Memaparkan' }}
                     @if ($paginator->firstItem())
                         <span class="font-medium">{{ $paginator->firstItem() }}</span>
