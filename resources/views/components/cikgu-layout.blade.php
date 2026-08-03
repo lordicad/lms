@@ -91,7 +91,7 @@
            light image behind pale text would fight it. Set here rather than inline on <body> so the
            dark override can win. */
         body.tp { background: var(--tp-page) url('{{ asset('images/gambarbg.png') }}') center center / cover no-repeat fixed; }
-        html.theme-dark body.tp { background: var(--tp-page) url('{{ asset('images/DMgambarbg.png') }}?v=3') center center / cover no-repeat fixed; }
+        html.theme-dark body.tp { background: var(--tp-page) url('{{ asset('images/DMgambarbg.png') }}?v=3') calc(50% - 40px) center / cover no-repeat fixed; }
 
         /* Shell */
         .tp-shell { min-height:100vh; display:grid; grid-template-columns:236px 1fr; }
