@@ -2,7 +2,7 @@
     {{-- Page heading, matching the admin dashboard. Greets by username rather than name: that is
          the display nickname the owner can change, and the one this dashboard is meant to show. --}}
     <div style="display:flex;align-items:flex-start;gap:16px">
-        <span style="width:48px;height:48px;border-radius:14px;background:#DCF2EE;display:grid;place-items:center;flex-shrink:0;font-size:26px;line-height:1" aria-hidden="true">👋</span>
+        <span style="width:48px;height:48px;border-radius:14px;background:#DCF2EE;display:grid;place-items:center;flex-shrink:0" aria-hidden="true"><img src="{{ asset('images/wave.png') }}" alt="" style="width:30px;height:30px;object-fit:contain"></span>
         <div style="display:flex;flex-direction:column;gap:3px;min-width:0">
             <h1 style="margin:0;font-family:'Geist',sans-serif;font-size:26px;font-weight:800;letter-spacing:-.01em;color:var(--wl-ink)">{{ __('Selamat datang, :name', ['name' => $user->username]) }}</h1>
             <span style="font-size:14.5px;color:var(--wl-muted)">{{ __('Ringkasan pembelajaran anda pada hari ini') }}</span>
