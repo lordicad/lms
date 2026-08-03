@@ -12,6 +12,17 @@
         $gi = 0;
     @endphp
 
+    {{-- Night mode: swap each pale tile for a dark, same-hue gradient (inline bg wins by default,
+         so these overrides use !important). One rule per palette index. --}}
+    <style>
+        html.theme-dark .sc-0 { background:linear-gradient(135deg,#1C2A3A,#162130) !important; }
+        html.theme-dark .sc-1 { background:linear-gradient(135deg,#282344,#1F1B38) !important; }
+        html.theme-dark .sc-2 { background:linear-gradient(135deg,#3A2430,#2C1B26) !important; }
+        html.theme-dark .sc-3 { background:linear-gradient(135deg,#183329,#122A23) !important; }
+        html.theme-dark .sc-4 { background:linear-gradient(135deg,#3A331F,#2C2617) !important; }
+        html.theme-dark .sc-5 { background:linear-gradient(135deg,#3A2A23,#2C201B) !important; }
+    </style>
+
     @if ($grade && $subjectsByCategory->isNotEmpty())
         <div style="display:flex;flex-direction:column;gap:18px">
             <div style="display:flex;align-items:flex-start;gap:16px">
@@ -29,9 +40,9 @@
                         <span style="font-family:'Geist',sans-serif;font-size:13px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--wl-muted-2)">{{ \App\Models\Subject::categoryLabel($category) }}</span>
                         <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px">
                             @foreach ($group as $subject)
-                                @php($grad = $grads[$gi++ % count($grads)])
-                                <a href="{{ route('belajar.subjek', ['subject' => $subject->slug, 'grade' => $grade->level]) }}" class="wl-lift"
-                                   style="background:{{ $grad }};border:1px solid var(--wl-line);border-radius:18px;padding:20px;min-height:160px;display:flex;flex-direction:column;box-shadow:0 4px 16px var(--wl-line);cursor:pointer;text-decoration:none">
+                                @php($gidx = $gi++ % count($grads))
+                                <a href="{{ route('belajar.subjek', ['subject' => $subject->slug, 'grade' => $grade->level]) }}" class="wl-lift sc-{{ $gidx }}"
+                                   style="background:{{ $grads[$gidx] }};border:1px solid var(--wl-line);border-radius:18px;padding:20px;min-height:160px;display:flex;flex-direction:column;box-shadow:0 4px 16px var(--wl-line);cursor:pointer;text-decoration:none">
                                     <x-subject-icon :subject="$subject" :size="26" />
                                     <div style="margin-top:auto;margin-bottom:12px;display:flex;flex-direction:column;gap:3px">
                                         <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:16px;color:var(--wl-ink)">{{ $subject->displayName() }}</span>
