@@ -84,6 +84,8 @@
         }
         .tp button { font-family:inherit; }
         .tp-g { font-family:'Geist',sans-serif; }
+        /* Heading-icon tile: the light teal reads too bright at night, so darken it (dark mode only). */
+        html.theme-dark .hi-tile { background:rgba(45,212,191,.15) !important; color:#5EEAD4 !important; }
 
         /* Page wallpaper: a fixed, cover-sized artwork behind the page, with --tp-page underneath as
            the fallback. The sidebar and cards keep their own solid backgrounds, so the image shows
@@ -269,7 +271,7 @@
         <div class="tp-head">
             @if ($headingIcon)
                 {{-- Accepts an image filename (from public/images), an icon name (line icon), or an emoji. --}}
-                <span style="width:48px;height:48px;border-radius:14px;background:#DCF2EE;color:#0F7A68;display:grid;place-items:center;flex-shrink:0;align-self:flex-start" aria-hidden="true">@if (\Illuminate\Support\Str::endsWith($headingIcon, ['.png', '.jpg', '.jpeg', '.svg', '.webp']))<img src="{{ asset('images/'.$headingIcon) }}" alt="" style="width:30px;height:30px;object-fit:contain" />@elseif (preg_match('/^[a-z0-9-]+$/', $headingIcon))<x-icon :name="$headingIcon" style="width:24px;height:24px" />@else<span style="font-size:26px;line-height:1">{{ $headingIcon }}</span>@endif</span>
+                <span class="hi-tile" style="width:48px;height:48px;border-radius:14px;background:#DCF2EE;color:#0F7A68;display:grid;place-items:center;flex-shrink:0;align-self:flex-start" aria-hidden="true">@if (\Illuminate\Support\Str::endsWith($headingIcon, ['.png', '.jpg', '.jpeg', '.svg', '.webp']))<img src="{{ asset('images/'.$headingIcon) }}" alt="" style="width:30px;height:30px;object-fit:contain" />@elseif (preg_match('/^[a-z0-9-]+$/', $headingIcon))<x-icon :name="$headingIcon" style="width:24px;height:24px" />@else<span style="font-size:26px;line-height:1">{{ $headingIcon }}</span>@endif</span>
             @endif
             <div style="display:flex;flex-direction:column;gap:2px;flex:1;min-width:200px">
                 <h1 class="tp-h1">{{ $heading }}</h1>
