@@ -80,8 +80,9 @@
         .wl a:not([class]):hover { color: #2BB39B; }
         .wl input:focus, .wl select:focus { outline: none; border-color: #17907B !important; box-shadow: 0 0 0 3px rgba(43,179,155,.25); }
         @media (prefers-reduced-motion: reduce) { .wl * { animation: none !important; transition: none !important; } }
-        /* Heading-icon tile (e.g. the wave): darken the light teal at night. */
-        html.theme-dark .hi-tile { background:rgba(45,212,191,.15) !important; }
+        /* Heading-icon tile (e.g. the wave / book / heart): darken the light teal at night and
+           lift the glyph colour so it stays legible. */
+        html.theme-dark .hi-tile { background:rgba(45,212,191,.15) !important; color:#5EEAD4 !important; }
 
         /* Favourite heart reveal (matches the prototype). */
         .fav-btn { opacity: 0; transition: opacity .15s ease-out, transform .15s ease-out; }
