@@ -67,7 +67,7 @@
             --tp-shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -8px rgba(0,0,0,.55);
             --tp-shadow-lift:0 2px 6px rgba(0,0,0,.45), 0 18px 44px -14px rgba(0,0,0,.6);
             --tp-input:#1E2731; --tp-active-bg:#123029; --tp-active-fg:#5EEAD4;
-            --tp-page:#0E1116; --tp-surface:#171E27; --tp-surface-2:#1E2731; --tp-hover:#232D38; --tp-chip:#232D38; --tp-icon:#AEB6C2;
+            --tp-page:#0E1116; --tp-surface:#1E2732; --tp-surface-2:#26313E; --tp-hover:#232D38; --tp-chip:#232D38; --tp-icon:#AEB6C2;
             --pill-bw:22%; --pill-bb:#10161C; --pill-fw:82%; --pill-fb:#fff;
         }
         .tp *,.tp *::before,.tp *::after { box-sizing:border-box; }
