@@ -71,7 +71,7 @@
         }
         /* Night mode keeps its dark ramp — a pale wallpaper behind it would undo the point of it
            and leave the light text on the cards fighting the background. */
-        html.theme-dark body { background: var(--wl-page) url('{{ asset('images/DMgambarbg.png') }}') center center / cover no-repeat fixed; }
+        html.theme-dark body { background: var(--wl-page) url('{{ asset('images/DMgambarbg.png') }}?v=2') center center / cover no-repeat fixed; }
         .wl a { text-decoration: none; }
         /* Only plain content links get teal. Links with a class — the sidebar nav, the back button —
            carry their own colour, so the nav can read grey like the teacher rail instead of being
