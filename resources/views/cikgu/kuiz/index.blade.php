@@ -97,9 +97,9 @@
                         <span class="sr-only">{{ __('Sunting :title', ['title' => $quiz->title]) }}</span>
                     </a>
 
+                    @php($delMsg = __('Padam kuiz ":title"? Semua soalan dan percubaan murid akan dipadam sekali. Tindakan ini tidak boleh dibatalkan.', ['title' => $quiz->title]))
                     <x-confirm-modal id="del-kuiz-{{ $quiz->id }}" :action="route('cikgu.kuiz.destroy', $quiz)"
-                        :title="__('Padam kuiz?')"
-                        :message="__('Padam kuiz \":title\"? Semua soalan dan percubaan murid akan dipadam sekali. Tindakan ini tidak boleh dibatalkan.', ['title' => $quiz->title])">
+                        :title="__('Padam kuiz?')" :message="$delMsg">
                         <button type="button" class="tp-icon-action tp-icon-danger" title="{{ __('Padam') }}" style="flex-shrink:0;background:#FDECEC;border:none;border-radius:14px">
                             <x-icon name="trash" class="h-[18px] w-[18px]" />
                             <span class="sr-only">{{ __('Padam :title', ['title' => $quiz->title]) }}</span>

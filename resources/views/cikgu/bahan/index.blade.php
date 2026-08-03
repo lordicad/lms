@@ -88,9 +88,9 @@
                         <x-icon name="pencil" class="h-4 w-4" />{{ __('Sunting') }}
                     </a>
 
+                    @php($delMsg = __('Padam bahan ":title"? Fail juga akan dipadam.', ['title' => $material->title]))
                     <x-confirm-modal id="del-bahan-{{ $material->id }}" :action="route('cikgu.bahan.destroy', $material)"
-                        :title="__('Padam bahan?')"
-                        :message="__('Padam bahan \":title\"? Fail juga akan dipadam.', ['title' => $material->title])">
+                        :title="__('Padam bahan?')" :message="$delMsg">
                         <button type="button" class="tp-icon-action tp-icon-danger" title="{{ __('Padam') }}" style="flex-shrink:0;background:#FDE7E0">
                             <x-icon name="trash" class="h-[18px] w-[18px]" />
                             <span class="sr-only">{{ __('Padam :title', ['title' => $material->title]) }}</span>
