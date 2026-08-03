@@ -60,7 +60,7 @@
         /* Night mode: same token NAMES, dark values — so every .tp element and every page
            colour that was converted to a var(--tp-*) recolours for free. */
         html.theme-dark .tp {
-            --tp-teal:#2DD4BF; --tp-teal-hover:#5EEAD4;
+            --tp-teal:#1CB4A3; --tp-teal-hover:#2BC9B7;
             --tp-ink:#EDF2F8; --tp-body:#C9D2DC;
             --tp-muted:#8A94A3; --tp-muted-2:#A6AFBC;
             --tp-line:rgba(255,255,255,.09); --tp-line-2:rgba(255,255,255,.14); --tp-line-3:rgba(255,255,255,.11);
