@@ -42,7 +42,7 @@
             --brand: #9DC284; --brand-hover: #A9C97E; --brand-ink: #9DC284; --brand-soft: rgba(157,194,132,.14);
             --line: rgba(255,255,255,.09); --line-strong: rgba(255,255,255,.14);
             --dark-green: #12241A;
-            /* Dark mode drops the photo, so the chrome falls back to the dark surface. */
+            /* The header chrome reads from the dark surface so it stays legible over the night artwork. */
             --chrome: var(--surface);
             --shadow-sm: 0 4px 16px rgba(0,0,0,.35);
             --shadow-lg: 0 24px 60px rgba(0,0,0,.5);
@@ -60,7 +60,8 @@
             font-family: 'Nunito', sans-serif; font-size: 16px; line-height: 1.5;
             -webkit-font-smoothing: antialiased;
         }
-        html.theme-dark body { background: var(--bg); }
+        /* Night mode has its own artwork (DMLandingPic) — same fixed/cover treatment as the light photo. */
+        html.theme-dark body { background: var(--bg) url('{{ asset('images/DMLandingPic.png') }}') center center / cover no-repeat fixed; }
         h1, h2, h3, .font-display { font-family: 'Geist', sans-serif; }
         a { color: var(--brand); text-decoration: none; }
         img, svg { display: block; }
@@ -109,10 +110,9 @@
         .wl-btn-outline.wl-btn-lg:hover { transform: none; }
 
         /* Hero */
-        /* No veil in light mode — the artwork shows through the hero at full strength. Dark mode
-           fills it with the opaque ramp, which hides the (dropped) photo. */
+        /* No veil in either mode — the artwork (light photo / DMLandingPic at night) shows through
+           the hero at full strength. */
         .wl-hero { background: transparent; }
-        html.theme-dark .wl-hero { background: linear-gradient(180deg, var(--surface) 0%, var(--bg) 100%); }
         .wl-hero-grid { display: grid; grid-template-columns: 1.05fr .95fr; gap: 56px; align-items: center; padding: 72px 0 64px; }
         .wl-eyebrow { display: inline-flex; align-self: flex-start; align-items: center; gap: 8px; background: var(--brand-soft); color: var(--brand-ink); border-radius: 999px; padding: 8px 16px; font-family: 'Geist', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
         .wl-eyebrow .dot { width: 8px; height: 8px; border-radius: 50%; background: #6D9C55; }
