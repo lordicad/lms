@@ -23,17 +23,28 @@
             @if ($hero)
                 @php($hs = $hero->chapter->subject)
                 @php($heroFav = $hero->isFavouritedBy($user))
+                @once
+                    {{-- The hero card is a light-blue feature panel; recolour it for night mode
+                         (inline styles win by default, so these overrides use !important). --}}
+                    <style>
+                        html.theme-dark .hero-card  { background:#17232F !important; box-shadow:0 12px 32px rgba(0,0,0,.45) !important; }
+                        html.theme-dark .hero-title { color:#EDF2F8 !important; }
+                        html.theme-dark .hero-babpill { color:#AEB6C2 !important; }
+                        html.theme-dark .hero-subpill { color:#7FB2EA !important; }
+                        html.theme-dark .hero-thumb { background:linear-gradient(135deg,#23313F,#18242F) !important; }
+                    </style>
+                @endonce
                 <div style="display:grid;grid-template-columns:minmax(0,1fr);gap:20px;align-items:stretch">
-                    <div style="border-radius:22px;overflow:hidden;display:grid;grid-template-columns:minmax(0,1fr) minmax(160px,42%);background:#E3F0FA;box-shadow:0 10px 30px rgba(66,118,174,.18)">
+                    <div class="hero-card" style="border-radius:22px;overflow:hidden;display:grid;grid-template-columns:minmax(0,1fr) minmax(160px,42%);background:#E3F0FA;box-shadow:0 10px 30px rgba(66,118,174,.18)">
                         <div style="padding:50px;display:flex;flex-direction:column;justify-content:center;gap:14px;min-width:0">
                             <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-                                <span style="background:var(--wl-surface);color:#2E6CA8;border-radius:999px;padding:5px 13px;font-family:'Geist',sans-serif;font-size:12px;font-weight:800"><x-subject-emoji :subject="$hs" class="text-sm" /> {{ $hs->displayName() }}</span>
-                                <span style="background:var(--wl-surface);color:#4A5A6B;border-radius:999px;padding:5px 13px;font-family:'Geist',sans-serif;font-size:12px;font-weight:800">Bab {{ $hero->chapter->number }}</span>
+                                <span class="hero-subpill" style="background:var(--wl-surface);color:#2E6CA8;border-radius:999px;padding:5px 13px;font-family:'Geist',sans-serif;font-size:12px;font-weight:800"><x-subject-emoji :subject="$hs" class="text-sm" /> {{ $hs->displayName() }}</span>
+                                <span class="hero-babpill" style="background:var(--wl-surface);color:#4A5A6B;border-radius:999px;padding:5px 13px;font-family:'Geist',sans-serif;font-size:12px;font-weight:800">Bab {{ $hero->chapter->number }}</span>
                                 @unless ($heroResuming)
                                     <span style="background:#17907B;color:#fff;border-radius:999px;padding:5px 13px;font-family:'Geist',sans-serif;font-size:11.5px;font-weight:800;letter-spacing:.08em">TRENDING</span>
                                 @endunless
                             </div>
-                            <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:26px;font-weight:800;color:#1A2433;letter-spacing:-.01em;text-wrap:balance">{{ $hero->title }}</h2>
+                            <h2 class="hero-title" style="margin:0;font-family:'Geist',sans-serif;font-size:26px;font-weight:800;color:#1A2433;letter-spacing:-.01em;text-wrap:balance">{{ $hero->title }}</h2>
                             <div style="display:flex;gap:10px;flex-wrap:wrap">
                                 <a href="{{ route('video.show', $hero) }}" class="wl-btn-primary" style="min-height:46px;display:inline-flex;align-items:center;border-radius:12px;background:#17907B;color:#fff;font-family:'Geist',sans-serif;font-weight:800;font-size:14.5px;padding:0 22px;text-decoration:none">▶&nbsp; {{ $heroResuming ? __('Sambung Menonton') : __('Tonton') }}</a>
                                 {{-- AJAX favourite toggle (endpoint returns JSON; no navigation). --}}
@@ -63,7 +74,7 @@
                                 </button>
                             </div>
                         </div>
-                        <a href="{{ route('video.show', $hero) }}" style="background:linear-gradient(135deg,#C4DCF2,#A5C9EA);display:grid;place-items:center;position:relative;min-height:200px;text-decoration:none">
+                        <a href="{{ route('video.show', $hero) }}" class="hero-thumb" style="background:linear-gradient(135deg,#C4DCF2,#A5C9EA);display:grid;place-items:center;position:relative;min-height:200px;text-decoration:none">
                             @if ($hero->thumbnailUrl())
                                 <img src="{{ $hero->thumbnailUrl() }}" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
                             @endif
