@@ -1,8 +1,8 @@
 <x-dynamic-component :component="auth()->user()->isTeacher() ? 'app-layout' : 'student-layout'" :title="'Bab '.$chapter->number.': '.$chapter->title">
     @php($col = $subject->color ?: '#17907B')
     @php($grad = "linear-gradient(135deg, color-mix(in oklab, {$col} 30%, #fff), color-mix(in oklab, {$col} 12%, #fff))")
-    @php($tagBg = "color-mix(in oklab, {$col} 15%, #fff)")
-    @php($tagColor = "color-mix(in oklab, {$col} 82%, #000)")
+    @php($tagBg = "color-mix(in oklab, {$col} var(--pill-bw), var(--pill-bb))")
+    @php($tagColor = "color-mix(in oklab, {$col} var(--pill-fw), var(--pill-fb))")
 
     <div style="display:flex;flex-direction:column;gap:22px">
         <a href="{{ route('belajar.subjek', ['subject' => $subject->slug, 'grade' => $grade->level]) }}" class="wl-back">← {{ __('Semua bab') }}</a>

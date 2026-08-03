@@ -20,7 +20,10 @@
             --wl-input: rgb(var(--c-surface-2)); --wl-chip: rgb(var(--c-surface-2));
             --wl-ink: rgb(var(--c-ink)); --wl-body: rgb(var(--c-ink)); --wl-muted: rgb(var(--c-ink-2)); --wl-muted-2: rgb(var(--c-ink-2));
             --wl-line: var(--border-subtle); --wl-line-2: var(--border-subtle); --wl-line-3: var(--border-strong);
+            /* Subject pill tone (shared with the student/teacher shells). */
+            --pill-bw:15%; --pill-bb:#fff; --pill-fw:82%; --pill-fb:#000;
         }
+        html.theme-dark { --pill-bw:22%; --pill-bb:#10161C; --pill-fw:82%; --pill-fb:#fff; }
 
         /* Same page wallpaper as the student shell: a fixed, cover-sized artwork that stays put
            while the page scrolls, with the theme background colour underneath as the fallback.

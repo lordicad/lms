@@ -17,7 +17,7 @@
         @else
             @foreach ($lessons->groupBy(fn ($l) => $l->chapter->subject->id) as $items)
                 @php($sub = $items->first()->chapter->subject)
-                @php($tagBg = 'color-mix(in oklab, '.($sub->color ?: '#17907B').' 15%, #fff)')
+                @php($tagBg = 'color-mix(in oklab, '.($sub->color ?: '#17907B').' var(--pill-bw), var(--pill-bb))')
                 <div style="display:flex;flex-direction:column;gap:14px">
                     <div style="display:flex;align-items:center;gap:10px">
                         <span style="width:34px;height:34px;border-radius:10px;background:{{ $tagBg }};display:grid;place-items:center;font-size:15px"><x-subject-emoji :subject="$sub" class="text-base" /></span>

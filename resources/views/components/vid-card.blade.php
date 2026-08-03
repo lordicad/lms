@@ -16,8 +16,8 @@
     $pct = ($progress && $progress->percent) ? min(100, $progress->percent) : 0;
     $thumb = $lesson->thumbnailUrl();
     $col = $subject->color ?: '#17907B';
-    $tagBg = "color-mix(in oklab, {$col} 15%, #fff)";
-    $tagColor = "color-mix(in oklab, {$col} 82%, #000)";
+    $tagBg = "color-mix(in oklab, {$col} var(--pill-bw), var(--pill-bb))";
+    $tagColor = "color-mix(in oklab, {$col} var(--pill-fw), var(--pill-fb))";
     $grad = "linear-gradient(135deg, color-mix(in oklab, {$col} 30%, #fff), color-mix(in oklab, {$col} 12%, #fff))";
 @endphp
 

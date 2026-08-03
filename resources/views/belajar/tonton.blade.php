@@ -2,8 +2,8 @@
 
 <x-dynamic-component :component="$me->isTeacher() ? 'app-layout' : 'student-layout'" :title="$lesson->title">
     @php($col = $subject->color ?: '#17907B')
-    @php($tagBg = "color-mix(in oklab, {$col} 15%, #fff)")
-    @php($tagColor = "color-mix(in oklab, {$col} 82%, #000)")
+    @php($tagBg = "color-mix(in oklab, {$col} var(--pill-bw), var(--pill-bb))")
+    @php($tagColor = "color-mix(in oklab, {$col} var(--pill-fw), var(--pill-fb))")
 
     <div style="display:flex;flex-direction:column;gap:18px">
         <a href="{{ route('bab.show', $chapter) }}" class="wl-back">← Bab {{ $chapter->number }}: {{ $chapter->title }}</a>

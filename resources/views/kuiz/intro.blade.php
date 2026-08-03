@@ -1,7 +1,7 @@
 <x-dynamic-component :component="auth()->user()->isTeacher() ? 'app-layout' : 'student-layout'" :title="$quiz->title">
     @php($col = $subject->color ?: '#17907B')
-    @php($tagBg = "color-mix(in oklab, {$col} 15%, #fff)")
-    @php($tagColor = "color-mix(in oklab, {$col} 82%, #000)")
+    @php($tagBg = "color-mix(in oklab, {$col} var(--pill-bw), var(--pill-bb))")
+    @php($tagColor = "color-mix(in oklab, {$col} var(--pill-fw), var(--pill-fb))")
 
     <div style="display:flex;flex-direction:column;gap:16px;max-width:760px;margin:0 auto;width:100%">
         @php($backToQuizzes = request('from') === 'quizzes')

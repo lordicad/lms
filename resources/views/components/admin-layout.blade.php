@@ -56,6 +56,8 @@
             --tp-shadow-lift:0 6px 18px rgba(46,44,80,.08);
             --tp-input:#F6F5F0; --tp-active-bg:#E6F5F1; --tp-active-fg:#0F7A68;
             --tp-page:#F7F6F2; --tp-surface:#fff; --tp-surface-2:#FAF9F5; --tp-hover:#F1F0E8; --tp-chip:#EFEDE6; --tp-icon:#4A5A52;
+            /* Subject pill tone: pale + dark text in light mode, dark tint + light text at night. */
+            --pill-bw:15%; --pill-bb:#fff; --pill-fw:82%; --pill-fb:#000;
             font-family:'Nunito',sans-serif; color:var(--tp-body);
         }
         /* Night mode: same token NAMES, dark values — every .tp element and every page colour
@@ -69,6 +71,7 @@
             --tp-shadow-lift:0 2px 6px rgba(0,0,0,.45), 0 18px 44px -14px rgba(0,0,0,.6);
             --tp-input:#1E2731; --tp-active-bg:#123029; --tp-active-fg:#5EEAD4;
             --tp-page:#0E1116; --tp-surface:#171E27; --tp-surface-2:#1E2731; --tp-hover:#232D38; --tp-chip:#232D38; --tp-icon:#AEB6C2;
+            --pill-bw:22%; --pill-bb:#10161C; --pill-fw:82%; --pill-fb:#fff;
         }
         .tp *,.tp *::before,.tp *::after { box-sizing:border-box; }
         .tp a { text-decoration:none; }

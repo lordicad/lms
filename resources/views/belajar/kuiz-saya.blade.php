@@ -109,8 +109,8 @@
                                 @php($pct = $attempt->percentage())
                                 @php($sc = $pct >= 80 ? '#17907B' : ($pct >= 50 ? '#E3A31C' : '#EB5E5A'))
                                 @php($sub = $quiz->chapter->subject)
-                                @php($tagBg = 'color-mix(in oklab, '.($sub->color ?: '#17907B').' 15%, #fff)')
-                                @php($tagColor = 'color-mix(in oklab, '.($sub->color ?: '#17907B').' 82%, #000)')
+                                @php($tagBg = 'color-mix(in oklab, '.($sub->color ?: '#17907B').' var(--pill-bw), var(--pill-bb))')
+                                @php($tagColor = 'color-mix(in oklab, '.($sub->color ?: '#17907B').' var(--pill-fw), var(--pill-fb))')
                                 <div style="display:flex;align-items:center;gap:14px;padding:14px 20px;border-bottom:1px solid var(--wl-line)">
                                     <span style="width:40px;height:40px;border-radius:12px;background:{{ $tagBg }};display:grid;place-items:center;flex-shrink:0"><x-subject-emoji :subject="$sub" class="text-base" /></span>
                                     <div style="display:flex;flex-direction:column;gap:6px;min-width:0;flex:1">
@@ -150,8 +150,8 @@
                     @if ($suggested)
                         @php($sub = $suggested->chapter->subject)
                         @php($col = $sub->color ?: '#17907B')
-                        @php($tagBg = "color-mix(in oklab, {$col} 15%, #fff)")
-                        @php($tagColor = "color-mix(in oklab, {$col} 82%, #000)")
+                        @php($tagBg = "color-mix(in oklab, {$col} var(--pill-bw), var(--pill-bb))")
+                        @php($tagColor = "color-mix(in oklab, {$col} var(--pill-fw), var(--pill-fb))")
                         <div class="wl-lift" style="background:var(--wl-surface);border:1px solid var(--wl-line);border-radius:18px;overflow:hidden;box-shadow:0 4px 16px rgba(46,44,80,.04);display:flex;flex-direction:column">
                             {{-- Decorative banner. --}}
                             <div style="position:relative;height:120px;background:linear-gradient(160deg,#DCF2EE,#EAF6F1);display:grid;place-items:center;overflow:hidden">

@@ -47,12 +47,16 @@
             --wl-ink:#28293F; --wl-body:#2D2F44; --wl-muted:#8B8AA3; --wl-muted-2:#6C6F87;
             --wl-line:rgba(46,44,80,.08); --wl-line-2:rgba(46,44,80,.1); --wl-line-3:rgba(46,44,80,.15);
             --wl-hover:#F1F0E8; --wl-active-bg:#E6F5F1; --wl-active-fg:#0F7A68; --wl-teal:#17907B;
+            /* Subject pill tone. Light = pale (mix into white) + dark text; a subject sets its own
+               colour and mixes it with these bases. Dark mode flips to a dark tint + light text. */
+            --pill-bw:15%; --pill-bb:#fff; --pill-fw:82%; --pill-fb:#000;
         }
         html.theme-dark .wl {
             --wl-page:#0E1116; --wl-surface:#171E27; --wl-surface-2:#1E2731; --wl-input:#1E2731; --wl-chip:#232D38;
             --wl-ink:#EDF2F8; --wl-body:#C9D2DC; --wl-muted:#8A94A3; --wl-muted-2:#A6AFBC;
             --wl-line:rgba(255,255,255,.09); --wl-line-2:rgba(255,255,255,.12); --wl-line-3:rgba(255,255,255,.16);
             --wl-hover:#232D38; --wl-active-bg:#123029; --wl-active-fg:#5EEAD4; --wl-teal:#2DD4BF;
+            --pill-bw:22%; --pill-bb:#10161C; --pill-fw:82%; --pill-fb:#fff;
         }
 
         /* ── WeLearn prototype styles, ported verbatim ── */
