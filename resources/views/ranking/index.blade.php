@@ -63,6 +63,14 @@
         .lb-pts { font-family: 'Geist', sans-serif; font-weight: 800; font-size: 14.5px; color: #17907B; text-align: center; }
         .lb-chev { color: var(--wl-muted-2); display: grid; place-items: center; }
 
+        /* Night mode: the table uses several light-mode fills (the "you" row, rank chip, bar,
+           percentage) that read too bright / low-contrast on the dark surface. */
+        html.theme-dark .lb-tr--me { background: #17322B; }
+        html.theme-dark .lb-rank { background: var(--wl-chip); color: var(--wl-body); }
+        html.theme-dark .lb-bar { background: rgba(255,255,255,.12); }
+        html.theme-dark .lb-pct { color: var(--wl-body); }
+        html.theme-dark .lb-pts { color: #2DD4BF; }
+
         @media (max-width: 720px) {
             .lb-tbl-head, .lb-tr { grid-template-columns: 42px minmax(0,1fr) auto; gap: 12px; padding: 12px 15px; }
             .lb-th.score, .lb-score, .lb-chev { display: none; }
