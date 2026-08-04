@@ -198,10 +198,14 @@
                 @forelse ($topContributors as $i => $c)
                     @php($m = $medals[$i + 1] ?? $medals[3])
                     <div style="{{ $row }}">
-                        <span style="position:relative;width:40px;height:40px;border-radius:12px;background:{{ $m['bg'] }};color:{{ $m['fg'] }};display:grid;place-items:center;flex-shrink:0;box-shadow:inset 0 0 0 1.5px {{ $m['ring'] }}">
-                            {!! $ic('award', 20) !!}
-                            <span style="position:absolute;bottom:-5px;right:-5px;width:18px;height:18px;border-radius:50%;background:{{ $m['fg'] }};color:#fff;display:grid;place-items:center;font-family:'Geist',sans-serif;font-weight:800;font-size:10.5px;border:2px solid #fff">{{ $i + 1 }}</span>
-                        </span>
+                        @if ($i < 3)
+                            <img src="{{ asset('images/medal'.($i + 1).'.png') }}" alt="{{ $i + 1 }}" style="width:42px;height:42px;object-fit:contain;flex-shrink:0">
+                        @else
+                            <span style="position:relative;width:40px;height:40px;border-radius:12px;background:{{ $m['bg'] }};color:{{ $m['fg'] }};display:grid;place-items:center;flex-shrink:0;box-shadow:inset 0 0 0 1.5px {{ $m['ring'] }}">
+                                {!! $ic('award', 20) !!}
+                                <span style="position:absolute;bottom:-5px;right:-5px;width:18px;height:18px;border-radius:50%;background:{{ $m['fg'] }};color:#fff;display:grid;place-items:center;font-family:'Geist',sans-serif;font-weight:800;font-size:10.5px;border:2px solid #fff">{{ $i + 1 }}</span>
+                            </span>
+                        @endif
                         <div style="display:flex;flex-direction:column;gap:2px;min-width:0;flex:1">
                             <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:14px;color:var(--tp-ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $c['name'] }}</span>
                             <span style="font-size:11.5px;color:var(--tp-muted);font-weight:600">{{ $c['videos'] }} {{ __('video') }} · {{ $c['materials'] }} {{ __('bahan') }} · {{ $c['quizzes'] }} {{ __('kuiz') }}</span>
