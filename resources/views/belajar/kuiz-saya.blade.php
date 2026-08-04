@@ -31,9 +31,9 @@
                  dark mode only swaps the colours (bg, text, disc, decorations). --}}
             @php($statsDark = ($theme ?? 'light') === 'dark')
             @php($statCards = $statsDark ? [
-                ['accent' => '#2DD4BF', 'bg' => 'linear-gradient(135deg,#16302A,#11241E)', 'ink' => '#E7F3EF', 'spark' => '#2E5A4E', 'disc' => '#1C2A24', 'type' => 'check', 'value' => $doneCount, 'label' => __('Kuiz selesai')],
-                ['accent' => '#F0B733', 'bg' => 'linear-gradient(135deg,#2E2716,#241E10)', 'ink' => '#F3E6C4', 'spark' => '#544824', 'disc' => '#2A2416', 'type' => 'star', 'value' => $avgScore !== null ? $avgScore.'%' : '—', 'label' => __('Purata markah')],
-                ['accent' => '#5A9BE0', 'bg' => 'linear-gradient(135deg,#1C2A3C,#16212F)', 'ink' => '#D6E4F5', 'spark' => '#33506E', 'disc' => '#1A2636', 'type' => 'trophy', 'value' => $rank ? '#'.$rank : '—', 'label' => __('Ranking'), 'leaf' => true],
+                ['accent' => '#2DD4BF', 'bg' => 'linear-gradient(135deg,#234A3F,#1A3A31)', 'ink' => '#EAF7F2', 'spark' => '#3A6B5C', 'disc' => '#26382F', 'type' => 'check', 'value' => $doneCount, 'label' => __('Kuiz selesai')],
+                ['accent' => '#F0B733', 'bg' => 'linear-gradient(135deg,#443A22,#352C18)', 'ink' => '#F6EBCF', 'spark' => '#6A5B30', 'disc' => '#3A3220', 'type' => 'star', 'value' => $avgScore !== null ? $avgScore.'%' : '—', 'label' => __('Purata markah')],
+                ['accent' => '#5A9BE0', 'bg' => 'linear-gradient(135deg,#2A3E56,#20304A)', 'ink' => '#E2ECF8', 'spark' => '#436286', 'disc' => '#293A50', 'type' => 'trophy', 'value' => $rank ? '#'.$rank : '—', 'label' => __('Ranking'), 'leaf' => true],
             ] : [
                 ['accent' => '#17907B', 'bg' => 'linear-gradient(135deg,#EAF7F2,#D6EFE7)', 'ink' => '#0F7A68', 'spark' => '#A9DECF', 'disc' => '#fff', 'type' => 'check', 'value' => $doneCount, 'label' => __('Kuiz selesai')],
                 ['accent' => '#E0A21C', 'bg' => 'linear-gradient(135deg,#FEF6E4,#FBE9C2)', 'ink' => '#8A6A12', 'spark' => '#F1D592', 'disc' => '#fff', 'type' => 'star', 'value' => $avgScore !== null ? $avgScore.'%' : '—', 'label' => __('Purata markah')],
