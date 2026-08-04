@@ -1,5 +1,16 @@
 <x-dynamic-component :component="auth()->user()->isTeacher() ? 'app-layout' : 'student-layout'" :title="$quiz->title">
-    <div class="mx-auto max-w-2xl" style="--sc: {{ $subject->rgb }}">
+    @once
+        {{-- Dark mode on this page: lift the near-black card a little and calm the bright brand
+             teal used by the Download button (scoped via the design-system --c-* vars). --}}
+        <style>
+            html.theme-dark .fail-view {
+                --c-surface: 30 39 50;         /* #1E2732 — brighter card */
+                --c-brand: 23 144 123;         /* #17907B — calmer button */
+                --c-brand-strong: 43 179 155;  /* #2BB39B — button hover */
+            }
+        </style>
+    @endonce
+    <div class="fail-view mx-auto max-w-2xl" style="--sc: {{ $subject->rgb }}">
         {{-- Back goes where the student came from: the Quizzes list when opened from there,
              otherwise the chapter page (the default for a direct link). --}}
         @php($backToQuizzes = request('from') === 'quizzes')
