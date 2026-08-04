@@ -41,7 +41,7 @@
                 @if ($good || $mid)
                     <span style="font-size:40px">{{ $good ? '🎉' : '💪' }}</span>
                 @else
-                    <img src="{{ asset('images/book1.png') }}" alt="" style="width:46px;height:46px;object-fit:contain">
+                    <img src="{{ asset('images/book1.png') }}" alt="" style="width:60px;height:60px;object-fit:contain">
                 @endif
                 <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:26px;font-weight:800;letter-spacing:-.01em;color:var(--wl-ink)">{{ $good ? __('Syabas, :name!', ['name' => $name]) : __('Kerja yang baik!') }}</h2>
                 <span style="font-size:14.5px;color:var(--wl-muted)">{{ $good ? __('Keputusan cemerlang. Teruskan usaha!') : ($mid ? __('Usaha yang baik. Cuba tingkatkan lagi!') : __('Jangan putus asa — tonton semula video dan cuba lagi.')) }}</span>
