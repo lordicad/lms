@@ -16,7 +16,7 @@
         /* Warm glow behind the champion's avatar. */
         .lb-card--first::before { content: ''; position: absolute; top: 62px; left: 50%; width: 210px; height: 210px; transform: translateX(-50%); border-radius: 50%; background: radial-gradient(circle, rgba(246,185,26,.15), transparent 68%); z-index: 0; pointer-events: none; }
 
-        .lb-medal { position: relative; display: block; z-index: 2; }
+        .lb-medal { position: relative; top: -8px; display: block; z-index: 2; }
         .lb-medal svg { display: block; width: 100%; height: 100%; }
         .lb-num { position: absolute; top: 0; left: 0; right: 0; height: 65%; display: grid; place-items: center; font-family: 'Geist', sans-serif; font-weight: 800; color: var(--c-mnum); }
         .lb-card--first .lb-medal { width: 48px; height: 48px; }
