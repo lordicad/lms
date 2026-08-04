@@ -350,7 +350,7 @@
                                     </span>
                                     <span style="min-width:0;flex:1;display:flex;flex-direction:column;gap:2px">
                                         <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:13.5px;color:var(--wl-ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $lesson->title }}</span>
-                                        <span style="font-size:12px;color:var(--wl-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $subject->name }} · {{ __('Bab :n', ['n' => $lesson->chapter->number]) }}</span>
+                                        <span style="font-size:12px;color:var(--wl-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><span style="display:inline-block;vertical-align:middle;border-radius:999px;padding:2px 9px;font-family:'Geist',sans-serif;font-weight:800;font-size:10.5px;background:color-mix(in oklab, {{ $subject->color ?: '#17907B' }} var(--pill-bw), var(--pill-bb));color:color-mix(in oklab, {{ $subject->color ?: '#17907B' }} var(--pill-fw), var(--pill-fb))">{{ $subject->name }}</span> · {{ __('Bab :n', ['n' => $lesson->chapter->number]) }}</span>
                                     </span>
                                 </a>
                             @endforeach
