@@ -38,16 +38,17 @@
 <div class="qb-badge" style="display:flex;flex-direction:column;align-items:center;gap:6px;width:104px;{{ $muted ? 'opacity:.85' : '' }}">
     <div class="qb-medal {{ $isNew ? 'qb-pop' : '' }}" style="position:relative;width:78px;height:90px;display:flex;justify-content:center">
         @if ($isNew)
-            {{-- A small multi-colour confetti popup bursting around the badge when it's newly earned. --}}
+            {{-- A small multi-colour confetti popup that bursts out from around the badge's edge
+                 (each piece starts on a ring around the medal and flies further outward). --}}
             @foreach ([
-                ['-34','-18','#2DD4BF','0s','-22deg'], ['34','-14','#F3B94C','.04s','24deg'],
-                ['-26','22','#EB5E5A','.09s','-36deg'], ['28','26','#A88FE4','.05s','40deg'],
-                ['2','-36','#6FA8E0','.08s','12deg'], ['-8','34','#F3B94C','.12s','-16deg'],
-                ['-40','6','#EB5E5A','.06s','30deg'], ['40','8','#2DD4BF','.1s','-26deg'],
-                ['16','-30','#A88FE4','.03s','16deg'], ['-18','-28','#6FA8E0','.11s','-30deg'],
-                ['22','18','#F3B94C','.07s','20deg'], ['-14','16','#2DD4BF','.13s','-12deg'],
-            ] as [$dx, $dy, $color, $delay, $rot])
-                <span class="qb-spark" style="top:30px;left:33px;--dx:{{ $dx }}px;--dy:{{ $dy }}px;animation-delay:{{ $delay }}">
+                [65, 27, 16, 0, '#2DD4BF', '0s', '-20deg'],   [61, 41, 16, 9, '#F3B94C', '.05s', '25deg'],
+                [50, 52, 9, 16, '#EB5E5A', '.1s', '-35deg'],  [35, 56, 0, 18, '#A88FE4', '.04s', '40deg'],
+                [20, 52, -9, 16, '#6FA8E0', '.08s', '15deg'], [9, 41, -16, 9, '#F3B94C', '.12s', '-18deg'],
+                [5, 27, -18, 0, '#EB5E5A', '.06s', '30deg'],  [9, 11, -16, -9, '#2DD4BF', '.11s', '-28deg'],
+                [20, 0, -9, -16, '#A88FE4', '.03s', '18deg'], [35, -4, 0, -18, '#6FA8E0', '.09s', '-30deg'],
+                [50, 0, 9, -16, '#F3B94C', '.07s', '22deg'],  [61, 11, 16, -9, '#2DD4BF', '.13s', '-12deg'],
+            ] as [$left, $top, $dx, $dy, $color, $delay, $rot])
+                <span class="qb-spark" style="top:{{ $top }}px;left:{{ $left }}px;--dx:{{ $dx }}px;--dy:{{ $dy }}px;animation-delay:{{ $delay }}">
                     <span style="display:block;width:7px;height:9px;border-radius:1.5px;background:{{ $color }};transform:rotate({{ $rot }})"></span>
                 </span>
             @endforeach
