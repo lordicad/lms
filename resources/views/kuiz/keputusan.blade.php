@@ -114,9 +114,9 @@
                     <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
                         <span style="font-family:'Geist',sans-serif;font-size:13px;font-weight:800;color:var(--wl-muted)">{{ __('Soalan') }} {{ $index + 1 }}</span>
                         @if ($ok)
-                            <span style="border-radius:999px;padding:5px 14px;font-family:'Geist',sans-serif;font-size:12.5px;font-weight:800;background:#DCF2EE;color:#0F7A68">✓ {{ __('Betul.') }} {{ $answer->points_awarded }} {{ __('mata') }}</span>
+                            <span style="border-radius:999px;padding:5px 14px;font-family:'Geist',sans-serif;font-size:12.5px;font-weight:800;{{ $isDark ? 'background:rgba(45,212,191,.15);color:#5EEAD4' : 'background:#DCF2EE;color:#0F7A68' }}">✓ {{ __('Betul.') }} {{ $answer->points_awarded }} {{ __('mata') }}</span>
                         @else
-                            <span style="border-radius:999px;padding:5px 14px;font-family:'Geist',sans-serif;font-size:12.5px;font-weight:800;background:#FDE7E0;color:#C24936">✗ {{ __('Salah. 0 mata') }}</span>
+                            <span style="border-radius:999px;padding:5px 14px;font-family:'Geist',sans-serif;font-size:12.5px;font-weight:800;{{ $isDark ? 'background:rgba(235,94,90,.16);color:#F0857F' : 'background:#FDE7E0;color:#C24936' }}">✗ {{ __('Salah. 0 mata') }}</span>
                         @endif
                     </div>
                     <h4 style="margin:0;font-family:'Geist',sans-serif;font-size:17px;font-weight:800;line-height:1.4;color:var(--wl-ink)">{{ $question->localizedText() }}</h4>
@@ -125,16 +125,16 @@
                             @php($sel = $answer?->selected($option->id) ?? false)
                             @php($isC = $option->is_correct)
                             @php($border = 'var(--wl-line-2)')
-                            @php($bg = '#fff')
+                            @php($bg = $isDark ? 'var(--wl-page)' : '#fff')
                             @php($tagTxt = '')
                             @php($tagStyle = '')
-                            @php($letterStyle = 'background:#F1F0E8;color:var(--wl-muted-2)')
+                            @php($letterStyle = $isDark ? 'background:var(--wl-chip);color:var(--wl-muted)' : 'background:#F1F0E8;color:var(--wl-muted-2)')
                             @if ($sel && $isC)
-                                @php($border = '#17907B') @php($bg = '#DCF2EE') @php($tagTxt = __('Jawapan anda')) @php($tagStyle = 'background:#17907B;color:#fff') @php($letterStyle = 'background:#17907B;color:#fff')
+                                @php($border = $isDark ? '#2DD4BF' : '#17907B') @php($bg = $isDark ? 'rgba(45,212,191,.14)' : '#DCF2EE') @php($tagTxt = __('Jawapan anda')) @php($tagStyle = 'background:#17907B;color:#fff') @php($letterStyle = 'background:#17907B;color:#fff')
                             @elseif ($sel && ! $isC)
-                                @php($border = '#EB5E5A') @php($bg = '#FDE7E0') @php($tagTxt = __('Jawapan anda')) @php($tagStyle = 'background:#EB5E5A;color:#fff') @php($letterStyle = 'background:#EB5E5A;color:#fff')
+                                @php($border = '#EB5E5A') @php($bg = $isDark ? 'rgba(235,94,90,.14)' : '#FDE7E0') @php($tagTxt = __('Jawapan anda')) @php($tagStyle = 'background:#EB5E5A;color:#fff') @php($letterStyle = 'background:#EB5E5A;color:#fff')
                             @elseif ($isC)
-                                @php($border = '#17907B') @php($tagTxt = __('Jawapan betul')) @php($tagStyle = 'background:#DCF2EE;color:#0F7A68') @php($letterStyle = 'background:#17907B;color:#fff')
+                                @php($border = $isDark ? '#2DD4BF' : '#17907B') @php($tagTxt = __('Jawapan betul')) @php($tagStyle = $isDark ? 'background:rgba(45,212,191,.16);color:#5EEAD4' : 'background:#DCF2EE;color:#0F7A68') @php($letterStyle = 'background:#17907B;color:#fff')
                             @endif
                             <div style="display:flex;align-items:center;gap:14px;border-radius:14px;padding:14px 18px;border:1.5px solid {{ $border }};background:{{ $bg }}">
                                 <span style="width:30px;height:30px;border-radius:50%;flex-shrink:0;display:grid;place-items:center;font-family:'Geist',sans-serif;font-weight:800;font-size:13px;{{ $letterStyle }}">{{ $option->letter() }}</span>
@@ -149,6 +149,6 @@
             @endforeach
         </div>
 
-        <a href="{{ route('kuiz-saya.index') }}" class="wl-btn-secondary" style="align-self:center;min-height:48px;display:inline-flex;align-items:center;gap:6px;border-radius:14px;border:2px solid #17907B;background:#fff;color:#0F7A68;font-family:'Geist',sans-serif;font-weight:800;font-size:14.5px;padding:0 24px;text-decoration:none"><x-icon name="arrow-left" style="width:17px;height:17px" />{{ __('Kembali') }}</a>
+        <a href="{{ route('kuiz-saya.index') }}" class="wl-btn-secondary" style="align-self:center;min-height:48px;display:inline-flex;align-items:center;gap:6px;border-radius:14px;border:2px solid {{ $isDark ? '#2DD4BF' : '#17907B' }};background:{{ $isDark ? 'var(--wl-surface)' : '#fff' }};color:{{ $isDark ? '#5EEAD4' : '#0F7A68' }};font-family:'Geist',sans-serif;font-weight:800;font-size:14.5px;padding:0 24px;text-decoration:none"><x-icon name="arrow-left" style="width:17px;height:17px" />{{ __('Kembali') }}</a>
     </div>
 </x-student-layout>
