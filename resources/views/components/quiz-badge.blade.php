@@ -8,6 +8,10 @@
 
 @php($m = \App\Support\QuizBadges::meta($badge))
 @php($grey = $muted ? 'filter:grayscale(1)' : '')
+{{-- The inner disc is var(--wl-surface) (dark at night), so the dark badge ink is invisible there.
+     In dark mode use the brighter ring colour for earned badges and a light grey for muted ones. --}}
+@php($isDark = ($theme ?? 'light') === 'dark')
+@php($iconInk = $muted ? ($isDark ? '#9AA3B2' : $m['ink']) : ($isDark ? $m['ring'] : $m['ink']))
 
 {{-- Animations, emitted once per page however many badges render. Earned badges pop in and throw
      a sparkle burst; any badge wiggles and lifts on hover/tap. All off under reduced motion. --}}
@@ -48,8 +52,8 @@
         <span style="position:absolute;top:6px;left:13px;width:52px;height:52px;background:{{ $m['ribbon'] }};border-radius:9px;transform:rotate(30deg);{{ $grey }}"></span>
         <span style="position:absolute;top:6px;left:13px;width:52px;height:52px;background:{{ $m['ribbon'] }};border-radius:9px;transform:rotate(60deg);{{ $grey }}"></span>
         <span style="position:absolute;top:5px;width:54px;height:54px;border-radius:50%;background:{{ $m['tint'] }};display:grid;place-items:center;box-shadow:0 4px 12px rgba(46,44,80,.16);{{ $grey }}">
-            <span style="width:41px;height:41px;border-radius:50%;background:var(--wl-surface);border:2px solid {{ $m['ring'] }};display:grid;place-items:center;color:{{ $m['ink'] }}">
-                <x-icon :name="$m['icon']" style="width:21px;height:21px;{{ $muted ? 'filter:grayscale(1) opacity(.55)' : '' }}" />
+            <span style="width:41px;height:41px;border-radius:50%;background:var(--wl-surface);border:2px solid {{ $m['ring'] }};display:grid;place-items:center;color:{{ $iconInk }}">
+                <x-icon :name="$m['icon']" style="width:21px;height:21px;{{ $muted && ! $isDark ? 'filter:grayscale(1) opacity(.55)' : '' }}" />
             </span>
         </span>
 
