@@ -33,18 +33,18 @@
         .subj-cell { position:relative; display:flex; flex-wrap:wrap; gap:5px; justify-content:center; align-items:center; }
         .subj-pill { display:inline-flex; align-items:center; border-radius:999px; padding:3px 10px; font-size:12px; font-weight:800; line-height:1.2; white-space:nowrap; }
         .subj-more { position:relative; cursor:default; background:var(--tp-line); color:var(--tp-muted-2); }
+        /* Teleported to <body>, so positioned fixed at the chip (left/top set inline) and lifted
+           above it. z-index over the shell; not clipped by the list card's overflow. */
         .subj-tip {
-            position:absolute; bottom:calc(100% + 8px); left:50%; transform:translateX(-50%) translateY(4px);
-            z-index:20; display:flex; flex-wrap:wrap; gap:5px; justify-content:center; width:max-content; max-width:240px;
+            position:fixed; transform:translate(-50%, calc(-100% - 10px));
+            z-index:9990; display:flex; flex-wrap:wrap; gap:5px; justify-content:center; width:max-content; max-width:240px;
             padding:9px; border-radius:12px; background:var(--tp-surface); border:1px solid var(--tp-line-2);
-            box-shadow:0 10px 26px rgba(46,44,80,.16); opacity:0; visibility:hidden;
-            transition:opacity .15s ease, transform .15s ease;
+            box-shadow:0 10px 26px rgba(46,44,80,.16); pointer-events:none;
         }
         .subj-tip::after {
             content:''; position:absolute; top:100%; left:50%; transform:translateX(-50%);
             border:6px solid transparent; border-top-color:var(--tp-surface);
         }
-        .subj-more:hover .subj-tip, .subj-more:focus-visible .subj-tip { opacity:1; visibility:visible; transform:translateX(-50%) translateY(0); }
     </style>
 
     <div style="display:flex;flex-direction:column;gap:48px">
@@ -152,13 +152,19 @@
                                         @endforelse
 
                                         @if ($tsubs->count() > 2)
-                                            <span class="subj-pill subj-more" tabindex="0" aria-label="{{ $tsubs->map->displayName()->join(', ') }}">
+                                            <span class="subj-pill subj-more" tabindex="0" aria-label="{{ $tsubs->map->displayName()->join(', ') }}"
+                                                  x-data="{ open: false, x: 0, y: 0 }"
+                                                  @mouseenter="const r = $el.getBoundingClientRect(); x = r.left + r.width / 2; y = r.top; open = true"
+                                                  @mouseleave="open = false" @focus="const r = $el.getBoundingClientRect(); x = r.left + r.width / 2; y = r.top; open = true" @blur="open = false">
                                                 +{{ $tsubs->count() - 2 }}
-                                                <span class="subj-tip">
-                                                    @foreach ($tsubs as $s)
-                                                        <span class="subj-pill" style="background:rgb({{ $s->rgb }} / .14);color:rgb({{ $s->rgb }})">{{ $s->displayName() }}</span>
-                                                    @endforeach
-                                                </span>
+                                                {{-- Teleported to <body> so the list card's overflow:hidden can't clip it; positioned fixed above the chip. --}}
+                                                <template x-teleport="body">
+                                                    <span class="subj-tip" x-show="open" x-cloak :style="`left:${x}px;top:${y}px`">
+                                                        @foreach ($tsubs as $s)
+                                                            <span class="subj-pill" style="background:rgb({{ $s->rgb }} / .14);color:rgb({{ $s->rgb }})">{{ $s->displayName() }}</span>
+                                                        @endforeach
+                                                    </span>
+                                                </template>
                                             </span>
                                         @endif
                                     </div>
