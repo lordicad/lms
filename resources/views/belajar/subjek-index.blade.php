@@ -15,19 +15,19 @@
     {{-- Night mode: swap each pale tile for a dark, same-hue gradient (inline bg wins by default,
          so these overrides use !important). One rule per palette index. --}}
     <style>
-        html.theme-dark .sc-0 { background:linear-gradient(135deg,#2E425C,#25344B) !important; box-shadow:0 0 22px rgba(96,140,200,.22), 0 6px 18px rgba(0,0,0,.35) !important; }
-        html.theme-dark .sc-1 { background:linear-gradient(135deg,#3E3768,#332C57) !important; box-shadow:0 0 22px rgba(146,126,214,.22), 0 6px 18px rgba(0,0,0,.35) !important; }
-        html.theme-dark .sc-2 { background:linear-gradient(135deg,#5A3A4C,#48303E) !important; box-shadow:0 0 22px rgba(206,124,156,.22), 0 6px 18px rgba(0,0,0,.35) !important; }
-        html.theme-dark .sc-3 { background:linear-gradient(135deg,#265042,#1F4237) !important; box-shadow:0 0 22px rgba(78,186,150,.22), 0 6px 18px rgba(0,0,0,.35) !important; }
-        html.theme-dark .sc-4 { background:linear-gradient(135deg,#5A4E2E,#484023) !important; box-shadow:0 0 22px rgba(206,176,92,.22), 0 6px 18px rgba(0,0,0,.35) !important; }
-        html.theme-dark .sc-5 { background:linear-gradient(135deg,#5A4238,#48342C) !important; box-shadow:0 0 22px rgba(214,150,120,.22), 0 6px 18px rgba(0,0,0,.35) !important; }
-        /* A touch stronger on hover (the card also lifts via .wl-lift). */
-        html.theme-dark .sc-0:hover { box-shadow:0 0 30px rgba(96,140,200,.34), 0 12px 26px rgba(0,0,0,.4) !important; }
-        html.theme-dark .sc-1:hover { box-shadow:0 0 30px rgba(146,126,214,.34), 0 12px 26px rgba(0,0,0,.4) !important; }
-        html.theme-dark .sc-2:hover { box-shadow:0 0 30px rgba(206,124,156,.34), 0 12px 26px rgba(0,0,0,.4) !important; }
-        html.theme-dark .sc-3:hover { box-shadow:0 0 30px rgba(78,186,150,.34), 0 12px 26px rgba(0,0,0,.4) !important; }
-        html.theme-dark .sc-4:hover { box-shadow:0 0 30px rgba(206,176,92,.34), 0 12px 26px rgba(0,0,0,.4) !important; }
-        html.theme-dark .sc-5:hover { box-shadow:0 0 30px rgba(214,150,120,.34), 0 12px 26px rgba(0,0,0,.4) !important; }
+        html.theme-dark .sc-0 { background:linear-gradient(135deg,#2E425C,#25344B) !important; box-shadow:0 0 40px rgba(96,140,200,.45), 0 0 14px rgba(96,140,200,.35), 0 6px 18px rgba(0,0,0,.35) !important; }
+        html.theme-dark .sc-1 { background:linear-gradient(135deg,#3E3768,#332C57) !important; box-shadow:0 0 40px rgba(146,126,214,.45), 0 0 14px rgba(146,126,214,.35), 0 6px 18px rgba(0,0,0,.35) !important; }
+        html.theme-dark .sc-2 { background:linear-gradient(135deg,#5A3A4C,#48303E) !important; box-shadow:0 0 40px rgba(206,124,156,.45), 0 0 14px rgba(206,124,156,.35), 0 6px 18px rgba(0,0,0,.35) !important; }
+        html.theme-dark .sc-3 { background:linear-gradient(135deg,#265042,#1F4237) !important; box-shadow:0 0 40px rgba(78,186,150,.45), 0 0 14px rgba(78,186,150,.35), 0 6px 18px rgba(0,0,0,.35) !important; }
+        html.theme-dark .sc-4 { background:linear-gradient(135deg,#5A4E2E,#484023) !important; box-shadow:0 0 40px rgba(206,176,92,.45), 0 0 14px rgba(206,176,92,.35), 0 6px 18px rgba(0,0,0,.35) !important; }
+        html.theme-dark .sc-5 { background:linear-gradient(135deg,#5A4238,#48342C) !important; box-shadow:0 0 40px rgba(214,150,120,.45), 0 0 14px rgba(214,150,120,.35), 0 6px 18px rgba(0,0,0,.35) !important; }
+        /* Stronger on hover (the card also lifts via .wl-lift). */
+        html.theme-dark .sc-0:hover { box-shadow:0 0 54px rgba(96,140,200,.6), 0 0 20px rgba(96,140,200,.5), 0 12px 26px rgba(0,0,0,.4) !important; }
+        html.theme-dark .sc-1:hover { box-shadow:0 0 54px rgba(146,126,214,.6), 0 0 20px rgba(146,126,214,.5), 0 12px 26px rgba(0,0,0,.4) !important; }
+        html.theme-dark .sc-2:hover { box-shadow:0 0 54px rgba(206,124,156,.6), 0 0 20px rgba(206,124,156,.5), 0 12px 26px rgba(0,0,0,.4) !important; }
+        html.theme-dark .sc-3:hover { box-shadow:0 0 54px rgba(78,186,150,.6), 0 0 20px rgba(78,186,150,.5), 0 12px 26px rgba(0,0,0,.4) !important; }
+        html.theme-dark .sc-4:hover { box-shadow:0 0 54px rgba(206,176,92,.6), 0 0 20px rgba(206,176,92,.5), 0 12px 26px rgba(0,0,0,.4) !important; }
+        html.theme-dark .sc-5:hover { box-shadow:0 0 54px rgba(214,150,120,.6), 0 0 20px rgba(214,150,120,.5), 0 12px 26px rgba(0,0,0,.4) !important; }
     </style>
 
     @if ($grade && $subjectsByCategory->isNotEmpty())
