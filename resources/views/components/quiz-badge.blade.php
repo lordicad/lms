@@ -21,7 +21,7 @@
         .qb-badge:hover, .qb-badge:active { transform: translateY(-4px) scale(1.06); }
         .qb-badge:hover .qb-medal, .qb-badge:active .qb-medal { animation: qbWiggle .5s ease-in-out; }
         .qb-pop { animation: qbPop .55s cubic-bezier(.2,.8,.3,1.3) both; }
-        .qb-spark { position: absolute; z-index: 2; pointer-events: none; opacity: 0; animation: qbSpark .9s ease-out both; }
+        .qb-spark { position: absolute; z-index: 2; pointer-events: none; opacity: 0; animation: qbSpark 1.5s ease-out infinite; }
         @keyframes qbPop { from { opacity: 0; transform: scale(.5) translateY(8px); } to { opacity: 1; transform: none; } }
         @keyframes qbWiggle { 0%, 100% { transform: rotate(0); } 20% { transform: rotate(-8deg); } 60% { transform: rotate(8deg); } 80% { transform: rotate(-4deg); } }
         @keyframes qbSpark { 0% { opacity: 0; transform: translate(0, 0) scale(.2); } 35% { opacity: 1; } 100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(1); } }
