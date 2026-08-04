@@ -41,7 +41,7 @@
             ])
             <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px">
                 @foreach ($statCards as $c)
-                    <div style="position:relative;overflow:hidden;background:{{ $c['bg'] }};border-left:5px solid {{ $c['accent'] }};border-radius:18px;padding:18px 20px;display:flex;align-items:center;gap:16px">
+                    <div style="position:relative;overflow:hidden;background:{{ $c['bg'] }};border-radius:18px;padding:18px 20px;display:flex;align-items:center;gap:16px">
                         {{-- Decorations. --}}
                         <svg style="position:absolute;top:14px;right:18px;opacity:.6" width="16" height="16" viewBox="0 0 16 16" fill="{{ $c['spark'] }}"><path d="M8 0c0 4.4-3.6 8-8 8 4.4 0 8 3.6 8 8 0-4.4 3.6-8 8-8-4.4 0-8-3.6-8-8z"/></svg>
                         <span style="position:absolute;right:-34px;bottom:-46px;width:130px;height:100px;border-radius:50%;background:{{ $c['accent'] }};opacity:.07"></span>
