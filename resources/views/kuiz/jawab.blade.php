@@ -77,10 +77,10 @@
                             {{-- Same four hues (yellow/blue/red/purple); dark mode darkens the tint so
                                  the answer text stays readable, keeping the solid accent for picks. --}}
                             @php($pal = ($isDark ? [
-                                ['tint' => '#3B331D', 'solid' => '#D99A28'],
-                                ['tint' => '#1E2C3E', 'solid' => '#3E86C9'],
-                                ['tint' => '#37202B', 'solid' => '#E0568A'],
-                                ['tint' => '#2A2440', 'solid' => '#7C5CBF'],
+                                ['tint' => '#524628', 'solid' => '#D99A28'],
+                                ['tint' => '#2B3E56', 'solid' => '#3E86C9'],
+                                ['tint' => '#4E2C3B', 'solid' => '#E0568A'],
+                                ['tint' => '#3C3359', 'solid' => '#7C5CBF'],
                             ] : [
                                 ['tint' => '#FBF0D9', 'solid' => '#D99A28'],
                                 ['tint' => '#DCEBF8', 'solid' => '#3E86C9'],
