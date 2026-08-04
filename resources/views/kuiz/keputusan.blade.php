@@ -6,7 +6,12 @@
 
     <div style="display:flex;flex-direction:column;gap:24px;max-width:760px;margin:0 auto;width:100%">
         {{-- Score card --}}
-        @php($stats = [
+        @php($isDark = ($theme ?? 'light') === 'dark')
+        @php($stats = $isDark ? [
+            ['icon' => 'check-circle', 'bg' => 'rgba(45,212,191,.15)', 'ink' => '#5EEAD4', 'label' => __('Betul'), 'value' => $attempt->correct_count.'/'.$attempt->question_count],
+            ['icon' => 'target-arrow', 'bg' => 'rgba(96,140,200,.16)', 'ink' => '#7FB2EA', 'label' => __('Ketepatan'), 'value' => $pct.'%'],
+            ['icon' => 'clock', 'bg' => 'rgba(146,126,214,.20)', 'ink' => '#B7A6E8', 'label' => __('Masa'), 'value' => $attempt->humanDuration()],
+        ] : [
             ['icon' => 'check-circle', 'bg' => '#DCF2EE', 'ink' => '#0F7A68', 'label' => __('Betul'), 'value' => $attempt->correct_count.'/'.$attempt->question_count],
             ['icon' => 'target-arrow', 'bg' => '#E4EEF9', 'ink' => '#2E6CA8', 'label' => __('Ketepatan'), 'value' => $pct.'%'],
             ['icon' => 'clock', 'bg' => '#E9E4F9', 'ink' => '#7C5CBF', 'label' => __('Masa'), 'value' => $attempt->humanDuration()],
@@ -45,7 +50,7 @@
                 </div>
                 <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;width:100%;margin-top:10px">
                     @foreach ($stats as $s)
-                        <div style="background:#F6F3EC;border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:12px;text-align:left">
+                        <div style="background:var(--wl-input);border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:12px;text-align:left">
                             <span style="width:40px;height:40px;flex-shrink:0;border-radius:50%;background:{{ $s['bg'] }};color:{{ $s['ink'] }};display:grid;place-items:center"><x-icon :name="$s['icon']" style="width:20px;height:20px" /></span>
                             <div style="display:flex;flex-direction:column;gap:1px;min-width:0">
                                 <span style="font-size:12.5px;font-weight:700;color:var(--wl-muted)">{{ $s['label'] }}</span>
@@ -54,9 +59,9 @@
                         </div>
                     @endforeach
                 </div>
-                <div style="width:100%;background:#DCF2EE;border:1px solid rgba(23,144,123,.25);border-radius:14px;padding:13px 16px;display:flex;align-items:center;gap:12px;margin-top:4px">
+                <div style="width:100%;background:{{ $isDark ? 'rgba(45,212,191,.12)' : '#DCF2EE' }};border:1px solid {{ $isDark ? 'rgba(45,212,191,.3)' : 'rgba(23,144,123,.25)' }};border-radius:14px;padding:13px 16px;display:flex;align-items:center;gap:12px;margin-top:4px">
                     <span style="width:30px;height:30px;flex-shrink:0;border-radius:50%;background:#17907B;color:#fff;display:grid;place-items:center"><x-icon name="check" style="width:17px;height:17px" /></span>
-                    <span style="font-family:'Geist',sans-serif;font-size:13.5px;font-weight:700;color:#0F7A68;text-align:left">{{ $attempt->counts_for_ranking ? __('Ini percubaan pertama anda, jadi :score mata dikira untuk ranking.', ['score' => $attempt->score]) : __('Ini latihan semula. Markah ini tidak menjejaskan ranking anda.') }}</span>
+                    <span style="font-family:'Geist',sans-serif;font-size:13.5px;font-weight:700;color:{{ $isDark ? '#5EEAD4' : '#0F7A68' }};text-align:left">{{ $attempt->counts_for_ranking ? __('Ini percubaan pertama anda, jadi :score mata dikira untuk ranking.', ['score' => $attempt->score]) : __('Ini latihan semula. Markah ini tidak menjejaskan ranking anda.') }}</span>
                 </div>
 
                 {{-- Badges earned, in their own bordered card. --}}
