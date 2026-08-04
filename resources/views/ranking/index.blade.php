@@ -19,9 +19,9 @@
         .lb-medal { position: relative; display: block; z-index: 2; }
         .lb-medal svg { display: block; width: 100%; height: 100%; }
         .lb-num { position: absolute; top: 0; left: 0; right: 0; height: 65%; display: grid; place-items: center; font-family: 'Geist', sans-serif; font-weight: 800; color: var(--c-mnum); }
-        .lb-card--first .lb-medal { width: 56px; height: 56px; }
+        .lb-card--first .lb-medal { width: 48px; height: 48px; }
         .lb-card--first .lb-num { font-size: 13px; }
-        .lb-card--second .lb-medal, .lb-card--third .lb-medal { width: 46px; height: 46px; }
+        .lb-card--second .lb-medal, .lb-card--third .lb-medal { width: 40px; height: 40px; }
         .lb-card--second .lb-num, .lb-card--third .lb-num { font-size: 11px; }
 
         .lb-avatar { position: relative; z-index: 1; border-radius: 50%; display: grid; place-items: center; overflow: hidden; background: radial-gradient(circle at 50% 32%, #fff, var(--c-avfill) 80%); border: 3px solid var(--c-avring); color: var(--c-avink); font-family: 'Geist', sans-serif; font-weight: 800; }
