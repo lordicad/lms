@@ -24,7 +24,7 @@
         .lb-card--second .lb-medal, .lb-card--third .lb-medal { width: 40px; height: 40px; }
         .lb-card--second .lb-num, .lb-card--third .lb-num { font-size: 11px; }
 
-        .lb-avatar { position: relative; z-index: 1; border-radius: 50%; display: grid; place-items: center; overflow: hidden; background: radial-gradient(circle at 50% 32%, var(--c-avtop, #fff), var(--c-avfill) 80%); border: 3px solid var(--c-avring); color: var(--c-avink); font-family: 'Geist', sans-serif; font-weight: 800; }
+        .lb-avatar { position: relative; z-index: 1; border-radius: 50%; display: grid; place-items: center; overflow: hidden; background: radial-gradient(circle at 50% 32%, #fff, var(--c-avfill) 80%); border: 3px solid var(--c-avring); color: var(--c-avink); font-family: 'Geist', sans-serif; font-weight: 800; }
         .lb-avatar img { width: 100%; height: 100%; object-fit: cover; }
         .lb-card--first .lb-avatar { width: 70px; height: 70px; font-size: 27px; margin-top: -6px; }
         .lb-card--second .lb-avatar, .lb-card--third .lb-avatar { width: 60px; height: 60px; font-size: 22px; margin-top: -5px; }
@@ -71,10 +71,6 @@
         html.theme-dark .lb-bar { background: rgba(255,255,255,.12); }
         html.theme-dark .lb-pct { color: var(--wl-body); }
         html.theme-dark .lb-pts { color: #2DD4BF; }
-        /* Podium card text + the cream podium steps, for night mode. */
-        html.theme-dark .lb-name { color: #EDF2F8; }
-        html.theme-dark .lb-quizzes { color: #99A0B5; }
-        html.theme-dark .lb-step { background: linear-gradient(180deg, #232B25, #1A211C); }
 
         @media (max-width: 720px) {
             .lb-tbl-head, .lb-tr { grid-template-columns: 42px minmax(0,1fr) auto; gap: 12px; padding: 12px 15px; }
@@ -164,14 +160,7 @@
             {{-- Display order is Rank 2 · Rank 1 · Rank 3 (derived, not a mutation of the data). --}}
             @php($displayOrder = collect([1, 0, 2])->map(fn ($i) => $topStudents[$i] ?? null)->filter()->values())
             {{-- Per-rank palette, handed to each card as CSS custom properties. --}}
-            @php($isDark = ($theme ?? 'light') === 'dark')
-            {{-- Same podium design; dark mode only swaps the card colours (the medal is a PNG,
-                 so it is untouched). --}}
-            @php($cfg = $isDark ? [
-                1 => ['cls' => 'lb-card--first', 'vars' => '--c-bg:#2C2717;--c-bg2:#241F12;--c-border:#5E4E22;--c-avtop:#243026;--c-avfill:#1A2620;--c-avring:#2DD4BF;--c-avink:#5EEAD4;--c-pillbg:#123029;--c-pillink:#5EEAD4;--c-spark:#5A4E2C;--c-leaf:#4E4326'],
-                2 => ['cls' => 'lb-card--second', 'vars' => '--c-bg:#1E2C3E;--c-bg2:#172230;--c-border:#3C587F;--c-avtop:#22303F;--c-avfill:#18222F;--c-avring:#6FA8E0;--c-avink:#A6C8F0;--c-pillbg:#1A2B3F;--c-pillink:#A6C8F0;--c-spark:#324659;--c-leaf:#2A3A4D'],
-                3 => ['cls' => 'lb-card--third', 'vars' => '--c-bg:#331E28;--c-bg2:#2A1821;--c-border:#7A3C56;--c-avtop:#3A2530;--c-avfill:#2C1B24;--c-avring:#E97DA6;--c-avink:#F2A6C2;--c-pillbg:#3A1E2C;--c-pillink:#F2A6C2;--c-spark:#4E2E3C;--c-leaf:#452839'],
-            ] : [
+            @php($cfg = [
                 1 => ['cls' => 'lb-card--first', 'vars' => '--c-bg:#FFFBF2;--c-bg2:#FFF7E7;--c-border:#F4C45E;--c-disc:#F6B91A;--c-dring:#DDA00E;--c-dhi:#FCD277;--c-mnum:#7A4E10;--c-mribA:#EDA130;--c-mribB:#D68A1C;--c-avfill:#E9F8EF;--c-avring:#0DA77E;--c-avink:#07815E;--c-pillbg:#DDF4E7;--c-pillink:#087A58;--c-spark:#EFCE7C;--c-leaf:#EAD79A'],
                 2 => ['cls' => 'lb-card--second', 'vars' => '--c-bg:#F5F9FF;--c-bg2:#ECF5FF;--c-border:#91BAF3;--c-disc:#CBD3DF;--c-dring:#A6ADBA;--c-dhi:#E6EBF2;--c-mnum:#37414F;--c-mribA:#447FD4;--c-mribB:#3565B0;--c-avfill:#EAF3FF;--c-avring:#78A9EE;--c-avink:#1762B6;--c-pillbg:#E1EEFF;--c-pillink:#1761BB;--c-spark:#B9CFEA;--c-leaf:#C4D8F0'],
                 3 => ['cls' => 'lb-card--third', 'vars' => '--c-bg:#FFF6FA;--c-bg2:#FFEFF5;--c-border:#F1A8C1;--c-disc:#C87B48;--c-dring:#AE6636;--c-dhi:#E0A97A;--c-mnum:#6B3E18;--c-mribA:#C22A69;--c-mribB:#A82258;--c-avfill:#FFEAF2;--c-avring:#EC77A4;--c-avink:#C22A69;--c-pillbg:#FDE1EC;--c-pillink:#C32767;--c-spark:#F0BFD4;--c-leaf:#F3C9DC'],
