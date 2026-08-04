@@ -72,8 +72,8 @@
                     {{-- Botanical corners (soft blob + olive-branch sprig) and scattered sparkles, redrawn from the reference. --}}
                     <div aria-hidden="true" style="position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden">
                         {{-- Soft pastel-green shade behind each branch. --}}
-                        <div style="position:absolute;left:-26px;bottom:-30px;width:164px;height:185px;border-radius:58% 42% 48% 52% / 62% 55% 45% 38%;background:#E7EEE8;opacity:.42;filter:blur(12px)"></div>
-                        <div style="position:absolute;right:-44px;bottom:-30px;width:146px;height:167px;border-radius:42% 58% 52% 48% / 58% 45% 55% 42%;background:#E7EEE8;opacity:.36;filter:blur(12px)"></div>
+                        <div style="position:absolute;left:-26px;bottom:-30px;width:164px;height:185px;border-radius:58% 42% 48% 52% / 62% 55% 45% 38%;background:#E7EEE8;opacity:.2;filter:blur(12px)"></div>
+                        <div style="position:absolute;right:-44px;bottom:-30px;width:146px;height:167px;border-radius:42% 58% 52% 48% / 58% 45% 55% 42%;background:#E7EEE8;opacity:.16;filter:blur(12px)"></div>
                         {{-- Leaf branches from the uploaded illustration, cropped into each corner. --}}
                         <div style="position:absolute;left:0;bottom:0;width:90px;height:117px;opacity:.92;background:url('{{ asset('images/leaf.png') }}') no-repeat -10px -24px / 238px 158px"></div>
                         <div style="position:absolute;right:-4px;bottom:0;width:77px;height:100px;opacity:.92;transform:scaleX(-1) rotate(9deg);transform-origin:50% 100%;background:url('{{ asset('images/leaf.png') }}') no-repeat -9px -20px / 203px 135px"></div>
