@@ -351,7 +351,7 @@
                 <div style="overflow-x:auto;margin-top:12px">
                     <table style="width:100%;border-collapse:collapse;font-size:12.5px">
                         <thead>
-                            <tr style="text-align:right">
+                            <tr style="text-align:center">
                                 <th scope="col" style="text-align:left;padding:7px 10px;font-family:'Geist',sans-serif;font-weight:800;color:var(--tp-muted-2);border-bottom:1.5px solid var(--dl-tick)">{{ __('Tarikh') }}</th>
                                 @foreach ($seriesMeta as $s)
                                     <th scope="col" style="padding:7px 10px;font-family:'Geist',sans-serif;font-weight:800;color:{{ $s['color'] }};border-bottom:1.5px solid var(--dl-tick)">{{ $s['label'] }}</th>
@@ -360,7 +360,7 @@
                         </thead>
                         <tbody>
                             @foreach ($activity['labels'] as $i => $label)
-                                <tr style="text-align:right">
+                                <tr style="text-align:center">
                                     <td style="text-align:left;padding:6px 10px;font-weight:700;color:var(--d-label);border-bottom:1px solid var(--dl-soft)">{{ $label }}</td>
                                     @foreach ($seriesMeta as $s)
                                         <td style="padding:6px 10px;color:var(--tp-ink);font-variant-numeric:tabular-nums;border-bottom:1px solid var(--dl-soft)">{{ number_format($activity['series'][$s['key']][$i]) }}</td>
