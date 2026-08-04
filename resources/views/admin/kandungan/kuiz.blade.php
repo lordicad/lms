@@ -70,7 +70,8 @@
                                 <span style="text-align:center;font-size:13px;font-weight:800;color:{{ $hasAttempts ? '#0F7A68' : '#8B8AA3' }}">{{ $hasAttempts ? number_format($quiz->pass_count) : '—' }}</span>
                                 <span style="text-align:center;font-size:13px;font-weight:800;color:{{ $hasAttempts ? '#C24936' : '#8B8AA3' }}">{{ $hasAttempts ? number_format($quiz->attempts_count - $quiz->pass_count) : '—' }}</span>
                                 <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2);text-align:center">{{ $quiz->created_at->translatedFormat('j M Y') }}</span>
-                                <button type="button" class="tp-linkbtn" style="justify-self:center;white-space:nowrap"
+                                <button type="button"
+                                        style="justify-self:center;display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 14px;border-radius:10px;border:1.5px solid var(--tp-line-2);background:var(--tp-surface);color:var(--tp-teal);font-family:'Geist',sans-serif;font-weight:800;font-size:12.5px;cursor:pointer;white-space:nowrap"
                                         @click="open(@js([
                                             'title' => $quiz->title,
                                             'subtitle' => collect([$quiz->teacher?->name, $quiz->chapter->subject->displayName(), $quiz->chapter->grade->name])->filter()->implode(' · '),
@@ -87,7 +88,7 @@
                                                 ])->all(),
                                             ])->all(),
                                         ]))">
-                                    👁 {{ __('Lihat') }}<span class="sr-only">{{ $quiz->title }}</span>
+                                    <x-icon name="eye" style="width:15px;height:15px" />{{ __('Lihat') }}<span class="sr-only">{{ $quiz->title }}</span>
                                 </button>
                             </div>
                         @endforeach
