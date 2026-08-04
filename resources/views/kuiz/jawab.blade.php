@@ -1,4 +1,5 @@
 <x-student-layout :title="$quiz->title">
+    @php($isDark = ($theme ?? 'light') === 'dark')
     <style>
         /* Answer options: a colour-tinted card each, turning solid when picked (colours set per
            option via --tint / --solid). Letter badge left, answer in the middle, tick on the right. */
@@ -73,12 +74,19 @@
                     {{-- Answer options, one per row. --}}
                     <div style="display:flex;flex-direction:column;gap:12px">
                         @foreach ($question->options as $oIndex => $option)
-                            @php($pal = [
+                            {{-- Same four hues (yellow/blue/red/purple); dark mode darkens the tint so
+                                 the answer text stays readable, keeping the solid accent for picks. --}}
+                            @php($pal = ($isDark ? [
+                                ['tint' => '#3B331D', 'solid' => '#D99A28'],
+                                ['tint' => '#1E2C3E', 'solid' => '#3E86C9'],
+                                ['tint' => '#37202B', 'solid' => '#E0568A'],
+                                ['tint' => '#2A2440', 'solid' => '#7C5CBF'],
+                            ] : [
                                 ['tint' => '#FBF0D9', 'solid' => '#D99A28'],
                                 ['tint' => '#DCEBF8', 'solid' => '#3E86C9'],
                                 ['tint' => '#FCE1EA', 'solid' => '#E0568A'],
                                 ['tint' => '#EDE7F9', 'solid' => '#7C5CBF'],
-                            ][$oIndex % 4])
+                            ])[$oIndex % 4])
                             <label class="qopt2 {{ $question->isMultiple() ? 'check' : 'radio' }}" style="--tint:{{ $pal['tint'] }};--solid:{{ $pal['solid'] }}">
                                 <input type="{{ $question->isMultiple() ? 'checkbox' : 'radio' }}" name="answers[{{ $question->id }}][]" value="{{ $option->id }}" @change="touch({{ $index }})">
                                 <span class="q2letter">{{ chr(65 + $oIndex) }}</span>
