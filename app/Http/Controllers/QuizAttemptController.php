@@ -126,7 +126,9 @@ class QuizAttemptController extends Controller
             route('cikgu.kuiz.statistik', $attempt->quiz),
         );
 
-        return redirect()->route('keputusan.show', $attempt);
+        // Flash a one-time flag so the result page celebrates (confetti) only on this fresh
+        // completion — not when the student later clicks "Semak" to review the same attempt.
+        return redirect()->route('keputusan.show', $attempt)->with('quiz_celebrate', $attempt->id);
     }
 
     public function result(Request $request, QuizAttempt $attempt): View|RedirectResponse

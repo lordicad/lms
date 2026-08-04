@@ -1,5 +1,8 @@
 <x-student-layout :title="__('Keputusan')">
     @php($pct = $attempt->percentage())
+    {{-- True only right after finishing this quiz (flashed by submit()), so reviewing an old
+         completed attempt via "Semak" shows no confetti / "new" badge fanfare. --}}
+    @php($celebrate = session('quiz_celebrate') == $attempt->id)
     @php($good = $pct >= 80)
     @php($mid = $pct >= 50)
     @php($name = \Illuminate\Support\Str::before(auth()->user()->name, ' '))
@@ -71,13 +74,13 @@
                         <div style="display:flex;align-items:center;gap:12px">
                             <span style="width:40px;height:40px;flex-shrink:0;border-radius:12px;background:#FEF0CE;color:#E0A21C;display:grid;place-items:center"><x-icon name="trophy" style="width:22px;height:22px" /></span>
                             <h3 style="margin:0;font-family:'Geist',sans-serif;font-size:17px;font-weight:800;color:var(--wl-ink)">{{ __('Lencana Diperoleh') }}</h3>
-                            @if (count($badgesNew))
+                            @if ($celebrate && count($badgesNew))
                                 <span style="background:#DCF2EE;color:#0F7A68;border-radius:999px;padding:4px 12px;font-family:'Geist',sans-serif;font-size:12px;font-weight:800">+{{ count($badgesNew) }} {{ __('baru') }}</span>
                             @endif
                         </div>
                         <div style="display:flex;flex-wrap:wrap;gap:14px;justify-content:center">
                             @foreach ($badgesEarned as $key)
-                                @php($new = in_array($key, $badgesNew, true))
+                                @php($new = $celebrate && in_array($key, $badgesNew, true))
                                 <div style="position:relative;flex:0 0 auto;border:1px solid var(--wl-line);border-radius:16px;padding:16px 12px 14px;background:var(--wl-surface)">
                                     @if ($new)
                                         <span style="position:absolute;top:8px;right:8px;background:#EB5E5A;color:#fff;border-radius:999px;padding:2px 10px;font-family:'Geist',sans-serif;font-size:10.5px;font-weight:800;box-shadow:0 3px 8px rgba(235,94,90,.4);z-index:4">{{ __('Baru') }}</span>
@@ -153,9 +156,9 @@
         <a href="{{ route('kuiz-saya.index') }}" class="wl-btn-secondary" style="align-self:center;min-height:48px;display:inline-flex;align-items:center;gap:6px;border-radius:14px;border:2px solid {{ $isDark ? '#2DD4BF' : '#17907B' }};background:{{ $isDark ? 'var(--wl-surface)' : '#fff' }};color:{{ $isDark ? '#5EEAD4' : '#0F7A68' }};font-family:'Geist',sans-serif;font-weight:800;font-size:14.5px;padding:0 24px;text-decoration:none"><x-icon name="arrow-left" style="width:17px;height:17px" />{{ __('Kembali') }}</a>
     </div>
 
-    {{-- One-off full-screen confetti rain — only for a perfect score. Self-contained canvas
-         (no library), fires once on load, and is skipped under reduced motion. --}}
-    @if ($pct >= 100)
+    {{-- One-off full-screen confetti rain — only for a perfect score, and only on a fresh finish
+         (not when reviewing). Self-contained canvas (no library), skipped under reduced motion. --}}
+    @if ($pct >= 100 && $celebrate)
         <script>
             (function () {
                 if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
