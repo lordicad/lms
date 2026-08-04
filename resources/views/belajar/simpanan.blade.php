@@ -25,21 +25,15 @@
                     {{ __('Tiada video untuk Tahun ini lagi.') }}
                 </p>
             @else
-                @php($vpal = [
-                    ['accent' => '#17907B', 'tint' => '#DCF2EE', 'grad' => 'linear-gradient(135deg,#E6F4EE,#CFEADD)'],
-                    ['accent' => '#3E86C9', 'tint' => '#E4EEF9', 'grad' => 'linear-gradient(135deg,#E9F1FB,#D3E4F6)'],
-                    ['accent' => '#C8901C', 'tint' => '#FBEFCF', 'grad' => 'linear-gradient(135deg,#FDF4DC,#FBE7B8)'],
-                    ['accent' => '#7C5CBF', 'tint' => '#E9E4F9', 'grad' => 'linear-gradient(135deg,#EEE8FB,#DDD1F3)'],
-                    ['accent' => '#17907B', 'tint' => '#DCF2EE', 'grad' => 'linear-gradient(135deg,#E6F4EE,#CFEADD)'],
-                    ['accent' => '#D6357F', 'tint' => '#FBE0EC', 'grad' => 'linear-gradient(135deg,#FCE7F1,#F8D2E3)'],
-                ])
                 <ul style="display:flex;flex-direction:column;gap:12px">
                     @foreach ($lessons as $lesson)
-                        @php($p = $vpal[$loop->index % 6])
+                        @php($ac = $lesson->chapter->subject->color ?: '#17907B')
+                        @php($grad = "linear-gradient(135deg, color-mix(in oklab, {$ac} 10%, #fff), color-mix(in oklab, {$ac} 22%, #fff))")
+                        @php($tint = "color-mix(in oklab, {$ac} 14%, #fff)")
                         <li style="position:relative;overflow:hidden;display:flex;align-items:center;gap:14px;background:var(--wl-surface);border:1px solid var(--wl-line);border-radius:16px;padding:12px 16px;box-shadow:0 4px 16px rgba(46,44,80,.04)">
                             {{-- Faint leaf flourish on the right. --}}
-                            <svg aria-hidden="true" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);opacity:.2;pointer-events:none;z-index:0" width="92" height="74" viewBox="0 0 92 74" fill="{{ $p['accent'] }}">
-                                <path d="M8 68 C 26 54 46 42 84 12" fill="none" stroke="{{ $p['accent'] }}" stroke-width="1.5"/>
+                            <svg aria-hidden="true" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);opacity:.2;pointer-events:none;z-index:0" width="92" height="74" viewBox="0 0 92 74" fill="{{ $ac }}">
+                                <path d="M8 68 C 26 54 46 42 84 12" fill="none" stroke="{{ $ac }}" stroke-width="1.5"/>
                                 <ellipse cx="0" cy="0" rx="10" ry="4.5" transform="translate(26 54) rotate(-32)"/>
                                 <ellipse cx="0" cy="0" rx="10" ry="4.5" transform="translate(40 47) rotate(28)"/>
                                 <ellipse cx="0" cy="0" rx="9" ry="4" transform="translate(52 37) rotate(-32)"/>
@@ -48,18 +42,18 @@
                             </svg>
 
                             {{-- Thumbnail on a soft gradient (video image, or the subject icon). --}}
-                            <span style="position:relative;z-index:1;flex-shrink:0;width:104px;height:66px;border-radius:13px;overflow:hidden;background:{{ $p['grad'] }};display:grid;place-items:center">
+                            <span style="position:relative;z-index:1;flex-shrink:0;width:104px;height:66px;border-radius:13px;overflow:hidden;background:{{ $grad }};display:grid;place-items:center">
                                 @if ($lesson->thumbnailUrl())
                                     <img src="{{ $lesson->thumbnailUrl() }}" alt="" loading="lazy" style="width:100%;height:100%;object-fit:cover">
                                 @else
-                                    <span style="color:{{ $p['accent'] }}"><x-subject-icon :subject="$lesson->chapter->subject" :size="30" /></span>
+                                    <span style="color:{{ $ac }}"><x-subject-icon :subject="$lesson->chapter->subject" :size="30" /></span>
                                 @endif
                             </span>
 
                             <span style="position:relative;z-index:1;min-width:0;flex:1;display:flex;flex-direction:column;gap:3px">
                                 <a href="{{ route('video.show', $lesson) }}" style="font-family:'Geist',sans-serif;font-weight:800;font-size:15px;color:var(--wl-ink);text-decoration:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $lesson->title }}</a>
                                 <span style="display:inline-flex;align-items:center;gap:9px;flex-wrap:wrap">
-                                    <span style="background:color-mix(in oklab, {{ $p['accent'] }} var(--pill-bw), var(--pill-bb));color:color-mix(in oklab, {{ $p['accent'] }} var(--pill-fw), var(--pill-fb));border-radius:999px;padding:3px 12px;font-family:'Geist',sans-serif;font-size:12px;font-weight:800">{{ $lesson->chapter->subject->displayName() }}</span>
+                                    <span style="background:color-mix(in oklab, {{ $ac }} var(--pill-bw), var(--pill-bb));color:color-mix(in oklab, {{ $ac }} var(--pill-fw), var(--pill-fb));border-radius:999px;padding:3px 12px;font-family:'Geist',sans-serif;font-size:12px;font-weight:800">{{ $lesson->chapter->subject->displayName() }}</span>
                                     <span style="font-size:12.5px;font-weight:700;color:var(--wl-muted)">· Bab {{ $lesson->chapter->number }}</span>
                                 </span>
                                 @if ($lesson->teacher)
@@ -69,12 +63,12 @@
 
                             @if ($lesson->isUpload())
                                 <a href="{{ route('muat-turun.video', $lesson) }}" @click="remember(@js($lesson->title))"
-                                   style="position:relative;z-index:1;flex-shrink:0;display:inline-flex;align-items:center;gap:8px;min-height:42px;padding:0 20px;border-radius:12px;background:var(--wl-surface);border:1.5px solid color-mix(in oklab, {{ $p['accent'] }} 32%, #fff);color:{{ $p['accent'] }};font-family:'Geist',sans-serif;font-weight:800;font-size:14px;text-decoration:none">
+                                   style="position:relative;z-index:1;flex-shrink:0;display:inline-flex;align-items:center;gap:8px;min-height:42px;padding:0 20px;border-radius:12px;background:var(--wl-surface);border:1.5px solid color-mix(in oklab, {{ $ac }} 32%, #fff);color:{{ $ac }};font-family:'Geist',sans-serif;font-weight:800;font-size:14px;text-decoration:none">
                                     <x-icon name="download" style="width:17px;height:17px" />{{ __('Muat Turun') }}
                                 </a>
                             @else
                                 <span style="position:relative;z-index:1;flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;gap:5px">
-                                    <span style="display:inline-flex;align-items:center;gap:8px;min-height:42px;padding:0 18px;border-radius:12px;background:{{ $p['tint'] }};color:{{ $p['accent'] }};font-family:'Geist',sans-serif;font-weight:800;font-size:14px"><x-icon name="play" style="width:16px;height:16px" />{{ __('Dalam talian sahaja') }}</span>
+                                    <span style="display:inline-flex;align-items:center;gap:8px;min-height:42px;padding:0 18px;border-radius:12px;background:{{ $tint }};color:{{ $ac }};font-family:'Geist',sans-serif;font-weight:800;font-size:14px"><x-icon name="play" style="width:16px;height:16px" />{{ __('Dalam talian sahaja') }}</span>
                                     <span style="font-size:12px;color:var(--wl-muted);text-align:right">{{ __('Video ini hanya boleh ditonton dalam talian.') }}</span>
                                 </span>
                             @endif
