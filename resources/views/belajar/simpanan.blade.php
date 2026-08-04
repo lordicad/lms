@@ -59,7 +59,7 @@
                             <span style="position:relative;z-index:1;min-width:0;flex:1;display:flex;flex-direction:column;gap:3px">
                                 <a href="{{ route('video.show', $lesson) }}" style="font-family:'Geist',sans-serif;font-weight:800;font-size:15px;color:var(--wl-ink);text-decoration:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $lesson->title }}</a>
                                 <span style="display:inline-flex;align-items:center;gap:9px;flex-wrap:wrap">
-                                    <span style="background:{{ $p['tint'] }};color:color-mix(in oklab, {{ $p['accent'] }} 80%, #000);border-radius:999px;padding:3px 12px;font-family:'Geist',sans-serif;font-size:12px;font-weight:800">{{ $lesson->chapter->subject->displayName() }}</span>
+                                    <span style="background:color-mix(in oklab, {{ $p['accent'] }} var(--pill-bw), var(--pill-bb));color:color-mix(in oklab, {{ $p['accent'] }} var(--pill-fw), var(--pill-fb));border-radius:999px;padding:3px 12px;font-family:'Geist',sans-serif;font-size:12px;font-weight:800">{{ $lesson->chapter->subject->displayName() }}</span>
                                     <span style="font-size:12.5px;font-weight:700;color:var(--wl-muted)">· Bab {{ $lesson->chapter->number }}</span>
                                 </span>
                                 @if ($lesson->teacher)
@@ -118,7 +118,7 @@
                                 <span style="position:relative;z-index:1;min-width:0;flex:1;display:flex;flex-direction:column;gap:5px">
                                     <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:15.5px;color:var(--wl-ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $material->title }}</span>
                                     <span style="display:inline-flex;align-items:center;gap:9px;flex-wrap:wrap">
-                                        <span style="background:{{ $tint }};color:{{ $tintInk }};border-radius:999px;padding:3px 12px;font-family:'Geist',sans-serif;font-size:12px;font-weight:800">{{ $chapter->subject->displayName() }}</span>
+                                        <span style="background:color-mix(in oklab, {{ $ac }} var(--pill-bw), var(--pill-bb));color:color-mix(in oklab, {{ $ac }} var(--pill-fw), var(--pill-fb));border-radius:999px;padding:3px 12px;font-family:'Geist',sans-serif;font-size:12px;font-weight:800">{{ $chapter->subject->displayName() }}</span>
                                         <span style="font-size:12.5px;font-weight:700;color:var(--wl-muted)">· Bab {{ $chapter->number }}: {{ $chapter->title }}</span>
                                     </span>
                                     <span style="display:inline-flex;align-items:center;gap:10px;font-size:12.5px;color:var(--wl-muted)">
