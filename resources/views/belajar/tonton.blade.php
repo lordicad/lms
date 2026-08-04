@@ -72,6 +72,7 @@
                     @if ($materials->isEmpty())
                         <p style="margin:0;background:var(--wl-surface);border:1px dashed var(--wl-line-3);border-radius:16px;padding:16px;font-size:13px;color:var(--wl-muted)">{{ __('Tiada bahan sokongan untuk video ini.') }}</p>
                     @else
+                        @php($isDark = ($theme ?? 'light') === 'dark')
                         @foreach ($materials as $material)
                             <div style="background:var(--wl-surface);border:1px solid var(--wl-line);border-radius:16px;padding:14px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 3px 12px rgba(46,44,80,.04)">
                                 <span style="width:38px;height:38px;border-radius:10px;background:#FDE7E0;display:grid;place-items:center;font-size:15px;flex-shrink:0">📄</span>
@@ -79,7 +80,7 @@
                                     <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:13.5px;color:var(--wl-ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ $material->title }}</span>
                                     <span style="font-size:12px;color:var(--wl-muted)">{{ $material->humanSize() }}</span>
                                 </div>
-                                <a href="{{ route('muat-turun.bahan', $material) }}" title="{{ __('Muat turun') }}" style="width:38px;height:38px;border-radius:10px;background:#DCF2EE;color:#0F7A68;font-size:15px;display:grid;place-items:center;text-decoration:none;flex-shrink:0">⬇</a>
+                                <a href="{{ route('muat-turun.bahan', $material) }}" title="{{ __('Muat turun') }}" style="width:38px;height:38px;border-radius:10px;background:{{ $isDark ? 'rgba(45,212,191,.15)' : '#DCF2EE' }};color:{{ $isDark ? '#5EEAD4' : '#0F7A68' }};display:grid;place-items:center;text-decoration:none;flex-shrink:0"><x-icon name="download" style="width:18px;height:18px" /></a>
                             </div>
                         @endforeach
                     @endif
