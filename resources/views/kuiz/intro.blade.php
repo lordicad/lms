@@ -1,5 +1,6 @@
 <x-dynamic-component :component="auth()->user()->isTeacher() ? 'app-layout' : 'student-layout'" :title="$quiz->title">
     @php($col = $subject->color ?: '#17907B')
+    @php($isDark = ($theme ?? 'light') === 'dark')
     @php($tagBg = "color-mix(in oklab, {$col} var(--pill-bw), var(--pill-bb))")
     @php($tagColor = "color-mix(in oklab, {$col} var(--pill-fw), var(--pill-fb))")
 
@@ -16,44 +17,44 @@
             <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:26px;font-weight:800;letter-spacing:-.01em;color:var(--wl-ink)">{{ $quiz->localizedTitle() }}</h2>
 
             <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px">
-                <div style="background:#F6F3EC;border-radius:14px;padding:14px 18px;display:flex;flex-direction:column;gap:3px">
+                <div style="background:{{ $isDark ? '#2A3543' : '#F6F3EC' }};border:1px solid var(--wl-line-2);border-radius:14px;padding:14px 18px;display:flex;flex-direction:column;gap:3px">
                     <span style="font-size:12.5px;font-weight:700;color:var(--wl-muted)">{{ __('Soalan') }}</span>
                     <span style="font-family:'Geist',sans-serif;font-size:20px;font-weight:800;color:var(--wl-ink)">{{ $questionCount }}</span>
                 </div>
-                <div style="background:#F6F3EC;border-radius:14px;padding:14px 18px;display:flex;flex-direction:column;gap:3px">
+                <div style="background:{{ $isDark ? '#2A3543' : '#F6F3EC' }};border:1px solid var(--wl-line-2);border-radius:14px;padding:14px 18px;display:flex;flex-direction:column;gap:3px">
                     <span style="font-size:12.5px;font-weight:700;color:var(--wl-muted)">{{ __('Markah penuh') }}</span>
                     <span style="font-family:'Geist',sans-serif;font-size:20px;font-weight:800;color:var(--wl-ink)">{{ $maxScore }}</span>
                 </div>
-                <div style="background:#F6F3EC;border-radius:14px;padding:14px 18px;display:flex;flex-direction:column;gap:3px">
+                <div style="background:{{ $isDark ? '#2A3543' : '#F6F3EC' }};border:1px solid var(--wl-line-2);border-radius:14px;padding:14px 18px;display:flex;flex-direction:column;gap:3px">
                     <span style="font-size:12.5px;font-weight:700;color:var(--wl-muted)">{{ __('Masa') }}</span>
                     <span style="font-family:'Geist',sans-serif;font-size:20px;font-weight:800;color:var(--wl-ink)">{{ $quiz->duration_minutes ? $quiz->duration_minutes.' minit' : __('Bebas') }}</span>
                 </div>
             </div>
 
-            <div style="background:#F6F3EC;border:1px solid var(--wl-line);border-radius:16px;padding:20px 22px;display:flex;flex-direction:column;gap:12px">
+            <div style="background:{{ $isDark ? '#2A3543' : '#F6F3EC' }};border:1px solid var(--wl-line);border-radius:16px;padding:20px 22px;display:flex;flex-direction:column;gap:12px">
                 <span style="display:inline-flex;align-items:center;gap:8px;font-family:'Geist',sans-serif;font-size:14.5px;font-weight:800;color:var(--wl-ink)"><x-icon name="info-circle" style="width:18px;height:18px;color:#2E6CA8" />{{ __('Peraturan kuiz') }}</span>
                 <div style="display:flex;gap:10px;align-items:flex-start">
                     <span style="color:#17907B;flex-shrink:0;margin-top:1px"><x-icon name="check" style="width:16px;height:16px" /></span>
-                    <span style="font-size:13.5px;color:#4A4B63;line-height:1.5">{{ __('Soalan pilihan: pilih') }} <b>{{ __('satu') }}</b> {{ __('jawapan sahaja.') }}</span>
+                    <span style="font-size:13.5px;color:{{ $isDark ? 'var(--wl-body)' : '#4A4B63' }};line-height:1.5">{{ __('Soalan pilihan: pilih') }} <b>{{ __('satu') }}</b> {{ __('jawapan sahaja.') }}</span>
                 </div>
                 <div style="display:flex;gap:10px;align-items:flex-start">
                     <span style="color:#17907B;flex-shrink:0;margin-top:1px"><x-icon name="check" style="width:16px;height:16px" /></span>
-                    <span style="font-size:13.5px;color:#4A4B63;line-height:1.5">{{ __('Soalan kotak semak: pilih') }} <b>{{ __('semua') }}</b> {{ __('jawapan yang betul. Semua mesti betul untuk mendapat markah.') }}</span>
+                    <span style="font-size:13.5px;color:{{ $isDark ? 'var(--wl-body)' : '#4A4B63' }};line-height:1.5">{{ __('Soalan kotak semak: pilih') }} <b>{{ __('semua') }}</b> {{ __('jawapan yang betul. Semua mesti betul untuk mendapat markah.') }}</span>
                 </div>
                 <div style="display:flex;gap:10px;align-items:flex-start">
-                    <span style="color:#8A6A12;flex-shrink:0;margin-top:1px"><x-icon name="trophy" style="width:16px;height:16px" /></span>
-                    <span style="font-size:13.5px;color:#4A4B63;line-height:1.5"><b>{{ __('Hanya percubaan pertama') }}</b> {{ __('dikira untuk ranking. Percubaan seterusnya adalah latihan sahaja dan tidak menjejaskan mata anda.') }}</span>
+                    <span style="color:{{ $isDark ? '#F0B733' : '#8A6A12' }};flex-shrink:0;margin-top:1px"><x-icon name="trophy" style="width:16px;height:16px" /></span>
+                    <span style="font-size:13.5px;color:{{ $isDark ? 'var(--wl-body)' : '#4A4B63' }};line-height:1.5"><b>{{ __('Hanya percubaan pertama') }}</b> {{ __('dikira untuk ranking. Percubaan seterusnya adalah latihan sahaja dan tidak menjejaskan mata anda.') }}</span>
                 </div>
                 @if ($quiz->duration_minutes)
                     <div style="display:flex;gap:10px;align-items:flex-start">
                         <span style="color:#E3A31C;font-size:13px;flex-shrink:0">⏰</span>
-                        <span style="font-size:13.5px;color:#4A4B63;line-height:1.5">{{ __('Anda ada :minutes minit. Jawapan dihantar secara automatik apabila masa tamat.', ['minutes' => $quiz->duration_minutes]) }}</span>
+                        <span style="font-size:13.5px;color:{{ $isDark ? 'var(--wl-body)' : '#4A4B63' }};line-height:1.5">{{ __('Anda ada :minutes minit. Jawapan dihantar secara automatik apabila masa tamat.', ['minutes' => $quiz->duration_minutes]) }}</span>
                     </div>
                 @endif
             </div>
 
             @if ($rankedAttempt)
-                <div style="display:flex;align-items:center;gap:8px;background:#DCF2EE;border:1px solid rgba(23,144,123,.25);border-radius:14px;padding:14px 18px;font-family:'Geist',sans-serif;font-size:13.5px;font-weight:700;color:#0F7A68"><x-icon name="check-circle" style="width:18px;height:18px;flex-shrink:0" />{{ __('Percubaan pertama anda: :score/:max mata. Percubaan baharu adalah latihan.', ['score' => $rankedAttempt->score, 'max' => $rankedAttempt->max_score]) }}</div>
+                <div style="display:flex;align-items:center;gap:8px;background:{{ $isDark ? 'rgba(45,212,191,.12)' : '#DCF2EE' }};border:1px solid {{ $isDark ? 'rgba(45,212,191,.3)' : 'rgba(23,144,123,.25)' }};border-radius:14px;padding:14px 18px;font-family:'Geist',sans-serif;font-size:13.5px;font-weight:700;color:{{ $isDark ? '#5EEAD4' : '#0F7A68' }}"><x-icon name="check-circle" style="width:18px;height:18px;flex-shrink:0" />{{ __('Percubaan pertama anda: :score/:max mata. Percubaan baharu adalah latihan.', ['score' => $rankedAttempt->score, 'max' => $rankedAttempt->max_score]) }}</div>
             @endif
 
             @unless ($isPreview)
