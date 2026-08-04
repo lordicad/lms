@@ -17,10 +17,10 @@
             ['icon' => 'clock', 'bg' => '#E9E4F9', 'ink' => '#7C5CBF', 'label' => __('Masa'), 'value' => $attempt->humanDuration()],
         ])
         @php($cheer = match (true) {
-            $pct >= 100 => ['icon' => 'target-arrow', 'bg' => '#EEF3FC', 'ink' => '#2E6CA8', 'title' => __('Hebat! Semua jawapan betul.'), 'sub' => __('Teruskan mencabar diri untuk mencapai lebih!')],
-            $pct >= 80 => ['icon' => 'target-arrow', 'bg' => '#E4F4EF', 'ink' => '#0F7A68', 'title' => __('Bagus! Prestasi cemerlang.'), 'sub' => __('Sedikit lagi untuk markah sempurna!')],
-            $pct >= 50 => ['icon' => 'target-arrow', 'bg' => '#FBF3DD', 'ink' => '#8A6A12', 'title' => __('Usaha yang baik!'), 'sub' => __('Ulang kaji dan cuba tingkatkan markah anda.')],
-            default => ['icon' => 'target-arrow', 'bg' => '#FBEAE4', 'ink' => '#C24936', 'title' => __('Jangan putus asa!'), 'sub' => __('Tonton semula video dan cuba lagi — anda pasti boleh!')],
+            $pct >= 100 => ['icon' => 'target-arrow', 'bg' => '#EEF3FC', 'bgDark' => 'rgba(96,140,200,.14)', 'ink' => '#2E6CA8', 'inkDark' => '#7FB2EA', 'title' => __('Hebat! Semua jawapan betul.'), 'sub' => __('Teruskan mencabar diri untuk mencapai lebih!')],
+            $pct >= 80 => ['icon' => 'target-arrow', 'bg' => '#E4F4EF', 'bgDark' => 'rgba(45,212,191,.13)', 'ink' => '#0F7A68', 'inkDark' => '#5EEAD4', 'title' => __('Bagus! Prestasi cemerlang.'), 'sub' => __('Sedikit lagi untuk markah sempurna!')],
+            $pct >= 50 => ['icon' => 'target-arrow', 'bg' => '#FBF3DD', 'bgDark' => 'rgba(224,162,28,.15)', 'ink' => '#8A6A12', 'inkDark' => '#F0B733', 'title' => __('Usaha yang baik!'), 'sub' => __('Ulang kaji dan cuba tingkatkan markah anda.')],
+            default => ['icon' => 'target-arrow', 'bg' => '#FBEAE4', 'bgDark' => 'rgba(194,73,54,.16)', 'ink' => '#C24936', 'inkDark' => '#E8836E', 'title' => __('Jangan putus asa!'), 'sub' => __('Tonton semula video dan cuba lagi — anda pasti boleh!')],
         })
         @php($star = 'M12 3l2.35 4.76 5.25.76-3.8 3.7.9 5.23L12 15.9l-4.7 2.47.9-5.23-3.8-3.7 5.25-.76z')
         <div style="position:relative;overflow:hidden;background:var(--wl-surface);border:1px solid var(--wl-line);border-radius:22px;padding:32px;box-shadow:0 8px 24px var(--wl-line)">
@@ -89,8 +89,8 @@
                 @endif
 
                 {{-- Motivational note, tuned to the score. --}}
-                <div style="width:100%;background:{{ $cheer['bg'] }};border-radius:16px;padding:15px 18px;display:flex;align-items:center;gap:14px;text-align:left">
-                    <span style="width:44px;height:44px;flex-shrink:0;border-radius:50%;background:var(--wl-surface);color:{{ $cheer['ink'] }};display:grid;place-items:center"><x-icon :name="$cheer['icon']" style="width:22px;height:22px" /></span>
+                <div style="width:100%;background:{{ $isDark ? $cheer['bgDark'] : $cheer['bg'] }};border-radius:16px;padding:15px 18px;display:flex;align-items:center;gap:14px;text-align:left">
+                    <span style="width:44px;height:44px;flex-shrink:0;border-radius:50%;background:var(--wl-surface);color:{{ $isDark ? $cheer['inkDark'] : $cheer['ink'] }};display:grid;place-items:center"><x-icon :name="$cheer['icon']" style="width:22px;height:22px" /></span>
                     <div style="display:flex;flex-direction:column;gap:2px;min-width:0">
                         <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:14.5px;color:var(--wl-ink)">{{ $cheer['title'] }}</span>
                         <span style="font-size:13px;font-weight:600;color:var(--wl-muted)">{{ $cheer['sub'] }}</span>
