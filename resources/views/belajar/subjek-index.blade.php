@@ -15,12 +15,12 @@
     {{-- Night mode: swap each pale tile for a dark, same-hue gradient (inline bg wins by default,
          so these overrides use !important). One rule per palette index. --}}
     <style>
-        html.theme-dark .sc-0 { background:linear-gradient(135deg,#1C2A3A,#162130) !important; }
-        html.theme-dark .sc-1 { background:linear-gradient(135deg,#282344,#1F1B38) !important; }
-        html.theme-dark .sc-2 { background:linear-gradient(135deg,#3A2430,#2C1B26) !important; }
-        html.theme-dark .sc-3 { background:linear-gradient(135deg,#183329,#122A23) !important; }
-        html.theme-dark .sc-4 { background:linear-gradient(135deg,#3A331F,#2C2617) !important; }
-        html.theme-dark .sc-5 { background:linear-gradient(135deg,#3A2A23,#2C201B) !important; }
+        html.theme-dark .sc-0 { background:linear-gradient(135deg,#2E425C,#25344B) !important; }
+        html.theme-dark .sc-1 { background:linear-gradient(135deg,#3E3768,#332C57) !important; }
+        html.theme-dark .sc-2 { background:linear-gradient(135deg,#5A3A4C,#48303E) !important; }
+        html.theme-dark .sc-3 { background:linear-gradient(135deg,#265042,#1F4237) !important; }
+        html.theme-dark .sc-4 { background:linear-gradient(135deg,#5A4E2E,#484023) !important; }
+        html.theme-dark .sc-5 { background:linear-gradient(135deg,#5A4238,#48342C) !important; }
     </style>
 
     @if ($grade && $subjectsByCategory->isNotEmpty())
