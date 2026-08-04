@@ -110,7 +110,7 @@
             {{-- Completed (left) beside Suggested Quiz (right). --}}
             <div class="kz-cols" style="margin-top:34px">
                 {{-- Completed --}}
-                <div style="display:flex;flex-direction:column;gap:12px;min-width:0">
+                <div id="telah-selesai" style="display:flex;flex-direction:column;gap:12px;min-width:0;scroll-margin-top:20px">
                     <div style="display:flex;align-items:center;gap:10px">
                         <span style="width:30px;height:30px;border-radius:9px;background:#DCF2EE;color:#0F7A68;display:grid;place-items:center;flex-shrink:0"><x-icon name="book" style="width:17px;height:17px" /></span>
                         <h3 style="margin:0;font-family:'Geist',sans-serif;font-size:17px;font-weight:800;color:var(--wl-ink)">{{ __('Telah Selesai') }}</h3>
@@ -146,7 +146,7 @@
                                 </div>
                             @endforeach
                             <div style="padding:14px;display:flex;justify-content:center">
-                                <a href="{{ route('subjek.index') }}" class="wl-btn-secondary" style="min-height:40px;display:inline-flex;align-items:center;gap:8px;border-radius:12px;border:1.5px solid var(--wl-line-2);background:var(--wl-surface);color:var(--wl-ink);font-family:'Geist',sans-serif;font-weight:700;font-size:13px;padding:0 18px;text-decoration:none"><x-icon name="dashboard" style="width:16px;height:16px" />{{ __('Lihat semua kuiz') }}</a>
+                                <a href="#telah-selesai" onclick="event.preventDefault();document.getElementById('telah-selesai')?.scrollIntoView({behavior:'smooth',block:'start'})" class="wl-btn-secondary" style="min-height:40px;display:inline-flex;align-items:center;gap:8px;border-radius:12px;border:1.5px solid var(--wl-line-2);background:var(--wl-surface);color:var(--wl-ink);font-family:'Geist',sans-serif;font-weight:700;font-size:13px;padding:0 18px;text-decoration:none;cursor:pointer"><x-icon name="dashboard" style="width:16px;height:16px" />{{ __('Lihat semua kuiz') }}</a>
                             </div>
                         @else
                             <div style="padding:44px;text-align:center;color:var(--wl-muted);font-size:14px;font-weight:600">{{ __('Anda belum menyelesaikan sebarang kuiz.') }}</div>
