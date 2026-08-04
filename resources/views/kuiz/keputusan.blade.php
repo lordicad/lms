@@ -153,9 +153,9 @@
         <a href="{{ route('kuiz-saya.index') }}" class="wl-btn-secondary" style="align-self:center;min-height:48px;display:inline-flex;align-items:center;gap:6px;border-radius:14px;border:2px solid {{ $isDark ? '#2DD4BF' : '#17907B' }};background:{{ $isDark ? 'var(--wl-surface)' : '#fff' }};color:{{ $isDark ? '#5EEAD4' : '#0F7A68' }};font-family:'Geist',sans-serif;font-weight:800;font-size:14.5px;padding:0 24px;text-decoration:none"><x-icon name="arrow-left" style="width:17px;height:17px" />{{ __('Kembali') }}</a>
     </div>
 
-    {{-- One-off confetti celebration when the student just earned a new badge. Self-contained
-         canvas (no library), fires once on load, and is skipped under reduced motion. --}}
-    @if (! empty($badgesNew))
+    {{-- One-off full-screen confetti rain — only for a perfect score. Self-contained canvas
+         (no library), fires once on load, and is skipped under reduced motion. --}}
+    @if ($pct >= 100)
         <script>
             (function () {
                 if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
