@@ -150,13 +150,34 @@
             <form method="POST" action="{{ route('profile.update') }}" enctype="multipart/form-data" style="display:flex;flex-direction:column;gap:18px;margin-top:14px">
                 @csrf
                 @method('PATCH')
-                <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
-                    <x-avatar :user="$user" size="lg" />
-                    <div style="flex:1;min-width:200px">
+                {{-- Avatar uploader: clicking the circle or the button opens the one hidden input; the
+                     chosen image previews live in the circle before saving. --}}
+                <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap" x-data="{ fname: '', preview: '' }">
+                    <label for="avatar" title="{{ $user->avatarUrl() ? __('Tukar gambar profil') : __('Tambah gambar profil') }}"
+                           style="width:84px;height:84px;border-radius:50%;background:#17907B;color:#fff;display:flex;align-items:center;justify-content:center;font-family:'Geist',sans-serif;font-weight:800;font-size:30px;flex-shrink:0;overflow:hidden;cursor:pointer;position:relative;border:4px solid {{ $isDark ? 'rgba(45,212,191,.3)' : '#DCF2EE' }}">
+                        <span x-show="! preview">{{ $user->initials() }}</span>
+                        @if ($user->avatarUrl())
+                            <img src="{{ $user->avatarUrl() }}" alt="" x-show="! preview" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+                        @endif
+                        <template x-if="preview">
+                            <img :src="preview" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+                        </template>
+                    </label>
+                    <div style="flex:1;min-width:200px;display:flex;flex-direction:column;gap:6px">
                         <label for="avatar" style="{{ $labelStyle }}">{{ __('Gambar profil') }}</label>
-                        <x-file-input id="avatar" name="avatar" accept="image/*" @error('avatar') aria-invalid="true" @enderror />
+                        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+                            <label for="avatar" style="display:inline-flex;align-items:center;gap:7px;min-height:40px;border-radius:10px;background:#17907B;color:#fff;font-family:'Geist',sans-serif;font-weight:800;font-size:13px;padding:0 16px;cursor:pointer">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 20h16"/></svg>
+                                {{ $user->avatarUrl() ? __('Tukar gambar') : __('Tambah gambar') }}
+                            </label>
+                            <span style="font-size:13px;color:var(--wl-muted)" x-text="fname || '{{ __('Tiada fail dipilih') }}'"></span>
+                        </div>
+                        <span style="font-size:12.5px;color:var(--wl-muted)">{{ __('JPG, PNG atau WEBP. Klik bulatan atau butang untuk pilih gambar.') }}</span>
                         @error('avatar')<p style="{{ $errStyle }}">{{ $message }}</p>@enderror
                     </div>
+                    <input type="file" id="avatar" name="avatar" accept="image/*" class="sr-only"
+                           x-on:change="fname = $event.target.files[0]?.name || ''; preview = $event.target.files[0] ? URL.createObjectURL($event.target.files[0]) : ''"
+                           @error('avatar') aria-invalid="true" @enderror>
                 </div>
                 <div>
                     @if ($user->isAdmin())
