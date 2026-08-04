@@ -68,7 +68,8 @@
                                 </a>
                             @else
                                 <span style="position:relative;z-index:1;flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;gap:5px">
-                                    <span style="display:inline-flex;align-items:center;gap:8px;min-height:42px;padding:0 18px;border-radius:12px;background:{{ $tint }};color:{{ $ac }};font-family:'Geist',sans-serif;font-weight:800;font-size:14px"><x-icon name="play" style="width:16px;height:16px" />{{ __('Dalam talian sahaja') }}</span>
+                                    {{-- Outlined like the Download button, but greyed out: it is a status, not a clickable action. --}}
+                                    <span style="display:inline-flex;align-items:center;gap:8px;min-height:42px;padding:0 18px;border-radius:12px;background:var(--wl-surface);border:1.5px solid var(--wl-line-3);color:var(--wl-muted);font-family:'Geist',sans-serif;font-weight:800;font-size:14px;cursor:default"><x-icon name="play" style="width:16px;height:16px" />{{ __('Dalam talian sahaja') }}</span>
                                     <span style="font-size:12px;color:var(--wl-muted);text-align:right">{{ __('Video ini hanya boleh ditonton dalam talian.') }}</span>
                                 </span>
                             @endif
