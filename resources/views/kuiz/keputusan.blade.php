@@ -152,4 +152,70 @@
 
         <a href="{{ route('kuiz-saya.index') }}" class="wl-btn-secondary" style="align-self:center;min-height:48px;display:inline-flex;align-items:center;gap:6px;border-radius:14px;border:2px solid {{ $isDark ? '#2DD4BF' : '#17907B' }};background:{{ $isDark ? 'var(--wl-surface)' : '#fff' }};color:{{ $isDark ? '#5EEAD4' : '#0F7A68' }};font-family:'Geist',sans-serif;font-weight:800;font-size:14.5px;padding:0 24px;text-decoration:none"><x-icon name="arrow-left" style="width:17px;height:17px" />{{ __('Kembali') }}</a>
     </div>
+
+    {{-- One-off confetti celebration when the student just earned a new badge. Self-contained
+         canvas (no library), fires once on load, and is skipped under reduced motion. --}}
+    @if (! empty($badgesNew))
+        <script>
+            (function () {
+                if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+                var colors = ['#2DD4BF', '#F3B94C', '#EB5E5A', '#A88FE4', '#6FA8E0', '#17907B'];
+                var canvas = document.createElement('canvas');
+                canvas.style.cssText = 'position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9998';
+                document.body.appendChild(canvas);
+                var ctx = canvas.getContext('2d');
+
+                function fit() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+                fit();
+                window.addEventListener('resize', fit);
+
+                var parts = [];
+                for (var i = 0; i < 160; i++) {
+                    parts.push({
+                        x: Math.random() * canvas.width,
+                        y: -20 - Math.random() * canvas.height * 0.4,
+                        w: 6 + Math.random() * 6,
+                        h: 9 + Math.random() * 8,
+                        vx: (Math.random() - 0.5) * 3,
+                        vy: 3 + Math.random() * 4,
+                        rot: Math.random() * Math.PI,
+                        vr: (Math.random() - 0.5) * 0.35,
+                        sway: Math.random() * Math.PI * 2,
+                        color: colors[i % colors.length]
+                    });
+                }
+
+                var start = performance.now();
+                var DURATION = 3200;
+
+                function frame(now) {
+                    var t = now - start;
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    var fade = t > DURATION - 700 ? Math.max(0, (DURATION - t) / 700) : 1;
+                    for (var i = 0; i < parts.length; i++) {
+                        var p = parts[i];
+                        p.x += p.vx + Math.sin(now / 400 + p.sway) * 0.9;
+                        p.y += p.vy;
+                        p.vy += 0.035;
+                        p.rot += p.vr;
+                        ctx.save();
+                        ctx.globalAlpha = fade;
+                        ctx.translate(p.x, p.y);
+                        ctx.rotate(p.rot);
+                        ctx.fillStyle = p.color;
+                        ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+                        ctx.restore();
+                    }
+                    if (t < DURATION) {
+                        requestAnimationFrame(frame);
+                    } else {
+                        window.removeEventListener('resize', fit);
+                        canvas.remove();
+                    }
+                }
+                requestAnimationFrame(frame);
+            })();
+        </script>
+    @endif
 </x-student-layout>
