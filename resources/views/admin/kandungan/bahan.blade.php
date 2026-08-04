@@ -69,7 +69,8 @@
                                 {{-- nowrap keeps each label on one line: without it the icon and its
                                      word stack vertically as soon as the column tightens. --}}
                                 <div style="display:flex;justify-content:center;gap:8px;white-space:nowrap">
-                                    <button type="button" class="tp-linkbtn"
+                                    <button type="button"
+                                            style="display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 14px;border-radius:10px;border:1.5px solid var(--tp-line-2);background:var(--tp-surface);color:var(--tp-teal);font-family:'Geist',sans-serif;font-weight:800;font-size:12.5px;cursor:pointer;white-space:nowrap"
                                             @click="open(@js([
                                                 'title' => $material->title,
                                                 'subtitle' => collect([$material->teacher?->name, $material->chapter->subject->displayName(), $material->chapter->grade->name])->filter()->implode(' · '),
@@ -80,10 +81,11 @@
                                                 'size' => $material->humanSize(),
                                                 'downloadUrl' => route('muat-turun.bahan', $material),
                                             ]))">
-                                        👁 {{ __('Lihat') }}<span class="sr-only">{{ $material->title }}</span>
+                                        <x-icon name="eye" style="width:15px;height:15px" />{{ __('Lihat') }}<span class="sr-only">{{ $material->title }}</span>
                                     </button>
-                                    <a href="{{ route('muat-turun.bahan', $material) }}" class="tp-linkbtn is-muted">
-                                        ⬇ {{ __('Muat Turun') }}<span class="sr-only">{{ $material->title }}</span>
+                                    <a href="{{ route('muat-turun.bahan', $material) }}"
+                                       style="display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 14px;border-radius:10px;background:var(--tp-teal);color:#fff;font-family:'Geist',sans-serif;font-weight:800;font-size:12.5px;text-decoration:none;white-space:nowrap">
+                                        <x-icon name="download" style="width:15px;height:15px" />{{ __('Muat Turun') }}<span class="sr-only">{{ $material->title }}</span>
                                     </a>
                                 </div>
                             </div>
