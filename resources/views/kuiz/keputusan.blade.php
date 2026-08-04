@@ -38,11 +38,8 @@
             </div>
 
             <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center">
-                @if ($good || $mid)
-                    <span style="font-size:40px">{{ $good ? '🎉' : '💪' }}</span>
-                @else
-                    <img src="{{ asset('images/book1.png') }}" alt="" style="width:70px;height:70px;object-fit:contain">
-                @endif
+                @php($resultImg = $good ? 'confetti.png' : ($mid ? 'muscle.png' : 'book1.png'))
+                <img src="{{ asset('images/'.$resultImg) }}" alt="" style="width:70px;height:70px;object-fit:contain">
                 <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:26px;font-weight:800;letter-spacing:-.01em;color:var(--wl-ink)">{{ $good ? __('Syabas, :name!', ['name' => $name]) : __('Kerja yang baik!') }}</h2>
                 <span style="font-size:14.5px;color:var(--wl-muted)">{{ $good ? __('Keputusan cemerlang. Teruskan usaha!') : ($mid ? __('Usaha yang baik. Cuba tingkatkan lagi!') : __('Jangan putus asa — tonton semula video dan cuba lagi.')) }}</span>
                 <div style="display:flex;align-items:baseline;gap:4px;margin-top:6px">
