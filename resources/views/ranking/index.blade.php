@@ -50,7 +50,7 @@
         .lb-th.r { text-align: right; }
         .lb-tr + .lb-tr { border-top: 1px solid var(--wl-line); }
         /* The current student's row — highlighted with a tint, a teal accent bar and a soft ring. */
-        .lb-tr--me { background: #DCF2EE; box-shadow: inset 4px 0 0 #17907B, inset 0 0 0 1.5px rgba(23,144,123,.4); }
+        .lb-tr--me { background: #DCF2EE; box-shadow: inset 4px 0 0 #17907B; }
         .lb-rank { justify-self: center; width: 40px; height: 40px; border-radius: 12px; background: #EEF0F4; display: grid; place-items: center; font-family: 'Geist', sans-serif; font-weight: 800; font-size: 15px; color: #4A4B63; }
         .lb-part { display: flex; align-items: center; gap: 13px; min-width: 0; }
         .lb-pav { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; font-family: 'Geist', sans-serif; font-weight: 800; font-size: 15px; flex-shrink: 0; }
@@ -66,7 +66,7 @@
 
         /* Night mode: the table uses several light-mode fills (the "you" row, rank chip, bar,
            percentage) that read too bright / low-contrast on the dark surface. */
-        html.theme-dark .lb-tr--me { background: #1E4438; box-shadow: inset 4px 0 0 #2DD4BF, inset 0 0 0 1.5px rgba(45,212,191,.45); }
+        html.theme-dark .lb-tr--me { background: #1E4438; box-shadow: inset 4px 0 0 #2DD4BF; }
         html.theme-dark .lb-rank { background: var(--wl-chip); color: var(--wl-body); }
         html.theme-dark .lb-bar { background: rgba(255,255,255,.12); }
         html.theme-dark .lb-pct { color: var(--wl-body); }
