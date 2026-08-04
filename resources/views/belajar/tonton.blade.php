@@ -75,7 +75,7 @@
                         @php($isDark = ($theme ?? 'light') === 'dark')
                         @foreach ($materials as $material)
                             <div style="background:var(--wl-surface);border:1px solid var(--wl-line);border-radius:16px;padding:14px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 3px 12px rgba(46,44,80,.04)">
-                                <span style="width:38px;height:38px;border-radius:10px;background:#FDE7E0;display:grid;place-items:center;font-size:15px;flex-shrink:0">📄</span>
+                                <span style="width:38px;height:38px;border-radius:10px;background:{{ $isDark ? 'rgba(194,73,54,.15)' : '#FDE7E0' }};color:{{ $isDark ? '#E8836E' : '#C24936' }};display:grid;place-items:center;flex-shrink:0"><x-icon :name="$material->iconName()" style="width:18px;height:18px" /></span>
                                 <div style="display:flex;flex-direction:column;gap:1px;min-width:0;flex:1">
                                     <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:13.5px;color:var(--wl-ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ $material->title }}</span>
                                     <span style="font-size:12px;color:var(--wl-muted)">{{ $material->humanSize() }}</span>
