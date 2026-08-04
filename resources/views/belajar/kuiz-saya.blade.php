@@ -27,11 +27,17 @@
             @php($recommended = $quizzes->reject(fn ($q) => $rankedAttempts->has($q->id)))
             @php($suggested = $recommended->first())
 
-            {{-- Stats strip: left-accent gradient cards with a white icon disc. --}}
-            @php($statCards = [
-                ['accent' => '#17907B', 'bg' => 'linear-gradient(135deg,#EAF7F2,#D6EFE7)', 'ink' => '#0F7A68', 'spark' => '#A9DECF', 'type' => 'check', 'value' => $doneCount, 'label' => __('Kuiz selesai')],
-                ['accent' => '#E0A21C', 'bg' => 'linear-gradient(135deg,#FEF6E4,#FBE9C2)', 'ink' => '#8A6A12', 'spark' => '#F1D592', 'type' => 'star', 'value' => $avgScore !== null ? $avgScore.'%' : '—', 'label' => __('Purata markah')],
-                ['accent' => '#3E86C9', 'bg' => 'linear-gradient(135deg,#EFF4FC,#DFEAF7)', 'ink' => '#2E6CA8', 'spark' => '#B6CEEC', 'type' => 'trophy', 'value' => $rank ? '#'.$rank : '—', 'label' => __('Ranking'), 'leaf' => true],
+            {{-- Stats strip: left-accent gradient cards with an icon disc. Same design in both themes;
+                 dark mode only swaps the colours (bg, text, disc, decorations). --}}
+            @php($statsDark = ($theme ?? 'light') === 'dark')
+            @php($statCards = $statsDark ? [
+                ['accent' => '#2DD4BF', 'bg' => 'linear-gradient(135deg,#16302A,#11241E)', 'ink' => '#E7F3EF', 'spark' => '#2E5A4E', 'disc' => '#1C2A24', 'type' => 'check', 'value' => $doneCount, 'label' => __('Kuiz selesai')],
+                ['accent' => '#F0B733', 'bg' => 'linear-gradient(135deg,#2E2716,#241E10)', 'ink' => '#F3E6C4', 'spark' => '#544824', 'disc' => '#2A2416', 'type' => 'star', 'value' => $avgScore !== null ? $avgScore.'%' : '—', 'label' => __('Purata markah')],
+                ['accent' => '#5A9BE0', 'bg' => 'linear-gradient(135deg,#1C2A3C,#16212F)', 'ink' => '#D6E4F5', 'spark' => '#33506E', 'disc' => '#1A2636', 'type' => 'trophy', 'value' => $rank ? '#'.$rank : '—', 'label' => __('Ranking'), 'leaf' => true],
+            ] : [
+                ['accent' => '#17907B', 'bg' => 'linear-gradient(135deg,#EAF7F2,#D6EFE7)', 'ink' => '#0F7A68', 'spark' => '#A9DECF', 'disc' => '#fff', 'type' => 'check', 'value' => $doneCount, 'label' => __('Kuiz selesai')],
+                ['accent' => '#E0A21C', 'bg' => 'linear-gradient(135deg,#FEF6E4,#FBE9C2)', 'ink' => '#8A6A12', 'spark' => '#F1D592', 'disc' => '#fff', 'type' => 'star', 'value' => $avgScore !== null ? $avgScore.'%' : '—', 'label' => __('Purata markah')],
+                ['accent' => '#3E86C9', 'bg' => 'linear-gradient(135deg,#EFF4FC,#DFEAF7)', 'ink' => '#2E6CA8', 'spark' => '#B6CEEC', 'disc' => '#fff', 'type' => 'trophy', 'value' => $rank ? '#'.$rank : '—', 'label' => __('Ranking'), 'leaf' => true],
             ])
             <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px">
                 @foreach ($statCards as $c)
@@ -43,7 +49,7 @@
                             <svg style="position:absolute;right:6px;bottom:0;opacity:.4" width="54" height="54" viewBox="0 0 60 60" fill="{{ $c['spark'] }}"><path d="M8 52c0-15 11-26 27-28-2 7-6 12-11 16 6-2 12-1 17 2-8 4-17 3-24-1 4 6 3 13-2 18-4-3-7-9-7-15z"/></svg>
                         @endif
                         {{-- Icon disc. --}}
-                        <span style="position:relative;z-index:1;width:46px;height:46px;flex-shrink:0;border-radius:50%;background:#fff;display:grid;place-items:center;box-shadow:0 4px 12px rgba(46,44,80,.12)">
+                        <span style="position:relative;z-index:1;width:46px;height:46px;flex-shrink:0;border-radius:50%;background:{{ $c['disc'] }};display:grid;place-items:center;box-shadow:0 4px 12px rgba(46,44,80,.12)">
                             @if ($c['type'] === 'check')
                                 <span style="width:27px;height:27px;border-radius:8px;background:{{ $c['accent'] }};display:grid;place-items:center;color:#fff"><x-icon name="check" style="width:16px;height:16px" /></span>
                             @elseif ($c['type'] === 'star')
