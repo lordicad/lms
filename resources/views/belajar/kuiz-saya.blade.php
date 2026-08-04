@@ -70,10 +70,17 @@
                 @php($spk = 'M8 0c0 4.4-3.6 8-8 8 4.4 0 8 3.6 8 8 0-4.4 3.6-8 8-8-4.4 0-8-3.6-8-8z')
                 <div style="position:relative;overflow:hidden;background:var(--wl-surface);border:1px solid var(--wl-line);border-radius:18px;padding:24px 20px;box-shadow:0 4px 16px rgba(46,44,80,.04)">
                     {{-- Botanical corners (soft blob + olive-branch sprig) and scattered sparkles, redrawn from the reference. --}}
+                    @once
+                        {{-- The pastel shade is fine on the light card but glows on the dark one, so fade it at night. --}}
+                        <style>
+                            html.theme-dark .ach-shade-l { opacity:.2 !important; }
+                            html.theme-dark .ach-shade-r { opacity:.16 !important; }
+                        </style>
+                    @endonce
                     <div aria-hidden="true" style="position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden">
-                        {{-- Soft pastel-green shade behind each branch. --}}
-                        <div style="position:absolute;left:-26px;bottom:-30px;width:164px;height:185px;border-radius:58% 42% 48% 52% / 62% 55% 45% 38%;background:#E7EEE8;opacity:.2;filter:blur(12px)"></div>
-                        <div style="position:absolute;right:-44px;bottom:-30px;width:146px;height:167px;border-radius:42% 58% 52% 48% / 58% 45% 55% 42%;background:#E7EEE8;opacity:.16;filter:blur(12px)"></div>
+                        {{-- Soft pastel-green shade behind each branch (dimmed in dark mode via .ach-shade-*). --}}
+                        <div class="ach-shade-l" style="position:absolute;left:-26px;bottom:-30px;width:164px;height:185px;border-radius:58% 42% 48% 52% / 62% 55% 45% 38%;background:#E7EEE8;opacity:.42;filter:blur(12px)"></div>
+                        <div class="ach-shade-r" style="position:absolute;right:-44px;bottom:-30px;width:146px;height:167px;border-radius:42% 58% 52% 48% / 58% 45% 55% 42%;background:#E7EEE8;opacity:.36;filter:blur(12px)"></div>
                         {{-- Leaf branches from the uploaded illustration, cropped into each corner. --}}
                         <div style="position:absolute;left:0;bottom:0;width:90px;height:117px;opacity:.92;background:url('{{ asset('images/leaf.png') }}') no-repeat -10px -24px / 238px 158px"></div>
                         <div style="position:absolute;right:-4px;bottom:0;width:77px;height:100px;opacity:.92;transform:scaleX(-1) rotate(9deg);transform-origin:50% 100%;background:url('{{ asset('images/leaf.png') }}') no-repeat -9px -20px / 203px 135px"></div>
