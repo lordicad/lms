@@ -75,8 +75,10 @@
                                 <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2);text-align:center">{{ number_format($lesson->views_count) }}</span>
                                 <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2);text-align:center">{{ $lesson->created_at->translatedFormat('j M Y') }}</span>
                                 <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2);text-align:center">{{ number_format($lesson->favourites_count) }}</span>
-                                {{-- justify-self, not text-align: a button sizes to its label rather than the column. --}}
-                                <button type="button" class="tp-linkbtn" style="justify-self:center;white-space:nowrap"
+                                {{-- justify-self, not text-align: a button sizes to its label rather than the column.
+                                     Same outlined View button as the Materials and Quizzes tables. --}}
+                                <button type="button"
+                                        style="justify-self:center;display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 14px;border-radius:10px;border:1.5px solid var(--tp-line-2);background:var(--tp-surface);color:var(--tp-teal);font-family:'Geist',sans-serif;font-weight:800;font-size:12.5px;cursor:pointer;white-space:nowrap"
                                         @click="open(@js([
                                             'title' => $lesson->title,
                                             'kindLabel' => $lesson->isYoutube() ? 'YouTube' : __('Video'),
@@ -85,7 +87,7 @@
                                             'src' => $lesson->isYoutube() ? $lesson->embedUrl() : $lesson->videoUrl(),
                                             'poster' => $lesson->thumbnailUrl(),
                                         ]))">
-                                    👁 {{ __('Lihat') }}<span class="sr-only">{{ $lesson->title }}</span>
+                                    <x-icon name="eye" style="width:15px;height:15px" />{{ __('Lihat') }}<span class="sr-only">{{ $lesson->title }}</span>
                                 </button>
                             </div>
                         @endforeach
