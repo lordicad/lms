@@ -1,10 +1,9 @@
-@php($user = auth()->user())
-
 <x-admin-layout :title="__('Profil Saya')"
                 :heading="__('Profil Saya')"
                 heading-icon="user"
                 :sub="__('Kemas kini butiran akaun dan kata laluan anda')">
     @php
+        $user = auth()->user();
         // Same WeLearn design tokens as the teacher profile — reused here so the two pages match.
         $card = "background:var(--tp-surface);border:1px solid var(--tp-line);border-radius:18px;padding:24px;display:flex;flex-direction:column;box-shadow:0 2px 10px rgba(46,44,80,.04)";
         $h2 = "margin:0;font-family:'Geist',sans-serif;font-size:17px;font-weight:800;color:var(--tp-ink)";
