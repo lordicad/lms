@@ -15,7 +15,7 @@
     $unreadNotifications = (clone $adminNotif)->whereNull('read_at')->count();
     $recentNotifications = (clone $adminNotif)->latest()->limit(8)->get();
     $notifMeta = [
-        \App\Models\AdminNotification::TYPE_PASSWORD_RESET => ['icon' => '🔑', 'tint' => '#FEF0CE', 'text' => __(':actor (:title) lupa kata laluan')],
+        \App\Models\AdminNotification::TYPE_PASSWORD_RESET => ['icon' => 'key', 'tint' => '#FEF0CE', 'fg' => '#8A6A12', 'text' => __(':actor (:title) lupa kata laluan')],
     ];
 
     // Sidebar nav — mirrors the WeLearn Admin design (icon + label, active pill). The SVGs are the
