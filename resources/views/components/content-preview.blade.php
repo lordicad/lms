@@ -15,7 +15,7 @@
          style="width:min(920px,100%);max-height:90vh;overflow:hidden;background:{{ $isDark ? '#1E2732' : '#fff' }};border-radius:20px;box-shadow:0 24px 70px rgba(20,20,40,.4);display:flex;flex-direction:column">
 
         {{-- Header --}}
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding:13px 22px;background:linear-gradient(120deg,#5A9BD8,#7DB4E6);flex-shrink:0">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding:13px 22px;background:{{ $isDark ? 'linear-gradient(120deg,#243B52,#2E5273)' : 'linear-gradient(120deg,#5A9BD8,#7DB4E6)' }};flex-shrink:0">
             <div style="display:flex;flex-direction:column;gap:4px;min-width:0">
                 <div style="display:flex;align-items:center;gap:10px;min-width:0">
                     <span style="flex-shrink:0;background:rgba(255,255,255,.28);color:#fff;border-radius:999px;padding:3px 11px;font-family:'Geist',sans-serif;font-size:11px;font-weight:800;letter-spacing:.02em">{{ $pill }}</span>
