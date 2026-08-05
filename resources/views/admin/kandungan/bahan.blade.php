@@ -61,7 +61,7 @@
                                     <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:13.5px;color:var(--tp-ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $material->title }}</span>
                                     <span style="font-size:11.5px;color:var(--tp-muted)">{{ $material->teacher?->name }}</span>
                                 </div>
-                                <span style="font-size:13px;font-weight:700;color:#4276AE;text-align:center">{{ $material->chapter->subject->displayName() }}</span>
+                                <span style="justify-self:center;display:inline-flex;align-items:center;text-align:center;max-width:150px;border-radius:999px;padding:4px 10px;font-size:12.5px;font-weight:800;line-height:1.25;background:rgb({{ $material->chapter->subject->rgb }} / .14);color:rgb({{ $material->chapter->subject->rgb }})">{{ $material->chapter->subject->displayName() }}</span>
                                 <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2);text-align:center">{{ $material->chapter->grade->name }}</span>
                                 <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2);text-align:center">{{ number_format($material->download_count) }}</span>
                                 <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2);text-align:center">{{ strtoupper($material->extension()) }} <span style="font-size:11.5px;color:var(--tp-muted)">{{ $material->humanSize() }}</span></span>

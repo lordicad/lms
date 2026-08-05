@@ -64,7 +64,7 @@
                                     <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:13.5px;color:var(--tp-ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $quiz->title }}@if ($quiz->isFile()) <span style="font-size:11px;font-weight:800;color:var(--tp-muted)">· {{ __('Fail') }}</span>@endif</span>
                                     <span style="font-size:11.5px;color:var(--tp-muted)">{{ $quiz->teacher?->name }}</span>
                                 </div>
-                                <span style="font-size:13px;font-weight:700;color:#4276AE;text-align:center">{{ $quiz->chapter->subject->displayName() }}</span>
+                                <span style="justify-self:center;display:inline-flex;align-items:center;text-align:center;max-width:150px;border-radius:999px;padding:4px 10px;font-size:12.5px;font-weight:800;line-height:1.25;background:rgb({{ $quiz->chapter->subject->rgb }} / .14);color:rgb({{ $quiz->chapter->subject->rgb }})">{{ $quiz->chapter->subject->displayName() }}</span>
                                 <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2);text-align:center">{{ $quiz->chapter->grade->name }}</span>
                                 <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2);text-align:center">{{ number_format($quiz->attempts_count) }}</span>
                                 <span style="text-align:center;font-size:13px;font-weight:800;color:{{ $hasAttempts ? '#0F7A68' : '#8B8AA3' }}">{{ $hasAttempts ? number_format($quiz->pass_count) : '—' }}</span>
