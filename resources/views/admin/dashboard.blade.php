@@ -76,6 +76,7 @@
     $chip = 'width:34px;height:34px;border-radius:10px;display:grid;place-items:center;flex-shrink:0';
     $row = 'display:flex;align-items:center;gap:13px;padding:13px 14px;border:1px solid var(--dl);border-radius:14px';
     $outlineBtn = "cursor:pointer;border-radius:11px;border:1.5px solid var(--tp-teal);background:var(--tp-surface);color:var(--tp-teal);font-family:'Geist',sans-serif;font-weight:800";
+    $isDark = ($theme ?? 'light') === 'dark';
 @endphp
 
 <x-admin-layout :title="__('Utama')"
@@ -170,18 +171,18 @@
             </div>
 
             @foreach ($pending as $p)
-                {{-- Each signal links to the page that resolves it; the all-clear item has nowhere to go. --}}
+                {{-- Each signal links to the page that resolves it; the all-clear item has nowhere to go.
+                     Light mode keeps the fixed pastel + dark ink. Dark mode keeps each row's hue but
+                     tones it down: a deep tint of the row's own accent, with light ink so it reads. --}}
                 <{{ $p['url'] ? 'a' : 'div' }} @if ($p['url']) href="{{ $p['url'] }}" class="dash-pending" @endif
-                    style="display:flex;align-items:center;gap:13px;padding:13px 15px;border-radius:12px;background:{{ $p['bg'] }};text-align:left;width:100%;box-sizing:border-box">
-                    {{-- The row sits on a fixed pastel in both themes, so its ink stays dark rather
-                         than following --tp-ink, which would go near-white and vanish in dark mode. --}}
-                    <span style="width:32px;height:32px;border-radius:9px;background:#fff;color:{{ $p['fg'] }};display:grid;place-items:center;flex-shrink:0">{!! $ic($p['icon'], 18) !!}</span>
+                    style="display:flex;align-items:center;gap:13px;padding:13px 15px;border-radius:12px;background:{{ $isDark ? 'color-mix(in oklab, '.$p['fg'].' 15%, #1E2732)' : $p['bg'] }};text-align:left;width:100%;box-sizing:border-box">
+                    <span style="width:32px;height:32px;border-radius:9px;background:{{ $isDark ? 'color-mix(in oklab, '.$p['fg'].' 26%, #1E2732)' : '#fff' }};color:{{ $isDark ? 'color-mix(in oklab, '.$p['fg'].' 55%, #fff)' : $p['fg'] }};display:grid;place-items:center;flex-shrink:0">{!! $ic($p['icon'], 18) !!}</span>
                     <div style="display:flex;flex-direction:column;gap:2px;min-width:0;flex:1">
-                        <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:14px;color:#28293F">{{ $p['title'] }}</span>
-                        <span style="font-size:12.5px;color:#4A4B63;line-height:1.4">{{ $p['desc'] }}</span>
+                        <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:14px;color:{{ $isDark ? '#F3F5F8' : '#28293F' }}">{{ $p['title'] }}</span>
+                        <span style="font-size:12.5px;color:{{ $isDark ? '#AEB6C2' : '#4A4B63' }};line-height:1.4">{{ $p['desc'] }}</span>
                     </div>
                     @if ($p['url'])
-                        <span style="width:20px;height:20px;color:{{ $p['fg'] }};flex-shrink:0">{!! $ic('chev', 20) !!}</span>
+                        <span style="width:20px;height:20px;color:{{ $isDark ? 'color-mix(in oklab, '.$p['fg'].' 55%, #fff)' : $p['fg'] }};flex-shrink:0">{!! $ic('chev', 20) !!}</span>
                     @endif
                 </{{ $p['url'] ? 'a' : 'div' }}>
             @endforeach
