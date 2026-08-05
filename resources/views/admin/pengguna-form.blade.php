@@ -131,7 +131,13 @@
                 <div style="display:flex;flex-direction:column;gap:16px">
                     <div class="tp-field">
                         <label for="school_class_id" class="tp-label">{{ __('Kelas') }} <span aria-hidden="true" style="color:#C24936">*</span></label>
-                        <select id="school_class_id" name="school_class_id" class="tp-filter-select" style="width:100%" x-model="schoolClass" x-bind:disabled="! schoolId || ! gradeLevel" required>
+                        {{-- x-init/$nextTick: the options come from x-for, so on an edit the saved
+                             class cannot be preselected until they exist in the DOM. Re-applying the
+                             value after the first render is what makes the edit form show the class
+                             already on file (otherwise it looks empty and reads as "not saved"). --}}
+                        <select id="school_class_id" name="school_class_id" class="tp-filter-select" style="width:100%"
+                                x-model="schoolClass" x-bind:disabled="! schoolId || ! gradeLevel" required
+                                x-init="$nextTick(() => { if (schoolClass) $el.value = schoolClass })">
                             <option value="">{{ __('Sila pilih kelas') }}</option>
                             <template x-for="c in availableClasses" :key="c.id">
                                 <option :value="c.id" x-text="c.label"></option>
