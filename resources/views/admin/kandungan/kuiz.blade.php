@@ -11,6 +11,7 @@
 
 <x-admin-layout :title="__('Kandungan Kuiz')"
                 :heading="__('Kandungan Kuiz')"
+                heading-icon="quiz"
                 :sub="__('Setiap kuiz yang dibina oleh cikgu, merentas semua subjek dan Tahun')">
 
     <div style="display:flex;flex-direction:column;gap:18px"

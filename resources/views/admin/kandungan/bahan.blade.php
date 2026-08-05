@@ -12,6 +12,7 @@
 
 <x-admin-layout :title="__('Kandungan Bahan')"
                 :heading="__('Kandungan Bahan')"
+                heading-icon="file-text"
                 :sub="__('Setiap bahan pengajaran yang dimuat naik oleh cikgu, merentas semua subjek dan Tahun')">
 
     <div style="display:flex;flex-direction:column;gap:18px"
