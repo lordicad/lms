@@ -12,6 +12,7 @@ use App\Support\SchoolScope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Every aggregate on the Admin Home page, computed once here so the page and the PDF/DOCX exports
@@ -21,6 +22,19 @@ class AdminReportService
 {
     /** Allow-listed Platform Activity reporting periods. */
     public const PERIODS = ['7d', '30d', '12m'];
+
+    /**
+     * Thresholds for the "Tindakan Menunggu" oversight signals, kept together so the numbers the
+     * admin is judged against live in one obvious place rather than buried in a query.
+     */
+    // A teacher is expected to publish a video every week; nothing newer than this many days is "overdue".
+    public const WEEKLY_VIDEO_DAYS = 7;
+
+    // A quiz is flagged only once enough students have sat it that a low average is a real signal, not one bad day.
+    public const LOW_SCORE_MIN_ATTEMPTS = 5;
+
+    // Average percentage below this marks a quiz as one students are struggling with.
+    public const LOW_SCORE_PCT = 40;
 
     public const PERIOD_LABELS = [
         '7d' => '7 hari lalu',
@@ -221,15 +235,61 @@ class AdminReportService
      */
     public function pending(): array
     {
+        $staleSince = Carbon::now()->subDays(self::WEEKLY_VIDEO_DAYS);
+
+        // Active teachers who have gone a week without a new video. New teachers (account younger
+        // than a week) are given that first week's grace so onboarding does not read as a lapse.
+        $missedWeekly = SchoolScope::users(User::where('role', User::ROLE_TEACHER))
+            ->where('is_active', true)
+            ->where('created_at', '<', $staleSince)
+            ->whereDoesntHave('lessons', fn (Builder $q) => $q->where('created_at', '>=', $staleSince))
+            ->count();
+
         $inactiveTeachers = SchoolScope::users(User::where('role', User::ROLE_TEACHER))->where('is_active', false)->count();
+
         $draftVideos = SchoolScope::content(Lesson::query())->where('is_published', false)->count();
-        $silentTeachers = SchoolScope::users(User::where('role', User::ROLE_TEACHER))
-            ->whereDoesntHave('lessons')
-            ->whereDoesntHave('materials')
-            ->whereDoesntHave('quizzes')
+
+        // Quizzes whose completed attempts average below the threshold, once enough students have
+        // sat them. max_score > 0 excludes attempts against a quiz whose questions were all removed.
+        $lowScoreQuizzes = SchoolScope::content(QuizAttempt::query(), 'quiz.teacher')
+            ->completed()
+            ->where('max_score', '>', 0)
+            ->groupBy('quiz_id')
+            ->havingRaw('COUNT(*) >= ?', [self::LOW_SCORE_MIN_ATTEMPTS])
+            ->havingRaw('AVG(score / max_score * 100) < ?', [self::LOW_SCORE_PCT])
+            ->pluck('quiz_id')
+            ->count();
+
+        // Curriculum coverage gaps: subject×Tahun offerings this school has published no video for.
+        // Content has no school of its own, so we match through the posting teacher.
+        $teacherIds = SchoolScope::teacherIds();
+        $uncoveredSubjects = $teacherIds === [] ? 0 : DB::table('grade_subject')
+            ->whereNotExists(function ($q) use ($teacherIds) {
+                $q->from('lessons')
+                    ->join('chapters', 'chapters.id', '=', 'lessons.chapter_id')
+                    ->whereColumn('chapters.subject_id', 'grade_subject.subject_id')
+                    ->whereColumn('chapters.grade_id', 'grade_subject.grade_id')
+                    ->where('lessons.is_published', true)
+                    ->whereIn('lessons.teacher_id', $teacherIds);
+            })
+            ->count();
+
+        // Students who have never completed a first sign-in. First login forces a password change,
+        // so a null password_changed_at is the standing record that they have not yet been in.
+        $neverLoggedIn = SchoolScope::users(User::where('role', User::ROLE_STUDENT))
+            ->whereNull('password_changed_at')
             ->count();
 
         $items = [];
+
+        if ($missedWeekly > 0) {
+            $items[] = [
+                'icon' => 'calendar', 'bg' => '#FDEBD8', 'fg' => '#B5651D',
+                'title' => trans_choice('{1}:count cikgu belum memuat naik video minggu ini|[2,*]:count cikgu belum memuat naik video minggu ini', $missedWeekly, ['count' => $missedWeekly]),
+                'desc' => __('Setiap cikgu perlu memuat naik video setiap minggu. Semak di halaman Cikgu.'),
+                'url' => route('admin.bakat'),
+            ];
+        }
 
         if ($inactiveTeachers > 0) {
             $items[] = [
@@ -249,12 +309,30 @@ class AdminReportService
             ];
         }
 
-        if ($silentTeachers > 0) {
+        if ($lowScoreQuizzes > 0) {
             $items[] = [
-                'icon' => 'teachers', 'bg' => '#E4EEF9', 'fg' => '#2E6CA8',
-                'title' => trans_choice('{1}:count cikgu belum menyumbang kandungan|[2,*]:count cikgu belum menyumbang kandungan', $silentTeachers, ['count' => $silentTeachers]),
-                'desc' => __('Belum memuat naik sebarang video, bahan atau kuiz.'),
-                'url' => route('admin.bakat'),
+                'icon' => 'trenddown', 'bg' => '#FBE4ED', 'fg' => '#B84A75',
+                'title' => trans_choice('{1}:count kuiz mempunyai purata markah rendah|[2,*]:count kuiz mempunyai purata markah rendah', $lowScoreQuizzes, ['count' => $lowScoreQuizzes]),
+                'desc' => __('Purata di bawah :pct%. Mungkin terlalu sukar atau video kurang jelas. Semak di halaman Kandungan.', ['pct' => self::LOW_SCORE_PCT]),
+                'url' => route('admin.kandungan.kuiz'),
+            ];
+        }
+
+        if ($uncoveredSubjects > 0) {
+            $items[] = [
+                'icon' => 'folder', 'bg' => '#E4EEF9', 'fg' => '#2E6CA8',
+                'title' => trans_choice('{1}:count gabungan subjek & tahun tiada video|[2,*]:count gabungan subjek & tahun tiada video', $uncoveredSubjects, ['count' => $uncoveredSubjects]),
+                'desc' => __('Tiada video diterbitkan untuk gabungan ini lagi. Semak di halaman Kandungan.'),
+                'url' => route('admin.kandungan.video'),
+            ];
+        }
+
+        if ($neverLoggedIn > 0) {
+            $items[] = [
+                'icon' => 'students', 'bg' => '#E7E6FB', 'fg' => '#5B54C9',
+                'title' => trans_choice('{1}:count murid belum log masuk|[2,*]:count murid belum log masuk', $neverLoggedIn, ['count' => $neverLoggedIn]),
+                'desc' => __('Akaun dicipta tetapi belum log masuk kali pertama. Semak di halaman Murid.'),
+                'url' => route('admin.murid'),
             ];
         }
 
