@@ -128,7 +128,7 @@
         {{-- ========================= Top students per Tahun ========================= --}}
         <div style="display:flex;flex-direction:column;gap:24px;margin-top:48px">
             <div style="display:flex;flex-direction:column;gap:2px">
-                <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:17px;font-weight:800;color:var(--tp-ink)">🌟 {{ __('Murid Terbaik') }}</h2>
+                <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:20px;font-weight:800;color:var(--tp-ink)">🌟 {{ __('Murid Terbaik') }}</h2>
                 <span style="font-size:13px;color:var(--tp-muted);max-width:640px;line-height:1.5">{{ __('Tiga murid paling aktif dalam setiap Tahun. Aktiviti = video ditonton + percubaan kuiz + kegemaran. Ia mengukur penyertaan, bukan markah — jadi berbeza daripada papan Ranking yang dilihat murid.') }}</span>
             </div>
 
