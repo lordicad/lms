@@ -175,8 +175,8 @@
                      Light mode keeps the fixed pastel + dark ink. Dark mode keeps each row's hue but
                      tones it down: a deep tint of the row's own accent, with light ink so it reads. --}}
                 <{{ $p['url'] ? 'a' : 'div' }} @if ($p['url']) href="{{ $p['url'] }}" class="dash-pending" @endif
-                    style="display:flex;align-items:center;gap:13px;padding:13px 15px;border-radius:12px;background:{{ $isDark ? 'color-mix(in oklab, '.$p['fg'].' 15%, #1E2732)' : $p['bg'] }};text-align:left;width:100%;box-sizing:border-box">
-                    <span style="width:32px;height:32px;border-radius:9px;background:{{ $isDark ? 'color-mix(in oklab, '.$p['fg'].' 26%, #1E2732)' : '#fff' }};color:{{ $isDark ? 'color-mix(in oklab, '.$p['fg'].' 55%, #fff)' : $p['fg'] }};display:grid;place-items:center;flex-shrink:0">{!! $ic($p['icon'], 18) !!}</span>
+                    style="display:flex;align-items:center;gap:13px;padding:13px 15px;border-radius:12px;background:{{ $isDark ? 'color-mix(in oklab, '.$p['fg'].' 26%, #212B36)' : $p['bg'] }};text-align:left;width:100%;box-sizing:border-box">
+                    <span style="width:32px;height:32px;border-radius:9px;background:{{ $isDark ? 'color-mix(in oklab, '.$p['fg'].' 38%, #212B36)' : '#fff' }};color:{{ $isDark ? 'color-mix(in oklab, '.$p['fg'].' 65%, #fff)' : $p['fg'] }};display:grid;place-items:center;flex-shrink:0">{!! $ic($p['icon'], 18) !!}</span>
                     <div style="display:flex;flex-direction:column;gap:2px;min-width:0;flex:1">
                         <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:14px;color:{{ $isDark ? '#F3F5F8' : '#28293F' }}">{{ $p['title'] }}</span>
                         <span style="font-size:12.5px;color:{{ $isDark ? '#AEB6C2' : '#4A4B63' }};line-height:1.4">{{ $p['desc'] }}</span>
