@@ -1,4 +1,4 @@
-<x-cikgu-layout :title="__('Notifikasi')" :heading="__('Notifikasi')" :sub="__('Aktiviti murid pada kandungan anda')">
+<x-cikgu-layout :title="__('Notifikasi')" :heading="__('Notifikasi')" heading-icon="bell" :sub="__('Aktiviti murid pada kandungan anda')">
 
     @php
         // Per-type presentation: emoji + a message template with :actor and :title.
