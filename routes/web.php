@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AdminContentController;
 use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\AdminNotificationController;
 use App\Http\Controllers\Admin\AdminReportController;
 use App\Http\Controllers\Admin\AdminStudentController;
 use App\Http\Controllers\Admin\AdminTalentController;
@@ -225,6 +226,10 @@ Route::middleware(['auth', 'role:admin'])
         Route::get('bakat/{teacher}', [AdminTalentController::class, 'show'])->name('bakat.show');
 
         Route::get('murid', [AdminStudentController::class, 'index'])->name('murid');
+
+        // Admin notification feed + the bell's "mark read" (mirrors the teacher endpoints).
+        Route::get('notifikasi', [AdminNotificationController::class, 'index'])->name('notifikasi');
+        Route::post('notifikasi/baca', [AdminNotificationController::class, 'markRead'])->name('notifikasi.baca');
 
         // Deactivate/reactivate a teacher's sign-in. POST, not GET: it changes state.
         Route::post('guru/{teacher}/status', [AdminTalentController::class, 'toggleStatus'])->name('guru.status');

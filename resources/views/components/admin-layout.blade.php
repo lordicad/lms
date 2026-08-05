@@ -10,6 +10,14 @@
     $current = app()->getLocale();
     $heading ??= $title;
 
+    // Admin bell: this school's notifications (plus any unscoped ones). Mirrors the teacher wiring.
+    $adminNotif = \App\Http\Controllers\Admin\AdminNotificationController::scopeFor($user?->school_id);
+    $unreadNotifications = (clone $adminNotif)->whereNull('read_at')->count();
+    $recentNotifications = (clone $adminNotif)->latest()->limit(8)->get();
+    $notifMeta = [
+        \App\Models\AdminNotification::TYPE_PASSWORD_RESET => ['icon' => '🔑', 'tint' => '#FEF0CE', 'text' => __(':actor (:title) lupa kata laluan')],
+    ];
+
     // Sidebar nav — mirrors the WeLearn Admin design (icon + label, active pill). The SVGs are the
     // exact glyphs from the prototype (Feather set, 1.8 stroke), inlined so they match pixel-for-pixel.
     $icons = [
@@ -290,10 +298,8 @@
                 <x-icon :name="$isDark ? 'sun' : 'moon'" class="h-[19px] w-[19px]" />
             </a>
 
-            {{-- Nothing creates a notification for an admin yet, so the panel opens on its empty
-                 state. The red dot that used to sit here was hard-coded on: it reported unread
-                 items that could not exist. --}}
-            <x-notif-bell />
+            <x-notif-bell :notifications="$recentNotifications" :unread="$unreadNotifications" :meta="$notifMeta"
+                          :all-url="route('admin.notifikasi')" :mark-read-url="route('admin.notifikasi.baca')" />
         </div>
 
         <x-flash />

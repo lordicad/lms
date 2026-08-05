@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\ConfirmablePasswordController;
 use App\Http\Controllers\Auth\FirstPasswordController;
+use App\Http\Controllers\Auth\ForgotPasswordOtpController;
 use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
@@ -26,6 +27,13 @@ Route::middleware('guest')->group(function () {
 
     Route::get('reset-password/{token}', [NewPasswordController::class, 'create'])->name('password.reset');
     Route::post('reset-password', [NewPasswordController::class, 'store'])->name('password.store');
+
+    // Forgot-password OTP flow (inline on the login page). Throttled: these look up accounts and
+    // send email, so they are a natural target for probing.
+    Route::post('forgot-password/otp', [ForgotPasswordOtpController::class, 'send'])
+        ->middleware('throttle:6,1')->name('password.otp.send');
+    Route::post('forgot-password/verify', [ForgotPasswordOtpController::class, 'verify'])
+        ->middleware('throttle:10,1')->name('password.otp.verify');
 });
 
 Route::middleware('auth')->group(function () {
