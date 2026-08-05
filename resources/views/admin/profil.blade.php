@@ -5,13 +5,13 @@
     @php
         $user = auth()->user();
         // Same WeLearn design tokens as the teacher profile — reused here so the two pages match.
-        $card = "background:var(--tp-surface);border:1px solid var(--tp-line);border-radius:18px;padding:24px;display:flex;flex-direction:column;box-shadow:0 2px 10px rgba(46,44,80,.04)";
-        $h2 = "margin:0;font-family:'Geist',sans-serif;font-size:17px;font-weight:800;color:var(--tp-ink)";
-        $label = "font-family:'Geist',sans-serif;font-size:12.5px;font-weight:800;color:var(--tp-muted-2)";
+        $card = "background:var(--tp-surface);border:1px solid var(--tp-line);border-radius:16px;padding:20px;display:flex;flex-direction:column;box-shadow:0 2px 10px rgba(46,44,80,.04)";
+        $h2 = "margin:0;font-family:'Geist',sans-serif;font-size:15.5px;font-weight:800;color:var(--tp-ink)";
+        $label = "font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:var(--tp-muted-2)";
         // Trailing semicolon matters: these get concatenated below.
-        $input = "min-height:46px;border:1.5px solid var(--tp-line-2);border-radius:12px;padding:0 14px;background:var(--tp-input);font-family:'Nunito',sans-serif;font-size:14.5px;color:var(--tp-ink);box-sizing:border-box;width:100%;";
-        $field = "display:flex;flex-direction:column;gap:6px";
-        $primary = "align-self:flex-start;min-height:46px;border:none;cursor:pointer;border-radius:12px;background:#17907B;color:#fff;font-family:'Geist',sans-serif;font-weight:800;font-size:14px;padding:0 22px;display:inline-flex;align-items:center;gap:9px";
+        $input = "min-height:42px;border:1.5px solid var(--tp-line-2);border-radius:11px;padding:0 13px;background:var(--tp-input);font-family:'Nunito',sans-serif;font-size:14px;color:var(--tp-ink);box-sizing:border-box;width:100%;";
+        $field = "display:flex;flex-direction:column;gap:5px";
+        $primary = "align-self:flex-start;min-height:42px;border:none;cursor:pointer;border-radius:11px;background:#17907B;color:#fff;font-family:'Geist',sans-serif;font-weight:800;font-size:13.5px;padding:0 20px;display:inline-flex;align-items:center;gap:8px";
         $err = "margin:0;font-size:12.5px;font-weight:700;color:#C24936";
         $note = "font-size:12.5px;color:var(--tp-muted-2)";
         // Save icon reused on both primary buttons.
@@ -23,17 +23,17 @@
         .wl-primary:active { transform:scale(.98); }
         .wl-avatarbtn { transition:background .15s; }
         .wl-avatarbtn:hover { background:#2BB39B; }
-        .pf-grid2 { display:grid; grid-template-columns:1fr 1fr; gap:18px 24px; align-items:start; }
-        .pf-tile  { width:40px; height:40px; border-radius:12px; display:grid; place-items:center; flex-shrink:0; }
-        .pf-head  { display:flex; align-items:center; gap:12px; }
+        .pf-grid2 { display:grid; grid-template-columns:1fr 1fr; gap:14px 20px; align-items:start; }
+        .pf-tile  { width:36px; height:36px; border-radius:11px; display:grid; place-items:center; flex-shrink:0; }
+        .pf-head  { display:flex; align-items:center; gap:10px; }
         .pf-eye   { position:absolute; right:7px; top:50%; transform:translateY(-50%); width:32px; height:32px; border:none; background:transparent; cursor:pointer; color:var(--tp-muted-2); display:grid; place-items:center; }
         @media (max-width:820px) { .pf-grid2 { grid-template-columns:1fr; } }
     </style>
 
-    <div style="display:flex;flex-direction:column;gap:20px;max-width:1040px">
+    <div style="display:flex;flex-direction:column;gap:16px;max-width:860px">
 
         {{-- Account details --}}
-        <form method="POST" action="{{ route('profile.update') }}" enctype="multipart/form-data" style="{{ $card }};gap:20px">
+        <form method="POST" action="{{ route('profile.update') }}" enctype="multipart/form-data" style="{{ $card }};gap:16px">
             @csrf
             @method('PATCH')
 
@@ -46,7 +46,7 @@
                  image previews live in the circle before saving. --}}
             <div style="display:flex;align-items:center;gap:16px" x-data="{ name: '', preview: '' }">
                 <label for="avatar" title="{{ $user->avatarUrl() ? __('Tukar gambar profil') : __('Tambah gambar profil') }}"
-                       style="width:64px;height:64px;border-radius:50%;background:#DCF2EE;color:#0F7A68;display:flex;align-items:center;justify-content:center;font-family:'Geist',sans-serif;font-weight:800;font-size:20px;line-height:1;flex-shrink:0;overflow:hidden;cursor:pointer;position:relative">
+                       style="width:56px;height:56px;border-radius:50%;background:#DCF2EE;color:#0F7A68;display:flex;align-items:center;justify-content:center;font-family:'Geist',sans-serif;font-weight:800;font-size:18px;line-height:1;flex-shrink:0;overflow:hidden;cursor:pointer;position:relative">
                     <span x-show="! preview">{{ $user->initials() }}</span>
                     @if ($user->avatarUrl())
                         <img src="{{ $user->avatarUrl() }}" alt="" x-show="! preview" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
@@ -99,7 +99,7 @@
         </form>
 
         {{-- Change password --}}
-        <form method="POST" action="{{ route('password.update') }}" style="{{ $card }};gap:16px">
+        <form method="POST" action="{{ route('password.update') }}" style="{{ $card }};gap:13px">
             @csrf
             @method('PUT')
             <div class="pf-head">
