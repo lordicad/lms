@@ -43,12 +43,22 @@
     }
 
     $reset = $resetUrl ?? $action;
-    $hasDate = $withDate && (request()->filled('dari') || request()->filled('hingga'));
+    $hasDate = $withDate && request()->filled('tarikh');
     $hasActiveFilters = $selLevel || $selSubjek || $selBab || $hasDate;
 
-    // Native date pickers need the app theme so their calendar glyph stays visible in dark mode.
-    $isDark = ($theme ?? 'light') === 'dark';
-    $dateStyle = "min-height:46px;border:1.5px solid var(--tp-line-2);border-radius:12px;padding:0 14px;background:var(--tp-input);font-family:'Geist',sans-serif;font-weight:800;font-size:14px;color:var(--tp-ink);min-width:150px;box-sizing:border-box;color-scheme:".($isDark ? 'dark' : 'light');
+    // Preset published-date ranges. The keys are matched server-side (AdminContentController::dateRange);
+    // the labels live here so the dropdown reads naturally and translates.
+    $datePresets = [
+        'today' => __('Hari ini'),
+        'yesterday' => __('Semalam'),
+        'this_week' => __('Minggu ini'),
+        'last_week' => __('Minggu lepas'),
+        'last_7d' => __('7 hari lepas'),
+        'this_month' => __('Bulan ini'),
+        'last_month' => __('Bulan lepas'),
+        'last_30d' => __('30 hari lepas'),
+    ];
+    $selTarikh = request()->string('tarikh')->toString();
 
     $cls = $variant === 'student'
         ? ['label' => 'ysf-label', 'select' => 'ysf-select']
@@ -122,18 +132,17 @@
         </div>
     @endif
 
-    {{-- Published-date range (video oversight). Native inputs, so they submit on change and still
-         work without Alpine; each bounds the other so the range cannot invert. --}}
+    {{-- Published-date range (video oversight): a preset picker, resolved to a from/to window on
+         the server. A plain <select> so it submits on change and still works without Alpine. --}}
     @if ($withDate)
         <div class="tp-field" style="display:flex;flex-direction:column;gap:6px">
-            <label for="ysf-dari" class="{{ $cls['label'] }}">{{ __('Dari tarikh') }}</label>
-            <input id="ysf-dari" type="date" name="dari" value="{{ request('dari') }}"
-                   max="{{ request('hingga') }}" onchange="this.form.submit()" style="{{ $dateStyle }}">
-        </div>
-        <div class="tp-field" style="display:flex;flex-direction:column;gap:6px">
-            <label for="ysf-hingga" class="{{ $cls['label'] }}">{{ __('Hingga tarikh') }}</label>
-            <input id="ysf-hingga" type="date" name="hingga" value="{{ request('hingga') }}"
-                   min="{{ request('dari') }}" onchange="this.form.submit()" style="{{ $dateStyle }}">
+            <label for="ysf-tarikh" class="{{ $cls['label'] }}">{{ __('Tarikh terbit') }}</label>
+            <select id="ysf-tarikh" name="tarikh" class="{{ $cls['select'] }}" style="min-width:170px" onchange="this.form.submit()">
+                <option value="">{{ __('Semua tarikh') }}</option>
+                @foreach ($datePresets as $key => $label)
+                    <option value="{{ $key }}" @selected($selTarikh === $key)>{{ $label }}</option>
+                @endforeach
+            </select>
         </div>
     @endif
 

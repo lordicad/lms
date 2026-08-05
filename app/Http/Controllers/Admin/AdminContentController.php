@@ -13,6 +13,7 @@ use App\Support\ContentFilter;
 use App\Support\SchoolScope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\View\View;
 
 /**
@@ -26,10 +27,9 @@ class AdminContentController extends Controller
         $filter = ContentFilter::fromRequest($request);
         $search = trim((string) $request->query('q', ''));
 
-        // Published-date range, matched against created_at (the date the "Published" column shows).
-        // Empty when absent, so the range simply does not narrow anything.
-        $from = $request->query('dari');
-        $to = $request->query('hingga');
+        // Preset published-date window, matched against created_at (the "Published" column). Both
+        // ends are null when no preset is chosen, so the range simply does not narrow anything.
+        [$from, $to] = $this->dateRange($request->query('tarikh'));
 
         // Rebuilt per call: the summary counts each need their own query, and reusing one
         // builder would stack their wheres on top of each other. The search rides along, so the
@@ -37,8 +37,8 @@ class AdminContentController extends Controller
         $filtered = fn (): Builder => $this->searched(
             $filter->apply(SchoolScope::content(Lesson::query())), $search
         )
-            ->when($from, fn (Builder $q) => $q->whereDate('created_at', '>=', $from))
-            ->when($to, fn (Builder $q) => $q->whereDate('created_at', '<=', $to));
+            ->when($from, fn (Builder $q) => $q->where('created_at', '>=', $from))
+            ->when($to, fn (Builder $q) => $q->where('created_at', '<=', $to));
 
         $lessons = $filtered()
             ->with('chapter.subject', 'chapter.grade', 'teacher')
@@ -73,6 +73,30 @@ class AdminContentController extends Controller
                 ->where('title', 'like', "%{$search}%")
                 ->orWhereHas('teacher', fn (Builder $t) => $t->where('name', 'like', "%{$search}%")),
         ));
+    }
+
+    /**
+     * The [from, to] datetime window for a preset published-date range, or [null, null] for no (or
+     * an unknown) preset. Weeks start Monday; "today" and the rolling windows run up to the present
+     * moment. Keys mirror the dropdown in the year-subject filter component.
+     *
+     * @return array{0: ?Carbon, 1: ?Carbon}
+     */
+    private function dateRange(?string $preset): array
+    {
+        $now = Carbon::now();
+
+        return match ($preset) {
+            'today' => [$now->copy()->startOfDay(), $now],
+            'yesterday' => [$now->copy()->subDay()->startOfDay(), $now->copy()->subDay()->endOfDay()],
+            'this_week' => [$now->copy()->startOfWeek(), $now],
+            'last_week' => [$now->copy()->subWeek()->startOfWeek(), $now->copy()->subWeek()->endOfWeek()],
+            'last_7d' => [$now->copy()->subDays(6)->startOfDay(), $now],
+            'this_month' => [$now->copy()->startOfMonth(), $now],
+            'last_month' => [$now->copy()->subMonthNoOverflow()->startOfMonth(), $now->copy()->subMonthNoOverflow()->endOfMonth()],
+            'last_30d' => [$now->copy()->subDays(29)->startOfDay(), $now],
+            default => [null, null],
+        };
     }
 
     public function material(Request $request): View
