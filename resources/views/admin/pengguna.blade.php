@@ -5,9 +5,15 @@
 
     {{-- When the admin filters to teachers, the "Year" column (a student attribute) becomes "Position". --}}
     @php($teacherView = $role === 'teacher')
-    {{-- One geometry for both roles, so switching the Role filter does not shuffle the columns
-         sideways. The fourth column is the widest of the two it has to hold (Jawatan, not Tahun). --}}
-    @php($cols = 'grid-template-columns:minmax(150px,1.7fr) 96px minmax(150px,1.5fr) 130px 118px 96px')
+    {{-- The Year/Position column only earns its place once a single role is chosen: in the combined
+         "Semua peranan" list it is half a column of Tahun and half a column of "—", so it is dropped
+         there. Teacher view keeps Jawatan; student view keeps Tahun. --}}
+    @php($showAttr = $role !== '')
+    {{-- One geometry per view. The fourth column is the widest of the two it has to hold (Jawatan,
+         not Tahun); the combined list runs the same layout minus that column. --}}
+    @php($cols = $showAttr
+        ? 'grid-template-columns:minmax(150px,1.7fr) 96px minmax(150px,1.5fr) 130px 118px 96px'
+        : 'grid-template-columns:minmax(150px,1.7fr) 96px minmax(150px,1.5fr) 118px 96px')
 
     {{-- The success banner is rendered once by <x-flash /> in the admin layout. --}}
     <div style="display:flex;flex-direction:column;gap:18px">
@@ -67,7 +73,7 @@
                     <div style="min-width:820px">
                         <div style="display:grid;{{ $cols }};gap:12px;padding:14px 20px;border-bottom:1px solid var(--tp-line)">
                             {{-- Everything but Name is centred; names keep a common left edge to scan down. --}}
-                            @foreach (['Nama', 'Peranan', 'Emel', $teacherView ? 'Jawatan' : 'Tahun', 'Status', 'Tindakan'] as $h)
+                            @foreach (array_filter(['Nama', 'Peranan', 'Emel', $showAttr ? ($teacherView ? 'Jawatan' : 'Tahun') : null, 'Status', 'Tindakan']) as $h)
                                 <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;color:var(--tp-muted){{ $loop->first ? '' : ';text-align:center' }}">{{ __($h) }}</span>
                             @endforeach
                         </div>
@@ -86,7 +92,9 @@
                                 @endif
 
                                 <span style="font-size:13px;font-weight:600;color:var(--tp-muted-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center">{{ $u->email ?: '—' }}</span>
-                                <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center">{{ $teacherView ? ($u->position ?: '—') : ($u->grade?->name ?? '—') }}</span>
+                                @if ($showAttr)
+                                    <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center">{{ $teacherView ? ($u->position ?: '—') : ($u->grade?->name ?? '—') }}</span>
+                                @endif
 
                                 {{-- Read-only: the account is switched on or off from its edit form,
                                      so the list cannot deactivate someone on a stray click. The pill
