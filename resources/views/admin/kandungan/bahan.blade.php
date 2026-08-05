@@ -64,7 +64,7 @@
                                 <span style="font-size:13px;font-weight:700;color:#4276AE;text-align:center">{{ $material->chapter->subject->displayName() }}</span>
                                 <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2);text-align:center">{{ $material->chapter->grade->name }}</span>
                                 <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2);text-align:center">{{ number_format($material->download_count) }}</span>
-                                <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2);text-align:center">📄 {{ strtoupper($material->extension()) }} <span style="font-size:11.5px;color:var(--tp-muted)">{{ $material->humanSize() }}</span></span>
+                                <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2);text-align:center">{{ strtoupper($material->extension()) }} <span style="font-size:11.5px;color:var(--tp-muted)">{{ $material->humanSize() }}</span></span>
                                 <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2);text-align:center">{{ $material->created_at->translatedFormat('j M Y') }}</span>
                                 {{-- nowrap keeps each label on one line: without it the icon and its
                                      word stack vertically as soon as the column tightens. --}}
