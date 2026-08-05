@@ -4,6 +4,7 @@
     'subjects',               // Collection<Subject> (all subjects; availability drives what's usable)
     'filter' => null,         // App\Support\ContentFilter (resolved selection + chapters)
     'withChapter' => false,   // render the dependent Bab dropdown
+    'withDate' => false,      // render a From/To published-date range (params: dari, hingga)
     'allYears' => true,       // show a "Semua tahun" option and allow Subject without a Year
     'variant' => 'cikgu',     // 'cikgu' (teacher/admin) | 'student'
     'chapterParam' => 'bab',
@@ -42,7 +43,12 @@
     }
 
     $reset = $resetUrl ?? $action;
-    $hasActiveFilters = $selLevel || $selSubjek || $selBab;
+    $hasDate = $withDate && (request()->filled('dari') || request()->filled('hingga'));
+    $hasActiveFilters = $selLevel || $selSubjek || $selBab || $hasDate;
+
+    // Native date pickers need the app theme so their calendar glyph stays visible in dark mode.
+    $isDark = ($theme ?? 'light') === 'dark';
+    $dateStyle = "min-height:46px;border:1.5px solid var(--tp-line-2);border-radius:12px;padding:0 14px;background:var(--tp-input);font-family:'Geist',sans-serif;font-weight:800;font-size:14px;color:var(--tp-ink);min-width:150px;box-sizing:border-box;color-scheme:".($isDark ? 'dark' : 'light');
 
     $cls = $variant === 'student'
         ? ['label' => 'ysf-label', 'select' => 'ysf-select']
@@ -113,6 +119,21 @@
                     </option>
                 @endforeach
             </select>
+        </div>
+    @endif
+
+    {{-- Published-date range (video oversight). Native inputs, so they submit on change and still
+         work without Alpine; each bounds the other so the range cannot invert. --}}
+    @if ($withDate)
+        <div class="tp-field" style="display:flex;flex-direction:column;gap:6px">
+            <label for="ysf-dari" class="{{ $cls['label'] }}">{{ __('Dari tarikh') }}</label>
+            <input id="ysf-dari" type="date" name="dari" value="{{ request('dari') }}"
+                   max="{{ request('hingga') }}" onchange="this.form.submit()" style="{{ $dateStyle }}">
+        </div>
+        <div class="tp-field" style="display:flex;flex-direction:column;gap:6px">
+            <label for="ysf-hingga" class="{{ $cls['label'] }}">{{ __('Hingga tarikh') }}</label>
+            <input id="ysf-hingga" type="date" name="hingga" value="{{ request('hingga') }}"
+                   min="{{ request('dari') }}" onchange="this.form.submit()" style="{{ $dateStyle }}">
         </div>
     @endif
 

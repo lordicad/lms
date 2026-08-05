@@ -26,12 +26,19 @@ class AdminContentController extends Controller
         $filter = ContentFilter::fromRequest($request);
         $search = trim((string) $request->query('q', ''));
 
+        // Published-date range, matched against created_at (the date the "Published" column shows).
+        // Empty when absent, so the range simply does not narrow anything.
+        $from = $request->query('dari');
+        $to = $request->query('hingga');
+
         // Rebuilt per call: the summary counts each need their own query, and reusing one
         // builder would stack their wheres on top of each other. The search rides along, so the
         // cards keep describing the rows on screen rather than the unfiltered library.
         $filtered = fn (): Builder => $this->searched(
             $filter->apply(SchoolScope::content(Lesson::query())), $search
-        );
+        )
+            ->when($from, fn (Builder $q) => $q->whereDate('created_at', '>=', $from))
+            ->when($to, fn (Builder $q) => $q->whereDate('created_at', '<=', $to));
 
         $lessons = $filtered()
             ->with('chapter.subject', 'chapter.grade', 'teacher')

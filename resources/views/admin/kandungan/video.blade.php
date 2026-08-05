@@ -32,7 +32,7 @@
             @endforeach
         </div>
 
-        <x-year-subject-filter :action="route('admin.kandungan.video')" :grades="$grades" :subjects="$subjects" :filter="$filter">
+        <x-year-subject-filter :action="route('admin.kandungan.video')" :grades="$grades" :subjects="$subjects" :filter="$filter" :with-date="true">
             <x-slot:search>
                 <div class="tp-field" style="flex:1;min-width:220px">
                     <label for="cari-video" class="tp-label">{{ __('Cari') }}</label>
