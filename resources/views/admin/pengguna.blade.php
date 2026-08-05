@@ -8,7 +8,7 @@
     {{-- The Year/Position column only earns its place once a single role is chosen: in the combined
          "Semua peranan" list it is half a column of Tahun and half a column of "—", so it is dropped
          there. Teacher view keeps Jawatan; student view keeps Tahun. --}}
-    @php($showAttr = $role !== '')
+    @php($showAttr = filled($role))
     {{-- One geometry per view. The fourth column is the widest of the two it has to hold (Jawatan,
          not Tahun); the combined list runs the same layout minus that column. --}}
     @php($cols = $showAttr
