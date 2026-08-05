@@ -1,5 +1,6 @@
 <x-admin-layout :title="__('Penyumbang')"
                 :heading="__('Ranking Penyumbang')"
+                heading-icon="trophy"
                 :sub="__('Guru mengikut jumlah kandungan yang dicipta')">
 
     <div style="display:flex;flex-direction:column;gap:16px">
