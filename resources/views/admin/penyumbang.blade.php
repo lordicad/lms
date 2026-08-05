@@ -19,8 +19,16 @@
                     </div>
 
                     @forelse ($contributors as $i => $c)
+                        @php($rank = $contributors->firstItem() + $i)
                         <div style="display:grid;grid-template-columns:{{ $cols }};gap:12px;padding:13px 22px;border-bottom:1px solid var(--tp-line)">
-                            <span style="font-family:'Geist',sans-serif;font-size:14px;font-weight:800;color:var(--tp-muted-2);font-variant-numeric:tabular-nums;text-align:center">{{ $contributors->firstItem() + $i }}</span>
+                            {{-- Top three across the whole ranking get a medal; everyone else keeps the number. --}}
+                            <span style="font-family:'Geist',sans-serif;font-size:14px;font-weight:800;color:var(--tp-muted-2);font-variant-numeric:tabular-nums;display:flex;align-items:center;justify-content:center">
+                                @if ($rank <= 3)
+                                    <img src="{{ asset('images/medal'.$rank.'.png') }}" alt="{{ $rank }}" style="width:26px;height:26px;object-fit:contain">
+                                @else
+                                    {{ $rank }}
+                                @endif
+                            </span>
                             <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:14px;color:var(--tp-ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center">{{ $c['name'] }}</span>
                             <span style="font-size:14px;color:var(--tp-muted-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center">{{ $c['school'] ?? '—' }}</span>
                             <span style="font-family:'Geist',sans-serif;font-size:14px;font-weight:800;color:#17907B;text-align:center">{{ number_format($c['total']) }}</span>
