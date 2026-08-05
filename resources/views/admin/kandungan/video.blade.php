@@ -44,7 +44,8 @@
 
         @if ($lessons->isEmpty())
             <div class="tp-empty">
-                <span style="font-size:30px">🎬</span>
+                <img src="{{ asset('images/video.png') }}" alt="" style="width:46px;height:46px;object-fit:contain">
+
                 <h3 style="margin:0;font-family:'Geist',sans-serif;font-size:19px;font-weight:800;color:var(--tp-ink)">{{ __('Tiada video untuk dipaparkan') }}</h3>
                 <p style="margin:0;font-size:14.5px;color:var(--tp-muted);max-width:380px">{{ __('Tiada video yang sepadan dengan tapisan ini.') }}</p>
             </div>
