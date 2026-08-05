@@ -1,5 +1,7 @@
 @props(['obj', 'pill'])
 
+@php($isDark = ($theme ?? 'light') === 'dark')
+
 {{--
     WeLearn Admin preview modal shell: blurred overlay + a 920px card with a blue gradient
     header (kind pill + white title + subtitle) and a styled close button. The body is the
@@ -10,7 +12,7 @@
      style="position:fixed;inset:0;z-index:100;background:rgba(30,30,45,.55);backdrop-filter:blur(2px);display:flex;align-items:center;justify-content:center;padding:32px">
 
     <div @click.stop
-         style="width:min(920px,100%);max-height:90vh;overflow:hidden;background:#fff;border-radius:20px;box-shadow:0 24px 70px rgba(20,20,40,.4);display:flex;flex-direction:column">
+         style="width:min(920px,100%);max-height:90vh;overflow:hidden;background:{{ $isDark ? '#1E2732' : '#fff' }};border-radius:20px;box-shadow:0 24px 70px rgba(20,20,40,.4);display:flex;flex-direction:column">
 
         {{-- Header --}}
         <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding:13px 22px;background:linear-gradient(120deg,#5A9BD8,#7DB4E6);flex-shrink:0">

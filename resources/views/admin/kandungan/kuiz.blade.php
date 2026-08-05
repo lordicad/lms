@@ -6,6 +6,7 @@
         ['icon' => 'check-circle', 'label' => __('Lulus'),            'value' => $passCount,    'labelColor' => '#0F7A68'],
         ['icon' => 'x-circle',     'label' => __('Gagal'),            'value' => $failCount,    'labelColor' => '#C24936'],
     ];
+    $isDark = ($theme ?? 'light') === 'dark';
 @endphp
 
 <x-admin-layout :title="__('Kandungan Kuiz')"
@@ -111,41 +112,41 @@
         {{-- Preview modal (WeLearn Admin design): gradient header + green question body. --}}
         <template x-if="quiz">
             <x-content-preview obj="quiz" :pill="'📝 '.__('Kuiz')">
-                <div style="overflow-y:auto;background:linear-gradient(180deg,#E9F7F2,#FAF9F5)">
+                <div style="overflow-y:auto;background:{{ $isDark ? 'linear-gradient(180deg,#141A20,#1B232C)' : 'linear-gradient(180deg,#E9F7F2,#FAF9F5)' }}">
                     <template x-if="quiz.type === 'file'">
                         <div style="padding:48px 28px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px">
-                            <p style="margin:0;font-family:'Geist',sans-serif;font-weight:800;font-size:15px;color:#28293F">{{ __('Kuiz ini ialah fail untuk dicetak.') }}</p>
-                            <p style="margin:0;font-size:13.5px;color:#6C6F87;max-width:360px">{{ __('Ia tiada soalan dalam sistem. Muat turun fail untuk melihatnya.') }}</p>
+                            <p style="margin:0;font-family:'Geist',sans-serif;font-weight:800;font-size:15px;color:{{ $isDark ? '#F3F5F8' : '#28293F' }}">{{ __('Kuiz ini ialah fail untuk dicetak.') }}</p>
+                            <p style="margin:0;font-size:13.5px;color:{{ $isDark ? '#9AA3B2' : '#6C6F87' }};max-width:360px">{{ __('Ia tiada soalan dalam sistem. Muat turun fail untuk melihatnya.') }}</p>
                             <a :href="quiz.downloadUrl" style="margin-top:12px;display:inline-flex;align-items:center;gap:8px;min-height:44px;border-radius:12px;background:#17907B;color:#fff;font-family:'Geist',sans-serif;font-weight:800;font-size:14px;padding:0 20px;text-decoration:none">⬇ {{ __('Muat Turun') }}</a>
                         </div>
                     </template>
 
                     <template x-if="quiz.type === 'interactive' && ! quiz.questions.length">
                         <div style="padding:48px 28px;text-align:center">
-                            <p style="margin:0;font-family:'Geist',sans-serif;font-weight:800;font-size:15px;color:#28293F">{{ __('Kuiz ini belum ada soalan.') }}</p>
+                            <p style="margin:0;font-family:'Geist',sans-serif;font-weight:800;font-size:15px;color:{{ $isDark ? '#F3F5F8' : '#28293F' }}">{{ __('Kuiz ini belum ada soalan.') }}</p>
                         </div>
                     </template>
 
                     <template x-if="quiz.questions.length">
                         <div style="padding:24px;display:flex;flex-direction:column;gap:16px">
-                            <div style="display:flex;align-items:center;gap:8px;background:#fff;border:1px solid #B7E3D8;border-radius:12px;padding:10px 16px;align-self:flex-start">
-                                <span style="width:16px;height:16px;border-radius:5px;background:#E9F7F2;border:1.5px solid #0F7A68;display:inline-block;flex-shrink:0"></span>
-                                <span style="font-size:12.5px;font-weight:800;color:#0F7A68;font-family:'Geist',sans-serif">{{ __('Jawapan betul ditanda hijau') }}</span>
+                            <div style="display:flex;align-items:center;gap:8px;background:{{ $isDark ? '#1E2732' : '#fff' }};border:1px solid {{ $isDark ? 'rgba(94,234,212,.35)' : '#B7E3D8' }};border-radius:12px;padding:10px 16px;align-self:flex-start">
+                                <span style="width:16px;height:16px;border-radius:5px;background:{{ $isDark ? 'rgba(94,234,212,.15)' : '#E9F7F2' }};border:1.5px solid {{ $isDark ? '#5EEAD4' : '#0F7A68' }};display:inline-block;flex-shrink:0"></span>
+                                <span style="font-size:12.5px;font-weight:800;color:{{ $isDark ? '#5EEAD4' : '#0F7A68' }};font-family:'Geist',sans-serif">{{ __('Jawapan betul ditanda hijau') }}</span>
                             </div>
 
                             <template x-for="(question, index) in quiz.questions" :key="index">
-                                <div style="background:#fff;border:1px solid rgba(46,44,80,.08);border-radius:14px;padding:18px 20px;display:flex;flex-direction:column;gap:12px;box-shadow:0 2px 8px rgba(46,44,80,.04)">
+                                <div style="background:{{ $isDark ? '#1E2732' : '#fff' }};border:1px solid {{ $isDark ? 'rgba(255,255,255,.08)' : 'rgba(46,44,80,.08)' }};border-radius:14px;padding:18px 20px;display:flex;flex-direction:column;gap:12px;box-shadow:0 2px 8px rgba(46,44,80,{{ $isDark ? '.25' : '.04' }})">
                                     <div style="display:flex;gap:10px;align-items:flex-start">
-                                        <span style="flex-shrink:0;width:26px;height:26px;border-radius:8px;background:#E6F5F1;color:#0F7A68;display:grid;place-items:center;font-family:'Geist',sans-serif;font-weight:800;font-size:13px" x-text="index + 1"></span>
-                                        <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:15px;color:#28293F;line-height:1.4" x-text="question.text"></span>
+                                        <span style="flex-shrink:0;width:26px;height:26px;border-radius:8px;background:{{ $isDark ? 'rgba(23,144,123,.22)' : '#E6F5F1' }};color:{{ $isDark ? '#5EEAD4' : '#0F7A68' }};display:grid;place-items:center;font-family:'Geist',sans-serif;font-weight:800;font-size:13px" x-text="index + 1"></span>
+                                        <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:15px;color:{{ $isDark ? '#F3F5F8' : '#28293F' }};line-height:1.4" x-text="question.text"></span>
                                     </div>
                                     <div style="display:flex;flex-direction:column;gap:8px;padding-left:36px">
                                         <template x-for="option in question.options" :key="option.letter">
-                                            <div :style="(option.correct ? 'border:1px solid #17907B;background:#E6F5F1' : 'border:1px solid rgba(46,44,80,.08);background:#F6F5F0') + ';display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px'">
-                                                <span :style="(option.correct ? 'background:#17907B;color:#fff' : 'background:#EDECE4;color:#8B8AA3') + ';width:24px;height:24px;flex-shrink:0;border-radius:50%;display:grid;place-items:center;font-family:\'Geist\',sans-serif;font-weight:800;font-size:11.5px'" x-text="option.letter"></span>
-                                                <span style="font-size:13.5px;font-weight:700;color:#4A4B63" x-text="option.text"></span>
+                                            <div :style="(option.correct ? 'border:1px solid {{ $isDark ? '#2BB39B' : '#17907B' }};background:{{ $isDark ? 'rgba(43,179,155,.18)' : '#E6F5F1' }}' : 'border:1px solid {{ $isDark ? 'rgba(255,255,255,.07)' : 'rgba(46,44,80,.08)' }};background:{{ $isDark ? '#26313E' : '#F6F5F0' }}') + ';display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px'">
+                                                <span :style="(option.correct ? 'background:#17907B;color:#fff' : 'background:{{ $isDark ? '#2E3A47' : '#EDECE4' }};color:{{ $isDark ? '#8A93A0' : '#8B8AA3' }}') + ';width:24px;height:24px;flex-shrink:0;border-radius:50%;display:grid;place-items:center;font-family:\'Geist\',sans-serif;font-weight:800;font-size:11.5px'" x-text="option.letter"></span>
+                                                <span style="font-size:13.5px;font-weight:700;color:{{ $isDark ? '#C6CDD6' : '#4A4B63' }}" x-text="option.text"></span>
                                                 <template x-if="option.correct">
-                                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0F7A68" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-left:auto;flex-shrink:0"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="{{ $isDark ? '#5EEAD4' : '#0F7A68' }}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-left:auto;flex-shrink:0"><polyline points="20 6 9 17 4 12"></polyline></svg>
                                                 </template>
                                             </div>
                                         </template>
