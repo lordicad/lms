@@ -46,6 +46,9 @@
         {{-- Forgot-password (OTP) — plain JS, since the auth shell deliberately ships no Alpine.
              Reveals under the login button; a code goes to the account's email (a teacher's own,
              a student's guardian's), and a correct code raises a request in the admin's bell. --}}
+        {{-- .wla-stack sets display:flex, which beats the browser's [hidden] rule — so restore it
+             here or every step would show at once. --}}
+        <style>#fp[hidden], #fp [hidden] { display: none !important; }</style>
         <div id="fp" class="wla-stack" hidden>
             <div style="height:1px;background:var(--line)"></div>
             <div class="wla-head">
