@@ -110,7 +110,7 @@
             </div>
             <noscript><button type="submit" class="tp-btn-ghost">{{ __('Tapis') }}</button></noscript>
             @if ($subjectSlug || $gradeLevel || $search !== '')
-                <a href="{{ route('admin.bakat', array_filter(['p_subjek' => $contribSubject, 'p_tahun' => $contribGrade])) }}" class="tp-btn-ghost">{{ __('Kosongkan') }}</a>
+                <a href="{{ route('admin.bakat', array_filter(['p_subjek' => $contribSubject, 'p_tahun' => $contribGrade])) }}" class="tp-btn-ghost" style="color:#C24936">{{ __('Kosongkan') }}</a>
             @endif
         </form>
 

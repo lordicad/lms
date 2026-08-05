@@ -24,6 +24,6 @@
     <noscript><button type="submit" class="tp-btn-ghost">{{ __('Tapis') }}</button></noscript>
 
     @if (request('subjek') || request('tahun'))
-        <a href="{{ $action }}" class="tp-btn-ghost">{{ __('Kosongkan') }}</a>
+        <a href="{{ $action }}" class="tp-btn-ghost" style="color:#C24936">{{ __('Kosongkan') }}</a>
     @endif
 </form>

@@ -122,7 +122,7 @@
 
     @if ($hasActiveFilters)
         <a href="{{ $reset }}" class="ysf-reset"
-           style="min-height:46px;display:inline-flex;align-items:center;font-weight:800;font-size:13.5px;color:#6C6F87;text-decoration:none">
+           style="min-height:46px;display:inline-flex;align-items:center;font-weight:800;font-size:13.5px;color:#C24936;text-decoration:none">
             {{ __('Kosongkan') }}
         </a>
     @endif

@@ -38,7 +38,7 @@
     </noscript>
 
     @if (request()->hasAny(['subjek', 'tahun']))
-        <a href="{{ $action }}" style="min-height:46px;display:inline-flex;align-items:center;font-family:'Geist',sans-serif;font-weight:800;font-size:13.5px;color:#6C6F87">{{ __('Kosongkan') }}</a>
+        <a href="{{ $action }}" style="min-height:46px;display:inline-flex;align-items:center;font-family:'Geist',sans-serif;font-weight:800;font-size:13.5px;color:#C24936">{{ __('Kosongkan') }}</a>
     @endif
 
     {{ $slot }}

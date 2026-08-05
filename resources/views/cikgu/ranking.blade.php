@@ -45,7 +45,7 @@
         </div>
 
         @if (request()->hasAny(['tahun', 'subjek', 'kuiz']))
-            <a href="{{ route('cikgu.ranking') }}" style="min-height:46px;display:inline-flex;align-items:center;font-family:'Geist',sans-serif;font-weight:800;font-size:13.5px;color:var(--tp-muted-2)">{{ __('Kosongkan') }}</a>
+            <a href="{{ route('cikgu.ranking') }}" style="min-height:46px;display:inline-flex;align-items:center;font-family:'Geist',sans-serif;font-weight:800;font-size:13.5px;color:#C24936">{{ __('Kosongkan') }}</a>
         @endif
     </form>
 

@@ -77,7 +77,7 @@
                 <noscript><button type="submit" class="tp-btn-ghost">{{ __('Tapis') }}</button></noscript>
 
                 @if ($gradeLevel || $classId || $search !== '')
-                    <a href="{{ route('admin.murid') }}" style="min-height:46px;display:inline-flex;align-items:center;font-family:'Geist',sans-serif;font-weight:800;font-size:13.5px;color:var(--tp-muted-2);text-decoration:none">{{ __('Kosongkan') }}</a>
+                    <a href="{{ route('admin.murid') }}" style="min-height:46px;display:inline-flex;align-items:center;font-family:'Geist',sans-serif;font-weight:800;font-size:13.5px;color:#C24936;text-decoration:none">{{ __('Kosongkan') }}</a>
                 @endif
             </form>
 
