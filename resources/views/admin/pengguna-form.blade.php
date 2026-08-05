@@ -2,6 +2,7 @@
 
 <x-admin-layout :title="$editing ? __('Sunting Pengguna') : __('Pengguna Baharu')"
                 :heading="$editing ? __('Sunting Pengguna') : __('Pengguna Baharu')"
+                heading-icon="user"
                 :sub="__('Akaun cikgu atau murid')">
 
     <style>
