@@ -35,7 +35,15 @@
             <span style="font-size:12.5px;color:var(--tp-muted)">{{ __('Lulus bermaksud percubaan mendapat :percent% atau lebih. Setiap percubaan yang selesai dikira, termasuk ulangan.', ['percent' => \App\Models\QuizAttempt::PASS_AT]) }}</span>
         </div>
 
-        <x-year-subject-filter :action="route('admin.kandungan.kuiz')" :grades="$grades" :subjects="$subjects" :filter="$filter" />
+        <x-year-subject-filter :action="route('admin.kandungan.kuiz')" :grades="$grades" :subjects="$subjects" :filter="$filter" :with-date="true">
+            <x-slot:search>
+                <div class="tp-field" style="flex:1;min-width:220px">
+                    <label for="cari-kuiz" class="tp-label">{{ __('Cari') }}</label>
+                    <input id="cari-kuiz" type="search" name="q" value="{{ $search }}"
+                           placeholder="{{ __('Tajuk kuiz atau nama cikgu') }}" class="tp-input">
+                </div>
+            </x-slot:search>
+        </x-year-subject-filter>
 
         @if ($quizzes->isEmpty())
             <div class="tp-empty">

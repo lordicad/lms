@@ -32,13 +32,11 @@ class AdminContentController extends Controller
         [$from, $to] = $this->dateRange($request->query('tarikh'));
 
         // Rebuilt per call: the summary counts each need their own query, and reusing one
-        // builder would stack their wheres on top of each other. The search rides along, so the
+        // builder would stack their wheres on top of each other. Search + date ride along, so the
         // cards keep describing the rows on screen rather than the unfiltered library.
-        $filtered = fn (): Builder => $this->searched(
-            $filter->apply(SchoolScope::content(Lesson::query())), $search
-        )
-            ->when($from, fn (Builder $q) => $q->where('created_at', '>=', $from))
-            ->when($to, fn (Builder $q) => $q->where('created_at', '<=', $to));
+        $filtered = fn (): Builder => $this->narrow(
+            $filter->apply(SchoolScope::content(Lesson::query())), $search, $from, $to
+        );
 
         $lessons = $filtered()
             ->with('chapter.subject', 'chapter.grade', 'teacher')
@@ -76,6 +74,21 @@ class AdminContentController extends Controller
     }
 
     /**
+     * The free-text search and published-date window shared by all three content tables, applied on
+     * top of the Subjek/Tahun filter. Kept in one place so Videos, Materials and Quizzes narrow the
+     * same way and their summary cards keep describing the rows on screen.
+     *
+     * @param  Builder<Lesson>|Builder<Material>|Builder<Quiz>  $query
+     * @return Builder<Lesson>|Builder<Material>|Builder<Quiz>
+     */
+    private function narrow(Builder $query, string $search, ?Carbon $from, ?Carbon $to): Builder
+    {
+        return $this->searched($query, $search)
+            ->when($from, fn (Builder $q) => $q->where('created_at', '>=', $from))
+            ->when($to, fn (Builder $q) => $q->where('created_at', '<=', $to));
+    }
+
+    /**
      * The [from, to] datetime window for a preset published-date range, or [null, null] for no (or
      * an unknown) preset. Weeks start Monday; "today" and the rolling windows run up to the present
      * moment. Keys mirror the dropdown in the year-subject filter component.
@@ -102,7 +115,12 @@ class AdminContentController extends Controller
     public function material(Request $request): View
     {
         $filter = ContentFilter::fromRequest($request);
-        $filtered = fn (): Builder => $filter->apply(SchoolScope::content(Material::query()));
+        $search = trim((string) $request->query('q', ''));
+        [$from, $to] = $this->dateRange($request->query('tarikh'));
+
+        $filtered = fn (): Builder => $this->narrow(
+            $filter->apply(SchoolScope::content(Material::query())), $search, $from, $to
+        );
 
         $materials = $filtered()
             ->with('chapter.subject', 'chapter.grade', 'teacher')
@@ -124,13 +142,19 @@ class AdminContentController extends Controller
             'subjects' => Subject::orderBy('sort_order')->get(),
             'grades' => Grade::orderBy('level')->get(),
             'filter' => $filter,
+            'search' => $search,
         ]);
     }
 
     public function quiz(Request $request): View
     {
         $filter = ContentFilter::fromRequest($request);
-        $filtered = fn (): Builder => $filter->apply(SchoolScope::content(Quiz::query()));
+        $search = trim((string) $request->query('q', ''));
+        [$from, $to] = $this->dateRange($request->query('tarikh'));
+
+        $filtered = fn (): Builder => $this->narrow(
+            $filter->apply(SchoolScope::content(Quiz::query())), $search, $from, $to
+        );
 
         $quizzes = $filtered()
             ->with([
@@ -149,12 +173,12 @@ class AdminContentController extends Controller
             ->paginate(20)
             ->withQueryString();
 
-        // Attempts are counted through the quiz, so the same Subjek/Tahun filter applies and the
-        // cards keep describing the rows on screen. Every completed attempt counts, retries
+        // Attempts are counted through the quiz, so the same Subjek/Tahun/search/date filter applies
+        // and the cards keep describing the rows on screen. Every completed attempt counts, retries
         // included: this reports usage, not standings.
         $attempts = fn (): Builder => QuizAttempt::query()
             ->completed()
-            ->whereHas('quiz', fn (Builder $q) => $filter->apply(SchoolScope::content($q)));
+            ->whereHas('quiz', fn (Builder $q) => $this->narrow($filter->apply(SchoolScope::content($q)), $search, $from, $to));
 
         $totalAttempts = $attempts()->count();
         $passCount = $attempts()->passed()->count();
@@ -168,6 +192,7 @@ class AdminContentController extends Controller
             'subjects' => Subject::orderBy('sort_order')->get(),
             'grades' => Grade::orderBy('level')->get(),
             'filter' => $filter,
+            'search' => $search,
         ]);
     }
 
