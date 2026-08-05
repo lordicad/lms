@@ -3,9 +3,9 @@
     @php
         // Per-type presentation: emoji + a message template with :actor and :title.
         $meta = [
-            \App\Models\TeacherNotification::TYPE_QUIZ => ['icon' => '📝', 'tint' => '#FEF0CE', 'text' => __(':actor menjawab kuiz ":title"')],
-            \App\Models\TeacherNotification::TYPE_FAVOURITE => ['icon' => '❤️', 'tint' => '#FBE4ED', 'text' => __(':actor menggemari video ":title"')],
-            \App\Models\TeacherNotification::TYPE_DOWNLOAD => ['icon' => '📄', 'tint' => '#E4EEF9', 'text' => __(':actor memuat turun bahan ":title"')],
+            \App\Models\TeacherNotification::TYPE_QUIZ => ['icon' => 'quiz', 'tint' => '#FEF0CE', 'fg' => '#8A6A12', 'text' => __(':actor menjawab kuiz ":title"')],
+            \App\Models\TeacherNotification::TYPE_FAVOURITE => ['icon' => 'heart', 'tint' => '#FBE4ED', 'fg' => '#B84A75', 'text' => __(':actor menggemari video ":title"')],
+            \App\Models\TeacherNotification::TYPE_DOWNLOAD => ['icon' => 'download', 'tint' => '#E4EEF9', 'fg' => '#2E6CA8', 'text' => __(':actor memuat turun bahan ":title"')],
         ];
     @endphp
 
@@ -21,7 +21,7 @@
                 @foreach ($notifications as $n)
                     @php($m = $meta[$n->type] ?? ['icon' => '🔔', 'tint' => '#F1F0E8', 'text' => $n->title])
                     <div style="display:flex;align-items:center;gap:14px;padding:14px 20px;border-bottom:1px solid var(--tp-line);{{ $n->read_at ? '' : 'background:#FBFAF6' }}">
-                        <span style="width:42px;height:42px;flex-shrink:0;border-radius:12px;background:{{ $m['tint'] }};display:grid;place-items:center;font-size:19px">{{ $m['icon'] }}</span>
+                        <span style="width:42px;height:42px;flex-shrink:0;border-radius:12px;background:{{ $m['tint'] }};color:{{ $m['fg'] ?? 'var(--tp-ink)' }};display:grid;place-items:center;font-size:19px">@if (preg_match('/^[a-z0-9-]+$/', $m['icon']))<x-icon :name="$m['icon']" class="h-[21px] w-[21px]" />@else{{ $m['icon'] }}@endif</span>
 
                         <div style="display:flex;flex-direction:column;gap:2px;min-width:0;flex:1">
                             <span style="font-family:'Geist',sans-serif;font-weight:700;font-size:14px;color:var(--tp-ink)">

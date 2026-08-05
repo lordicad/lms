@@ -50,7 +50,8 @@
                 @php($m = $meta[$n->type] ?? ['icon' => '🔔', 'tint' => '#F1F0E8', 'text' => $n->title])
                 <a href="{{ $n->url ?: $allUrl }}"
                    style="display:flex;align-items:flex-start;gap:11px;padding:12px 18px;border-bottom:1px solid rgba(46,44,80,.05);text-decoration:none;{{ $n->read_at ? '' : 'background:var(--tp-surface-2, var(--wl-surface-2, #FBFAF6))' }}">
-                    <span style="width:36px;height:36px;flex-shrink:0;border-radius:10px;background:{{ $m['tint'] }};display:grid;place-items:center;font-size:16px">{{ $m['icon'] }}</span>
+                    {{-- 'icon' may be a line-icon name (rendered as an SVG) or an emoji. --}}
+                    <span style="width:36px;height:36px;flex-shrink:0;border-radius:10px;background:{{ $m['tint'] }};color:{{ $m['fg'] ?? $ink }};display:grid;place-items:center;font-size:16px">@if (preg_match('/^[a-z0-9-]+$/', $m['icon']))<x-icon :name="$m['icon']" class="h-[18px] w-[18px]" />@else{{ $m['icon'] }}@endif</span>
                     <span style="min-width:0;flex:1;display:flex;flex-direction:column;gap:2px">
                         <span style="font-family:'Nunito',sans-serif;font-size:13px;line-height:1.4;color:{{ $ink }}">{!! __($m['text'], ['actor' => '<strong>'.e($n->actor_name).'</strong>', 'title' => e($n->title)]) !!}</span>
                         <span style="font-size:11.5px;color:{{ $muted }}">{{ $n->created_at->diffForHumans() }}</span>

@@ -12,9 +12,9 @@
     $unreadNotifications = $user->teacherNotifications()->whereNull('read_at')->count();
     $recentNotifications = $user->teacherNotifications()->latest()->limit(8)->get();
     $notifMeta = [
-        \App\Models\TeacherNotification::TYPE_QUIZ => ['icon' => '📝', 'tint' => '#FEF0CE', 'text' => __(':actor menjawab kuiz ":title"')],
-        \App\Models\TeacherNotification::TYPE_FAVOURITE => ['icon' => '❤️', 'tint' => '#FBE4ED', 'text' => __(':actor menggemari video ":title"')],
-        \App\Models\TeacherNotification::TYPE_DOWNLOAD => ['icon' => '📄', 'tint' => '#E4EEF9', 'text' => __(':actor memuat turun bahan ":title"')],
+        \App\Models\TeacherNotification::TYPE_QUIZ => ['icon' => 'quiz', 'tint' => '#FEF0CE', 'fg' => '#8A6A12', 'text' => __(':actor menjawab kuiz ":title"')],
+        \App\Models\TeacherNotification::TYPE_FAVOURITE => ['icon' => 'heart', 'tint' => '#FBE4ED', 'fg' => '#B84A75', 'text' => __(':actor menggemari video ":title"')],
+        \App\Models\TeacherNotification::TYPE_DOWNLOAD => ['icon' => 'download', 'tint' => '#E4EEF9', 'fg' => '#2E6CA8', 'text' => __(':actor memuat turun bahan ":title"')],
     ];
 
     // Sidebar nav — mirrors the WeLearn Cikgu design (icon + label, active pill).
