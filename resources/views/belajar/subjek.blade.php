@@ -46,7 +46,7 @@
                     @php($wpct = $total > 0 ? (int) round($watched / $total * 100) : 0)
                     @php($c = $palette[$loop->index % count($palette)])
                     <a href="{{ route('bab.show', $chapter) }}" class="wl-row-lift"
-                       style="background:var(--wl-surface);border:1px solid var(--wl-line);border-left:4px solid {{ $c['accent'] }};border-radius:16px;padding:16px 20px;display:flex;align-items:center;gap:18px;box-shadow:0 3px 12px rgba(46,44,80,.04);cursor:pointer;text-decoration:none">
+                       style="background:var(--wl-surface);border:1px solid var(--wl-line);border-radius:16px;padding:16px 20px;display:flex;align-items:center;gap:18px;box-shadow:0 3px 12px rgba(46,44,80,.04);cursor:pointer;text-decoration:none">
                         <span style="width:52px;height:52px;border-radius:14px;background:{{ $c['tint'] }};color:{{ $c['accent'] }};display:grid;place-items:center;font-family:'Geist',sans-serif;font-weight:800;font-size:20px;flex-shrink:0">{{ $chapter->number }}</span>
                         <div style="display:flex;flex-direction:column;gap:7px;margin-right:auto;min-width:0">
                             <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:17px;color:var(--wl-ink)">{{ $chapter->title }}</span>
