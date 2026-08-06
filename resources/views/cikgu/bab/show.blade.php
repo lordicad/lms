@@ -6,7 +6,7 @@
     <div style="display:flex;flex-direction:column;gap:22px;max-width:960px">
         <a href="{{ route('cikgu.bab.index', ['subjek' => $subject->slug, 'tahun' => $grade->level]) }}" class="tp-back">← {{ __('Semua Bab') }}</a>
 
-        <span style="align-self:flex-start;background:#E4EEF9;color:#2E6CA8;border-radius:999px;padding:5px 14px;font-family:'Geist',sans-serif;font-size:12.5px;font-weight:800;display:inline-flex;align-items:center;gap:6px"><x-icon :name="$subject->iconName()" class="h-[15px] w-[15px]" />{{ $subject->name }} · {{ $grade->displayName() }} · {{ __('Bab :number', ['number' => $chapter->number]) }}</span>
+        <span style="align-self:flex-start;background:#E4EEF9;color:#2E6CA8;border-radius:999px;padding:5px 14px;font-family:'Geist',sans-serif;font-size:12.5px;font-weight:800;display:inline-flex;align-items:center;gap:6px"><x-icon :name="$subject->iconName()" class="h-[15px] w-[15px]" />{{ $subject->name }} – {{ $grade->displayName() }} – {{ __('Bab :number', ['number' => $chapter->number]) }}</span>
 
         @if ($chapter->description)
             <p style="margin:0;font-size:15px;color:var(--tp-muted-2);max-width:640px">{{ $chapter->description }}</p>
