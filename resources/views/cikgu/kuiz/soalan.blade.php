@@ -96,7 +96,7 @@
                     </div>
 
                     <fieldset style="border:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px">
-                        <legend class="tp-label" style="padding:0">
+                        <legend class="tp-label" style="padding:0;margin-bottom:8px">
                             {{ __('Pilihan jawapan.') }}
                             <span x-show="question.question_type === 'single'">{{ __('Tanda SATU jawapan betul.') }}</span>
                             <span x-show="question.question_type === 'multiple'" x-cloak>{{ __('Tanda SEMUA jawapan betul.') }}</span>
