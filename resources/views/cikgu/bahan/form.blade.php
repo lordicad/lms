@@ -2,6 +2,7 @@
 
 <x-cikgu-layout :title="$editing ? __('Sunting Bahan') : __('Bahan Baru')"
     :heading="$editing ? __('Sunting Bahan') : __('Bahan Baru')"
+    heading-icon="file"
     :sub="__('Slaid, PDF dan lembaran kerja yang menyokong video anda')">
 
     <form method="POST"
