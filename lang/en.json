@@ -121,6 +121,8 @@
     "(pilihan)": "(optional)",
     "Tahun": "Year",
     "Tahun :n": "Year :n",
+    ":m min :s saat": ":m min :s sec",
+    ":s saat": ":s sec",
     "Bahasa Melayu": "Malay Language",
     "Bahasa Inggeris": "English Language",
     "Bahasa Cina (SJK)": "Chinese Language (SJK)",

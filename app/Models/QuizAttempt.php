@@ -136,6 +136,8 @@ class QuizAttempt extends Model
         $minutes = intdiv($seconds, 60);
         $rest = $seconds % 60;
 
-        return $minutes > 0 ? "{$minutes} min {$rest} saat" : "{$rest} saat";
+        return $minutes > 0
+            ? __(':m min :s saat', ['m' => $minutes, 's' => $rest])
+            : __(':s saat', ['s' => $rest]);
     }
 }
