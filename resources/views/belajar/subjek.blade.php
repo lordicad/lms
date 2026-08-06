@@ -1,4 +1,4 @@
-<x-dynamic-component :component="auth()->user()->isTeacher() ? 'app-layout' : 'student-layout'" :title="$subject->name.' '.$grade->name">
+<x-dynamic-component :component="auth()->user()->isTeacher() ? 'app-layout' : 'student-layout'" :title="$subject->name.' '.$grade->displayName()">
     @php($col = $subject->color ?: '#17907B')
     @php($selGrad = "linear-gradient(135deg, color-mix(in oklab, {$col} 30%, #fff), color-mix(in oklab, {$col} 12%, #fff))")
 
@@ -9,7 +9,7 @@
             <span style="width:56px;height:56px;border-radius:16px;background:{{ $selGrad }};display:grid;place-items:center"><x-subject-icon :subject="$subject" :size="26" /></span>
             <div style="display:flex;flex-direction:column;gap:2px;margin-right:auto">
                 <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:26px;font-weight:800;letter-spacing:-.01em;color:var(--wl-ink)">{{ $subject->name }}</h2>
-                <span style="font-size:14px;font-weight:700;color:var(--wl-muted)">{{ $grade->name }}</span>
+                <span style="font-size:14px;font-weight:700;color:var(--wl-muted)">{{ $grade->displayName() }}</span>
             </div>
             <label style="display:flex;flex-direction:column;gap:5px;font-family:'Geist',sans-serif;font-size:12.5px;font-weight:800;color:var(--wl-ink)">
                 {{ __('Tukar Tahun') }}
@@ -26,7 +26,7 @@
             <div style="background:var(--wl-surface);border:1px solid var(--wl-line);border-radius:18px;padding:44px;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center">
                 <span style="width:44px;height:44px;border-radius:50%;background:#F1F0E8;display:grid;place-items:center;font-size:18px">📚</span>
                 <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:15px;color:var(--wl-ink)">{{ __('Belum ada bab untuk subjek ini') }}</span>
-                <span style="font-size:13.5px;color:var(--wl-muted)">{{ __('Cikgu belum menyediakan bab untuk :subject :grade.', ['subject' => $subject->name, 'grade' => $grade->name]) }}</span>
+                <span style="font-size:13.5px;color:var(--wl-muted)">{{ __('Cikgu belum menyediakan bab untuk :subject :grade.', ['subject' => $subject->name, 'grade' => $grade->displayName()]) }}</span>
             </div>
         @else
             {{-- Same card design as the teacher Bab page: a colour cycles per chapter (accent bar

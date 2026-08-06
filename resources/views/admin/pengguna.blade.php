@@ -93,7 +93,7 @@
 
                                 <span style="font-size:13px;font-weight:600;color:var(--tp-muted-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center">{{ $u->email ?: '—' }}</span>
                                 @if ($showAttr)
-                                    <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center">{{ $teacherView ? ($u->position ?: '—') : ($u->grade?->name ?? '—') }}</span>
+                                    <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center">{{ $teacherView ? ($u->position ?: '—') : ($u->grade?->displayName() ?? '—') }}</span>
                                 @endif
 
                                 {{-- Read-only: the account is switched on or off from its edit form,

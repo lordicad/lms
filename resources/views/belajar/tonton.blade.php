@@ -20,7 +20,7 @@
                         <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:24px;font-weight:800;letter-spacing:-.01em;color:var(--wl-ink)">{{ $lesson->title }}</h2>
                         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
                             <span style="background:{{ $tagBg }};color:{{ $tagColor }};border-radius:999px;padding:4px 12px;font-family:'Geist',sans-serif;font-size:12px;font-weight:800"><x-subject-emoji :subject="$subject" class="text-sm" /> {{ $subject->displayName() }}</span>
-                            <span style="font-size:13px;font-weight:700;color:var(--wl-muted)">{{ $grade->name }}</span>
+                            <span style="font-size:13px;font-weight:700;color:var(--wl-muted)">{{ $grade->displayName() }}</span>
                             <span style="font-size:13px;font-weight:700;color:var(--wl-muted)">{{ $lesson->teacher->name }}</span>
                             <span style="font-size:13px;font-weight:700;color:var(--wl-muted)">👁 {{ $lesson->views_count }} {{ __('tontonan') }}</span>
                             @if ($me->isStudent() && $lesson->watchedBy($me))

@@ -8,7 +8,7 @@
         <a href="{{ route('belajar.subjek', ['subject' => $subject->slug, 'grade' => $grade->level]) }}" class="wl-back">← {{ __('Semua bab') }}</a>
 
         <div style="background:var(--wl-surface);border:1px solid var(--wl-line);border-radius:18px;padding:20px 24px;display:flex;flex-direction:column;gap:4px;box-shadow:0 3px 12px rgba(46,44,80,.04)">
-            <span style="font-family:'Geist',sans-serif;font-size:13px;font-weight:800;color:#2E6CA8"><x-subject-emoji :subject="$subject" class="text-sm" /> {{ $subject->name }} · {{ $grade->name }}</span>
+            <span style="font-family:'Geist',sans-serif;font-size:13px;font-weight:800;color:#2E6CA8"><x-subject-emoji :subject="$subject" class="text-sm" /> {{ $subject->name }} · {{ $grade->displayName() }}</span>
             <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:24px;font-weight:800;letter-spacing:-.01em;color:var(--wl-ink)">{{ __('Bab :number: :title', ['number' => $chapter->number, 'title' => $chapter->title]) }}</h2>
         </div>
 

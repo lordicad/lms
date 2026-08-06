@@ -19,7 +19,7 @@
             <div style="display:flex;align-items:center;gap:14px">
                 <span style="width:52px;height:52px;border-radius:14px;background:rgb({{ $subject->rgb }} / .14);color:rgb({{ $subject->rgb }});display:grid;place-items:center;flex-shrink:0"><x-icon :name="$subject->iconName()" class="h-6 w-6" /></span>
                 <div style="display:flex;flex-direction:column;gap:3px">
-                    <h2 class="tp-g" style="font-size:22px;font-weight:800;letter-spacing:-.01em;color:var(--tp-ink)">{{ $subject->name }}. {{ $grade->name }}</h2>
+                    <h2 class="tp-g" style="font-size:22px;font-weight:800;letter-spacing:-.01em;color:var(--tp-ink)">{{ $subject->name }}. {{ $grade->displayName() }}</h2>
                     <span style="display:inline-flex;align-items:center;gap:7px;font-size:13.5px;font-weight:700;color:var(--tp-muted)">
                         <span style="width:8px;height:8px;border-radius:50%;background:#2BB39B;flex-shrink:0"></span>
                         {{ __(':count bab tersedia', ['count' => $chapters->count()]) }}
@@ -30,7 +30,7 @@
             @unless ($isOffered)
                 <div style="display:flex;gap:10px;background:#FEF0CE;border:1px solid rgba(138,106,18,.25);border-radius:14px;padding:14px 18px;font-size:13.5px;color:#8A6A12">
                     <span>ℹ️</span>
-                    <div>{{ __(':subject tidak ditawarkan untuk :grade dalam Kurikulum 2027. Anda tidak boleh menambah bab baharu di sini. Bab lama yang masih mengandungi kandungan ditandakan tidak aktif — sila pindahkan kandungannya ke Tahun yang betul.', ['subject' => $subject->name, 'grade' => $grade->name]) }}</div>
+                    <div>{{ __(':subject tidak ditawarkan untuk :grade dalam Kurikulum 2027. Anda tidak boleh menambah bab baharu di sini. Bab lama yang masih mengandungi kandungan ditandakan tidak aktif — sila pindahkan kandungannya ke Tahun yang betul.', ['subject' => $subject->name, 'grade' => $grade->displayName()]) }}</div>
                 </div>
             @endunless
 
@@ -38,7 +38,7 @@
                 <div class="tp-empty">
                     <span style="font-size:30px">📚</span>
                     <h3 class="tp-g" style="font-size:19px;font-weight:800;color:var(--tp-ink)">{{ __('Belum ada bab') }}</h3>
-                    <p style="margin:0;font-size:14.5px;color:var(--tp-muted);max-width:420px">{{ __('Tiada bab untuk :subject :grade lagi.', ['subject' => $subject->name, 'grade' => $grade->name]) }}</p>
+                    <p style="margin:0;font-size:14.5px;color:var(--tp-muted);max-width:420px">{{ __('Tiada bab untuk :subject :grade lagi.', ['subject' => $subject->name, 'grade' => $grade->displayName()]) }}</p>
                 </div>
             @else
                 {{-- A colour cycles per chapter — the accent bar, number badge and Lihat button

@@ -72,7 +72,7 @@
                                     <span style="font-size:11.5px;color:var(--tp-muted)">{{ $material->teacher?->name }}</span>
                                 </div>
                                 <span style="justify-self:center;display:inline-flex;align-items:center;text-align:center;max-width:150px;border-radius:999px;padding:4px 10px;font-size:12.5px;font-weight:800;line-height:1.25;background:rgb({{ $material->chapter->subject->rgb }} / .14);color:rgb({{ $material->chapter->subject->rgb }})">{{ $material->chapter->subject->displayName() }}</span>
-                                <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2);text-align:center">{{ $material->chapter->grade->name }}</span>
+                                <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2);text-align:center">{{ $material->chapter->grade->displayName() }}</span>
                                 <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2);text-align:center">{{ number_format($material->download_count) }}</span>
                                 <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2);text-align:center">{{ strtoupper($material->extension()) }} <span style="font-size:11.5px;color:var(--tp-muted)">{{ $material->humanSize() }}</span></span>
                                 <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2);text-align:center">{{ $material->created_at->translatedFormat('j M Y') }}</span>
@@ -83,7 +83,7 @@
                                             style="display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 14px;border-radius:10px;border:1.5px solid var(--tp-line-2);background:var(--tp-surface);color:var(--tp-teal);font-family:'Geist',sans-serif;font-weight:800;font-size:12.5px;cursor:pointer;white-space:nowrap"
                                             @click="open(@js([
                                                 'title' => $material->title,
-                                                'subtitle' => collect([$material->teacher?->name, $material->chapter->subject->displayName(), $material->chapter->grade->name])->filter()->implode(' · '),
+                                                'subtitle' => collect([$material->teacher?->name, $material->chapter->subject->displayName(), $material->chapter->grade->displayName()])->filter()->implode(' · '),
                                                 'kind' => $material->previewKind(),
                                                 'src' => $material->fileUrl(),
                                                 'name' => $material->original_name,

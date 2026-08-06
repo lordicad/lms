@@ -76,7 +76,7 @@
                                     <span style="font-size:11.5px;color:var(--tp-muted)">{{ $quiz->teacher?->name }}</span>
                                 </div>
                                 <span style="justify-self:center;display:inline-flex;align-items:center;text-align:center;max-width:150px;border-radius:999px;padding:4px 10px;font-size:12.5px;font-weight:800;line-height:1.25;background:rgb({{ $quiz->chapter->subject->rgb }} / .14);color:rgb({{ $quiz->chapter->subject->rgb }})">{{ $quiz->chapter->subject->displayName() }}</span>
-                                <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2);text-align:center">{{ $quiz->chapter->grade->name }}</span>
+                                <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2);text-align:center">{{ $quiz->chapter->grade->displayName() }}</span>
                                 <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2);text-align:center">{{ number_format($quiz->attempts_count) }}</span>
                                 <span style="text-align:center;font-size:13px;font-weight:800;color:{{ $hasAttempts ? '#0F7A68' : '#8B8AA3' }}">{{ $hasAttempts ? number_format($quiz->pass_count) : '—' }}</span>
                                 <span style="text-align:center;font-size:13px;font-weight:800;color:{{ $hasAttempts ? '#C24936' : '#8B8AA3' }}">{{ $hasAttempts ? number_format($quiz->attempts_count - $quiz->pass_count) : '—' }}</span>
@@ -85,7 +85,7 @@
                                         style="justify-self:center;display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 14px;border-radius:10px;border:1.5px solid var(--tp-line-2);background:var(--tp-surface);color:var(--tp-teal);font-family:'Geist',sans-serif;font-weight:800;font-size:12.5px;cursor:pointer;white-space:nowrap"
                                         @click="open(@js([
                                             'title' => $quiz->title,
-                                            'subtitle' => collect([$quiz->teacher?->name, $quiz->chapter->subject->displayName(), $quiz->chapter->grade->name])->filter()->implode(' · '),
+                                            'subtitle' => collect([$quiz->teacher?->name, $quiz->chapter->subject->displayName(), $quiz->chapter->grade->displayName()])->filter()->implode(' · '),
                                             'type' => $quiz->type,
                                             'downloadUrl' => $quiz->isFile() ? route('muat-turun.kuiz', $quiz) : null,
                                             'questions' => $quiz->questions->map(fn ($question) => [

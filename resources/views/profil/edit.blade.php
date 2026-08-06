@@ -42,7 +42,7 @@
                     <div style="display:flex;flex-direction:column;gap:7px;min-width:0;flex:1">
                         <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:24px;font-weight:800;letter-spacing:-.01em;color:var(--wl-ink)">{{ $user->name }}</h2>
                         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-                            @if ($user->grade)<span style="background:#E4EEF9;color:#2E6CA8;border-radius:999px;padding:4px 12px;font-family:'Geist',sans-serif;font-size:12px;font-weight:800">{{ $user->grade->name }}</span>@endif
+                            @if ($user->grade)<span style="background:#E4EEF9;color:#2E6CA8;border-radius:999px;padding:4px 12px;font-family:'Geist',sans-serif;font-size:12px;font-weight:800">{{ $user->grade->displayName() }}</span>@endif
                             @if ($user->schoolClass)<span style="background:#DCF2EE;color:#0F7A68;border-radius:999px;padding:4px 12px;font-family:'Geist',sans-serif;font-size:12px;font-weight:800">{{ $user->schoolClass->label() }}</span>@endif
                         </div>
                         @if ($user->email)
@@ -210,7 +210,7 @@
 
                     <div>
                         <span style="{{ $labelStyle }}">{{ __('Tahun') }}</span>
-                        <span style="{{ $lockedStyle }}">{{ $user->grade?->name ?: __('Belum ditetapkan') }}</span>
+                        <span style="{{ $lockedStyle }}">{{ $user->grade?->displayName() ?: __('Belum ditetapkan') }}</span>
                     </div>
 
                     <div>

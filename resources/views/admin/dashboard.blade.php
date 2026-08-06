@@ -395,7 +395,7 @@
                     <span style="width:36px;height:36px;border-radius:10px;background:{{ $p[0] }};color:{{ $p[1] }};display:grid;place-items:center;font-family:'Geist',sans-serif;font-weight:800;font-size:12px;flex-shrink:0">{{ $u->initials() }}</span>
                     <div style="display:flex;flex-direction:column;gap:1px;min-width:0;flex:1">
                         <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:14px;color:var(--tp-ink)">{{ $u->name }}</span>
-                        <span style="font-size:12px;color:var(--tp-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $u->isStudent() && $u->grade ? $u->grade->name.' · ' : '' }}{{ $u->email ?? $u->username }}</span>
+                        <span style="font-size:12px;color:var(--tp-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $u->isStudent() && $u->grade ? $u->grade->displayName().' · ' : '' }}{{ $u->email ?? $u->username }}</span>
                     </div>
                     <span style="flex-shrink:0;border-radius:999px;padding:4px 12px;font-family:'Geist',sans-serif;font-size:11.5px;font-weight:800;{{ $u->isTeacher() ? 'background:#DCF2EE;color:#0F7A68' : 'background:#E4EEF9;color:#2E6CA8' }}">{{ $u->isTeacher() ? __('Cikgu') : __('Murid') }}</span>
                     <span style="font-size:12.5px;font-weight:700;color:var(--tp-muted);flex-shrink:0">

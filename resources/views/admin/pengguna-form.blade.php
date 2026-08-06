@@ -120,7 +120,7 @@
                 <select id="grade_level" name="grade_level" class="tp-filter-select" style="width:100%" x-model="gradeLevel" @change="onContextChange()">
                     <option value="">{{ __('Pilih Tahun') }}</option>
                     @foreach ($grades as $grade)
-                        <option value="{{ $grade->level }}" @selected(old('grade_level', $user->grade?->level) == $grade->level)>{{ $grade->name }}</option>
+                        <option value="{{ $grade->level }}" @selected(old('grade_level', $user->grade?->level) == $grade->level)>{{ $grade->displayName() }}</option>
                     @endforeach
                 </select>
                 @error('grade_level')<p class="pg-err">{{ $message }}</p>@enderror

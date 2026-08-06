@@ -29,7 +29,7 @@
     $gradeData = $grades->map(fn ($grade) => [
         'id' => $grade->id,
         'level' => $grade->level,
-        'name' => $grade->name,
+        'name' => $grade->displayName(),
     ])->values();
 @endphp
 

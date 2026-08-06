@@ -43,7 +43,7 @@
                 @php($subject = $lesson->chapter->subject)
                 @php($preview = [
                     'title' => $lesson->title,
-                    'subtitle' => collect([$subject->name, $lesson->chapter->grade->name, __('Bab :n', ['n' => $lesson->chapter->number])])->implode(' · '),
+                    'subtitle' => collect([$subject->name, $lesson->chapter->grade->displayName(), __('Bab :n', ['n' => $lesson->chapter->number])])->implode(' · '),
                     'kind' => $lesson->isYoutube() ? 'youtube' : 'upload',
                     'src' => $lesson->isYoutube() ? $lesson->embedUrl() : $lesson->videoUrl(),
                     'poster' => $lesson->thumbnailUrl(),
@@ -77,7 +77,7 @@
 
                         {{-- Detail row, each item led by an icon. --}}
                         <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
-                            <span class="tp-meta" style="display:inline-flex;align-items:center;gap:6px"><x-icon name="calendar" class="h-4 w-4" style="color:var(--tp-muted-2)" />{{ $lesson->chapter->grade->name }} · {{ __('Bab :n', ['n' => $lesson->chapter->number]) }}</span>
+                            <span class="tp-meta" style="display:inline-flex;align-items:center;gap:6px"><x-icon name="calendar" class="h-4 w-4" style="color:var(--tp-muted-2)" />{{ $lesson->chapter->grade->displayName() }} · {{ __('Bab :n', ['n' => $lesson->chapter->number]) }}</span>
                             <span class="tp-meta" style="display:inline-flex;align-items:center;gap:6px"><x-icon name="{{ $lesson->isYoutube() ? 'youtube' : 'upload' }}" class="h-4 w-4" style="color:var(--tp-muted-2)" />{{ $lesson->isYoutube() ? 'YouTube' : __('Muat naik') }}</span>
                             <span class="tp-meta" style="display:inline-flex;align-items:center;gap:6px"><x-icon name="eye" class="h-4 w-4" style="color:var(--tp-muted-2)" />{{ $lesson->views_count }} {{ __('tontonan') }}</span>
                             @unless ($lesson->chapter->is_active)

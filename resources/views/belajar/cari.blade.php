@@ -2,7 +2,7 @@
     <header class="mb-6">
         <h1 class="text-2xl font-extrabold text-ink">{{ __('Cari Video') }}</h1>
         <p class="mt-1 text-ink-2">
-            {{ $grade ? __('Mencari dalam :grade.', ['grade' => $grade->name]) : __('Tahun anda belum ditetapkan.') }}
+            {{ $grade ? __('Mencari dalam :grade.', ['grade' => $grade->displayName()]) : __('Tahun anda belum ditetapkan.') }}
         </p>
 
         <form method="GET" action="{{ route('cari.index') }}" class="relative mt-4 max-w-xl" role="search">

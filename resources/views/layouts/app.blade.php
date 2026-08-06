@@ -109,7 +109,7 @@
                             <p class="truncate text-sm text-ink-2">
                                 @if ($user->isAdmin()) {{ __('Admin MOE') }}
                                 @elseif ($user->isTeacher()) {{ __('Guru') }}
-                                @else {{ $user->grade?->name ?? __('Murid') }}
+                                @else {{ $user->grade?->displayName() ?? __('Murid') }}
                                 @endif
                             </p>
                         </div>

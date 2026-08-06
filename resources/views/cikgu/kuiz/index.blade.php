@@ -53,7 +53,7 @@
                         {{-- Detail row, each item led by an icon. --}}
                         <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
                             <span class="tp-tag" style="background:rgb({{ $subject->rgb }} / .14);color:rgb({{ $subject->rgb }})">{{ $subject->name }}</span>
-                            <span class="tp-meta" style="display:inline-flex;align-items:center;gap:6px"><x-icon name="graduation" class="h-4 w-4" style="color:#0F7A68" />{{ $quiz->chapter->grade->name }}</span>
+                            <span class="tp-meta" style="display:inline-flex;align-items:center;gap:6px"><x-icon name="graduation" class="h-4 w-4" style="color:#0F7A68" />{{ $quiz->chapter->grade->displayName() }}</span>
                             <span class="tp-meta" style="display:inline-flex;align-items:center;gap:6px"><x-icon name="book" class="h-4 w-4" style="color:#0F7A68" />{{ __('Bab :n', ['n' => $quiz->chapter->number]) }}</span>
                             @if ($quiz->isInteractive())
                                 <span class="tp-meta" style="display:inline-flex;align-items:center;gap:6px"><x-icon name="help-circle" class="h-4 w-4" style="color:#0F7A68" />{{ __(':count soalan', ['count' => $quiz->questions_count]) }}</span>
@@ -71,7 +71,7 @@
                     @if ($quiz->isInteractive())
                         <button type="button" style="flex-shrink:0;display:inline-flex;align-items:center;gap:7px;min-height:42px;border-radius:11px;border:1.5px solid #0F7A68;background:var(--tp-surface);color:#0F7A68;font-family:'Geist',sans-serif;font-weight:800;font-size:13px;padding:0 16px;cursor:pointer" @click="open(@js([
                             'title' => $quiz->title,
-                            'subtitle' => collect([$quiz->chapter->subject->displayName(), $quiz->chapter->grade->name, __(':count soalan', ['count' => $quiz->questions_count])])->filter()->implode(' · '),
+                            'subtitle' => collect([$quiz->chapter->subject->displayName(), $quiz->chapter->grade->displayName(), __(':count soalan', ['count' => $quiz->questions_count])])->filter()->implode(' · '),
                             'questions' => $quiz->questions->map(fn ($question) => [
                                 'text' => $question->question_text,
                                 'points' => $question->points,

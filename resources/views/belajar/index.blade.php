@@ -143,7 +143,7 @@
 
         @if (! $hero && $continue->isEmpty() && $trending->isEmpty() && $newest->isEmpty() && $suggested->isEmpty())
             <div style="background:var(--wl-surface);border:1px dashed var(--wl-line-3);border-radius:18px;padding:44px;text-align:center;color:var(--wl-muted);font-weight:600">
-                {{ __('Belum ada video untuk :grade. Sila semak semula kemudian.', ['grade' => $grade->name]) }}
+                {{ __('Belum ada video untuk :grade. Sila semak semula kemudian.', ['grade' => $grade->displayName()]) }}
             </div>
         @endif
     @endif

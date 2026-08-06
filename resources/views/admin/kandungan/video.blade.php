@@ -72,7 +72,7 @@
                                 </div>
                                 @php($vsub = $lesson->chapter->subject)
                                 <span style="justify-self:center;display:inline-flex;align-items:center;text-align:center;max-width:150px;border-radius:999px;padding:4px 10px;font-size:12.5px;font-weight:800;line-height:1.25;background:rgb({{ $vsub->rgb }} / .14);color:rgb({{ $vsub->rgb }})">{{ $vsub->displayName() }}</span>
-                                <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2);text-align:center">{{ $lesson->chapter->grade->name }}</span>
+                                <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2);text-align:center">{{ $lesson->chapter->grade->displayName() }}</span>
                                 <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2);text-align:center">{{ number_format($lesson->views_count) }}</span>
                                 <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2);text-align:center">{{ $lesson->created_at->translatedFormat('j M Y') }}</span>
                                 <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2);text-align:center">{{ number_format($lesson->favourites_count) }}</span>
@@ -83,7 +83,7 @@
                                         @click="open(@js([
                                             'title' => $lesson->title,
                                             'kindLabel' => $lesson->isYoutube() ? 'YouTube' : __('Video'),
-                                            'subtitle' => collect([$lesson->teacher?->name, $lesson->chapter->subject->displayName(), $lesson->chapter->grade->name])->filter()->implode(' · '),
+                                            'subtitle' => collect([$lesson->teacher?->name, $lesson->chapter->subject->displayName(), $lesson->chapter->grade->displayName()])->filter()->implode(' · '),
                                             'kind' => $lesson->isYoutube() ? 'youtube' : 'upload',
                                             'src' => $lesson->isYoutube() ? $lesson->embedUrl() : $lesson->videoUrl(),
                                             'poster' => $lesson->thumbnailUrl(),

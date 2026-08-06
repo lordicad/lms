@@ -27,7 +27,7 @@
             <option value="">{{ __('Semua tahun') }}</option>
             @foreach ($grades as $grade)
                 <option value="{{ $grade->level }}" @selected((int) request('tahun') === $grade->level)>
-                    {{ $grade->name }}
+                    {{ $grade->displayName() }}
                 </option>
             @endforeach
         </select>

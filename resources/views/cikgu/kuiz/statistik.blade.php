@@ -5,7 +5,7 @@
     <div style="display:flex;flex-direction:column;gap:20px">
         <a href="{{ route('cikgu.kuiz.index') }}" class="tp-back">← {{ __('Kuiz Saya') }}</a>
 
-        <span style="align-self:flex-start;background:#E4EEF9;color:#2E6CA8;border-radius:999px;padding:5px 14px;font-family:'Geist',sans-serif;font-size:12.5px;font-weight:800;display:inline-flex;align-items:center;gap:6px"><x-icon :name="$subject->iconName()" class="h-[15px] w-[15px]" />{{ $subject->name }}. {{ $chapter->grade->name }}. {{ __('Bab :n', ['n' => $chapter->number]) }}</span>
+        <span style="align-self:flex-start;background:#E4EEF9;color:#2E6CA8;border-radius:999px;padding:5px 14px;font-family:'Geist',sans-serif;font-size:12.5px;font-weight:800;display:inline-flex;align-items:center;gap:6px"><x-icon :name="$subject->iconName()" class="h-[15px] w-[15px]" />{{ $subject->name }}. {{ $chapter->grade->displayName() }}. {{ __('Bab :n', ['n' => $chapter->number]) }}</span>
 
         {{-- Summary --}}
         <div class="tp-stats">
@@ -100,7 +100,7 @@
                                         <span style="width:34px;height:34px;border-radius:9px;background:#DCF2EE;color:#0F7A68;display:grid;place-items:center;font-family:'Geist',sans-serif;font-weight:800;font-size:11px;flex-shrink:0">{{ $attempt->student->initials() }}</span>
                                         <span class="tp-g" style="font-weight:800;font-size:14px;color:var(--tp-ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $attempt->student->name }}</span>
                                     </div>
-                                    <span class="tp-meta">{{ $attempt->student->grade?->name ?? '-' }}</span>
+                                    <span class="tp-meta">{{ $attempt->student->grade?->displayName() ?? '-' }}</span>
                                     <span><span class="tp-g" style="font-weight:800;color:var(--tp-ink)">{{ $attempt->score }}/{{ $attempt->max_score }}</span> <span class="tp-meta">{{ $attempt->percentage() }}%</span></span>
                                     <span class="tp-meta">{{ $attempt->correct_count }}/{{ $attempt->question_count }}</span>
                                     <span class="tp-meta">{{ $attempt->humanDuration() }}</span>

@@ -64,6 +64,6 @@ class SchoolClass extends Model
     {
         $grade = $this->relationLoaded('grade') ? $this->grade : $this->grade()->first();
 
-        return trim(($grade?->name ? $grade->name.' ' : '').$this->name);
+        return trim(($grade ? $grade->displayName().' ' : '').$this->name);
     }
 }

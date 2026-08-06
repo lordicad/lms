@@ -49,7 +49,7 @@
                     <select id="grade_level" name="grade_level" class="wla-select" @error('grade_level') aria-invalid="true" @enderror>
                         <option value="">{{ __('Sila pilih Tahun') }}</option>
                         @foreach ($grades as $grade)
-                            <option value="{{ $grade->level }}" @selected(old('grade_level') == $grade->level)>{{ $grade->name }}</option>
+                            <option value="{{ $grade->level }}" @selected(old('grade_level') == $grade->level)>{{ $grade->displayName() }}</option>
                         @endforeach
                     </select>
                 </label>

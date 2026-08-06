@@ -24,7 +24,7 @@
             </div>
             @foreach ($grades as $grade)
                 <div style="background:var(--tp-surface);border:1px solid var(--tp-line);border-radius:14px;padding:16px 18px;display:flex;flex-direction:column;gap:6px;box-shadow:0 2px 10px rgba(46,44,80,.04)">
-                    <span style="font-size:12.5px;font-weight:700;color:var(--tp-muted)">{{ $grade->name }}</span>
+                    <span style="font-size:12.5px;font-weight:700;color:var(--tp-muted)">{{ $grade->displayName() }}</span>
                     <span style="font-family:'Geist',sans-serif;font-size:24px;font-weight:800;color:var(--tp-ink)">{{ number_format($countsByGrade[$grade->level] ?? 0) }}</span>
                 </div>
             @endforeach
@@ -57,7 +57,7 @@
                     <select id="filter-tahun" name="tahun" class="tp-filter-select" style="min-width:150px" onchange="this.form.submit()">
                         <option value="">{{ __('Semua tahun') }}</option>
                         @foreach ($grades as $grade)
-                            <option value="{{ $grade->level }}" @selected($gradeLevel === $grade->level)>{{ $grade->name }}</option>
+                            <option value="{{ $grade->level }}" @selected($gradeLevel === $grade->level)>{{ $grade->displayName() }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -68,7 +68,7 @@
                         <option value="">{{ __('Semua kelas') }}</option>
                         @foreach ($classes as $class)
                             <option value="{{ $class->id }}" @selected($classId === $class->id)>
-                                {{ $gradeLevel ? $class->name : $class->grade->name.' '.$class->name }}
+                                {{ $gradeLevel ? $class->name : $class->grade->displayName().' '.$class->name }}
                             </option>
                         @endforeach
                     </select>
@@ -108,7 +108,7 @@
                                         <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:13.5px;color:var(--tp-ink)">{{ $student->name }}</span>
                                         <span style="font-size:11.5px;color:var(--tp-muted)">{{ $student->username }}</span>
                                     </div>
-                                    <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2);text-align:center">{{ $student->grade?->name ?? '—' }}</span>
+                                    <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2);text-align:center">{{ $student->grade?->displayName() ?? '—' }}</span>
                                     <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2);text-align:center">{{ number_format($student->videos_viewed) }}</span>
                                     {{-- Downloads are counted per file, never per student — an em dash beats inventing one. --}}
                                     <span style="font-size:13px;font-weight:700;color:var(--tp-muted);text-align:center">—</span>
@@ -144,7 +144,7 @@
                 @php($podiumSubjects = $subjects->filter(fn ($s) => in_array($podium->grade->level, $availabilityById[$s->id] ?? [], true))->values())
                 <div style="background:var(--tp-surface);border:1px solid var(--tp-line);border-radius:18px;padding:20px 24px;display:flex;flex-direction:column;gap:14px;box-shadow:0 2px 10px rgba(46,44,80,.04)">
                     <div style="display:flex;align-items:center;gap:12px">
-                        <span style="background:#E4EEF9;color:#2E6CA8;border-radius:999px;padding:5px 14px;font-family:'Geist',sans-serif;font-size:12.5px;font-weight:800">{{ $podium->grade->name }}</span>
+                        <span style="background:#E4EEF9;color:#2E6CA8;border-radius:999px;padding:5px 14px;font-family:'Geist',sans-serif;font-size:12.5px;font-weight:800">{{ $podium->grade->displayName() }}</span>
 
                         <form method="GET" action="{{ route('admin.murid') }}" style="margin-left:auto">
                             @if ($gradeLevel) <input type="hidden" name="tahun" value="{{ $gradeLevel }}"> @endif

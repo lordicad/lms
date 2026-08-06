@@ -82,7 +82,7 @@
                                 <span style="width:36px;height:36px;border-radius:10px;background:{{ $p[0] }};color:{{ $p[1] }};display:grid;place-items:center;font-family:'Geist',sans-serif;font-weight:800;font-size:12px;flex-shrink:0">{{ $row->student->initials() }}</span>
                                 <span class="tp-g" style="font-weight:800;font-size:14.5px;color:var(--tp-ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $row->student->name }}</span>
                             </div>
-                            <span style="font-size:13.5px;font-weight:700;color:var(--tp-muted-2);text-align:center">{{ $row->student->grade?->name ?? '-' }}</span>
+                            <span style="font-size:13.5px;font-weight:700;color:var(--tp-muted-2);text-align:center">{{ $row->student->grade?->displayName() ?? '-' }}</span>
                             <span class="tp-g" style="font-weight:800;font-size:15px;color:var(--tp-ink);text-align:center">{{ $row->points }}</span>
                             <span style="font-size:13.5px;font-weight:700;color:var(--tp-muted-2);text-align:center">{{ $row->correct }}/{{ $row->questions }}</span>
                             {{-- justify-self, not text-align: the pill has a background, so it must stay

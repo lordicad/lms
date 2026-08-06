@@ -29,6 +29,15 @@ class Grade extends Model
         return 'level';
     }
 
+    /**
+     * The display label ("Tahun 6" / "Year 6"), derived from the level so it translates. The stored
+     * `name` column keeps the untranslated value for the API and raw queries; views use this.
+     */
+    public function displayName(): string
+    {
+        return __('Tahun :n', ['n' => $this->level]);
+    }
+
     public function chapters(): HasMany
     {
         return $this->hasMany(Chapter::class);

@@ -109,7 +109,7 @@
                 <tr>
                     <td>{{ $u->name }}</td>
                     <td>{{ $u->isTeacher() ? __('Cikgu') : __('Murid') }}</td>
-                    <td>{{ $u->grade?->name ?? '—' }}</td>
+                    <td>{{ $u->grade?->displayName() ?? '—' }}</td>
                     <td>{{ $u->created_at->translatedFormat('j M Y') }}</td>
                 </tr>
             @empty
