@@ -317,7 +317,7 @@
         <div class="tp-userbar">
             <a href="{{ route('profile.edit') }}" class="tp-ava" title="{{ __('Profil') }}">@if ($user->avatarUrl())<img src="{{ $user->avatarUrl() }}" alt="">@else{{ $user->initials() }}@endif</a>
             <a href="{{ route('profile.edit') }}" style="display:flex;flex-direction:column;min-width:0;flex:1">
-                <span class="tp-userbar-name">Cikgu {{ $user->username }}</span>
+                <span class="tp-userbar-name">{{ __('Cikgu :name', ['name' => $user->username]) }}</span>
                 <span class="tp-userbar-sub">{{ __('Guru') }}</span>
             </a>
             <x-logout-confirm id="tp-logout-form">
