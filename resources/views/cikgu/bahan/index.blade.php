@@ -76,8 +76,6 @@
                         </div>
                     </div>
 
-                    {{-- A divider sets the row's actions apart from its detail. --}}
-                    <span style="width:1px;height:46px;background:var(--tp-line);flex-shrink:0"></span>
 
                     <a href="{{ route('muat-turun.bahan', $material) }}" class="tp-icon-action" style="flex-shrink:0;background:#DCF2EE;color:#0F7A68" title="{{ __('Muat turun') }}">
                         <x-icon name="download" class="h-[18px] w-[18px]" />
