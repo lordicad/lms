@@ -53,7 +53,7 @@
                 <div class="tp-list">
                     @foreach ($chapters as $chapter)
                         @php($c = $palette[$loop->index % count($palette)])
-                        <div class="tp-listcard" style="border-left:4px solid {{ $c['accent'] }};{{ $chapter->is_active ? '' : 'opacity:.7' }}">
+                        <div class="tp-listcard" style="{{ $chapter->is_active ? '' : 'opacity:.7' }}">
                             <span style="width:52px;height:52px;border-radius:14px;background:{{ $c['tint'] }};color:{{ $c['accent'] }};display:grid;place-items:center;font-family:'Geist',sans-serif;font-weight:800;font-size:20px;flex-shrink:0">{{ $chapter->number }}</span>
 
                             <div style="display:flex;flex-direction:column;gap:7px;min-width:0;flex:1">
