@@ -210,8 +210,15 @@
             <div class="tp-field" style="border-top:1px solid var(--tp-line);padding-top:16px"
                  @if (! $editing) x-show="! batch" x-cloak @endif>
                 <label for="thumbnail" class="tp-label">{{ __('Gambar kecil (pilihan)') }}</label>
-                <input id="thumbnail" name="thumbnail" type="file" accept="image/*" class="tp-file"
-                       x-ref="thumbnail" @change="onThumbnailPicked()" aria-describedby="thumbnail-help">
+                {{-- Localised file button: the browser's native "Choose File / No file chosen" cannot
+                     be retexted, so the input is hidden and driven from a styled label in the form's
+                     own Alpine scope (keeps x-ref / onThumbnailPicked working). --}}
+                <label for="thumbnail" style="display:flex;align-items:center;gap:14px;width:100%;min-height:46px;box-sizing:border-box;padding:5px;cursor:pointer;border:1.5px solid var(--tp-line-2);border-radius:12px;background:var(--tp-input)">
+                    <span style="display:inline-flex;align-items:center;min-height:36px;padding:0 16px;border-radius:10px;background:var(--tp-teal);color:#fff;white-space:nowrap;font-family:'Geist',sans-serif;font-weight:800;font-size:13px">{{ __('Pilih Fail') }}</span>
+                    <span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:'Nunito',sans-serif;font-size:13.5px;color:var(--tp-muted)" x-text="thumbName || '{{ __('Tiada fail dipilih') }}'"></span>
+                </label>
+                <input id="thumbnail" name="thumbnail" type="file" accept="image/*" class="sr-only"
+                       x-ref="thumbnail" @change="thumbName = $event.target.files[0]?.name || ''; onThumbnailPicked()" aria-describedby="thumbnail-help">
                 <p id="thumbnail-help" class="tp-hint">{{ __('Dibuat secara automatik daripada video anda. Muat naik gambar sendiri untuk menggantikannya.') }}</p>
                 {{-- Live status for the frame we capture from the chosen video file. --}}
                 <p x-show="thumbBusy" x-cloak class="tp-hint" aria-live="polite">⏳ {{ __('Sedang mengambil gambar daripada video…') }}</p>
@@ -267,7 +274,7 @@
                     uploading: false, progress: 0, sizeError: '', failed: '',
                     // autoThumb marks the thumbnail input as holding a frame we captured, so a
                     // teacher's own picture is never overwritten but ours can be replaced.
-                    autoThumb: false, thumbBusy: false, thumbNote: '', thumbError: '',
+                    autoThumb: false, thumbBusy: false, thumbNote: '', thumbError: '', thumbName: '',
                     dragging: false, videoName: '', videoSize: '',
                     // One row per chosen recording: { key, file, name, ext, size, title,
                     // thumbFile, thumbReady }. Row order is submission order, so videos[i] is
