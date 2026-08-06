@@ -164,7 +164,7 @@
         {{-- Video preview modal — a look, not a lesson (no view counted); x-if so closing destroys
              the player and its audio. Same shell the admin content preview uses. --}}
         <template x-if="lesson">
-            <x-content-preview obj="lesson" :pill="'🎬 '.__('Video')">
+            <x-content-preview obj="lesson" :pill="__('Video')">
                 <div style="overflow-y:auto;background:#000;height:min(72vh,620px)">
                     <template x-if="lesson.kind === 'youtube'">
                         <iframe style="width:100%;height:100%;border:0;display:block" :src="lesson.src" :title="lesson.title"
