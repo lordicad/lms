@@ -20,6 +20,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
+    {{-- Flag JS on before first paint so the scroll-reveal starts hidden without a flash. With no
+         JS this never runs, so the cards render normally (progressive enhancement). --}}
+    <script>document.documentElement.classList.add('wl-js');</script>
+
     <style>
         *, *::before, *::after { box-sizing: border-box; }
 
@@ -218,6 +222,24 @@
             .wl-cta { padding: 48px 24px; }
             .wl-cta h2 { font-size: 30px; }
             .wl-h1 { font-size: 36px; }
+        }
+
+        /* ── Card motion: hover lift + fade-up on scroll ──────────────────────────────────
+           One eased transition drives both the reveal and the hover so the movement stays
+           smooth. The hidden start state only applies when JS is on (.wl-js) and the card is
+           not yet revealed, so without JS everything shows, and once revealed the transform
+           reverts to base/hover with no specificity clash. */
+        .wl-card, .wl-total, .wl-step {
+            transition: opacity .7s ease, transform .45s cubic-bezier(.22,.61,.36,1), box-shadow .35s ease;
+            will-change: opacity, transform;
+        }
+        .wl-js .wl-card:not(.is-visible),
+        .wl-js .wl-total:not(.is-visible),
+        .wl-js .wl-step:not(.is-visible) { opacity: 0; transform: translateY(28px); }
+
+        .wl-card:hover, .wl-total:hover, .wl-step:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 18px 40px rgba(36,49,42,.14);
         }
     </style>
 </head>
@@ -437,5 +459,39 @@
             <span class="copy">{{ __('© 2026 WeLearn - Sistem Pengurusan Pembelajaran. Belajar · Membesar · Berjaya.') }}</span>
         </div>
     </footer>
+
+    {{-- Scroll-reveal: fade each card up as it enters the viewport, staggered within its row.
+         Reduced-motion or no IntersectionObserver reveals everything at once. --}}
+    <script>
+        (function () {
+            var cards = document.querySelectorAll('.wl-card, .wl-total, .wl-step');
+            if (! cards.length) return;
+
+            var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            if (reduce || ! ('IntersectionObserver' in window)) {
+                cards.forEach(function (c) { c.classList.add('is-visible'); });
+                return;
+            }
+
+            var io = new IntersectionObserver(function (entries) {
+                entries.forEach(function (entry) {
+                    if (! entry.isIntersecting) return;
+                    var el = entry.target;
+                    // Stagger by the card's position among its reveal siblings, then clear the
+                    // delay once revealed so hover responds instantly.
+                    var sibs = Array.prototype.filter.call(el.parentNode.children, function (n) {
+                        return n === el || n.classList.contains('wl-card') || n.classList.contains('wl-total') || n.classList.contains('wl-step');
+                    });
+                    var i = Math.max(0, sibs.indexOf(el));
+                    el.style.transitionDelay = (i * 90) + 'ms';
+                    el.classList.add('is-visible');
+                    el.addEventListener('transitionend', function () { el.style.transitionDelay = '0s'; }, { once: true });
+                    io.unobserve(el);
+                });
+            }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+
+            cards.forEach(function (c) { io.observe(c); });
+        })();
+    </script>
 </body>
 </html>
