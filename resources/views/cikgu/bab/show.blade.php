@@ -127,10 +127,12 @@
                                         <span class="tp-tag-neutral">{{ __('Draf') }}</span>
                                     @endif
                                     @if ($quiz->isInteractive())
-                                        <span class="tp-meta">{{ __(':count soalan', ['count' => $quiz->questions_count]) }}</span>
-                                        <span class="tp-meta">{{ __(':count percubaan', ['count' => $quiz->completed_attempts_count]) }}</span>
+                                        <span class="tp-meta" style="display:inline-flex;align-items:center;gap:6px"><x-icon name="help-circle" class="h-4 w-4" style="color:#8A6A12" />{{ __(':count soalan', ['count' => $quiz->questions_count]) }}</span>
                                     @endif
-                                    <span class="tp-meta">{{ $quiz->created_at->format('d/m/Y') }}</span>
+                                    <span class="tp-meta" style="display:inline-flex;align-items:center;gap:6px"><x-icon name="calendar" class="h-4 w-4" style="color:#8A6A12" />{{ $quiz->created_at->format('d/m/Y') }}</span>
+                                    @if ($quiz->isInteractive())
+                                        <span class="tp-meta" style="display:inline-flex;align-items:center;gap:6px"><x-icon name="users" class="h-4 w-4" style="color:#8A6A12" />{{ __(':count percubaan', ['count' => $quiz->completed_attempts_count]) }}</span>
+                                    @endif
                                 </div>
                             </div>
                             @if ($quiz->isInteractive())
