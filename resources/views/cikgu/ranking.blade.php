@@ -15,7 +15,7 @@
             <select id="tahun" name="tahun" class="tp-filter-select" style="min-width:130px" onchange="this.form.submit()">
                 <option value="">{{ __('Semua tahun') }}</option>
                 @foreach ($grades as $option)
-                    <option value="{{ $option->level }}" @selected($grade?->id === $option->id)>{{ $option->name }}</option>
+                    <option value="{{ $option->level }}" @selected($grade?->id === $option->id)>{{ $option->displayName() }}</option>
                 @endforeach
             </select>
         </div>

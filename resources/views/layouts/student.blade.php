@@ -210,7 +210,7 @@
             <select onchange="if (this.value) window.location.href = '{{ url('tahun') }}/' + this.value" class="js-styled-select wl-year-select"
                     style="min-height:48px;border:1px solid var(--wl-line-2);border-radius:999px;padding:0 38px 0 16px;-webkit-appearance:none;-moz-appearance:none;appearance:none;background:var(--wl-surface) url(&quot;data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='24'%20height='24'%20viewBox='0%200%2024%2024'%20fill='none'%20stroke='%2328293F'%20stroke-width='2.5'%20stroke-linecap='round'%20stroke-linejoin='round'%3E%3Cpath%20d='M6%209l6%206%206-6'/%3E%3C/svg%3E&quot;) no-repeat right 14px center;background-size:12px;font-family:'Geist',sans-serif;font-weight:700;font-size:12.5px;color:var(--wl-ink);cursor:pointer">
                 @foreach ($grades as $g)
-                    <option value="{{ $g->level }}" @selected($browseLevel === $g->level)>{{ $g->name }}</option>
+                    <option value="{{ $g->level }}" @selected($browseLevel === $g->level)>{{ $g->displayName() }}</option>
                 @endforeach
             </select>
 
