@@ -39,7 +39,7 @@
                                     <span class="tp-meta">{{ $lesson->created_at->format('d/m/Y') }}</span>
                                 </div>
                             </div>
-                            <a href="{{ route('video.show', $lesson) }}" class="tp-btn-ghost" style="flex-shrink:0">👁 {{ __('Lihat') }}</a>
+                            <a href="{{ route('video.show', $lesson) }}" class="tp-btn-outline" style="flex-shrink:0"><x-icon name="eye" class="h-4 w-4" />{{ __('Lihat') }}</a>
                         </div>
                     @endforeach
                 </div>
@@ -71,7 +71,7 @@
                                     <span class="tp-meta" style="display:inline-flex;align-items:center;gap:6px"><x-icon name="download" class="h-4 w-4" style="color:#B84A75" />{{ $material->download_count }}</span>
                                 </div>
                             </div>
-                            <a href="{{ $material->fileUrl() }}" target="_blank" rel="noopener" class="tp-btn-ghost" style="flex-shrink:0">👁 {{ __('Buka') }}</a>
+                            <a href="{{ $material->fileUrl() }}" target="_blank" rel="noopener" class="tp-btn-outline" style="flex-shrink:0"><x-icon name="eye" class="h-4 w-4" />{{ __('Buka') }}</a>
                         </div>
                     @endforeach
                 </div>
@@ -111,7 +111,7 @@
                             @if ($quiz->isInteractive())
                                 <a href="{{ route('cikgu.kuiz.statistik', $quiz) }}" class="tp-btn-ghost" style="flex-shrink:0">📊 {{ __('Statistik') }}</a>
                             @else
-                                <a href="{{ $quiz->fileUrl() }}" target="_blank" rel="noopener" class="tp-btn-ghost" style="flex-shrink:0">👁 {{ __('Buka') }}</a>
+                                <a href="{{ $quiz->fileUrl() }}" target="_blank" rel="noopener" class="tp-btn-outline" style="flex-shrink:0"><x-icon name="eye" class="h-4 w-4" />{{ __('Buka') }}</a>
                             @endif
                         </div>
                     @endforeach
