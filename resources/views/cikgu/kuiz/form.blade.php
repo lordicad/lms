@@ -201,7 +201,6 @@
 
         {{-- Action bar spanning both columns. --}}
         <div class="kf-actionbar">
-            <span class="kf-actionleaf"></span>
 
             @if ($editing && $quiz->isInteractive())
                 <a href="{{ route('cikgu.kuiz.soalan', $quiz) }}" class="tp-btn-outline" style="min-height:48px;display:inline-flex;align-items:center;gap:8px"><x-icon name="pencil" class="h-4 w-4" /> {{ __('Sunting Soalan') }}</a>
