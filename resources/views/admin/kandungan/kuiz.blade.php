@@ -112,7 +112,7 @@
 
         {{-- Preview modal (WeLearn Admin design): gradient header + green question body. --}}
         <template x-if="quiz">
-            <x-content-preview obj="quiz" :pill="'📝 '.__('Kuiz')">
+            <x-content-preview obj="quiz">
                 <div style="overflow-y:auto;background:{{ $isDark ? 'linear-gradient(180deg,#141A20,#1B232C)' : 'linear-gradient(180deg,#E9F7F2,#FAF9F5)' }}">
                     <template x-if="quiz.type === 'file'">
                         <div style="padding:48px 28px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px">

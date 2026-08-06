@@ -104,7 +104,7 @@
         {{-- Preview modal: PDFs and images render in place, other files show a document card with a
              download. Shared admin shell so both surfaces stay in step. --}}
         <template x-if="item">
-            <x-content-preview obj="item" :pill="__('Bahan')">
+            <x-content-preview obj="item">
                 <template x-if="item.kind === 'pdf'">
                     <iframe style="width:100%;height:min(72vh,620px);border:0;display:block;background:#000" :src="item.src" :title="item.title"></iframe>
                 </template>

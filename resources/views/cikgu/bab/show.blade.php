@@ -183,7 +183,7 @@
         {{-- Material preview modal — PDFs and images render in place, other files show a document
              card with a download. Same shell the admin/teacher content lists use. --}}
         <template x-if="item">
-            <x-content-preview obj="item" :pill="__('Bahan')">
+            <x-content-preview obj="item">
                 <template x-if="item.kind === 'pdf'">
                     <iframe style="width:100%;height:min(72vh,620px);border:0;display:block;background:#000" :src="item.src" :title="item.title"></iframe>
                 </template>
@@ -212,7 +212,7 @@
         {{-- Quiz preview modal — questions with the correct answer marked, or a download card for a
              file quiz. Same body as the content-list preview. --}}
         <template x-if="quiz">
-            <x-content-preview obj="quiz" :pill="'📝 '.__('Kuiz')">
+            <x-content-preview obj="quiz">
                 <div style="overflow-y:auto;background:{{ $isDark ? 'linear-gradient(180deg,#141A20,#1B232C)' : 'linear-gradient(180deg,#E9F7F2,#FAF9F5)' }}">
                     <template x-if="quiz.type === 'file'">
                         <div style="padding:48px 28px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px">

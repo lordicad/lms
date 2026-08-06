@@ -114,7 +114,7 @@
 
         {{-- Read-only question preview (WeLearn Admin design: gradient header + green body) --}}
         <template x-if="quiz">
-            <x-content-preview obj="quiz" :pill="'📝 '.__('Kuiz')">
+            <x-content-preview obj="quiz">
                 <div style="overflow-y:auto;background:linear-gradient(180deg,#E9F7F2,#FAF9F5)">
                     <template x-if="! quiz.questions.length">
                         <p style="text-align:center;color:#6C6F87;padding:44px 0;font-weight:700">{{ __('Kuiz ini belum ada soalan.') }}</p>
