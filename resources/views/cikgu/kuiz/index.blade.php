@@ -34,7 +34,7 @@
         <div class="tp-list">
             @foreach ($quizzes as $quiz)
                 @php($subject = $quiz->chapter->subject)
-                <div class="tp-listcard" style="padding:18px 20px;border-left:4px solid rgb({{ $subject->rgb }})">
+                <div class="tp-listcard" style="padding:18px 20px">
                     {{-- Subject icon square, colour-matched to the subject. --}}
                     <span style="width:60px;height:60px;border-radius:14px;background:rgb({{ $subject->rgb }} / .14);color:rgb({{ $subject->rgb }});display:grid;place-items:center;flex-shrink:0"><x-icon :name="$subject->iconName()" class="h-7 w-7" /></span>
 
