@@ -9,7 +9,7 @@ use Illuminate\Validation\Rule;
 
 class QuizRequest extends FormRequest
 {
-    /** A printed quiz upload takes a batch, one quiz per file — the same ceiling as materials. */
+    /** A printed quiz upload takes a batch, one quiz per file - the same ceiling as materials. */
     public const MAX_FILES = 20;
 
     public function authorize(): bool

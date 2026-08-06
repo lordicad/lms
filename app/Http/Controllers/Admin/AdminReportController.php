@@ -48,7 +48,7 @@ class AdminReportController extends Controller
             // Capped, because it is the one unbounded section: a school that onboarded its whole
             // roll in a week put every account in this table, and rendering hundreds of rows took
             // the PDF over PHP's memory limit. A report wants the recent ones and a total, not a
-            // register — the full list is on the Users page.
+            // register - the full list is on the Users page.
             'registrations' => $report->recentRegistrationsQuery()->limit(self::MAX_REGISTRATION_ROWS)->get(),
             'registrationsTotal' => $report->recentRegistrationsQuery()->count(),
             'registrationsShown' => self::MAX_REGISTRATION_ROWS,

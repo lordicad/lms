@@ -80,7 +80,7 @@
                             <span style="width:40px;height:40px;border-radius:12px;background:#FBE4ED;color:#B84A75;display:grid;place-items:center;flex-shrink:0"><x-icon :name="$material->iconName()" class="h-5 w-5" /></span>
                             <div style="display:flex;flex-direction:column;gap:4px;min-width:0;flex:1">
                                 <span class="tp-g" style="font-weight:800;font-size:15px;color:var(--tp-ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ $material->title }}</span>
-                                {{-- File facts: type, size, upload date, and download count — in the
+                                {{-- File facts: type, size, upload date, and download count - in the
                                      soft rose of the material theme. --}}
                                 <div style="display:flex;flex-wrap:wrap;align-items:center;gap:14px">
                                     <span style="background:#FBE4ED;color:#B84A75;border-radius:999px;padding:4px 12px;font-family:'Geist',sans-serif;font-size:11.5px;font-weight:800">{{ strtoupper($material->extension()) }}</span>
@@ -161,7 +161,7 @@
             @endif
         </section>
 
-        {{-- Video preview modal — a look, not a lesson (no view counted); x-if so closing destroys
+        {{-- Video preview modal - a look, not a lesson (no view counted); x-if so closing destroys
              the player and its audio. Same shell the admin content preview uses. --}}
         <template x-if="lesson">
             <x-content-preview obj="lesson">
@@ -180,7 +180,7 @@
             </x-content-preview>
         </template>
 
-        {{-- Material preview modal — PDFs and images render in place, other files show a document
+        {{-- Material preview modal - PDFs and images render in place, other files show a document
              card with a download. Same shell the admin/teacher content lists use. --}}
         <template x-if="item">
             <x-content-preview obj="item">
@@ -209,7 +209,7 @@
             </x-content-preview>
         </template>
 
-        {{-- Quiz preview modal — questions with the correct answer marked, or a download card for a
+        {{-- Quiz preview modal - questions with the correct answer marked, or a download card for a
              file quiz. Same body as the content-list preview. --}}
         <template x-if="quiz">
             <x-content-preview obj="quiz">

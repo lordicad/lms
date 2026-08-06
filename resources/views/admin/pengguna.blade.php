@@ -6,7 +6,7 @@
     {{-- When the admin filters to teachers, the "Year" column (a student attribute) becomes "Position". --}}
     @php($teacherView = $role === 'teacher')
     {{-- The Year/Position column only earns its place once a single role is chosen: in the combined
-         "Semua peranan" list it is half a column of Tahun and half a column of "—", so it is dropped
+         "Semua peranan" list it is half a column of Tahun and half a column of "-", so it is dropped
          there. Teacher view keeps Jawatan; student view keeps Tahun. --}}
     @php($showAttr = filled($role))
     {{-- One geometry per view. The fourth column is the widest of the two it has to hold (Jawatan,
@@ -91,15 +91,15 @@
                                     <span style="justify-self:center;background:#DCF2EE;color:#0F7A68;border-radius:999px;padding:4px 11px;font-family:'Geist',sans-serif;font-size:11.5px;font-weight:800">{{ __('Murid') }}</span>
                                 @endif
 
-                                <span style="font-size:13px;font-weight:600;color:var(--tp-muted-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center">{{ $u->email ?: '—' }}</span>
+                                <span style="font-size:13px;font-weight:600;color:var(--tp-muted-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center">{{ $u->email ?: '-' }}</span>
                                 @if ($showAttr)
-                                    <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center">{{ $teacherView ? ($u->position ?: '—') : ($u->grade?->displayName() ?? '—') }}</span>
+                                    <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center">{{ $teacherView ? ($u->position ?: '-') : ($u->grade?->displayName() ?? '-') }}</span>
                                 @endif
 
                                 {{-- Read-only: the account is switched on or off from its edit form,
                                      so the list cannot deactivate someone on a stray click. The pill
                                      carries a background, so it centres by justify-self rather than
-                                     text-align — otherwise it would stretch the whole column. --}}
+                                     text-align - otherwise it would stretch the whole column. --}}
                                 <span style="justify-self:center;display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:5px 11px;font-family:'Geist',sans-serif;font-size:11.5px;font-weight:800;{{ $u->is_active ? 'background:#DCF2EE;color:#0F7A68' : 'background:#F1F0E8;color:var(--tp-muted)' }}">
                                     <span style="width:7px;height:7px;border-radius:50%;background:{{ $u->is_active ? '#17907B' : '#B9B8C6' }}"></span>
                                     {{ $u->is_active ? __('Aktif') : __('Tidak aktif') }}

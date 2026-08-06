@@ -19,7 +19,7 @@ class TahunController extends Controller
         ActiveGrade::set($level);
 
         // Return to where they were. If that URL pins a ?tahun= (e.g. the Subject page, which
-        // honours it over the session), rewrite it to the chosen Tahun — otherwise the old
+        // honours it over the session), rewrite it to the chosen Tahun - otherwise the old
         // ?tahun would win and the page would ignore the switch.
         $back = URL::previous();
         $parts = parse_url($back);

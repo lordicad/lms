@@ -18,7 +18,7 @@
         \App\Models\AdminNotification::TYPE_PASSWORD_RESET => ['icon' => 'key', 'tint' => '#FEF0CE', 'fg' => '#8A6A12', 'text' => __(':actor (:title) lupa kata laluan')],
     ];
 
-    // Sidebar nav — mirrors the WeLearn Admin design (icon + label, active pill). The SVGs are the
+    // Sidebar nav - mirrors the WeLearn Admin design (icon + label, active pill). The SVGs are the
     // exact glyphs from the prototype (Feather set, 1.8 stroke), inlined so they match pixel-for-pixel.
     $icons = [
         'home' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>',
@@ -68,7 +68,7 @@
             --pill-bw:15%; --pill-bb:#fff; --pill-fw:82%; --pill-fb:#000;
             font-family:'Nunito',sans-serif; color:var(--tp-body);
         }
-        /* Night mode: same token NAMES, dark values — every .tp element and every page colour
+        /* Night mode: same token NAMES, dark values - every .tp element and every page colour
            converted to a var(--tp-*) recolours for free. */
         html.theme-dark .tp {
             --tp-teal:#17907B; --tp-teal-hover:#2BB39B;

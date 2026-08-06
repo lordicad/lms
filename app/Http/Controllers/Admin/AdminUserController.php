@@ -23,7 +23,7 @@ use Illuminate\View\View;
 
 /**
  * Admin CRUD for teacher and student accounts. Admin accounts are deliberately out of
- * scope here — they are never listed, edited or deleted from this screen, so an admin can
+ * scope here - they are never listed, edited or deleted from this screen, so an admin can
  * neither lock themselves out nor tamper with a peer.
  */
 class AdminUserController extends Controller
@@ -94,7 +94,7 @@ class AdminUserController extends Controller
         $this->syncSubjects($user, $data);
         $this->syncHomeroom($user, $data);
 
-        // The only moment the password exists in plain text — hand it over now or never.
+        // The only moment the password exists in plain text - hand it over now or never.
         return redirect()->route('admin.pengguna')
             ->with($this->deliverCredentials($user, $plainPassword));
     }
@@ -104,7 +104,7 @@ class AdminUserController extends Controller
      *
      * A teacher gets them at their own address; a student's go to their guardian's. Email is the
      * only channel: it is the one that delivers by itself at no cost. (WhatsApp would need either a
-     * paid Business API or a human pressing send — see App\Support\WhatsAppLink, currently parked.)
+     * paid Business API or a human pressing send - see App\Support\WhatsAppLink, currently parked.)
      *
      * Used for a new account and for an admin password reset alike: both end with the admin holding
      * a password the owner does not yet know, so both need the same hand-off.
@@ -129,14 +129,14 @@ class AdminUserController extends Controller
 
         if ($isReset) {
             $flash['status'] = $sentTo === []
-                ? __('Kata laluan :name berjaya ditetapkan semula. Butiran belum dihantar — tiada alamat e-mel disimpan.', ['name' => $user->name])
+                ? __('Kata laluan :name berjaya ditetapkan semula. Butiran belum dihantar - tiada alamat e-mel disimpan.', ['name' => $user->name])
                 : __('Kata laluan :name berjaya ditetapkan semula. Butiran log masuk baharu dihantar ke :to.', [
                     'name' => $user->name,
                     'to' => implode(', ', $sentTo),
                 ]);
         } else {
             $flash['status'] = $sentTo === []
-                ? __('Akaun :name berjaya dicipta. Butiran log masuk belum dihantar — tiada alamat e-mel disimpan.', ['name' => $user->name])
+                ? __('Akaun :name berjaya dicipta. Butiran log masuk belum dihantar - tiada alamat e-mel disimpan.', ['name' => $user->name])
                 : __('Akaun :name berjaya dicipta. Butiran log masuk dihantar ke :to.', [
                     'name' => $user->name,
                     'to' => implode(', ', $sentTo),
@@ -215,7 +215,7 @@ class AdminUserController extends Controller
 
         $this->fill($user, $data);
 
-        // Blank password on edit means "leave it alone" — unless auto_password asks for a fresh one.
+        // Blank password on edit means "leave it alone" - unless auto_password asks for a fresh one.
         $plainPassword = ($data['password'] ?? null)
             ?: (($data['auto_password'] ?? false) ? TemporaryPassword::generate() : null);
 
@@ -292,11 +292,11 @@ class AdminUserController extends Controller
             'username' => [
                 'required', 'string', 'min:3', 'max:30',
                 // A student types this to sign in, so it stays strict. A teacher signs in with
-                // their email, making theirs a display nickname only — "Cikgu Ana" should be
+                // their email, making theirs a display nickname only - "Cikgu Ana" should be
                 // allowed. Usernames may repeat either way; email is the unique identifier.
                 $isTeacher ? 'regex:/^[\pL\pN ._-]+$/u' : 'regex:/^[a-zA-Z0-9._-]+$/',
             ],
-            // Everyone signs in with their email, so every account needs one — students included.
+            // Everyone signs in with their email, so every account needs one - students included.
             'email' => [
                 'required', 'string', 'lowercase', 'email', 'max:255',
                 Rule::unique('users', 'email')->ignore($user?->id),
@@ -329,7 +329,7 @@ class AdminUserController extends Controller
                 ),
             ],
             // Required for students: a student without a class also has no homeroom teacher, and
-            // nothing else in the app can give them one — the profiles cannot set it and the only
+            // nothing else in the app can give them one - the profiles cannot set it and the only
             // other filler is ProfileBackfillSeeder.
             'school_class_id' => [
                 Rule::requiredIf(! $isTeacher),
@@ -360,7 +360,7 @@ class AdminUserController extends Controller
                 },
             ],
             'guardian_name' => ['nullable', 'string', 'max:255'],
-            // Kept as contact details only — nothing is sent here.
+            // Kept as contact details only - nothing is sent here.
             'guardian_phone' => ['nullable', 'string', 'max:30', 'regex:/^\+?[0-9\s\-()]{6,20}$/'],
             // The single delivery address for a student's sign-in details, so it has to be there:
             // without it the password is generated, sent nowhere, and lost for good.
@@ -376,12 +376,12 @@ class AdminUserController extends Controller
                 ? __('Nama pengguna hanya boleh mengandungi huruf, nombor, ruang, titik, garis bawah dan sengkang.')
                 : __('Nama pengguna hanya boleh mengandungi huruf, nombor, titik, garis bawah dan sengkang.'),
             'username.min' => __('Nama pengguna mesti sekurang-kurangnya 3 aksara.'),
-            'email.required' => __('Emel diperlukan — ia digunakan untuk log masuk.'),
+            'email.required' => __('Emel diperlukan - ia digunakan untuk log masuk.'),
             'email.unique' => __('Emel ini sudah didaftarkan.'),
             'grade_level.required' => __('Sila pilih Tahun untuk murid.'),
             'school_class_id.required' => __('Sila pilih kelas untuk murid. Pilih sekolah dan tahun dahulu jika senarai kosong.'),
             'password.required' => __('Sila tetapkan kata laluan.'),
-            'guardian_email.required' => __('Sila isi e-mel penjaga — butiran log masuk murid dihantar ke alamat ini.'),
+            'guardian_email.required' => __('Sila isi e-mel penjaga - butiran log masuk murid dihantar ke alamat ini.'),
         ]);
     }
 
@@ -426,8 +426,8 @@ class AdminUserController extends Controller
     /**
      * Assign (or clear) the teacher's homeroom class. The relationship lives on the class, so this
      * writes school_classes.homeroom_teacher_id. Both sides are one-to-one, so the teacher is first
-     * removed from any class they held — that also frees the unique index before the new class is
-     * set — and the chosen class then takes this teacher, replacing whoever held it before.
+     * removed from any class they held - that also frees the unique index before the new class is
+     * set - and the chosen class then takes this teacher, replacing whoever held it before.
      */
     private function syncHomeroom(User $user, array $data): void
     {

@@ -16,7 +16,7 @@ use Illuminate\Http\Request;
  * web redirect) in a browser, so consent, reading the channel list, storing the channel and
  * re-attributing the teacher's videos all run through the same web YoutubeConnectController.
  * Mobile and web therefore can never drift. Only listing and disconnecting live here, and the
- * disconnect mirrors the web one — delete, then re-attribute so lessons flip back to references.
+ * disconnect mirrors the web one - delete, then re-attribute so lessons flip back to references.
  */
 class YoutubeController extends Controller
 {

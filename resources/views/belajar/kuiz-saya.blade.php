@@ -32,12 +32,12 @@
             @php($statsDark = ($theme ?? 'light') === 'dark')
             @php($statCards = $statsDark ? [
                 ['accent' => '#2DD4BF', 'bg' => 'linear-gradient(135deg,#234A3F,#1A3A31)', 'ink' => '#EAF7F2', 'spark' => '#3A6B5C', 'disc' => '#26382F', 'type' => 'check', 'value' => $doneCount, 'label' => __('Kuiz selesai')],
-                ['accent' => '#F0B733', 'bg' => 'linear-gradient(135deg,#443A22,#352C18)', 'ink' => '#F6EBCF', 'spark' => '#6A5B30', 'disc' => '#3A3220', 'type' => 'star', 'value' => $avgScore !== null ? $avgScore.'%' : '—', 'label' => __('Purata markah')],
-                ['accent' => '#5A9BE0', 'bg' => 'linear-gradient(135deg,#2A3E56,#20304A)', 'ink' => '#E2ECF8', 'spark' => '#436286', 'disc' => '#293A50', 'type' => 'trophy', 'value' => $rank ? '#'.$rank : '—', 'label' => __('Ranking'), 'leaf' => true],
+                ['accent' => '#F0B733', 'bg' => 'linear-gradient(135deg,#443A22,#352C18)', 'ink' => '#F6EBCF', 'spark' => '#6A5B30', 'disc' => '#3A3220', 'type' => 'star', 'value' => $avgScore !== null ? $avgScore.'%' : '-', 'label' => __('Purata markah')],
+                ['accent' => '#5A9BE0', 'bg' => 'linear-gradient(135deg,#2A3E56,#20304A)', 'ink' => '#E2ECF8', 'spark' => '#436286', 'disc' => '#293A50', 'type' => 'trophy', 'value' => $rank ? '#'.$rank : '-', 'label' => __('Ranking'), 'leaf' => true],
             ] : [
                 ['accent' => '#17907B', 'bg' => 'linear-gradient(135deg,#EAF7F2,#D6EFE7)', 'ink' => '#0F7A68', 'spark' => '#A9DECF', 'disc' => '#fff', 'type' => 'check', 'value' => $doneCount, 'label' => __('Kuiz selesai')],
-                ['accent' => '#E0A21C', 'bg' => 'linear-gradient(135deg,#FEF6E4,#FBE9C2)', 'ink' => '#8A6A12', 'spark' => '#F1D592', 'disc' => '#fff', 'type' => 'star', 'value' => $avgScore !== null ? $avgScore.'%' : '—', 'label' => __('Purata markah')],
-                ['accent' => '#3E86C9', 'bg' => 'linear-gradient(135deg,#EFF4FC,#DFEAF7)', 'ink' => '#2E6CA8', 'spark' => '#B6CEEC', 'disc' => '#fff', 'type' => 'trophy', 'value' => $rank ? '#'.$rank : '—', 'label' => __('Ranking'), 'leaf' => true],
+                ['accent' => '#E0A21C', 'bg' => 'linear-gradient(135deg,#FEF6E4,#FBE9C2)', 'ink' => '#8A6A12', 'spark' => '#F1D592', 'disc' => '#fff', 'type' => 'star', 'value' => $avgScore !== null ? $avgScore.'%' : '-', 'label' => __('Purata markah')],
+                ['accent' => '#3E86C9', 'bg' => 'linear-gradient(135deg,#EFF4FC,#DFEAF7)', 'ink' => '#2E6CA8', 'spark' => '#B6CEEC', 'disc' => '#fff', 'type' => 'trophy', 'value' => $rank ? '#'.$rank : '-', 'label' => __('Ranking'), 'leaf' => true],
             ])
             <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px">
                 @foreach ($statCards as $c)

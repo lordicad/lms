@@ -17,7 +17,7 @@ class FirstPasswordController extends Controller
 {
     public function create(Request $request): View|RedirectResponse
     {
-        // Nothing to do for an account that already owns its password — including a direct visit.
+        // Nothing to do for an account that already owns its password - including a direct visit.
         if (! $request->user()->mustChangePassword()) {
             return redirect()->route('profile.edit');
         }

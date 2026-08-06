@@ -1,9 +1,9 @@
 @props([
     'badge',            // badge key from App\Support\QuizBadges
-    'isNew' => false,   // just earned on this attempt — pops in with a sparkle burst
+    'isNew' => false,   // just earned on this attempt - pops in with a sparkle burst
     'tag' => true,      // show the built-in "Baru" pill (off when the wrapper draws its own)
-    'count' => null,    // times earned across quizzes — shows ×N on the profile
-    'muted' => false,   // not yet earned — greyed on the profile collection
+    'count' => null,    // times earned across quizzes - shows ×N on the profile
+    'muted' => false,   // not yet earned - greyed on the profile collection
 ])
 
 @php($m = \App\Support\QuizBadges::meta($badge))

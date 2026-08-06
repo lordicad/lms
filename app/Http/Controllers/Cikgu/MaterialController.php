@@ -80,7 +80,7 @@ class MaterialController extends Controller
     }
 
     /**
-     * Create one material per uploaded files[] entry in the chapter, titles paired by position —
+     * Create one material per uploaded files[] entry in the chapter, titles paired by position -
      * a blank title falls back to the file's own name with the extension dropped. Shared by
      * store() and update(): the edit page can also drop in more files, each a new material.
      *

@@ -8,7 +8,7 @@ use Illuminate\Database\Query\Builder as QueryBuilder;
 
 /**
  * One admin oversees one school, so every admin screen is limited to the accounts and content
- * belonging to it. This is the single place that rule is expressed — the controllers only say which
+ * belonging to it. This is the single place that rule is expressed - the controllers only say which
  * of these to apply, so there is one thing to read when checking a school cannot see another's data.
  *
  * It fails closed. An admin with no school gets nothing rather than everything: a forgotten
@@ -40,7 +40,7 @@ class SchoolScope
     }
 
     /**
-     * Narrow a query over content — lessons, materials, quizzes — to the work of the school's own
+     * Narrow a query over content - lessons, materials, quizzes - to the work of the school's own
      * teachers. Content has no school of its own; it belongs to whoever posted it.
      */
     public static function content(Builder $query, string $relation = 'teacher'): Builder
@@ -81,7 +81,7 @@ class SchoolScope
             : User::where('role', User::ROLE_STUDENT)->where('school_id', $schoolId)->pluck('id')->all();
     }
 
-    /** Whether a record belongs to the admin's school — for guarding a route-bound model. */
+    /** Whether a record belongs to the admin's school - for guarding a route-bound model. */
     public static function allows(?int $schoolId): bool
     {
         $current = self::currentSchoolId();

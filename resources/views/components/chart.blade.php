@@ -1,5 +1,5 @@
 @props([
-    'config',                 // Chart.js config (array) — required
+    'config',                 // Chart.js config (array) - required
     'id' => null,
     'title' => null,          // accessible name for the canvas
     'height' => 280,

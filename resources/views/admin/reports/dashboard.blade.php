@@ -38,7 +38,7 @@
                 <tr>
                     <td>{{ $i + 1 }}</td>
                     <td>{{ $c['name'] }}</td>
-                    <td>{{ $c['school'] ?? '—' }}</td>
+                    <td>{{ $c['school'] ?? '-' }}</td>
                     <td class="num">{{ $c['total'] }}</td>
                     <td class="num">{{ $c['videos'] }}</td>
                     <td class="num">{{ $c['materials'] }}</td>
@@ -65,16 +65,16 @@
             @foreach ($rows as $row)
                 <tr>
                     <td>{{ $row['t'] }}</td>
-                    <td>{{ $row['d']['title'] ?? '—' }}</td>
-                    <td>{{ $row['d']['teacher'] ?? '—' }}</td>
-                    <td class="num">{{ $row['d'] ? $row['d']['count'].' '.$row['m'] : '—' }}</td>
+                    <td>{{ $row['d']['title'] ?? '-' }}</td>
+                    <td>{{ $row['d']['teacher'] ?? '-' }}</td>
+                    <td class="num">{{ $row['d'] ? $row['d']['count'].' '.$row['m'] : '-' }}</td>
                 </tr>
             @endforeach
         </tbody>
     </table>
 
     {{-- Platform activity --}}
-    <h2>{{ __('Aktiviti Platform') }} — {{ __($periodLabel) }}</h2>
+    <h2>{{ __('Aktiviti Platform') }} - {{ __($periodLabel) }}</h2>
     <table border="1" cellspacing="0" cellpadding="6">
         <thead>
             <tr>
@@ -109,7 +109,7 @@
                 <tr>
                     <td>{{ $u->name }}</td>
                     <td>{{ $u->isTeacher() ? __('Cikgu') : __('Murid') }}</td>
-                    <td>{{ $u->grade?->displayName() ?? '—' }}</td>
+                    <td>{{ $u->grade?->displayName() ?? '-' }}</td>
                     <td>{{ $u->created_at->translatedFormat('j M Y') }}</td>
                 </tr>
             @empty

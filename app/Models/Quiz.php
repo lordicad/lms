@@ -136,7 +136,7 @@ class Quiz extends Model
         return $this->file_path ? Storage::disk('uploads')->url($this->file_path) : null;
     }
 
-    /** The uploaded file's type, e.g. "PDF" — from its original name. */
+    /** The uploaded file's type, e.g. "PDF" - from its original name. */
     public function extension(): string
     {
         $ext = pathinfo($this->original_name ?? $this->file_path ?? '', PATHINFO_EXTENSION);
@@ -147,7 +147,7 @@ class Quiz extends Model
     /**
      * Page count of the attached PDF, read from the file itself, or null when it is not a PDF or
      * the count cannot be read (a compressed page tree). Leaf /Page objects first, then the /Pages
-     * root's /Count as a fallback — best effort, so a card hides the figure rather than guessing.
+     * root's /Count as a fallback - best effort, so a card hides the figure rather than guessing.
      */
     public function pageCount(): ?int
     {

@@ -12,7 +12,7 @@ use Illuminate\View\View;
 class StudentQuizController extends Controller
 {
     /**
-     * Every published quiz in the student's Tahun — attempted and not — with their ranked score
+     * Every published quiz in the student's Tahun - attempted and not - with their ranked score
      * where they have finished one.
      */
     public function __invoke(Request $request): View

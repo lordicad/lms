@@ -16,7 +16,7 @@
     `form` attribute, so it works wherever the modal is teleported.
 
     Teleported to <body> (outside the .tp/.wl theme scopes), so themeable colours live in the classes
-    below and flip on `html.theme-dark` — matching light and night mode alike.
+    below and flip on `html.theme-dark` - matching light and night mode alike.
 --}}
 
 @once

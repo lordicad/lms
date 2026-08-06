@@ -9,7 +9,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\View\View;
 
 /**
- * The admin landing page — a calm, read-only overview of the whole platform. Every number is a real
+ * The admin landing page - a calm, read-only overview of the whole platform. Every number is a real
  * aggregate computed by AdminReportService, which the PDF/DOCX exports reuse so the reports match.
  */
 class AdminDashboardController extends Controller

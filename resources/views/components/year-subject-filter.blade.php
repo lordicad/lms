@@ -15,7 +15,7 @@
     Shared Year -> Subject -> Chapter filter (brief §1). Order is always Tahun, then Subjek, then
     (optionally) Bab, each dependent on the one before it. The server (App\Support\ContentFilter)
     is the source of truth; this component only makes the picking pleasant. Works without
-    JavaScript via the <noscript> submit button — every <select> keeps its server-rendered value.
+    JavaScript via the <noscript> submit button - every <select> keeps its server-rendered value.
 --}}
 
 @php
@@ -36,7 +36,7 @@
     // Subject list actually changes as the Year changes rather than greying options out.
     $visibleSubjects = $filter ? $filter->availableSubjects($subjects) : $subjects;
 
-    // A pair someone has deliberately opened stays visible even when the Year does not offer it —
+    // A pair someone has deliberately opened stays visible even when the Year does not offer it -
     // otherwise the dropdown would show a different subject than the page below is describing.
     if ($filter?->subject && ! $visibleSubjects->contains('id', $filter->subject->id)) {
         $visibleSubjects = $visibleSubjects->concat([$filter->subject])->values();
@@ -93,7 +93,7 @@
         </select>
     </div>
 
-    {{-- 2. Subjek (Subject) — depends on the chosen Tahun --}}
+    {{-- 2. Subjek (Subject) - depends on the chosen Tahun --}}
     <div class="tp-field" style="display:flex;flex-direction:column;gap:6px">
         <label for="ysf-subjek" class="{{ $cls['label'] }}">{{ __('Subjek') }}</label>
         <select id="ysf-subjek" name="subjek" class="{{ $cls['select'] }}" style="min-width:220px"
@@ -116,7 +116,7 @@
         @endunless
     </div>
 
-    {{-- 3. Bab (Chapter) — depends on the chosen Tahun + Subjek --}}
+    {{-- 3. Bab (Chapter) - depends on the chosen Tahun + Subjek --}}
     @if ($withChapter)
         <div class="tp-field" style="display:flex;flex-direction:column;gap:6px">
             <label for="ysf-bab" class="{{ $cls['label'] }}">{{ __('Bab') }}</label>

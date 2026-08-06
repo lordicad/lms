@@ -59,7 +59,7 @@ class AdminContentController extends Controller
 
     /**
      * Narrow content by a free-text term, matched against its own title and the name of the
-     * teacher who posted it — the two things an admin scanning this table actually knows.
+     * teacher who posted it - the two things an admin scanning this table actually knows.
      *
      * @param  Builder<Lesson>|Builder<Material>|Builder<Quiz>  $query
      * @return Builder<Lesson>|Builder<Material>|Builder<Quiz>
@@ -128,7 +128,7 @@ class AdminContentController extends Controller
             ->paginate(20)
             ->withQueryString();
 
-        // Type is derived from the stored filename — there is no extension column — so the
+        // Type is derived from the stored filename - there is no extension column - so the
         // per-type counts match on that. The column's collation is case-insensitive, so a
         // NOTA.PDF is counted with the rest.
         $ofType = fn (string $ext): int => $filtered()->where('original_name', 'like', '%.'.$ext)->count();

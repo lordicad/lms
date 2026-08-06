@@ -22,7 +22,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
  * MOE oversight of the teaching cohort. Read-only except for one switch: an admin may deactivate
- * a teacher's sign-in. Nothing here edits or removes content — deleting a teacher would cascade
+ * a teacher's sign-in. Nothing here edits or removes content - deleting a teacher would cascade
  * through their lessons, materials and quizzes and take students' history with it, so the action
  * deliberately does not exist.
  *
@@ -115,7 +115,7 @@ class AdminTalentController extends Controller
 
     /**
      * Teachers, narrowed to those holding content in the chosen Subjek/Tahun. A teacher belongs to
-     * no subject of their own — they are placed by what they have posted — so the filter reaches
+     * no subject of their own - they are placed by what they have posted - so the filter reaches
      * through all three content types, and the counts are scoped the same way to stay consistent
      * with it.
      */
@@ -262,7 +262,7 @@ class AdminTalentController extends Controller
         ]);
     }
 
-    /** A plain streamed CSV — no server-side spreadsheet libraries on shared hosting. */
+    /** A plain streamed CSV - no server-side spreadsheet libraries on shared hosting. */
     public function export(TalentService $talent): StreamedResponse
     {
         $cohort = $talent->cohort();

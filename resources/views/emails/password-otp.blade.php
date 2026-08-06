@@ -19,7 +19,7 @@
 
 **{{ __('Penting:') }}** {{ __('Selepas kod disahkan, admin sekolah akan menetapkan semula kata laluan dan menghantar butiran log masuk baharu.') }}
 
-{{ __('Jika anda tidak membuat permintaan ini, abaikan e-mel ini — tiada apa-apa yang berubah.') }}
+{{ __('Jika anda tidak membuat permintaan ini, abaikan e-mel ini - tiada apa-apa yang berubah.') }}
 
 {{ __('Terima kasih,') }}<br>
 {{ config('app.name') }}

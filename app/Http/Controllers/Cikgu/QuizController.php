@@ -24,8 +24,8 @@ class QuizController extends Controller
         $teacher = $request->user();
 
         // Discard abandoned drafts. An interactive quiz needs at least one question to be usable;
-        // a teacher who created one and left the builder without adding any — via "Batal", the
-        // "← Kuiz Saya" link, the nav, or the browser back button — should not be left with an
+        // a teacher who created one and left the builder without adding any - via "Batal", the
+        // "← Kuiz Saya" link, the nav, or the browser back button - should not be left with an
         // empty quiz. Cleaning up here catches every exit path that lands back on this page.
         // Scoped to interactive quizzes so printed (file) quizzes, which never have questions,
         // are untouched.
@@ -272,7 +272,7 @@ class QuizController extends Controller
     {
         $none = ['source_locale' => null, 'title_translated' => null, 'description_translated' => null];
 
-        // Teacher reviewed a translation in the form — keep it verbatim.
+        // Teacher reviewed a translation in the form - keep it verbatim.
         $providedLocale = $request->input('source_locale');
         $providedTitle = $request->input('title_translated');
 

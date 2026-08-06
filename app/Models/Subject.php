@@ -86,7 +86,7 @@ class Subject extends Model
 
     /**
      * Subject names are stored in Bahasa Melayu; the reader sees them in the app language. The
-     * translation lives in the lang files keyed by the stored name — an unmapped name (e.g. an
+     * translation lives in the lang files keyed by the stored name - an unmapped name (e.g. an
      * acronym short name) falls back to the stored value, so nothing ever goes blank.
      */
     public function getNameAttribute(?string $value): ?string
@@ -102,7 +102,7 @@ class Subject extends Model
     /**
      * A vector icon name (from the shared <x-icon> set) for this subject, mapped from its slug so
      * the UI can drop the stored emoji. Languages share the `language` glyph and are told apart by
-     * their colour; an unmapped subject falls back to a book. Specific cases come first — sign
+     * their colour; an unmapped subject falls back to a book. Specific cases come first - sign
      * language is `hand`, not a `language` book, even though its slug also starts with "bahasa-".
      */
     public function iconName(): string

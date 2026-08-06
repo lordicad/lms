@@ -1,7 +1,7 @@
 {{--
     Light / dark toggle. A single icon button, server-rendered like the language pill it sits
     beside: the theme route flips the session + user preference and `back()`s, so a full reload
-    applies the new `<html class="theme-dark">` — no JavaScript, no flash of the wrong theme.
+    applies the new `<html class="theme-dark">` - no JavaScript, no flash of the wrong theme.
 
     It is a toggle button (aria-pressed = dark active). The icon shows the mode you switch TO:
     a moon while in light, a sun while in dark. Labels are translated (Mod Terang / Mod Gelap).

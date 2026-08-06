@@ -17,9 +17,9 @@ use Illuminate\Support\Facades\Mail;
 /**
  * The forgot-password OTP flow, in two steps that the login page drives over fetch:
  *
- *   send()   — look up the account, email a one-time code to the address it trusts (a teacher's
+ *   send()   - look up the account, email a one-time code to the address it trusts (a teacher's
  *              own email, a student's guardian's), and remember only the hash.
- *   verify() — check the code, and on success raise a request in the school admins' bell. The admin
+ *   verify() - check the code, and on success raise a request in the school admins' bell. The admin
  *              does the actual reset (see AdminUserController); the OTP only proves the requester can
  *              read the account's email, so a stranger cannot trigger a reset for someone else.
  *

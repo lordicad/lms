@@ -72,11 +72,11 @@
             font-family: 'Nunito', sans-serif;
             color: var(--wl-body);
         }
-        /* Night mode keeps its dark ramp — a pale wallpaper behind it would undo the point of it
+        /* Night mode keeps its dark ramp - a pale wallpaper behind it would undo the point of it
            and leave the light text on the cards fighting the background. */
         html.theme-dark body { background: var(--wl-page) url('{{ asset('images/DMgambarbg.png') }}?v=3') center center / cover no-repeat fixed; }
         .wl a { text-decoration: none; }
-        /* Only plain content links get teal. Links with a class — the sidebar nav, the back button —
+        /* Only plain content links get teal. Links with a class - the sidebar nav, the back button -
            carry their own colour, so the nav can read grey like the teacher rail instead of being
            overridden to teal by a bare `.wl a` rule. Mirrors `.tp a:not([class])` on that side. */
         .wl a:not([class]) { color: #17907B; }
@@ -110,7 +110,7 @@
         .wl-profile { transition: transform .15s; }
         .wl-profile:hover { transform: scale(1.06); }
         .wl-logout:hover { background: #FDE7E0 !important; }
-        /* Outlined teal button — matches the Cikgu/Admin .tp-back so "go back" looks the same
+        /* Outlined teal button - matches the Cikgu/Admin .tp-back so "go back" looks the same
            app-wide and reads as something to press instead of drifting into the heading. */
         .wl-back {
             align-self:flex-start; display:inline-flex; align-items:center; gap:8px;
@@ -123,7 +123,7 @@
         .wl-acct-row { transition: background .15s; }
         .wl-acct-row:hover { background: #FAF8F3 !important; }
 
-        /* ── Sidebar — matched to the Cikgu/Admin wide labelled rail (236px, icon + label rows). ── */
+        /* ── Sidebar - matched to the Cikgu/Admin wide labelled rail (236px, icon + label rows). ── */
         .wl-brand { display:flex; align-items:center; gap:10px; padding:4px 8px 16px; text-decoration:none; }
         .wl-brand img { width:42px; height:42px; object-fit:contain; display:block; }
         .wl-brand-name { font-family:'Geist',sans-serif; font-weight:800; font-size:16px; color:var(--wl-ink); }
@@ -206,7 +206,7 @@
                        style="border:none;background:transparent;font-family:'Nunito',sans-serif;font-size:14.5px;color:var(--wl-body);width:100%;min-height:44px">
             </form>
 
-            {{-- Tahun switcher — kept for real revision use, styled to match the header pills. --}}
+            {{-- Tahun switcher - kept for real revision use, styled to match the header pills. --}}
             <select onchange="if (this.value) window.location.href = '{{ url('tahun') }}/' + this.value" class="js-styled-select wl-year-select"
                     style="min-height:48px;border:1px solid var(--wl-line-2);border-radius:999px;padding:0 38px 0 16px;-webkit-appearance:none;-moz-appearance:none;appearance:none;background:var(--wl-surface) url(&quot;data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='24'%20height='24'%20viewBox='0%200%2024%2024'%20fill='none'%20stroke='%2328293F'%20stroke-width='2.5'%20stroke-linecap='round'%20stroke-linejoin='round'%3E%3Cpath%20d='M6%209l6%206%206-6'/%3E%3C/svg%3E&quot;) no-repeat right 14px center;background-size:12px;font-family:'Geist',sans-serif;font-weight:700;font-size:12.5px;color:var(--wl-ink);cursor:pointer">
                 @foreach ($grades as $g)

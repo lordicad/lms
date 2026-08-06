@@ -12,7 +12,7 @@ class ProgressController extends Controller
 {
     /**
      * Save a watch-progress ping from the player. Fired every ~10s while playing, on pause,
-     * on end, and on the way out via sendBeacon — so it must stay cheap and idempotent.
+     * on end, and on the way out via sendBeacon - so it must stay cheap and idempotent.
      *
      * The row is always keyed by the authenticated student, so no one can write another
      * student's progress. lesson_views (the teacher-facing "watched once" counter) is left to

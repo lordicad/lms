@@ -1,14 +1,14 @@
 @props([
     'active' => 'login',   // which tab is highlighted: 'login' | 'register'
     'title' => null,
-    'tabs' => true,        // the Log Masuk / Daftar pair — off for pages reached while signed in
+    'tabs' => true,        // the Log Masuk / Daftar pair - off for pages reached while signed in
     'back' => true,        // the "back to home" link, likewise
 ])
 
 {{--
     WeLearn split-screen auth shell (login / register).
 
-    Deliberately self-contained — its own fonts and a scoped stylesheet, no app.css/app.js — so it
+    Deliberately self-contained - its own fonts and a scoped stylesheet, no app.css/app.js - so it
     matches the WeLearn marketing landing exactly and stays isolated from the signed-in app. Dark
     mode still works: the server emits `<html class="theme-dark">` (see guest layout / $theme) and
     the html.theme-dark overrides below flip the palette. The language and theme toggles are the
@@ -38,7 +38,7 @@
     <style>
         /* The WeLearn Auth design was authored with the default content-box model (its
            stylesheet has no box-sizing reset). Matching it keeps the card 514px and the
-           input boxes 440px wide, exactly as the mockup — a border-box reset here shrinks
+           input boxes 440px wide, exactly as the mockup - a border-box reset here shrinks
            every box by its padding+border and makes the fields look narrower. */
         *, *::before, *::after { box-sizing: content-box; }
 
@@ -92,11 +92,11 @@
                `cover` is anchored left to show the green and crop the white off.
 
                The first layer is a left-to-right fade that stays transparent over the green and
-               reaches the form's own colour (var(--bg)) by the right edge — so the seam between
+               reaches the form's own colour (var(--bg)) by the right edge - so the seam between
                this panel and the form dissolves instead of showing a hard line. var(--bg) keeps
                that blend correct in both light and dark themes.
 
-               The text is dark on the light artwork — fixed values, not theme vars, since the
+               The text is dark on the light artwork - fixed values, not theme vars, since the
                image does not change with the theme. */
             background:
                 linear-gradient(to right, transparent 42%, var(--bg) 100%),
@@ -241,10 +241,10 @@
         </a>
         <div class="wla-brand-copy">
             <h1>{{ __('Belajar di mana-mana, bila-bila masa.') }}</h1>
-            <p>{{ __('Video pelajaran, bahan dan kuiz — tersusun mengikut Subjek dan Tahun.') }}</p>
+            <p>{{ __('Video pelajaran, bahan dan kuiz - tersusun mengikut Subjek dan Tahun.') }}</p>
             <div class="wla-brand-accent">{{ __('Belajar · Membesar · Berjaya') }}</div>
         </div>
-        <span class="wla-brand-foot">{{ __('© 2026 WeLearn — Weststar Engineering Learning Management System') }}</span>
+        <span class="wla-brand-foot">{{ __('© 2026 WeLearn - Weststar Engineering Learning Management System') }}</span>
     </aside>
 
     {{-- Form panel --}}
@@ -278,7 +278,7 @@
                 <div class="wla-tabs">
                     <a href="{{ route('login') }}" class="wla-tab {{ $active === 'login' ? 'is-active' : '' }}"
                        @if ($active === 'login') aria-current="page" @endif>{{ __('Log Masuk') }}</a>
-                    {{-- Daftar tab hidden for now — uncomment this and restore `1fr 1fr` on .wla-tabs to bring it back. --}}
+                    {{-- Daftar tab hidden for now - uncomment this and restore `1fr 1fr` on .wla-tabs to bring it back. --}}
                     {{-- <a href="{{ route('register') }}" class="wla-tab {{ $active === 'register' ? 'is-active' : '' }}"
                        @if ($active === 'register') aria-current="page" @endif>{{ __('Daftar') }}</a> --}}
                 </div>

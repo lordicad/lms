@@ -17,7 +17,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 class OfflineController extends Controller
 {
     /**
-     * Simpanan Offline — honest offline: uploaded lessons can be downloaded as mp4; YouTube
+     * Simpanan Offline - honest offline: uploaded lessons can be downloaded as mp4; YouTube
      * lessons cannot (shown as online-only, never faked); and supporting materials (PDF/slides)
      * for the Tahun are listed so offline is useful even for YouTube lessons.
      */

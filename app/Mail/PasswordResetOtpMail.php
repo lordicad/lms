@@ -12,7 +12,7 @@ use Illuminate\Queue\SerializesModels;
 
 /**
  * The one-time code for a forgot-password request. For a student this goes to the guardian's email,
- * for a teacher to their own — whoever the account trusts to receive its sign-in details. The code
+ * for a teacher to their own - whoever the account trusts to receive its sign-in details. The code
  * is passed in plain (it is never stored in plain form) and is valid for a few minutes only.
  */
 class PasswordResetOtpMail extends Mailable

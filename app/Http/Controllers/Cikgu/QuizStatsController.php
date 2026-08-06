@@ -25,7 +25,7 @@ class QuizStatsController extends Controller
         // Every stat is scoped to the quiz's CURRENT version: attempts graded against the same
         // question count and total marks as it has now. A quiz edited after students attempted it
         // (e.g. Buruj went from 10 questions/100 marks to 2/20) leaves old attempts on a different
-        // scale — those are excluded so the figures stay honest and on one scale.
+        // scale - those are excluded so the figures stay honest and on one scale.
         $currentQuestions = $quiz->questions->count();
         $currentMax = (int) $quiz->questions->sum('points');
 

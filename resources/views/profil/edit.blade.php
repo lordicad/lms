@@ -8,7 +8,7 @@
         $errStyle = 'margin:6px 0 0;font-weight:700;font-size:13px;color:#C24936';
         $h2Style = 'margin:0 0 6px;font-family:\'Geist\',sans-serif;font-size:20px;font-weight:800;color:var(--wl-ink)';
         // Admin-maintained rows: the same box and the same ink as an input, because the student
-        // still needs to read these — they are simply not theirs to edit. The leading semicolon
+        // still needs to read these - they are simply not theirs to edit. The leading semicolon
         // matters, $inputStyle above ends without one.
         $lockedStyle = $inputStyle.';display:flex;align-items:center;cursor:default';
         $noteStyle = 'margin:6px 0 0;font-size:12.5px;color:var(--wl-muted)';
@@ -77,7 +77,7 @@
                 </div>
                 <div style="background:#FBE4ED;border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:4px">
                     <x-icon name="trophy" class="h-6 w-6" style="color:#B84A75" />
-                    <span style="font-family:'Geist',sans-serif;font-size:22px;font-weight:800;color:#B84A75">{{ $stats['rank'] ? '#'.$stats['rank'] : '—' }}</span>
+                    <span style="font-family:'Geist',sans-serif;font-size:22px;font-weight:800;color:#B84A75">{{ $stats['rank'] ? '#'.$stats['rank'] : '-' }}</span>
                     <span style="font-size:12.5px;font-weight:700;color:#B84A75">Ranking</span>
                 </div>
                 </div>
@@ -286,12 +286,12 @@
             </div>
         </section>
 
-        {{-- Log out lives in the shell chrome now — the student sidebar and the teacher app-layout
-             header both carry it — so the page itself no longer repeats it. --}}
+        {{-- Log out lives in the shell chrome now - the student sidebar and the teacher app-layout
+             header both carry it - so the page itself no longer repeats it. --}}
         </div>{{-- /.pf-col --}}
 
         {{-- Side column: what the student reads rather than changes. Both panels show only what
-             the app actually records — there is no per-student download log, so downloads are
+             the app actually records - there is no per-student download log, so downloads are
              absent rather than invented. --}}
         <div class="pf-col">
             @if ($stats)

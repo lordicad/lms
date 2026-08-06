@@ -13,7 +13,7 @@ use Illuminate\Validation\Rule;
 
 /**
  * Teacher Bab management for the mobile app: pick a Subject + Tahun, then add, rename or
- * remove a Bab. Mirrors the web Cikgu\ChapterController rules — the Bab number is assigned
+ * remove a Bab. Mirrors the web Cikgu\ChapterController rules - the Bab number is assigned
  * (never typed), a Bab may only be added to an offered pair, and only an empty Bab is
  * deletable. Chapters are shared curriculum, so any teacher may manage them.
  */

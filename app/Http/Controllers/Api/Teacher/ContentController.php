@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
 
 /**
  * Teacher content lists for the mobile Content Hub: the teacher's own videos, materials
- * and quizzes, each with publish status. Read-only for now — edit/publish/delete follow.
+ * and quizzes, each with publish status. Read-only for now - edit/publish/delete follow.
  */
 class ContentController extends Controller
 {

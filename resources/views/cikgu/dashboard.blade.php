@@ -22,7 +22,7 @@
     </style>
 
     {{-- Engagement summary. The "this week" line only appears where something actually records a
-         date — materials keep a running count and nothing more, so that card shows the total alone
+         date - materials keep a running count and nothing more, so that card shows the total alone
          rather than a figure nobody could stand behind. --}}
     <div class="dash-kpis" style="margin-top:26px">
         @foreach ($summary as $s)

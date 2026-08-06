@@ -21,7 +21,7 @@ use Illuminate\Support\Facades\DB;
  *
  * The server is the source of truth. A Subject that is not offered in the chosen Year, or a Chapter
  * that does not belong to the chosen Year+Subject, is dropped to a safe empty selection rather than
- * being trusted — client-side dependent dropdowns are only a convenience.
+ * being trusted - client-side dependent dropdowns are only a convenience.
  */
 class ContentFilter
 {

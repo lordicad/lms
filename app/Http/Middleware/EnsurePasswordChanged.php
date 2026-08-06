@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
  * Holds an account on the "choose your own password" screen until it has one.
  *
  * Admin-created accounts start on a password the admin chose and handed over, so it is known to
- * someone other than its owner. Until the owner replaces it, every page redirects here — otherwise
+ * someone other than its owner. Until the owner replaces it, every page redirects here - otherwise
  * the handed-over password would keep working indefinitely.
  */
 class EnsurePasswordChanged

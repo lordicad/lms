@@ -30,7 +30,7 @@
                                 @endif
                             </span>
                             <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:14px;color:var(--tp-ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center">{{ $c['name'] }}</span>
-                            <span style="font-size:14px;color:var(--tp-muted-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center">{{ $c['school'] ?? '—' }}</span>
+                            <span style="font-size:14px;color:var(--tp-muted-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center">{{ $c['school'] ?? '-' }}</span>
                             <span style="font-family:'Geist',sans-serif;font-size:14px;font-weight:800;color:#17907B;text-align:center">{{ number_format($c['total']) }}</span>
                             <span style="font-size:14px;color:var(--tp-muted-2);text-align:center">{{ $c['videos'] }}</span>
                             <span style="font-size:14px;color:var(--tp-muted-2);text-align:center">{{ $c['materials'] }}</span>

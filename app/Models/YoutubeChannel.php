@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * A YouTube channel a teacher has proven they own, via a one-time Google OAuth read of
- * `channels.list?mine=true`. We store only the public channel identity — never OAuth tokens.
+ * `channels.list?mine=true`. We store only the public channel identity - never OAuth tokens.
  * A channel_id is unique across the table, so two teachers can never both claim the same channel.
  */
 class YoutubeChannel extends Model

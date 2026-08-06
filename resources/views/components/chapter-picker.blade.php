@@ -13,7 +13,7 @@
     (@js, no extra endpoint): picking Sains leaves only Tahun 5–6 selectable, and vice versa. The
     Bab list is then fetched from /api/bab for the chosen pair, which also 422s an unoffered combo,
     so a teacher can never file content into a Bab that is not part of the curriculum. On edit the
-    current chapter is pre-selected — even if its pair has since left the syllabus, so the teacher
+    current chapter is pre-selected - even if its pair has since left the syllabus, so the teacher
     can see what to move.
 --}}
 
@@ -131,7 +131,7 @@
 
                     /*
                      * The styled-select overlay (resources/js/app.js) mirrors its native <select>
-                     * through the value setter — but Alpine picks an option via option.selected,
+                     * through the value setter - but Alpine picks an option via option.selected,
                      * which never trips that setter, so on edit the overlay keeps showing the
                      * placeholder. Re-assigning `value` (a DOM no-op) fires the setter so the overlay
                      * catches up. requestAnimationFrame lets the overlay build first.

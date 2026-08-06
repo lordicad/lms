@@ -8,14 +8,14 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 
 /**
- * "Apa yang murid suka" — a lightweight popularity score per lesson, scoped to one Tahun.
+ * "Apa yang murid suka" - a lightweight popularity score per lesson, scoped to one Tahun.
  *
  *   score = views_count * 1
  *         + favourites_count * 3
  *         + (distinct students who watched in the last 14 days) * 2
  *         + (completions in the last 14 days) * 2
  *
- * Cached per grade for 15 minutes (file cache is fine — no Redis on cPanel). Because production
+ * Cached per grade for 15 minutes (file cache is fine - no Redis on cPanel). Because production
  * starts nearly empty, when fewer than 5 lessons have any signal at all it falls back to
  * newest-first so the rail is never empty or one item long; the caller relabels it accordingly.
  *

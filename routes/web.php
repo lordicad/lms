@@ -177,7 +177,7 @@ Route::middleware(['auth', 'role:teacher'])
 
 /*
 |--------------------------------------------------------------------------
-| Pengesahan pemilikan YouTube (OAuth) — guru sahaja
+| Pengesahan pemilikan YouTube (OAuth) - guru sahaja
 |--------------------------------------------------------------------------
 | The redirect URI registered in Google Cloud is /oauth/youtube/callback, so these live at the
 | document root rather than under /cikgu. Read-only youtube.readonly scope; no tokens stored.
@@ -191,7 +191,7 @@ Route::middleware(['auth', 'role:teacher'])->group(function () {
 
 /*
 |--------------------------------------------------------------------------
-| Admin (MOE) — pengawasan sahaja, dicipta melalui CLI
+| Admin (MOE) - pengawasan sahaja, dicipta melalui CLI
 |--------------------------------------------------------------------------
 */
 
@@ -199,7 +199,7 @@ Route::middleware(['auth', 'role:admin'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
-        // Utama — the read-only platform overview.
+        // Utama - the read-only platform overview.
         Route::get('/', AdminDashboardController::class)->name('dashboard');
 
         // Full teacher-contributor ranking (brief §4.2).
@@ -208,7 +208,7 @@ Route::middleware(['auth', 'role:admin'])
         // Server-side dashboard reports (brief §4.6). Read-only; never increments analytics counters.
         Route::get('laporan/pdf', [AdminReportController::class, 'pdf'])->name('laporan.pdf');
 
-        // Pengguna — CRUD for teacher and student accounts.
+        // Pengguna - CRUD for teacher and student accounts.
         Route::get('pengguna', [AdminUserController::class, 'index'])->name('pengguna');
         Route::get('pengguna/baru', [AdminUserController::class, 'create'])->name('pengguna.create');
         Route::post('pengguna', [AdminUserController::class, 'store'])->name('pengguna.store');

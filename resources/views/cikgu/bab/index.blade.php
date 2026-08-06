@@ -7,7 +7,7 @@
     <div style="display:flex;flex-direction:column;gap:18px;max-width:1200px">
         {{-- The shared Tahun -> Subjek filter, same as the Video, Bahan and Kuiz pages: the Subjek
              list holds only the subjects that Tahun actually offers. A Tahun is always chosen here,
-             so there is no "Semua tahun" — a Bab list needs a definite Subject and Year. --}}
+             so there is no "Semua tahun" - a Bab list needs a definite Subject and Year. --}}
         <x-year-subject-filter
             :action="route('cikgu.bab.index')"
             :grades="$grades"
@@ -30,7 +30,7 @@
             @unless ($isOffered)
                 <div style="display:flex;gap:10px;background:#FEF0CE;border:1px solid rgba(138,106,18,.25);border-radius:14px;padding:14px 18px;font-size:13.5px;color:#8A6A12">
                     <span>ℹ️</span>
-                    <div>{{ __(':subject tidak ditawarkan untuk :grade dalam Kurikulum 2027. Anda tidak boleh menambah bab baharu di sini. Bab lama yang masih mengandungi kandungan ditandakan tidak aktif — sila pindahkan kandungannya ke Tahun yang betul.', ['subject' => $subject->name, 'grade' => $grade->displayName()]) }}</div>
+                    <div>{{ __(':subject tidak ditawarkan untuk :grade dalam Kurikulum 2027. Anda tidak boleh menambah bab baharu di sini. Bab lama yang masih mengandungi kandungan ditandakan tidak aktif - sila pindahkan kandungannya ke Tahun yang betul.', ['subject' => $subject->name, 'grade' => $grade->displayName()]) }}</div>
                 </div>
             @endunless
 
@@ -41,7 +41,7 @@
                     <p style="margin:0;font-size:14.5px;color:var(--tp-muted);max-width:420px">{{ __('Tiada bab untuk :subject :grade lagi.', ['subject' => $subject->name, 'grade' => $grade->displayName()]) }}</p>
                 </div>
             @else
-                {{-- A colour cycles per chapter — the accent bar, number badge and Lihat button
+                {{-- A colour cycles per chapter - the accent bar, number badge and Lihat button
                      all share it, while the meta icons keep a fixed colour per content type. --}}
                 @php($palette = [
                     ['accent' => '#17907B', 'tint' => '#DCF2EE'],

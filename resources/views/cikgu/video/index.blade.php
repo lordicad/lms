@@ -21,7 +21,7 @@
         </a>
     </x-year-subject-filter>
 
-    {{-- Clicking a video opens a preview here instead of navigating to the watch page — the same
+    {{-- Clicking a video opens a preview here instead of navigating to the watch page - the same
          look the admin content page uses. A look, not a lesson: no view is counted. --}}
     <div x-data="{
              lesson: null,
@@ -87,7 +87,7 @@
                     </div>
 
                     {{-- Publish toggle: green with a check when live, amber when a draft. Still a
-                         button — clicking it flips the state. --}}
+                         button - clicking it flips the state. --}}
                     <form method="POST" action="{{ route('cikgu.video.terbit', $lesson) }}" style="flex-shrink:0">
                         @csrf
                         <button type="submit" class="tp-badge {{ $lesson->is_published ? 'tp-badge-ok' : 'tp-badge-draft' }}" style="border:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px">

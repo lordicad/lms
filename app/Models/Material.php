@@ -71,7 +71,7 @@ class Material extends Model
     }
 
     /**
-     * Vector (Lucide/Tabler) icon name for the file type — used on the student surface.
+     * Vector (Lucide/Tabler) icon name for the file type - used on the student surface.
      */
     public function iconName(): string
     {
@@ -86,8 +86,8 @@ class Material extends Model
     }
 
     /**
-     * Direct URL to the stored file. The download route is the one students use — it returns the
-     * original filename and counts the download — so this is only for showing a file in place,
+     * Direct URL to the stored file. The download route is the one students use - it returns the
+     * original filename and counts the download - so this is only for showing a file in place,
      * where a forced attachment would defeat the point.
      */
     public function fileUrl(): ?string

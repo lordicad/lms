@@ -49,7 +49,7 @@
         .lb-th.c { text-align: center; }
         .lb-th.r { text-align: right; }
         .lb-tr + .lb-tr { border-top: 1px solid var(--wl-line); }
-        /* The current student's row — highlighted with a tint, a teal accent bar and a soft ring. */
+        /* The current student's row - highlighted with a tint, a teal accent bar and a soft ring. */
         .lb-tr--me { background: #DCF2EE; box-shadow: inset 4px 0 0 #17907B; }
         .lb-rank { justify-self: center; width: 40px; height: 40px; border-radius: 12px; background: #EEF0F4; display: grid; place-items: center; font-family: 'Geist', sans-serif; font-weight: 800; font-size: 15px; color: #4A4B63; }
         .lb-part { display: flex; align-items: center; gap: 13px; min-width: 0; }

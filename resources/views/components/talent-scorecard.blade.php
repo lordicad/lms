@@ -8,7 +8,7 @@
     $bars = [
         ['key' => 'engagement', 'label' => __('Penglibatan'), 'hint' => __('Tontonan + kegemaran murid (unik)'), 'value' => number_format((int) round($r->raw['engagement']))],
         ['key' => 'quality', 'label' => __('Kualiti'), 'hint' => __('Kadar kegemaran per penonton'), 'value' => round($r->raw['quality'] * 100, 1).'%'],
-        ['key' => 'outcome', 'label' => __('Hasil Pembelajaran'), 'hint' => __('Beza markah kuiz penonton vs purata bab'), 'value' => $r->raw['outcome'] === null ? '—' : (($r->raw['outcome'] > 0 ? '+' : '').$r->raw['outcome'])],
+        ['key' => 'outcome', 'label' => __('Hasil Pembelajaran'), 'hint' => __('Beza markah kuiz penonton vs purata bab'), 'value' => $r->raw['outcome'] === null ? '-' : (($r->raw['outcome'] > 0 ? '+' : '').$r->raw['outcome'])],
         ['key' => 'breadth', 'label' => __('Keluasan'), 'hint' => __('Bilangan bab disumbang'), 'value' => (int) $r->raw['breadth']],
     ];
 @endphp

@@ -4,8 +4,8 @@ namespace App\Support;
 
 /**
  * The catalogue of quiz badges: what can be earned, the score thresholds behind them, and the
- * copy + colours each one is drawn with. Badges are never stored — BadgeService derives them from
- * quiz_attempts on read — so this file is the single source of truth for what a badge *is*.
+ * copy + colours each one is drawn with. Badges are never stored - BadgeService derives them from
+ * quiz_attempts on read - so this file is the single source of truth for what a badge *is*.
  */
 class QuizBadges
 {

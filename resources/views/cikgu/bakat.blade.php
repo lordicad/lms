@@ -1,7 +1,7 @@
 <x-cikgu-layout
     :title="__('Bakat Kandungan')"
     :heading="__('Bakat Kandungan')"
-    :sub="__('Perkembangan kandungan yang anda muat naik — tontonan, kegemaran, muat turun dan percubaan kuiz')">
+    :sub="__('Perkembangan kandungan yang anda muat naik - tontonan, kegemaran, muat turun dan percubaan kuiz')">
 
     @php
         $medals = ['🥇', '🥈', '🥉'];

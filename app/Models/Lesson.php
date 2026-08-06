@@ -19,7 +19,7 @@ class Lesson extends Model
 
     public const SOURCE_YOUTUBE = 'youtube';
 
-    // Ownership attribution — see the YouTube ownership task. Only 'upload' and 'owned' feed the
+    // Ownership attribution - see the YouTube ownership task. Only 'upload' and 'owned' feed the
     // teacher talent signal; 'reference' (someone else's YouTube video) is watchable but excluded.
     public const OWNERSHIP_UPLOAD = 'upload';
 
@@ -143,8 +143,8 @@ class Lesson extends Model
     }
 
     /**
-     * Eager-loads exactly what a lesson card needs — subject, plus this student's own progress
-     * and favourite — so a rail of cards never N+1s. The relations are scoped to the student, so
+     * Eager-loads exactly what a lesson card needs - subject, plus this student's own progress
+     * and favourite - so a rail of cards never N+1s. The relations are scoped to the student, so
      * a card reads its own progress/favourite straight off the loaded models.
      */
     public function scopeWithStudentContext(Builder $query, User $student): Builder

@@ -3,7 +3,7 @@
 {{--
     Horizontal, scroll-snapping rail. No carousel library: native swipe, a focusable
     arrow-scrollable track, real focusable cards, and prev/next buttons. An edge fade mask hides
-    the "cut off mid-card" look — and only fades the side that can actually still scroll.
+    the "cut off mid-card" look - and only fades the side that can actually still scroll.
 --}}
 
 <section x-data="rail()" {{ $attributes }}>

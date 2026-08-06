@@ -11,7 +11,7 @@ use App\Models\User;
  * other route: the admin gets a link that opens WhatsApp with the recipient and the whole message
  * already filled in, and presses send. No API credentials, and nothing leaves the server.
  *
- * PARKED — nothing calls this today. Student sign-in details go to the guardian's email, which is
+ * PARKED - nothing calls this today. Student sign-in details go to the guardian's email, which is
  * the only channel that delivers by itself at no cost; the click-to-send step was dropped rather
  * than kept as a manual chore. Kept intact (with its tests) because the WhatsApp route is expected
  * to come back, either via this link or a Business API sender reusing self::message().
@@ -33,7 +33,7 @@ class WhatsAppLink
 
         $digits = preg_replace('/\D+/', '', $phone) ?? '';
 
-        // A local number ("012-345 6789" / "6012...") — swap the trunk 0 for the country code.
+        // A local number ("012-345 6789" / "6012...") - swap the trunk 0 for the country code.
         if (str_starts_with($digits, '0')) {
             $digits = self::COUNTRY_CODE.substr($digits, 1);
         }
@@ -68,7 +68,7 @@ class WhatsAppLink
             '',
             __('Akaun WeLearn telah dibuka untuk :name.', ['name' => $account->name]),
             '',
-            // Whichever identifier actually signs this account in — email for a teacher,
+            // Whichever identifier actually signs this account in - email for a teacher,
             // username for a student, who usually has no email of their own.
             ($account->signsInWithEmail() ? __('Emel') : __('Nama pengguna')).': '.$account->signInIdentifier(),
             __('Kata laluan sementara').': '.$plainPassword,

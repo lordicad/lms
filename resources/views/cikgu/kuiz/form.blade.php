@@ -142,7 +142,7 @@
                         </div>
                     @else
                         {{-- Creating takes many files at once, each becoming its own printed quiz, titled
-                             per row — the same drop zone the material and video uploads use. --}}
+                             per row - the same drop zone the material and video uploads use. --}}
                         <div x-show="type === 'file'" x-cloak>
                             <x-file-dropzone
                                 name="files[]"

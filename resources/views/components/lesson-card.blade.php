@@ -2,7 +2,7 @@
 
 {{--
     Lesson card, light-native: a white card with an inset (4px-framed) thumbnail on top and the
-    metadata below it (the YouTube / Apple TV pattern) — no text on the image, so any cover works.
+    metadata below it (the YouTube / Apple TV pattern) - no text on the image, so any cover works.
     Progress bar, duration and the favourite heart stay on the image (the streaming signature) and
     are passed into the thumb's slot so they clip to its rounded frame. One stretched link over the
     title keeps the whole card a single focusable target; the heart sits above it on its own.

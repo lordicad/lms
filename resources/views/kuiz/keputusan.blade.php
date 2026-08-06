@@ -23,7 +23,7 @@
             $pct >= 100 => ['icon' => 'target-arrow', 'bg' => '#EEF3FC', 'bgDark' => 'rgba(96,140,200,.14)', 'ink' => '#2E6CA8', 'inkDark' => '#7FB2EA', 'title' => __('Hebat! Semua jawapan betul.'), 'sub' => __('Teruskan mencabar diri untuk mencapai lebih!')],
             $pct >= 80 => ['icon' => 'target-arrow', 'bg' => '#E4F4EF', 'bgDark' => 'rgba(45,212,191,.13)', 'ink' => '#0F7A68', 'inkDark' => '#5EEAD4', 'title' => __('Bagus! Prestasi cemerlang.'), 'sub' => __('Sedikit lagi untuk markah sempurna!')],
             $pct >= 50 => ['icon' => 'target-arrow', 'bg' => '#FBF3DD', 'bgDark' => 'rgba(224,162,28,.15)', 'ink' => '#8A6A12', 'inkDark' => '#F0B733', 'title' => __('Usaha yang baik!'), 'sub' => __('Ulang kaji dan cuba tingkatkan markah anda.')],
-            default => ['icon' => 'target-arrow', 'bg' => '#FBEAE4', 'bgDark' => 'rgba(194,73,54,.16)', 'ink' => '#C24936', 'inkDark' => '#E8836E', 'title' => __('Jangan putus asa!'), 'sub' => __('Tonton semula video dan cuba lagi — anda pasti boleh!')],
+            default => ['icon' => 'target-arrow', 'bg' => '#FBEAE4', 'bgDark' => 'rgba(194,73,54,.16)', 'ink' => '#C24936', 'inkDark' => '#E8836E', 'title' => __('Jangan putus asa!'), 'sub' => __('Tonton semula video dan cuba lagi - anda pasti boleh!')],
         })
         @php($star = 'M12 3l2.35 4.76 5.25.76-3.8 3.7.9 5.23L12 15.9l-4.7 2.47.9-5.23-3.8-3.7 5.25-.76z')
         <div style="position:relative;overflow:hidden;background:var(--wl-surface);border:1px solid var(--wl-line);border-radius:22px;padding:32px;box-shadow:0 8px 24px var(--wl-line)">
@@ -44,7 +44,7 @@
                 @php($resultImg = $good ? 'confetti.png' : ($mid ? 'muscle.png' : 'book1.png'))
                 <img src="{{ asset('images/'.$resultImg) }}" alt="" style="width:68px;height:68px;object-fit:contain">
                 <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:26px;font-weight:800;letter-spacing:-.01em;color:var(--wl-ink)">{{ $good ? __('Syabas, :name!', ['name' => $name]) : __('Kerja yang baik!') }}</h2>
-                <span style="font-size:14.5px;color:var(--wl-muted)">{{ $good ? __('Keputusan cemerlang. Teruskan usaha!') : ($mid ? __('Usaha yang baik. Cuba tingkatkan lagi!') : __('Jangan putus asa — tonton semula video dan cuba lagi.')) }}</span>
+                <span style="font-size:14.5px;color:var(--wl-muted)">{{ $good ? __('Keputusan cemerlang. Teruskan usaha!') : ($mid ? __('Usaha yang baik. Cuba tingkatkan lagi!') : __('Jangan putus asa - tonton semula video dan cuba lagi.')) }}</span>
                 <div style="display:flex;align-items:baseline;gap:4px;margin-top:6px">
                     <span style="font-family:'Geist',sans-serif;font-size:48px;font-weight:800;color:var(--wl-ink)">{{ $attempt->score }}</span>
                     <span style="font-family:'Geist',sans-serif;font-size:20px;font-weight:800;color:var(--wl-muted)">/{{ $attempt->max_score }}</span>
@@ -156,7 +156,7 @@
         <a href="{{ route('kuiz-saya.index') }}" class="wl-btn-secondary" style="align-self:center;min-height:48px;display:inline-flex;align-items:center;gap:6px;border-radius:14px;border:2px solid {{ $isDark ? '#2DD4BF' : '#17907B' }};background:{{ $isDark ? 'var(--wl-surface)' : '#fff' }};color:{{ $isDark ? '#5EEAD4' : '#0F7A68' }};font-family:'Geist',sans-serif;font-weight:800;font-size:14.5px;padding:0 24px;text-decoration:none"><x-icon name="arrow-left" style="width:17px;height:17px" />{{ __('Kembali') }}</a>
     </div>
 
-    {{-- One-off full-screen confetti rain — only for a perfect score, and only on a fresh finish
+    {{-- One-off full-screen confetti rain - only for a perfect score, and only on a fresh finish
          (not when reviewing). Self-contained canvas (no library), skipped under reduced motion. --}}
     @if ($pct >= 100 && $celebrate)
         <script>

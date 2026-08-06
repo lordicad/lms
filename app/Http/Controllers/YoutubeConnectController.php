@@ -12,7 +12,7 @@ use Throwable;
 
 /**
  * The Google OAuth "prove you own this channel" dance. We read the teacher's channel list once
- * (channels.list?mine=true) and store only the public channel identity — the access token is used
+ * (channels.list?mine=true) and store only the public channel identity - the access token is used
  * in-memory and discarded. No refresh token is ever stored (PDPA-friendly; re-verify = reconnect).
  */
 class YoutubeConnectController extends Controller
@@ -74,7 +74,7 @@ class YoutubeConnectController extends Controller
         }
 
         // Refuse the whole batch if any channel is already claimed by a DIFFERENT teacher, before
-        // writing anything — so two teachers can never both claim the same channel.
+        // writing anything - so two teachers can never both claim the same channel.
         foreach ($channels as $channel) {
             $existing = YoutubeChannel::where('channel_id', $channel['channel_id'])->first();
 

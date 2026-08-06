@@ -27,7 +27,7 @@
 
         /* Same page wallpaper as the student shell: a fixed, cover-sized artwork that stays put
            while the page scrolls, with the theme background colour underneath as the fallback.
-           Dark mode drops the photo — a light image behind pale text would fight it. */
+           Dark mode drops the photo - a light image behind pale text would fight it. */
         body {
             background: rgb(var(--c-bg)) url('{{ asset('images/gambar5.jpg') }}') center center / cover no-repeat fixed;
         }

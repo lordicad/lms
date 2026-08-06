@@ -59,7 +59,7 @@ class SchoolClass extends Model
         return $query->where('is_active', true);
     }
 
-    /** "Tahun 6 Bestari" — the grade name plus the class name. */
+    /** "Tahun 6 Bestari" - the grade name plus the class name. */
     public function label(): string
     {
         $grade = $this->relationLoaded('grade') ? $this->grade : $this->grade()->first();

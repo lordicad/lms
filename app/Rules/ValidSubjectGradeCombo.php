@@ -13,10 +13,10 @@ use Illuminate\Support\Facades\DB;
  *
  * Two modes:
  *   - chapter (default): the attribute is a chapter_id. The chapter must still be active and its
- *     (subject, Tahun) must be an offered pair — this is how new content is kept out of chapters
+ *     (subject, Tahun) must be an offered pair - this is how new content is kept out of chapters
  *     that left the syllabus.
  *   - pair: the attribute pairs with a sibling field (subject_id + grade_id, or subject + grade),
- *     used when a raw (subject, Tahun) is chosen — e.g. adding a Bab.
+ *     used when a raw (subject, Tahun) is chosen - e.g. adding a Bab.
  */
 class ValidSubjectGradeCombo implements DataAwareRule, ValidationRule
 {

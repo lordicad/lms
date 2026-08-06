@@ -25,8 +25,8 @@ class SetLocale
     public function handle(Request $request, Closure $next): Response
     {
         // The default is a constant rather than config('app.locale') on purpose: setLocale()
-        // writes that config key, so under any long-lived process — Octane, a queue worker, a test
-        // run — the "default" would drift to whatever language the previous request happened to use.
+        // writes that config key, so under any long-lived process - Octane, a queue worker, a test
+        // run - the "default" would drift to whatever language the previous request happened to use.
         $locale = $request->session()->get('locale')
             ?? self::DEFAULT;
 

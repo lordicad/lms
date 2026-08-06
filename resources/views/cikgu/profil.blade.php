@@ -10,7 +10,7 @@
         $field = "display:flex;flex-direction:column;gap:6px";
         $primary = "align-self:flex-start;min-height:46px;border:none;cursor:pointer;border-radius:12px;background:#17907B;color:#fff;font-family:'Geist',sans-serif;font-weight:800;font-size:14px;padding:0 22px;display:inline-flex;align-items:center;gap:9px";
         $err = "margin:0;font-size:12.5px;font-weight:700;color:#C24936";
-        // Admin-maintained fields. Styled like an input — same box, same ink — because the teacher
+        // Admin-maintained fields. Styled like an input - same box, same ink - because the teacher
         // still needs to read these; they are simply not theirs to edit. Rendered as text rather
         // than a disabled <input>: there is nothing to submit, and a real input invites tabbing in.
         $locked = $input."display:flex;align-items:center;cursor:default";
@@ -149,7 +149,7 @@
                     <span class="pf-tile" style="background:#FBE4EA;color:#D23B4E"><x-icon name="youtube" class="h-5 w-5" /></span>
                     <h2 style="{{ $h2 }}">{{ __('Sambung YouTube') }}</h2>
                 </div>
-                <p style="margin:0;font-size:13.5px;color:var(--tp-muted-2);line-height:1.55">{{ __('Sahkan pemilikan saluran YouTube anda supaya video YouTube anda sendiri dikira dalam skor bakat. Kami hanya membaca senarai saluran anda — tiada token disimpan.') }}</p>
+                <p style="margin:0;font-size:13.5px;color:var(--tp-muted-2);line-height:1.55">{{ __('Sahkan pemilikan saluran YouTube anda supaya video YouTube anda sendiri dikira dalam skor bakat. Kami hanya membaca senarai saluran anda - tiada token disimpan.') }}</p>
 
                 @if (\App\Http\Controllers\YoutubeConnectController::isConfigured())
                     <a href="{{ route('oauth.youtube.redirect') }}" class="wl-primary" style="{{ $primary }};padding:0 20px;text-decoration:none"><x-icon name="play" class="h-4 w-4" /> {{ $channels->isEmpty() ? __('Sambung Akaun') : __('Sambung Lagi') }}</a>

@@ -10,12 +10,12 @@ use Illuminate\Support\Collection;
 /**
  * Quiz badges are derived, never stored: everything here is computed from quiz_attempts on read.
  * That keeps the badge a student sees always consistent with their attempts, and means the day
- * this shipped every past attempt already counts — no backfill.
+ * this shipped every past attempt already counts - no backfill.
  *
  * Rules (see QuizBadges for thresholds):
- *   completed / tier   — earned from the FIRST (ranked) attempt only.
- *   never_give_up      — three or more attempts on the same quiz.
- *   comeback           — the first attempt failed and a later one passed.
+ *   completed / tier   - earned from the FIRST (ranked) attempt only.
+ *   never_give_up      - three or more attempts on the same quiz.
+ *   comeback           - the first attempt failed and a later one passed.
  */
 class BadgeService
 {
@@ -111,7 +111,7 @@ class BadgeService
 
         $earned = ['completed'];
 
-        // Tier is fixed by the first attempt — the one that feeds the leaderboard.
+        // Tier is fixed by the first attempt - the one that feeds the leaderboard.
         $first = $attempts->firstWhere('counts_for_ranking', true) ?? $attempts->first();
         if ($tier = QuizBadges::tierFor((int) $first->score, (int) $first->max_score)) {
             $earned[] = $tier;

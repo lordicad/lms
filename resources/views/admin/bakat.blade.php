@@ -4,7 +4,7 @@
     // First subject a teacher works in (+N for the rest), for the compact table + podium captions.
     $subjectLabel = function ($teacherId, int $take = 2) use ($subjects, $subjectsByTeacher) {
         $ids = $subjectsByTeacher[$teacherId] ?? collect();
-        if ($ids->isEmpty()) return '—';
+        if ($ids->isEmpty()) return '-';
         $names = $subjects->whereIn('id', $ids)->take($take)->map->displayName()->join(', ');
         $extra = $ids->count() - $take;
         return $extra > 0 ? $names.' +'.$extra : $names;
@@ -13,7 +13,7 @@
     // The teacher's subject models, in the canonical order, for colour-tinted pills in the table.
     $teacherSubjects = fn ($teacherId) => $subjects->whereIn('id', $subjectsByTeacher[$teacherId] ?? collect())->values();
 
-    // Podium chrome per rank (gold / silver / bronze) — exact palette + raised-middle sizing.
+    // Podium chrome per rank (gold / silver / bronze) - exact palette + raised-middle sizing.
     $podiumMeta = [
         1 => ['medal' => '🥇', 'ring' => '#F0C24B', 'bg' => '#FEF3D3', 'fg' => '#8A6A12', 'pad' => '34px', 'order' => 1],
         2 => ['medal' => '🥈', 'ring' => '#C7CDD6', 'bg' => '#EDF0F4', 'fg' => '#5B6472', 'pad' => '18px', 'order' => 0],
@@ -71,7 +71,7 @@
             </div>
         </div>
 
-        {{-- Teacher filter — carries the contributor filter through so it is not reset. --}}
+        {{-- Teacher filter - carries the contributor filter through so it is not reset. --}}
         @php
             // The Subjek list follows the chosen Tahun: only subjects offered that year (all when none).
             $availabilityById = \App\Models\Subject::availabilityMap();
@@ -148,7 +148,7 @@
                                         @forelse ($tsubs->take(2) as $s)
                                             <span class="subj-pill" style="background:rgb({{ $s->rgb }} / .14);color:rgb({{ $s->rgb }})">{{ $s->displayName() }}</span>
                                         @empty
-                                            <span style="color:var(--tp-muted-2);font-weight:700">—</span>
+                                            <span style="color:var(--tp-muted-2);font-weight:700">-</span>
                                         @endforelse
 
                                         @if ($tsubs->count() > 2)

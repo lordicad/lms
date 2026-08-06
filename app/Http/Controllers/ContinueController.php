@@ -10,7 +10,7 @@ use Illuminate\View\View;
 class ContinueController extends Controller
 {
     /**
-     * Everything the student has started but not finished, newest first — the full-page version
+     * Everything the student has started but not finished, newest first - the full-page version
      * of the home "Sambung Menonton" rail.
      */
     public function __invoke(Request $request): View

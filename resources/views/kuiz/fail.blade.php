@@ -4,9 +4,9 @@
              teal used by the Download button (scoped via the design-system --c-* vars). --}}
         <style>
             html.theme-dark .fail-view {
-                --c-surface: 30 39 50;         /* #1E2732 — brighter card */
-                --c-brand: 23 144 123;         /* #17907B — calmer button */
-                --c-brand-strong: 43 179 155;  /* #2BB39B — button hover */
+                --c-surface: 30 39 50;         /* #1E2732 - brighter card */
+                --c-brand: 23 144 123;         /* #17907B - calmer button */
+                --c-brand-strong: 43 179 155;  /* #2BB39B - button hover */
                 --c-ink: 255 255 255;          /* pure white titles/values */
                 --c-ink-2: 197 206 218;        /* lift the muted labels too */
             }

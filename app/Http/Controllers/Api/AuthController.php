@@ -131,7 +131,7 @@ class AuthController extends Controller
             ],
         ];
 
-        // Mirrors ProfileController::update() — teachers and students edit only their display
+        // Mirrors ProfileController::update() - teachers and students edit only their display
         // name, photo and (teachers) phone number. This endpoint is the same form for the mobile
         // app, so leaving the school record editable here would be a way around the web lock
         // rather than a second opinion.

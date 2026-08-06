@@ -8,8 +8,8 @@
     HTML `form` attribute, so it works no matter where the modal is teleported.
 
     The card is teleported to <body>, outside the .tp/.wl theme scopes, so it can't read those layout
-    vars. Instead the themeable colours live in the classes below and flip on `html.theme-dark` — the
-    class the harness puts on <html> in every shell — so the modal matches light and night mode alike.
+    vars. Instead the themeable colours live in the classes below and flip on `html.theme-dark` - the
+    class the harness puts on <html> in every shell - so the modal matches light and night mode alike.
 --}}
 
 @once

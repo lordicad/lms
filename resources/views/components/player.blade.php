@@ -80,7 +80,7 @@
                         if (this.source === 'youtube') this.initYoutube();
                         else this.initUpload();
 
-                        // Save on the way out — sendBeacon survives the page unloading.
+                        // Save on the way out - sendBeacon survives the page unloading.
                         document.addEventListener('visibilitychange', () => { if (document.hidden) this.save(true); });
                         window.addEventListener('pagehide', () => this.save(true));
                         window.addEventListener('beforeunload', () => this.save(true));

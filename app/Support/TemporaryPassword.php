@@ -6,7 +6,7 @@ namespace App\Support;
  * A readable one-time password for a newly created account.
  *
  * It gets read off a screen, written on a slip of paper, or typed out of a WhatsApp message by a
- * parent — often for a seven year old — so it is built to be said aloud and typed correctly rather
+ * parent - often for a seven year old - so it is built to be said aloud and typed correctly rather
  * than to be maximally random. Pronounceable syllables, no characters that read as each other
  * (0/O, 1/l/I), and a short digit tail.
  *

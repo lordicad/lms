@@ -13,7 +13,7 @@ use Illuminate\Queue\SerializesModels;
  * The sign-in details for a freshly created account, sent once at creation.
  *
  * The password is passed in rather than read from the model: it only exists in plain text for the
- * length of this request — the stored copy is a one-way hash — so this is the single moment it can
+ * length of this request - the stored copy is a one-way hash - so this is the single moment it can
  * be delivered. It is a temporary password by design; EnsurePasswordChanged makes the owner replace
  * it the first time they sign in, which limits how long a password sitting in an inbox is worth
  * anything.

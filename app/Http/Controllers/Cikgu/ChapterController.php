@@ -81,7 +81,7 @@ class ChapterController extends Controller
 
     /**
      * A single Bab: everything the signed-in teacher has uploaded into it, grouped into Videos,
-     * Materials and Quizzes. Other teachers' content is never shown — ownership is enforced here on
+     * Materials and Quizzes. Other teachers' content is never shown - ownership is enforced here on
      * the server, not just by hiding a button.
      */
     public function show(Request $request, Chapter $chapter): View

@@ -6,11 +6,11 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 
 /**
- * Thin wrapper over the two YouTube Data API v3 endpoints we use. No google/apiclient — just
+ * Thin wrapper over the two YouTube Data API v3 endpoints we use. No google/apiclient - just
  * Laravel's HTTP client, so it is trivially fake-able in tests (Http::fake).
  *
- *   ownedChannels()   — channels.list?mine=true, with the teacher's OAuth access token.
- *   videoChannelId()  — videos.list by API key (public + unlisted), to find who owns a video.
+ *   ownedChannels()   - channels.list?mine=true, with the teacher's OAuth access token.
+ *   videoChannelId()  - videos.list by API key (public + unlisted), to find who owns a video.
  *
  * videoChannelId() is cached per video id for 24h to avoid re-charging quota on lesson edits.
  */
@@ -47,7 +47,7 @@ class YoutubeApi
 
     /**
      * The owning channelId and length of a public/unlisted video, in one call. Returns null when
-     * the video is private or deleted (no item). Throws on a transient API/network error — the
+     * the video is private or deleted (no item). Throws on a transient API/network error - the
      * caller degrades gracefully rather than losing the lesson. Cached 24h per video id (misses are
      * not cached, so a video flipped from private to public is picked up on the next save).
      *

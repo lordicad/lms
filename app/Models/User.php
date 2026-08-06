@@ -66,8 +66,8 @@ class User extends Authenticatable
     }
 
     /**
-     * Deactivated accounts cannot sign in. Their content stays published on purpose — see the
-     * is_active migration — so this gates access, not the library.
+     * Deactivated accounts cannot sign in. Their content stays published on purpose - see the
+     * is_active migration - so this gates access, not the library.
      */
     public function isActive(): bool
     {
@@ -112,7 +112,7 @@ class User extends Authenticatable
 
     /**
      * Teacher and student accounts are created by an admin, who picks the first password and hands
-     * it over — so until the owner replaces it, someone else knows it. A null `password_changed_at`
+     * it over - so until the owner replaces it, someone else knows it. A null `password_changed_at`
      * means exactly that, and sends them to the change screen before they can use the system.
      * Admins set up their own accounts, so they are not asked.
      */
@@ -147,7 +147,7 @@ class User extends Authenticatable
 
     /**
      * The class this teacher is homeroom teacher of, if any. This is the writable side of the
-     * homeroom relationship — homeroom_teacher_id lives on school_classes, so a teacher owns at
+     * homeroom relationship - homeroom_teacher_id lives on school_classes, so a teacher owns at
      * most one homeroom class (enforced by a unique index).
      */
     public function homeroomClass(): HasOne

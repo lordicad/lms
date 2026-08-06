@@ -13,7 +13,7 @@ use RuntimeException;
  * so they stay parallel and in order.
  *
  * The whole feature is optional. With no API key configured, enabled() is false and callers skip
- * translation entirely — quizzes save exactly as before, just without a second language.
+ * translation entirely - quizzes save exactly as before, just without a second language.
  */
 class QuestionTranslator
 {

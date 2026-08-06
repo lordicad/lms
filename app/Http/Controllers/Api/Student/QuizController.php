@@ -212,7 +212,7 @@ class QuizController extends StudentApiController
 
     /**
      * The graded view: score/percent plus every question with the correct options and the
-     * student's own choices. Safe to expose is_correct here — the attempt is already graded.
+     * student's own choices. Safe to expose is_correct here - the attempt is already graded.
      */
     private function resultPayload(QuizAttempt $attempt): JsonResponse
     {

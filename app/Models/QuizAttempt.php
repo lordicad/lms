@@ -20,7 +20,7 @@ class QuizAttempt extends Model
      * The ministry has set no pass mark and the app deliberately has none: a student is never
      * told they failed. This is the reporting threshold only, and it matches the celebration
      * screen's 80% on purpose, so "well done" to a child and "pass" to MOE mean the same thing.
-     * If a real pass mark ever arrives, it belongs in config/lms.php — and it should not silently
+     * If a real pass mark ever arrives, it belongs in config/lms.php - and it should not silently
      * move what children are congratulated for.
      */
     public const PASS_AT = 80;
@@ -108,7 +108,7 @@ class QuizAttempt extends Model
 
     /**
      * Attempts at or above the pass mark. Guards max_score, because a quiz whose questions were
-     * all deleted leaves attempts scoring 0/0 — dividing by that would error, and they are not
+     * all deleted leaves attempts scoring 0/0 - dividing by that would error, and they are not
      * passes.
      */
     public function scopePassed(Builder $query): Builder

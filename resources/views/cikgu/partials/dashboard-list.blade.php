@@ -1,6 +1,6 @@
 {{--
     One content leaderboard. Extracted because the dashboard now places these in three different
-    spots — a pair in the main column, one full width beneath, one in the side column — and they
+    spots - a pair in the main column, one full width beneath, one in the side column - and they
     were identical markup repeated in a loop before.
 --}}
 <div class="tp-card" style="overflow:hidden">

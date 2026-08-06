@@ -87,7 +87,7 @@
                 </div>
             @endif
 
-            {{-- ── CONTINUE WATCHING (horizontal rail — swipe / arrow-scroll) ── --}}
+            {{-- ── CONTINUE WATCHING (horizontal rail - swipe / arrow-scroll) ── --}}
             @if ($continue->isNotEmpty())
                 <x-rail :title="__('Sambung menonton')" :seeAll="route('sambung.index')">
                     @foreach ($continue as $lesson)

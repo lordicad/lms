@@ -10,10 +10,10 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 /**
- * The teacher talent signal — a "look closer" flag for MOE, NOT a verdict or an automatic reward.
+ * The teacher talent signal - a "look closer" flag for MOE, NOT a verdict or an automatic reward.
  *
  * Computed only from a teacher's own lessons (uploads + verified-own YouTube; counts_for_talent),
- * using IN-SYSTEM engagement only — never YouTube's public view count. Four transparent sub-scores
+ * using IN-SYSTEM engagement only - never YouTube's public view count. Four transparent sub-scores
  * plus one normalised headline, so both the teacher and MOE can see *why*.
  *
  *   engagement = Σ distinct-student reach  +  favourite_weight × Σ (per-student-capped favourites)

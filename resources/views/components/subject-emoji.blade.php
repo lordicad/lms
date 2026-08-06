@@ -3,7 +3,7 @@
 {{--
     A vector icon per subject (from the shared icon set, mapped by slug in Subject::iconName()).
     Callers still size it with the old text-* class they used for the emoji; that maps to a pixel
-    size set inline here — inline wins over the SVG's own width/height and any utility class, so the
+    size set inline here - inline wins over the SVG's own width/height and any utility class, so the
     size does not depend on a CSS rebuild. Decorative, and strokes in currentColor so inside a
     coloured chip it matches the chip's text.
 --}}

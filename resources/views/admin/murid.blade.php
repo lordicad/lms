@@ -108,19 +108,19 @@
                                         <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:13.5px;color:var(--tp-ink)">{{ $student->name }}</span>
                                         <span style="font-size:11.5px;color:var(--tp-muted)">{{ $student->username }}</span>
                                     </div>
-                                    <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2);text-align:center">{{ $student->grade?->displayName() ?? '—' }}</span>
+                                    <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2);text-align:center">{{ $student->grade?->displayName() ?? '-' }}</span>
                                     <span style="font-size:13px;font-weight:700;color:var(--tp-muted-2);text-align:center">{{ number_format($student->videos_viewed) }}</span>
-                                    {{-- Downloads are counted per file, never per student — an em dash beats inventing one. --}}
-                                    <span style="font-size:13px;font-weight:700;color:var(--tp-muted);text-align:center">—</span>
+                                    {{-- Downloads are counted per file, never per student - an em dash beats inventing one. --}}
+                                    <span style="font-size:13px;font-weight:700;color:var(--tp-muted);text-align:center">-</span>
                                     <span style="font-size:13px;font-weight:700;color:#4276AE;text-align:center">{{ number_format($student->attempts_count) }}</span>
-                                    <span style="text-align:center;font-size:13px;font-weight:800;color:{{ $has ? '#0F7A68' : '#8B8AA3' }}">{{ $has ? number_format($student->pass_count) : '—' }}</span>
-                                    <span style="text-align:center;font-size:13px;font-weight:800;color:{{ $has ? '#C24936' : '#8B8AA3' }}">{{ $has ? number_format($student->attempts_count - $student->pass_count) : '—' }}</span>
+                                    <span style="text-align:center;font-size:13px;font-weight:800;color:{{ $has ? '#0F7A68' : '#8B8AA3' }}">{{ $has ? number_format($student->pass_count) : '-' }}</span>
+                                    <span style="text-align:center;font-size:13px;font-weight:800;color:{{ $has ? '#C24936' : '#8B8AA3' }}">{{ $has ? number_format($student->attempts_count - $student->pass_count) : '-' }}</span>
                                 </div>
                             @endforeach
                         </div>
                     </div>
                 </div>
-                <span style="font-size:12.5px;color:var(--tp-muted)">{{ __('Muat turun bahan tidak direkodkan bagi setiap murid — hanya jumlah bagi setiap fail. Lulus bermaksud :percent% atau lebih.', ['percent' => \App\Models\QuizAttempt::PASS_AT]) }}</span>
+                <span style="font-size:12.5px;color:var(--tp-muted)">{{ __('Muat turun bahan tidak direkodkan bagi setiap murid - hanya jumlah bagi setiap fail. Lulus bermaksud :percent% atau lebih.', ['percent' => \App\Models\QuizAttempt::PASS_AT]) }}</span>
                 <div>{{ $students->links() }}</div>
             @endif
         </div>
@@ -129,12 +129,12 @@
         <div style="display:flex;flex-direction:column;gap:24px;margin-top:48px">
             <div style="display:flex;flex-direction:column;gap:2px">
                 <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:20px;font-weight:800;color:var(--tp-ink);display:inline-flex;align-items:center;gap:9px"><img src="{{ asset('images/top.png') }}" alt="" style="width:26px;height:26px;object-fit:contain">{{ __('Murid Terbaik') }}</h2>
-                <span style="font-size:13px;color:var(--tp-muted);max-width:640px;line-height:1.5">{{ __('Tiga murid paling aktif dalam setiap Tahun. Aktiviti = video ditonton + percubaan kuiz + kegemaran. Ia mengukur penyertaan, bukan markah — jadi berbeza daripada papan Ranking yang dilihat murid.') }}</span>
+                <span style="font-size:13px;color:var(--tp-muted);max-width:640px;line-height:1.5">{{ __('Tiga murid paling aktif dalam setiap Tahun. Aktiviti = video ditonton + percubaan kuiz + kegemaran. Ia mengukur penyertaan, bukan markah - jadi berbeza daripada papan Ranking yang dilihat murid.') }}</span>
             </div>
 
             @php($availabilityById = \App\Models\Subject::availabilityMap())
             @foreach ($podiums as $podium)
-                {{-- Visual order 2nd, 1st, 3rd — winner raised in the middle; ranks with no student are dropped. --}}
+                {{-- Visual order 2nd, 1st, 3rd - winner raised in the middle; ranks with no student are dropped. --}}
                 @php($slots = array_values(array_filter([
                     isset($podium->students[1]) ? [2, $podium->students[1]] : null,
                     isset($podium->students[0]) ? [1, $podium->students[0]] : null,

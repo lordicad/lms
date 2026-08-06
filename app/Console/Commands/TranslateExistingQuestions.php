@@ -10,7 +10,7 @@ use Throwable;
 /**
  * One-time backfill: translate questions that were created before the auto-translation feature
  * existed (or before an API key was configured). New questions translate on save, so this is only
- * needed once to catch up the existing library. Safe to re-run — it skips anything already done.
+ * needed once to catch up the existing library. Safe to re-run - it skips anything already done.
  *
  *   php artisan quiz:translate-existing            # translate all questions missing a translation
  *   php artisan quiz:translate-existing --quiz=12  # just one quiz
@@ -24,7 +24,7 @@ class TranslateExistingQuestions extends Command
     public function handle(QuestionTranslator $translator): int
     {
         if (! $translator->enabled()) {
-            $this->error('ANTHROPIC_API_KEY is not set — nothing to do.');
+            $this->error('ANTHROPIC_API_KEY is not set - nothing to do.');
 
             return self::FAILURE;
         }

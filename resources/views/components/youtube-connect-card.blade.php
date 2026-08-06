@@ -1,7 +1,7 @@
 @props(['user'])
 
 {{-- "Sambungkan YouTube": prove channel ownership so a teacher's own YouTube videos count toward
-     the talent signal. We read only the channel list — no tokens are ever stored. --}}
+     the talent signal. We read only the channel list - no tokens are ever stored. --}}
 
 @php($channels = $user->youtubeChannels()->latest('verified_at')->get())
 
@@ -10,7 +10,7 @@
         <div>
             <h2 class="text-xl font-extrabold text-ink">{{ __('Sambungkan YouTube') }}</h2>
             <p class="mt-1 max-w-prose text-sm text-ink-2">
-                {{ __('Sahkan pemilikan channel YouTube anda supaya video YouTube anda sendiri dikira untuk skor bakat. Kami hanya membaca senarai channel anda — tiada token disimpan.') }}
+                {{ __('Sahkan pemilikan channel YouTube anda supaya video YouTube anda sendiri dikira untuk skor bakat. Kami hanya membaca senarai channel anda - tiada token disimpan.') }}
             </p>
         </div>
 

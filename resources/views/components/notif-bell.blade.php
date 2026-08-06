@@ -17,7 +17,7 @@
     Notification bell with a dropdown panel anchored to the button.
 
     One component for all three portals. The panel reads its colours from the teacher tokens where
-    they exist and falls back to the student ones, then to a literal — the student layout defines
+    they exist and falls back to the student ones, then to a literal - the student layout defines
     --wl-* and no --tp-*, so a bare var(--tp-surface) would resolve to nothing there and leave the
     panel transparent.
 --}}

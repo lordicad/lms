@@ -17,7 +17,7 @@
         \App\Models\TeacherNotification::TYPE_DOWNLOAD => ['icon' => 'download', 'tint' => '#E4EEF9', 'fg' => '#2E6CA8', 'text' => __(':actor memuat turun bahan ":title"')],
     ];
 
-    // Sidebar nav — mirrors the WeLearn Cikgu design (icon + label, active pill).
+    // Sidebar nav - mirrors the WeLearn Cikgu design (icon + label, active pill).
     $nav = [
         ['label' => __('Utama'),   'icon' => 'home',     'route' => 'cikgu.dashboard', 'active' => request()->routeIs('cikgu.dashboard')],
         ['label' => __('Video'),   'icon' => 'video',    'route' => 'cikgu.video.index', 'active' => request()->routeIs('cikgu.video.*')],
@@ -57,7 +57,7 @@
             --pill-bw:15%; --pill-bb:#fff; --pill-fw:82%; --pill-fb:#000;
             font-family:'Nunito',sans-serif; color:var(--tp-body);
         }
-        /* Night mode: same token NAMES, dark values — so every .tp element and every page
+        /* Night mode: same token NAMES, dark values - so every .tp element and every page
            colour that was converted to a var(--tp-*) recolours for free. */
         html.theme-dark .tp {
             --tp-teal:#17907B; --tp-teal-hover:#2BB39B;
@@ -74,7 +74,7 @@
         .tp a { text-decoration:none; }
         /* Only plain (class-less) content links get the teal colour. Links styled as buttons,
            the avatar, nav items, etc. carry their own class colour and must not be overridden
-           (a teal button link would otherwise get teal text on a teal fill — invisible). */
+           (a teal button link would otherwise get teal text on a teal fill - invisible). */
         .tp a:not([class]) { color:var(--tp-teal); }
         .tp a:not([class]):hover { color:var(--tp-teal-hover); }
         .tp h1,.tp h2,.tp h3 { margin:0; }
@@ -89,7 +89,7 @@
 
         /* Page wallpaper: a fixed, cover-sized artwork that stays put while the page scrolls, with
            --tp-page underneath as the fallback. The sidebar and content cards keep their own solid
-           backgrounds, so the image shows in the space around them. Dark mode drops the photo — a
+           backgrounds, so the image shows in the space around them. Dark mode drops the photo - a
            light image behind pale text would fight it. Set here rather than inline on <body> so the
            dark override can win. */
         body.tp { background: var(--tp-page) url('{{ asset('images/gambarbg.png') }}') center center / cover no-repeat fixed; }
@@ -240,7 +240,7 @@
         .tp-thumb { border-radius:10px; overflow:hidden; display:grid; place-items:center; color:rgba(66,118,174,.8); flex-shrink:0; }
         .tp-empty { background:var(--tp-surface); border:1px dashed rgba(46,44,80,.2); border-radius:20px; padding:56px 24px; display:flex; flex-direction:column; align-items:center; gap:10px; text-align:center; }
         .tp-panelform { background:var(--tp-surface); border:1px solid var(--tp-line); border-radius:18px; padding:24px; display:flex; flex-direction:column; gap:16px; box-shadow:var(--tp-shadow); }
-        /* An outlined button rather than plain text, matching the back links on the admin side —
+        /* An outlined button rather than plain text, matching the back links on the admin side -
            going back looks and behaves the same wherever you are, and it reads as something to
            press instead of drifting into the heading above it. */
         .tp-back {

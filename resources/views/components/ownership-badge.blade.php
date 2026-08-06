@@ -6,8 +6,8 @@
 @php
     $map = [
         \App\Models\Lesson::OWNERSHIP_UPLOAD => ['label' => __('Muat naik'), 'class' => 'bg-success-soft text-success', 'icon' => 'upload'],
-        \App\Models\Lesson::OWNERSHIP_OWNED => ['label' => __('YouTube — Anda'), 'class' => 'bg-brand-soft text-brand', 'icon' => 'youtube'],
-        \App\Models\Lesson::OWNERSHIP_REFERENCE => ['label' => __('YouTube — Rujukan'), 'class' => 'bg-surface-2 text-ink-2', 'icon' => 'youtube'],
+        \App\Models\Lesson::OWNERSHIP_OWNED => ['label' => __('YouTube - Anda'), 'class' => 'bg-brand-soft text-brand', 'icon' => 'youtube'],
+        \App\Models\Lesson::OWNERSHIP_REFERENCE => ['label' => __('YouTube - Rujukan'), 'class' => 'bg-surface-2 text-ink-2', 'icon' => 'youtube'],
     ];
     $badge = $map[$lesson->ownership] ?? $map[\App\Models\Lesson::OWNERSHIP_UPLOAD];
 @endphp

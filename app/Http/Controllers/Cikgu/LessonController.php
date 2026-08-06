@@ -117,7 +117,7 @@ class LessonController extends Controller
      * by position; a blank one falls back to the file's own name with the extension dropped.
      *
      * Thumbnails come from the browser, which captures a frame per file and posts them keyed by
-     * the same index — so a capture that failed simply leaves that key absent rather than pushing
+     * the same index - so a capture that failed simply leaves that key absent rather than pushing
      * every later thumbnail onto the wrong video.
      *
      * @param  array<string, mixed>  $shared

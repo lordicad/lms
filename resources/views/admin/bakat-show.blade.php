@@ -3,7 +3,7 @@
     $bars = [
         ['label' => __('Penglibatan'),        'hint' => __('Tontonan + kegemaran murid (unik)'),          'value' => number_format((int) round($r->raw['engagement'])),                                                     'norm' => $r->norm['engagement'] ?? 0],
         ['label' => __('Kualiti'),            'hint' => __('Kadar kegemaran per penonton'),               'value' => round($r->raw['quality'] * 100, 1).'%',                                                                'norm' => $r->norm['quality'] ?? 0],
-        ['label' => __('Hasil Pembelajaran'), 'hint' => __('Beza markah kuiz penonton vs purata bab'),    'value' => $r->raw['outcome'] === null ? '—' : (($r->raw['outcome'] > 0 ? '+' : '').$r->raw['outcome']),          'norm' => $r->norm['outcome'] ?? 0],
+        ['label' => __('Hasil Pembelajaran'), 'hint' => __('Beza markah kuiz penonton vs purata bab'),    'value' => $r->raw['outcome'] === null ? '-' : (($r->raw['outcome'] > 0 ? '+' : '').$r->raw['outcome']),          'norm' => $r->norm['outcome'] ?? 0],
         ['label' => __('Keluasan'),           'hint' => __('Bilangan bab disumbang'),                     'value' => (int) $r->raw['breadth'],                                                                              'norm' => $r->norm['breadth'] ?? 0],
     ];
     $lcols = 'grid-template-columns:minmax(0,2fr) 1fr .7fr .7fr .9fr;gap:12px;align-items:center';
@@ -11,7 +11,7 @@
 
 <x-admin-layout :title="$r->teacher->name"
                 :heading="$r->teacher->name"
-                :sub="$r->teacher->email ? $r->teacher->email.($r->channels > 0 ? ' · '.trans_choice('{1}:n channel YouTube disahkan|[2,*]:n channel YouTube disahkan', $r->channels, ['n' => $r->channels]) : '') : '—'">
+                :sub="$r->teacher->email ? $r->teacher->email.($r->channels > 0 ? ' · '.trans_choice('{1}:n channel YouTube disahkan|[2,*]:n channel YouTube disahkan', $r->channels, ['n' => $r->channels]) : '') : '-'">
 
     <div style="display:flex;flex-direction:column;gap:20px">
 

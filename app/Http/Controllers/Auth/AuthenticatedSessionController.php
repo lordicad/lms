@@ -29,7 +29,7 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerate();
 
         // Every sign-in starts in Bahasa Melayu. The language toggle only changes the current
-        // session (see LocaleController), so it never carries into the next login — clearing the
+        // session (see LocaleController), so it never carries into the next login - clearing the
         // session override here drops any choice made on the login screen too.
         $request->session()->forget('locale');
 

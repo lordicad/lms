@@ -74,7 +74,7 @@
                 @error('email')<p class="pg-err">{{ $message }}</p>@enderror
             </div>
 
-            {{-- School — both roles --}}
+            {{-- School - both roles --}}
             <div class="tp-field">
                 <label for="school_id" class="tp-label">{{ __('Sekolah') }}</label>
                 <select id="school_id" name="school_id" class="tp-filter-select" style="width:100%" x-model="schoolId" @change="onContextChange()">
@@ -100,7 +100,7 @@
                         @error('position')<p class="pg-err">{{ $message }}</p>@enderror
                     </div>
                     {{-- Homeroom class: stored on the class (homeroom_teacher_id), assigned from here.
-                         One teacher per class and one class per teacher — the save reconciles both. --}}
+                         One teacher per class and one class per teacher - the save reconciles both. --}}
                     @php($homeroomId = old('homeroom_class_id', $user->homeroomClass?->id))
                     <div class="tp-field">
                         <label for="homeroom_class_id" class="tp-label">{{ __('Kelas guru kelas') }}</label>
@@ -128,7 +128,7 @@
                 </div>
             </template>
 
-            {{-- Tahun — students only --}}
+            {{-- Tahun - students only --}}
             <div class="tp-field" x-show="role === 'student'" x-cloak>
                 <label for="grade_level" class="tp-label">{{ __('Tahun') }}</label>
                 <select id="grade_level" name="grade_level" class="tp-filter-select" style="width:100%" x-model="gradeLevel" @change="onContextChange()">

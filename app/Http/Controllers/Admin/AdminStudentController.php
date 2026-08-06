@@ -45,7 +45,7 @@ class AdminStudentController extends Controller
         $search = trim((string) $request->query('q', ''));
 
         return view('admin.murid', [
-            // Counts are deliberately unfiltered — they describe the school, not the table.
+            // Counts are deliberately unfiltered - they describe the school, not the table.
             'totalStudents' => SchoolScope::users(User::where('role', User::ROLE_STUDENT))->count(),
             'countsByGrade' => $this->countsByGrade(),
 
@@ -85,7 +85,7 @@ class AdminStudentController extends Controller
     {
         return SchoolScope::users(User::where('role', User::ROLE_STUDENT))
             ->with('grade', 'schoolClass')
-            // Name, nickname or sign-in address — whichever the admin happens to have to hand.
+            // Name, nickname or sign-in address - whichever the admin happens to have to hand.
             ->when($search !== '', fn (Builder $q) => $q->where(
                 fn (Builder $w) => $w
                     ->where('name', 'like', "%{$search}%")
@@ -110,7 +110,7 @@ class AdminStudentController extends Controller
     /**
      * Top three per Tahun, each year filterable by its own subject.
      *
-     * Ranked on effort — videos watched + completed quiz attempts + favourites, equal weight. That
+     * Ranked on effort - videos watched + completed quiz attempts + favourites, equal weight. That
      * is a deliberate choice to reward taking part rather than scoring highest, and it means this
      * board will NOT agree with the /ranking one students see, which is points-based. The formula
      * is printed on the page so the difference is visible rather than mysterious.
@@ -123,7 +123,7 @@ class AdminStudentController extends Controller
             $slug = $request->string("subjek_{$grade->level}")->toString() ?: null;
 
             // Views, favourites and attempts all hang off a chapter, so one subject clause narrows
-            // each of them — it just reaches through a different relation each time.
+            // each of them - it just reaches through a different relation each time.
             $through = fn (string $relation): callable => function (Builder $query) use ($relation, $slug): Builder {
                 return $query->when($slug, fn (Builder $q) => $q->whereHas(
                     "{$relation}.chapter.subject",

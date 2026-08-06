@@ -67,7 +67,7 @@ class AdminReportService
     /**
      * Teacher contributors ranked by a transparent metric:
      *   contribution = Videos + Materials + Quizzes created.
-     * Tie-break: Videos, then Materials, then Quizzes, then full name, then id — fully deterministic.
+     * Tie-break: Videos, then Materials, then Quizzes, then full name, then id - fully deterministic.
      *
      * @return Collection<int, array<string, mixed>>
      */
@@ -224,7 +224,7 @@ class AdminReportService
     }
 
     /**
-     * Real oversight signals the admin can act on — never invented. Only non-empty ones show; if the
+     * Real oversight signals the admin can act on - never invented. Only non-empty ones show; if the
      * platform is entirely tidy a single "all clear" item is returned. Shared by the dashboard and
      * the exports so the report matches the page.
      *

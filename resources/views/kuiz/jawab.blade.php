@@ -15,7 +15,7 @@
         .qopt2.check .q2radio { border-radius:8px; }
         .qopt2:has(input:checked) .q2radio { background:#fff; border-color:#fff; color:var(--solid); }
         /* The question card. Flex/gap live here (not inline) so Alpine's x-show does not drop the
-           display back to block on reveal — which would collapse the gap and stack the rows. */
+           display back to block on reveal - which would collapse the gap and stack the rows. */
         .qcard { display:flex; flex-direction:column; gap:22px; }
         /* Footer question jumper */
         .qnum { width:44px; height:44px; border-radius:12px; cursor:pointer; font-family:'Geist',sans-serif; font-weight:800; font-size:15px; border:1.5px solid var(--wl-line-2); background:var(--wl-surface); color:#4A4B63; transition:all .12s; }
@@ -57,7 +57,7 @@
                         <span style="margin-left:auto;font-size:13px;font-weight:700;color:var(--wl-muted)" x-text="answeredCount() + ' ' + labels.answered">0 {{ __('dijawab') }}</span>
                     </div>
 
-                    {{-- Segmented progress: one bar per question — solid where answered, brighter on the
+                    {{-- Segmented progress: one bar per question - solid where answered, brighter on the
                          current one, faint for the rest. --}}
                     <div style="display:flex;gap:8px">
                         @for ($i = 0; $i < $questions->count(); $i++)

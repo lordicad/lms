@@ -55,8 +55,8 @@ class QuizBuilderController extends Controller
     }
 
     /**
-     * Leaving the builder. An interactive quiz with no questions is unusable — a teacher who
-     * created one and then backed out without adding any never really meant to keep it — so it is
+     * Leaving the builder. An interactive quiz with no questions is unusable - a teacher who
+     * created one and then backed out without adding any never really meant to keep it - so it is
      * discarded rather than left cluttering the list. A quiz that already holds questions (an edit
      * that was cancelled) is untouched.
      */

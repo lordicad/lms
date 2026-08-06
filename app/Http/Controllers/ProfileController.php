@@ -24,7 +24,7 @@ class ProfileController extends Controller
         $stats = null;
 
         // Real gamification stats for the student profile header. Badges are derived from these
-        // same numbers, so nothing is fabricated — a badge is earned only when its metric is met.
+        // same numbers, so nothing is fabricated - a badge is earned only when its metric is met.
         if ($user->isStudent()) {
             $row = app(LeaderboardService::class)->rowFor($user);
             $quizzesDone = QuizAttempt::where('student_id', $user->id)->completed()->count();
@@ -57,7 +57,7 @@ class ProfileController extends Controller
         }
 
         // Teachers get the WeLearn Teacher profile in their own portal shell. It shows their school
-        // record rather than offering it for editing, so no picker data is needed — only the
+        // record rather than offering it for editing, so no picker data is needed - only the
         // teacher's own relations.
         if ($user->isTeacher()) {
             $user->load(['subjects' => fn ($q) => $q->orderBy('sort_order'), 'homeroomClass.grade', 'school']);
@@ -66,7 +66,7 @@ class ProfileController extends Controller
         }
 
         // Students see their school record too rather than picking it, so the class/school/year
-        // lists the pickers needed are gone — only the student's own relations are read.
+        // lists the pickers needed are gone - only the student's own relations are read.
         $user->load('school', 'schoolClass.grade');
 
         return view('profil.edit', [
@@ -84,7 +84,7 @@ class ProfileController extends Controller
      * The student's own last few actions, newest first.
      *
      * Only things the app actually records: a video opened, a quiz finished, a video saved. There
-     * is no per-student download log — materials keep an aggregate count and nothing more — so
+     * is no per-student download log - materials keep an aggregate count and nothing more - so
      * downloads are deliberately absent rather than guessed at.
      *
      * @return \Illuminate\Support\Collection<int, array<string, mixed>>
@@ -166,7 +166,7 @@ class ProfileController extends Controller
 
         $rules = [
             // The display nickname, which the owner is free to change. Spaces are allowed: it is
-            // never typed to sign in — email is — and "Cikgu Ana" should be a valid name to show.
+            // never typed to sign in - email is - and "Cikgu Ana" should be a valid name to show.
             'username' => [
                 'required', 'string', 'min:3', 'max:30',
                 'regex:/^[\pL\pN ._-]+$/u',
@@ -185,8 +185,8 @@ class ProfileController extends Controller
         ];
 
         // Teachers and students edit their display name and photo, and a teacher their phone
-        // number. Everything else on those profiles — legal name, school, year, class, position,
-        // subjects, guardian contacts — is school record kept by the admin, so those keys are
+        // number. Everything else on those profiles - legal name, school, year, class, position,
+        // subjects, guardian contacts - is school record kept by the admin, so those keys are
         // never validated and never assigned here. Leaving them out of the rules is what enforces
         // it: a hand-crafted POST carrying school_id has nothing to bind to.
         //
@@ -201,7 +201,7 @@ class ProfileController extends Controller
 
         $validated = $request->validate($rules, $messages);
 
-        // Email is not in this list on purpose — see the rules above.
+        // Email is not in this list on purpose - see the rules above.
         $user->username = $validated['username'];
 
         if ($user->isAdmin()) {

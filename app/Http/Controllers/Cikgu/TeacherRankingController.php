@@ -46,7 +46,7 @@ class TeacherRankingController extends Controller
         );
 
         // Rank is stamped across the whole ranked set before this slice, so page two carries on at
-        // 51 rather than restarting — the number is the student's real position, not a row counter.
+        // 51 rather than restarting - the number is the student's real position, not a row counter.
         $page = Paginator::resolveCurrentPage();
         $rows = new LengthAwarePaginator(
             $ranked->forPage($page, self::PER_PAGE)->values(),
@@ -57,7 +57,7 @@ class TeacherRankingController extends Controller
             ['path' => Paginator::resolveCurrentPath(), 'query' => $request->query()],
         );
 
-        // Quiz filter options follow the Tahun and Subjek already picked — and only ever list the
+        // Quiz filter options follow the Tahun and Subjek already picked - and only ever list the
         // teacher's own quizzes, so the dropdown cannot offer one the board would show nothing for.
         $quizzes = Quiz::query()
             ->where('teacher_id', $request->user()->id)

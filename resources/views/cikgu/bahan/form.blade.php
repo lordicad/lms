@@ -57,7 +57,7 @@
                         @error('title') <span class="tp-error">{{ $message }}</span> @enderror
                     </div>
 
-                    {{-- Drag & drop more files into this chapter — each becomes a new material, so a
+                    {{-- Drag & drop more files into this chapter - each becomes a new material, so a
                          teacher can add a whole set of handouts from the edit page. --}}
                     <div class="tp-field">
                         <label class="tp-label">{{ __('Muat naik fail baharu (pilihan)') }}</label>

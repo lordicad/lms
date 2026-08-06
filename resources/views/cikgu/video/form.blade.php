@@ -247,7 +247,7 @@
             <div style="height:12px;width:100%;overflow:hidden;border-radius:999px;background:var(--tp-line)" role="progressbar" :aria-valuenow="progress" aria-valuemin="0" aria-valuemax="100">
                 {{-- Object syntax, not a string: Alpine applies a string :style with setAttribute,
                      which would replace the whole style attribute and leave the fill with no height
-                     and no colour — a bar that tracks progress perfectly and is invisible doing it. --}}
+                     and no colour - a bar that tracks progress perfectly and is invisible doing it. --}}
                 <div style="height:100%;border-radius:999px;background:#17907B;transition:width .15s" :style="{ width: progress + '%' }"></div>
             </div>
             <p class="tp-hint">{{ __('Jangan tutup halaman ini sehingga selesai.') }}</p>
@@ -433,7 +433,7 @@
                     /**
                      * Grab a still from the chosen video and hand it to the thumbnail input.
                      *
-                     * Done in the browser because the server has no ffmpeg — and it never needs
+                     * Done in the browser because the server has no ffmpeg - and it never needs
                      * one: the file is already here, and the captured frame rides along in the
                      * same multipart form as an ordinary image upload.
                      */
@@ -462,7 +462,7 @@
                     /**
                      * Grab a still from a video file and return it as an image, or null.
                      *
-                     * Done in the browser because the server has no ffmpeg — and never needs one:
+                     * Done in the browser because the server has no ffmpeg - and never needs one:
                      * the file is already here, and the frame rides along with the upload. A codec
                      * the browser cannot decode, or a seek that never lands, returns null and the
                      * video falls back to the subject artwork.

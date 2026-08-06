@@ -7,7 +7,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Str;
 
 /**
- * The ONLY way an admin (MOE oversight) account comes into existence — there is no admin
+ * The ONLY way an admin (MOE oversight) account comes into existence - there is no admin
  * self-registration. Promotes an existing user by email, or creates a fresh admin account.
  *
  *   php artisan lms:make-admin moe@example.gov.my
