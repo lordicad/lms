@@ -99,6 +99,20 @@
                         <input id="position" name="position" type="text" value="{{ old('position', $user->position) }}" class="tp-input">
                         @error('position')<p class="pg-err">{{ $message }}</p>@enderror
                     </div>
+                    {{-- Homeroom class: stored on the class (homeroom_teacher_id), assigned from here.
+                         One teacher per class and one class per teacher — the save reconciles both. --}}
+                    @php($homeroomId = old('homeroom_class_id', $user->homeroomClass?->id))
+                    <div class="tp-field">
+                        <label for="homeroom_class_id" class="tp-label">{{ __('Kelas guru kelas') }}</label>
+                        <select id="homeroom_class_id" name="homeroom_class_id" class="tp-filter-select" style="width:100%">
+                            <option value="">{{ __('Bukan guru kelas') }}</option>
+                            @foreach ($allClasses as $c)
+                                <option value="{{ $c['id'] }}" @selected((int) $homeroomId === (int) $c['id'])>{{ $c['label'] }}</option>
+                            @endforeach
+                        </select>
+                        <span class="tp-hint">{{ __('Setiap kelas hanya boleh ada seorang guru kelas.') }}</span>
+                        @error('homeroom_class_id')<p class="pg-err">{{ $message }}</p>@enderror
+                    </div>
                     <fieldset class="tp-field" style="border:1.5px solid var(--tp-line-2);border-radius:12px;padding:12px 14px">
                         <legend class="tp-label" style="padding:0 6px">{{ __('Subjek diajar') }}</legend>
                         <div style="display:flex;flex-wrap:wrap;gap:8px 16px;margin-top:6px">

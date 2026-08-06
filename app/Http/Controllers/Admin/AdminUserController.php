@@ -92,6 +92,7 @@ class AdminUserController extends Controller
         $user->password_changed_at = null;
         $user->save();
         $this->syncSubjects($user, $data);
+        $this->syncHomeroom($user, $data);
 
         // The only moment the password exists in plain text — hand it over now or never.
         return redirect()->route('admin.pengguna')
@@ -227,6 +228,7 @@ class AdminUserController extends Controller
 
         $user->save();
         $this->syncSubjects($user, $data);
+        $this->syncHomeroom($user, $data);
 
         // A reset leaves the admin holding a password the owner does not know yet, so it is handed
         // over the same way a brand new account is. An edit that left the password alone is silent.
@@ -319,6 +321,13 @@ class AdminUserController extends Controller
             'position' => ['nullable', 'string', 'max:100'],
             'subjects' => ['nullable', 'array'],
             'subjects.*' => ['integer', Rule::exists('subjects', 'id')],
+            // The class this teacher is homeroom of. Must be one of the admin's own school's classes.
+            'homeroom_class_id' => [
+                'nullable', 'integer',
+                Rule::exists('school_classes', 'id')->where(
+                    fn ($query) => $query->where('school_id', SchoolScope::currentSchoolId() ?? $request->input('school_id'))
+                ),
+            ],
             // Required for students: a student without a class also has no homeroom teacher, and
             // nothing else in the app can give them one — the profiles cannot set it and the only
             // other filler is ProfileBackfillSeeder.
@@ -411,6 +420,25 @@ class AdminUserController extends Controller
     {
         if ($user->role === User::ROLE_TEACHER) {
             $user->subjects()->sync($data['subjects'] ?? []);
+        }
+    }
+
+    /**
+     * Assign (or clear) the teacher's homeroom class. The relationship lives on the class, so this
+     * writes school_classes.homeroom_teacher_id. Both sides are one-to-one, so the teacher is first
+     * removed from any class they held — that also frees the unique index before the new class is
+     * set — and the chosen class then takes this teacher, replacing whoever held it before.
+     */
+    private function syncHomeroom(User $user, array $data): void
+    {
+        if ($user->role !== User::ROLE_TEACHER) {
+            return;
+        }
+
+        SchoolClass::where('homeroom_teacher_id', $user->id)->update(['homeroom_teacher_id' => null]);
+
+        if ($classId = $data['homeroom_class_id'] ?? null) {
+            SchoolClass::where('id', $classId)->update(['homeroom_teacher_id' => $user->id]);
         }
     }
 }
