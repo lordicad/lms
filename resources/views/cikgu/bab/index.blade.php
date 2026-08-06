@@ -70,7 +70,7 @@
                                 </div>
                             </div>
 
-                            <a href="{{ route('cikgu.bab.show', $chapter) }}" style="flex-shrink:0;display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 18px;border-radius:12px;border:1.5px solid {{ $c['accent'] }};color:{{ $c['accent'] }};background:var(--tp-surface);font-family:'Geist',sans-serif;font-weight:800;font-size:14px;text-decoration:none"><x-icon name="eye" class="h-4 w-4" />{{ __('Lihat') }}<x-icon name="chevron-right" class="h-4 w-4" /></a>
+                            <a href="{{ route('cikgu.bab.show', $chapter) }}" style="flex-shrink:0;display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 18px;border-radius:12px;border:1.5px solid {{ $c['accent'] }};color:{{ $c['accent'] }};background:var(--tp-surface);font-family:'Geist',sans-serif;font-weight:800;font-size:14px;text-decoration:none">{{ __('Lihat') }}</a>
                         </div>
                     @endforeach
                 </div>
