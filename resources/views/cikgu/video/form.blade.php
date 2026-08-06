@@ -2,6 +2,7 @@
 
 <x-cikgu-layout :title="$editing ? __('Sunting Video') : __('Video Baru')"
     :heading="$editing ? __('Sunting Video') : __('Video Baru')"
+    heading-icon="video"
     :sub="__('Rakaman kelas yang anda muat naik atau pautkan dari YouTube')">
 
     <form method="POST"
