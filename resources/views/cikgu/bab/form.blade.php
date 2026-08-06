@@ -1,5 +1,5 @@
 <x-cikgu-layout :title="__('Namakan Semula Bab')"
-    :heading="'Bab '.$chapter->number"
+    :heading="__('Bab :n', ['n' => $chapter->number])"
     :sub="__('Namakan semula bab supaya sepadan dengan sukatan KSSR sekolah anda')">
 
     <div class="tp-formwrap" style="max-width:560px">

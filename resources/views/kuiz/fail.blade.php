@@ -19,7 +19,7 @@
         <a href="{{ $backToQuizzes ? route('kuiz-saya.index') : route('bab.show', $chapter) }}" class="inline-flex items-center gap-2"
            style="border:1.8px solid #17907B;background:#fff;border-radius:12px;padding:7px 15px;font-family:'Geist',sans-serif;font-weight:800;font-size:13px;color:#0F7A68;text-decoration:none">
             <x-icon name="arrow-left" class="h-4 w-4" />
-            {{ $backToQuizzes ? __('Kuiz Saya') : 'Bab '.$chapter->number.': '.$chapter->title }}
+            {{ $backToQuizzes ? __('Kuiz Saya') : __('Bab :number: :title', ['number' => $chapter->number, 'title' => $chapter->title]) }}
         </a>
 
         <div class="card card-pad mt-4">

@@ -208,7 +208,7 @@ class ChapterController extends Controller
         return response()->json(
             $chapters->map(fn (Chapter $chapter) => [
                 'id' => $chapter->id,
-                'label' => "Bab {$chapter->number}: {$chapter->title}",
+                'label' => __('Bab :number: :title', ['number' => $chapter->number, 'title' => $chapter->title]),
             ])->values(),
         );
     }

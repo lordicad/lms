@@ -66,7 +66,7 @@
                         {{-- Detail row, each item led by an icon. --}}
                         <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
                             <span class="tp-meta" style="display:inline-flex;align-items:center;gap:6px"><x-icon name="graduation" class="h-4 w-4" style="color:#0F7A68" />{{ $material->chapter->grade->name }}</span>
-                            <span class="tp-meta" style="display:inline-flex;align-items:center;gap:6px"><x-icon name="book" class="h-4 w-4" style="color:#0F7A68" />Bab {{ $material->chapter->number }}</span>
+                            <span class="tp-meta" style="display:inline-flex;align-items:center;gap:6px"><x-icon name="book" class="h-4 w-4" style="color:#0F7A68" />{{ __('Bab :n', ['n' => $material->chapter->number]) }}</span>
                             @if ($material->lesson)
                                 <span class="tp-meta" style="display:inline-flex;align-items:center;gap:6px;max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><x-icon name="file" class="h-4 w-4" style="color:#0F7A68;flex-shrink:0" />{{ $material->lesson->title }}</span>
                             @endif

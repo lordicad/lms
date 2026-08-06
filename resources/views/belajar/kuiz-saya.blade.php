@@ -130,7 +130,7 @@
                                         <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:14.5px;color:var(--wl-ink)">{{ $quiz->localizedTitle() }}</span>
                                         <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
                                             <span style="background:{{ $tagBg }};color:{{ $tagColor }};border-radius:999px;padding:3px 11px;font-family:'Geist',sans-serif;font-size:11.5px;font-weight:800">{{ $sub->displayName() }}</span>
-                                            <span style="display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:700;color:var(--wl-muted)"><x-icon name="book" style="width:15px;height:15px;color:#0F7A68" />Bab {{ $quiz->chapter->number }}</span>
+                                            <span style="display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:700;color:var(--wl-muted)"><x-icon name="book" style="width:15px;height:15px;color:#0F7A68" />{{ __('Bab :n', ['n' => $quiz->chapter->number]) }}</span>
                                             @if ($attempt->completed_at)
                                                 <span style="display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:700;color:var(--wl-muted)"><x-icon name="clock" style="width:15px;height:15px;color:#0F7A68" />{{ $attempt->completed_at->translatedFormat('d M Y') }}</span>
                                             @endif
@@ -175,7 +175,7 @@
                             <div style="padding:18px 20px;display:flex;flex-direction:column;gap:10px">
                                 <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
                                     <span style="background:{{ $tagBg }};color:{{ $tagColor }};border-radius:999px;padding:4px 12px;font-family:'Geist',sans-serif;font-size:11.5px;font-weight:800">{{ $sub->displayName() }}</span>
-                                    <span style="font-size:12px;font-weight:700;color:var(--wl-muted)">Bab {{ $suggested->chapter->number }}</span>
+                                    <span style="font-size:12px;font-weight:700;color:var(--wl-muted)">{{ __('Bab :n', ['n' => $suggested->chapter->number]) }}</span>
                                 </div>
                                 <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:16px;color:var(--wl-ink)">{{ $suggested->title }}</span>
                                 <span style="font-size:12.5px;font-weight:700;color:var(--wl-muted)">@if ($suggested->isInteractive()){{ $suggested->questions_count }} {{ __('soalan') }}@if ($suggested->duration_minutes) · {{ $suggested->duration_minutes }} {{ __('minit') }}@endif @else {{ __('Kuiz Bercetak') }} @endif</span>

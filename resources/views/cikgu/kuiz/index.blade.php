@@ -54,7 +54,7 @@
                         <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
                             <span class="tp-tag" style="background:rgb({{ $subject->rgb }} / .14);color:rgb({{ $subject->rgb }})">{{ $subject->name }}</span>
                             <span class="tp-meta" style="display:inline-flex;align-items:center;gap:6px"><x-icon name="graduation" class="h-4 w-4" style="color:#0F7A68" />{{ $quiz->chapter->grade->name }}</span>
-                            <span class="tp-meta" style="display:inline-flex;align-items:center;gap:6px"><x-icon name="book" class="h-4 w-4" style="color:#0F7A68" />Bab {{ $quiz->chapter->number }}</span>
+                            <span class="tp-meta" style="display:inline-flex;align-items:center;gap:6px"><x-icon name="book" class="h-4 w-4" style="color:#0F7A68" />{{ __('Bab :n', ['n' => $quiz->chapter->number]) }}</span>
                             @if ($quiz->isInteractive())
                                 <span class="tp-meta" style="display:inline-flex;align-items:center;gap:6px"><x-icon name="help-circle" class="h-4 w-4" style="color:#0F7A68" />{{ __(':count soalan', ['count' => $quiz->questions_count]) }}</span>
                                 <span class="tp-meta" style="display:inline-flex;align-items:center;gap:6px"><x-icon name="users" class="h-4 w-4" style="color:var(--tp-muted-2)" />{{ __(':count percubaan', ['count' => $quiz->completed_attempts_count]) }}</span>

@@ -39,7 +39,7 @@
                         <div style="padding:50px;display:flex;flex-direction:column;justify-content:center;gap:14px;min-width:0">
                             <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
                                 <span class="hero-subpill" style="background:var(--wl-surface);color:#2E6CA8;border-radius:999px;padding:5px 13px;font-family:'Geist',sans-serif;font-size:12px;font-weight:800"><x-subject-emoji :subject="$hs" class="text-sm" /> {{ $hs->displayName() }}</span>
-                                <span class="hero-babpill" style="background:var(--wl-surface);color:#4A5A6B;border-radius:999px;padding:5px 13px;font-family:'Geist',sans-serif;font-size:12px;font-weight:800">Bab {{ $hero->chapter->number }}</span>
+                                <span class="hero-babpill" style="background:var(--wl-surface);color:#4A5A6B;border-radius:999px;padding:5px 13px;font-family:'Geist',sans-serif;font-size:12px;font-weight:800">{{ __('Bab :n', ['n' => $hero->chapter->number]) }}</span>
                                 @unless ($heroResuming)
                                     <span style="background:#17907B;color:#fff;border-radius:999px;padding:5px 13px;font-family:'Geist',sans-serif;font-size:11.5px;font-weight:800;letter-spacing:.08em">TRENDING</span>
                                 @endunless

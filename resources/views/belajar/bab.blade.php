@@ -1,4 +1,4 @@
-<x-dynamic-component :component="auth()->user()->isTeacher() ? 'app-layout' : 'student-layout'" :title="'Bab '.$chapter->number.': '.$chapter->title">
+<x-dynamic-component :component="auth()->user()->isTeacher() ? 'app-layout' : 'student-layout'" :title="__('Bab :number: :title', ['number' => $chapter->number, 'title' => $chapter->title])">
     @php($col = $subject->color ?: '#17907B')
     @php($grad = "linear-gradient(135deg, color-mix(in oklab, {$col} 30%, #fff), color-mix(in oklab, {$col} 12%, #fff))")
     @php($tagBg = "color-mix(in oklab, {$col} var(--pill-bw), var(--pill-bb))")
@@ -9,7 +9,7 @@
 
         <div style="background:var(--wl-surface);border:1px solid var(--wl-line);border-radius:18px;padding:20px 24px;display:flex;flex-direction:column;gap:4px;box-shadow:0 3px 12px rgba(46,44,80,.04)">
             <span style="font-family:'Geist',sans-serif;font-size:13px;font-weight:800;color:#2E6CA8"><x-subject-emoji :subject="$subject" class="text-sm" /> {{ $subject->name }} · {{ $grade->name }}</span>
-            <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:24px;font-weight:800;letter-spacing:-.01em;color:var(--wl-ink)">Bab {{ $chapter->number }}: {{ $chapter->title }}</h2>
+            <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:24px;font-weight:800;letter-spacing:-.01em;color:var(--wl-ink)">{{ __('Bab :number: :title', ['number' => $chapter->number, 'title' => $chapter->title]) }}</h2>
         </div>
 
         {{-- Video pelajaran --}}

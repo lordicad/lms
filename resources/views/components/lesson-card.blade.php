@@ -68,7 +68,7 @@
 
             <div class="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1">
                 <span class="inline-flex items-center rounded-full bg-subject-wash px-2.5 py-0.5 text-[11px] font-extrabold text-subject-ink">{{ $subject->displayName() }}</span>
-                <span class="text-[11px] font-bold text-ink-2">Bab {{ $lesson->chapter->number }}</span>
+                <span class="text-[11px] font-bold text-ink-2">{{ __('Bab :n', ['n' => $lesson->chapter->number]) }}</span>
                 @if ($showViews)
                     <span class="ml-auto text-[11px] font-bold text-ink-2">👁 {{ $lesson->views_count }}</span>
                 @endif

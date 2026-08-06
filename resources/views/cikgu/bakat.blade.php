@@ -11,28 +11,28 @@
                 'icon' => '🎬', 'title' => __('Video Paling Ditonton'), 'sub' => __('Tontonan pada video anda'),
                 'items' => $topVideos->map(fn ($l) => [
                     'subject' => $l->chapter->subject, 'title' => $l->title,
-                    'detail' => $l->chapter->subject->name.' · Bab '.$l->chapter->number, 'value' => $l->views_count,
+                    'detail' => $l->chapter->subject->name.' · '.__('Bab :n', ['n' => $l->chapter->number]), 'value' => $l->views_count,
                 ]),
             ],
             [
                 'icon' => '❤️', 'title' => __('Video Paling Digemari'), 'sub' => __('Murid menandakan ♥ pada video anda'),
                 'items' => $topFavourites->map(fn ($e) => [
                     'subject' => $e->lesson->chapter->subject, 'title' => $e->lesson->title,
-                    'detail' => $e->lesson->chapter->subject->name.' · Bab '.$e->lesson->chapter->number, 'value' => $e->favourites,
+                    'detail' => $e->lesson->chapter->subject->name.' · '.__('Bab :n', ['n' => $e->lesson->chapter->number]), 'value' => $e->favourites,
                 ]),
             ],
             [
                 'icon' => '📄', 'title' => __('Bahan Paling Dimuat Turun'), 'sub' => __('Muat turun pada bahan anda'),
                 'items' => $topMaterials->map(fn ($m) => [
                     'subject' => $m->chapter->subject, 'title' => $m->title,
-                    'detail' => $m->chapter->subject->name.' · Bab '.$m->chapter->number, 'value' => $m->download_count,
+                    'detail' => $m->chapter->subject->name.' · '.__('Bab :n', ['n' => $m->chapter->number]), 'value' => $m->download_count,
                 ]),
             ],
             [
                 'icon' => '📝', 'title' => __('Kuiz Paling Dicuba'), 'sub' => __('Percubaan murid pada kuiz anda'),
                 'items' => $topQuizzes->map(fn ($q) => [
                     'subject' => $q->chapter->subject, 'title' => $q->title,
-                    'detail' => $q->chapter->subject->name.' · Bab '.$q->chapter->number, 'value' => $q->completed_attempts_count,
+                    'detail' => $q->chapter->subject->name.' · '.__('Bab :n', ['n' => $q->chapter->number]), 'value' => $q->completed_attempts_count,
                 ]),
             ],
         ];
