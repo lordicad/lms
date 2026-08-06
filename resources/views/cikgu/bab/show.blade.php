@@ -3,7 +3,13 @@
     :heading="$chapter->title"
     :sub="__('Kandungan anda dalam bab ini')">
 
-    <div style="display:flex;flex-direction:column;gap:22px">
+    <div style="display:flex;flex-direction:column;gap:22px"
+         x-data="{
+             lesson: null,
+             open(data) { this.lesson = data; document.body.classList.add('overflow-hidden'); },
+             close() { this.lesson = null; document.body.classList.remove('overflow-hidden'); },
+         }"
+         @keydown.escape.window="close()">
         <a href="{{ route('cikgu.bab.index', ['subjek' => $subject->slug, 'tahun' => $grade->level]) }}" class="tp-back">← {{ __('Semua Bab') }}</a>
 
         <span style="align-self:flex-start;background:#E4EEF9;color:#2E6CA8;border-radius:999px;padding:5px 14px;font-family:'Geist',sans-serif;font-size:12.5px;font-weight:800;display:inline-flex;align-items:center;gap:6px"><x-icon :name="$subject->iconName()" class="h-[15px] w-[15px]" />{{ $subject->name }} – {{ $grade->displayName() }} – {{ __('Bab :number', ['number' => $chapter->number]) }}</span>
@@ -39,7 +45,14 @@
                                     <span class="tp-meta" style="display:inline-flex;align-items:center;gap:6px"><x-icon name="calendar" class="h-4 w-4" style="color:#0F7A68" />{{ $lesson->created_at->format('d/m/Y') }}</span>
                                 </div>
                             </div>
-                            <a href="{{ route('video.show', $lesson) }}" class="tp-btn-outline" style="flex-shrink:0"><x-icon name="eye" class="h-4 w-4" />{{ __('Lihat') }}</a>
+                            <button type="button" class="tp-btn-outline" style="flex-shrink:0"
+                                    @click="open(@js([
+                                        'title' => $lesson->title,
+                                        'subtitle' => collect([$subject->name, $grade->displayName(), __('Bab :number', ['number' => $chapter->number])])->filter()->implode(' · '),
+                                        'kind' => $lesson->isYoutube() ? 'youtube' : 'upload',
+                                        'src' => $lesson->isYoutube() ? $lesson->embedUrl() : $lesson->videoUrl(),
+                                        'poster' => $lesson->thumbnailUrl(),
+                                    ]))"><x-icon name="eye" class="h-4 w-4" />{{ __('Lihat') }}</button>
                         </div>
                     @endforeach
                 </div>
@@ -118,5 +131,24 @@
                 </div>
             @endif
         </section>
+
+        {{-- Video preview modal — a look, not a lesson (no view counted); x-if so closing destroys
+             the player and its audio. Same shell the admin content preview uses. --}}
+        <template x-if="lesson">
+            <x-content-preview obj="lesson" :pill="'🎬 '.__('Video')">
+                <div style="overflow-y:auto;background:#000;height:min(72vh,620px)">
+                    <template x-if="lesson.kind === 'youtube'">
+                        <iframe style="width:100%;height:100%;border:0;display:block" :src="lesson.src" :title="lesson.title"
+                                referrerpolicy="strict-origin-when-cross-origin"
+                                allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowfullscreen></iframe>
+                    </template>
+                    <template x-if="lesson.kind === 'upload'">
+                        <video style="width:100%;height:100%;object-fit:contain;background:#000;display:block" controls preload="metadata"
+                               :src="lesson.src" :poster="lesson.poster"></video>
+                    </template>
+                </div>
+            </x-content-preview>
+        </template>
     </div>
 </x-cikgu-layout>
