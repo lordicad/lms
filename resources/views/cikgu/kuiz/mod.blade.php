@@ -1,5 +1,6 @@
 <x-cikgu-layout :title="__('Kuiz Baru')"
     :heading="__('Kuiz Baru')"
+    heading-icon="quiz"
     :sub="__('Pilih jenis kuiz yang anda mahu cipta')">
 
     @php
