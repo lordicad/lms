@@ -243,6 +243,9 @@
             }
             .kf-type:hover  { border-color:#B9D9D0; }
             .kf-type.is-on  { border-color:#17907B; background:#F1FAF7; }
+            /* Dark mode: the light-green selected fill hid the light ink; use a deep teal tint. */
+            html.theme-dark .kf-type.is-on { border-color:#2BB39B; background:rgba(43,179,155,.14); }
+            html.theme-dark .kf-type:hover { border-color:#2BB39B; }
             .kf-type-row    { display:flex; align-items:center; gap:9px; }
             .kf-type-title  { font-weight:800; font-size:14.5px; color:var(--tp-ink); }
             .kf-type-desc   { font-size:12.5px; color:var(--tp-muted-2); line-height:1.45; }
