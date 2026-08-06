@@ -2,7 +2,7 @@
 
 <x-cikgu-layout
     :title="__('Utama')"
-    :heading="__('Selamat datang, :name', ['name' => 'Cikgu '.$teacher->username])"
+    :heading="__('Selamat datang, Cikgu :name', ['name' => $teacher->username])"
     heading-icon="wave.png"
     :sub="__('Ringkasan kelas anda pada hari ini, :date', ['date' => now()->translatedFormat('l, j F Y')])">
 
