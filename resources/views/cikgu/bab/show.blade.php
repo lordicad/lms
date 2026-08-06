@@ -41,8 +41,8 @@
                                         <span class="tp-tag-neutral">{{ __('Draf') }}</span>
                                     @endif
                                     <span class="tp-meta" style="display:inline-flex;align-items:center;gap:6px"><x-icon :name="$lesson->isYoutube() ? 'youtube' : 'upload'" class="h-4 w-4" style="color:#0F7A68" />{{ $lesson->isYoutube() ? 'YouTube' : __('Muat naik') }}</span>
-                                    <span class="tp-meta" style="display:inline-flex;align-items:center;gap:6px"><x-icon name="eye" class="h-4 w-4" style="color:#0F7A68" />{{ $lesson->views_count }}</span>
                                     <span class="tp-meta" style="display:inline-flex;align-items:center;gap:6px"><x-icon name="calendar" class="h-4 w-4" style="color:#0F7A68" />{{ $lesson->created_at->format('d/m/Y') }}</span>
+                                    <span class="tp-meta" style="display:inline-flex;align-items:center;gap:6px"><x-icon name="eye" class="h-4 w-4" style="color:#0F7A68" />{{ $lesson->views_count }}</span>
                                 </div>
                             </div>
                             <button type="button" class="tp-btn-outline" style="flex-shrink:0"
