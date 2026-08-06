@@ -51,7 +51,8 @@
 
     @if ($rows->isEmpty())
         <div class="tp-empty">
-            <span style="font-size:30px">🏁</span>
+            <img src="{{ asset('images/podium.png') }}" alt="" style="width:46px;height:46px;object-fit:contain">
+
             <h3 class="tp-g" style="font-size:19px;font-weight:800;color:var(--tp-ink)">{{ __('Belum ada data ranking') }}</h3>
             <p style="margin:0;font-size:14.5px;color:var(--tp-muted);max-width:420px">{{ __('Ranking akan muncul setelah murid menyelesaikan kuiz interaktif yang diterbitkan.') }}</p>
         </div>
