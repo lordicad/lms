@@ -77,11 +77,26 @@ class Subject extends Model
 
     /**
      * The compact label for cards, tabs and options: the short name if the subject has one,
-     * otherwise the full name. Names are never translated (decision A1).
+     * otherwise the full name. Both read through the accessors below, so they translate.
      */
     public function displayName(): string
     {
         return $this->short_name ?: $this->name;
+    }
+
+    /**
+     * Subject names are stored in Bahasa Melayu; the reader sees them in the app language. The
+     * translation lives in the lang files keyed by the stored name — an unmapped name (e.g. an
+     * acronym short name) falls back to the stored value, so nothing ever goes blank.
+     */
+    public function getNameAttribute(?string $value): ?string
+    {
+        return $value === null ? null : __($value);
+    }
+
+    public function getShortNameAttribute(?string $value): ?string
+    {
+        return $value ? __($value) : $value;
     }
 
     /**
