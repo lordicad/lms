@@ -1,5 +1,6 @@
-<x-cikgu-layout :title="__('Soalan:').' '.$quiz->title"
+<x-cikgu-layout :title="__('Soalan:').' '.$quiz->localizedTitle()"
     :heading="__('Tambah Soalan')"
+    heading-icon="quiz"
     :sub="__('Bina soalan aneka pilihan. Semua soalan disimpan serentak.')">
 
     {{-- Back link keeps its original left position; the content block below is centred in the wide
