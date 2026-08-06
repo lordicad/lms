@@ -81,7 +81,7 @@
                                     'correct' => (bool) $option->is_correct,
                                 ])->all(),
                             ])->all(),
-                        ]))"><x-icon name="eye" class="h-4 w-4" />{{ __('Lihat Soalan') }}</button>
+                        ]))">{{ __('Lihat Soalan') }}</button>
                         <a href="{{ route('cikgu.kuiz.statistik', $quiz) }}" class="tp-icon-action" style="flex-shrink:0;border:1.5px solid var(--tp-line-2)" title="{{ __('Statistik') }}">
                             <x-icon name="chart" class="h-[18px] w-[18px]" />
                             <span class="sr-only">{{ __('Statistik') }}</span>
