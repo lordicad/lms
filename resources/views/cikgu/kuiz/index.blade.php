@@ -40,7 +40,7 @@
 
                     <div style="display:flex;flex-direction:column;gap:8px;min-width:0;flex:1">
                         <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-                            <span class="tp-g" style="font-weight:800;font-size:17px;color:var(--tp-ink)">{{ $quiz->title }}</span>
+                            <span class="tp-g" style="font-weight:800;font-size:17px;color:var(--tp-ink)">{{ $quiz->localizedTitle() }}</span>
                             @if ($quiz->isInteractive())
                                 <span class="tp-tag" style="background:#DCF2EE;color:#0F7A68">{{ __('Interaktif') }}</span>
                             @else
@@ -70,14 +70,14 @@
 
                     @if ($quiz->isInteractive())
                         <button type="button" style="flex-shrink:0;display:inline-flex;align-items:center;gap:7px;min-height:42px;border-radius:11px;border:1.5px solid #0F7A68;background:var(--tp-surface);color:#0F7A68;font-family:'Geist',sans-serif;font-weight:800;font-size:13px;padding:0 16px;cursor:pointer" @click="open(@js([
-                            'title' => $quiz->title,
+                            'title' => $quiz->localizedTitle(),
                             'subtitle' => collect([$quiz->chapter->subject->displayName(), $quiz->chapter->grade->displayName(), __(':count soalan', ['count' => $quiz->questions_count])])->filter()->implode(' · '),
                             'questions' => $quiz->questions->map(fn ($question) => [
-                                'text' => $question->question_text,
+                                'text' => $question->localizedText(),
                                 'points' => $question->points,
                                 'options' => $question->options->map(fn ($option) => [
                                     'letter' => $option->letter(),
-                                    'text' => $option->option_text,
+                                    'text' => $option->localizedText($question->source_locale),
                                     'correct' => (bool) $option->is_correct,
                                 ])->all(),
                             ])->all(),

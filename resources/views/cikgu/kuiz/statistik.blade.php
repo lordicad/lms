@@ -1,5 +1,5 @@
-<x-cikgu-layout :title="__('Statistik:').' '.$quiz->title"
-    :heading="$quiz->title"
+<x-cikgu-layout :title="__('Statistik:').' '.$quiz->localizedTitle()"
+    :heading="$quiz->localizedTitle()"
     :sub="__('Prestasi murid pada kuiz ini')">
 
     <div style="display:flex;flex-direction:column;gap:20px">
@@ -56,7 +56,7 @@
                         <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px">
                             <div style="min-width:0;flex:1">
                                 <p style="margin:0;font-size:13px;font-weight:700;color:var(--tp-muted)">{{ __('Soalan :number', ['number' => $index + 1]) }}</p>
-                                <p class="tp-g" style="margin:4px 0 0;font-weight:800;font-size:15px;color:var(--tp-ink)">{{ $question->question_text }}</p>
+                                <p class="tp-g" style="margin:4px 0 0;font-weight:800;font-size:15px;color:var(--tp-ink)">{{ $question->localizedText() }}</p>
                             </div>
                             <span style="flex-shrink:0;background:{{ $barBg }};color:{{ $barFg }};border-radius:999px;padding:5px 13px;font-family:'Geist',sans-serif;font-size:12px;font-weight:800">{{ __(':rate% betul', ['rate' => $rate]) }}</span>
                         </div>

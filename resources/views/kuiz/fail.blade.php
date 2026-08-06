@@ -1,4 +1,4 @@
-<x-dynamic-component :component="auth()->user()->isTeacher() ? 'app-layout' : 'student-layout'" :title="$quiz->title">
+<x-dynamic-component :component="auth()->user()->isTeacher() ? 'app-layout' : 'student-layout'" :title="$quiz->localizedTitle()">
     @once
         {{-- Dark mode on this page: lift the near-black card a little and calm the bright brand
              teal used by the Download button (scoped via the design-system --c-* vars). --}}

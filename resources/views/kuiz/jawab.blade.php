@@ -1,4 +1,4 @@
-<x-student-layout :title="$quiz->title">
+<x-student-layout :title="$quiz->localizedTitle()">
     @php($isDark = ($theme ?? 'light') === 'dark')
     <style>
         /* Answer options: a colour-tinted card each, turning solid when picked (colours set per

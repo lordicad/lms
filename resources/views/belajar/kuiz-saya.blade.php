@@ -177,7 +177,7 @@
                                     <span style="background:{{ $tagBg }};color:{{ $tagColor }};border-radius:999px;padding:4px 12px;font-family:'Geist',sans-serif;font-size:11.5px;font-weight:800">{{ $sub->displayName() }}</span>
                                     <span style="font-size:12px;font-weight:700;color:var(--wl-muted)">{{ __('Bab :n', ['n' => $suggested->chapter->number]) }}</span>
                                 </div>
-                                <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:16px;color:var(--wl-ink)">{{ $suggested->title }}</span>
+                                <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:16px;color:var(--wl-ink)">{{ $suggested->localizedTitle() }}</span>
                                 <span style="font-size:12.5px;font-weight:700;color:var(--wl-muted)">@if ($suggested->isInteractive()){{ $suggested->questions_count }} {{ __('soalan') }}@if ($suggested->duration_minutes) · {{ $suggested->duration_minutes }} {{ __('minit') }}@endif @else {{ __('Kuiz Bercetak') }} @endif</span>
                                 <a href="{{ route('kuiz.intro', ['quiz' => $suggested, 'from' => 'quizzes']) }}" class="wl-btn-primary" style="margin-top:6px;width:100%;min-height:46px;display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:12px;background:#17907B;color:#fff;font-family:'Geist',sans-serif;font-weight:800;font-size:14px;text-decoration:none">{{ $suggested->isFile() ? __('Lihat Kuiz') : __('Mula Kuiz') }}<x-icon name="arrow-right" style="width:16px;height:16px" /></a>
                             </div>

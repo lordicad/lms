@@ -1,4 +1,4 @@
-<x-dynamic-component :component="auth()->user()->isTeacher() ? 'app-layout' : 'student-layout'" :title="$quiz->title">
+<x-dynamic-component :component="auth()->user()->isTeacher() ? 'app-layout' : 'student-layout'" :title="$quiz->localizedTitle()">
     @php($col = $subject->color ?: '#17907B')
     @php($isDark = ($theme ?? 'light') === 'dark')
     @php($tagBg = "color-mix(in oklab, {$col} var(--pill-bw), var(--pill-bb))")

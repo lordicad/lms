@@ -84,17 +84,17 @@
                                 <button type="button"
                                         style="justify-self:center;display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 14px;border-radius:10px;border:1.5px solid var(--tp-line-2);background:var(--tp-surface);color:var(--tp-teal);font-family:'Geist',sans-serif;font-weight:800;font-size:12.5px;cursor:pointer;white-space:nowrap"
                                         @click="open(@js([
-                                            'title' => $quiz->title,
+                                            'title' => $quiz->localizedTitle(),
                                             'subtitle' => collect([$quiz->teacher?->name, $quiz->chapter->subject->displayName(), $quiz->chapter->grade->displayName()])->filter()->implode(' · '),
                                             'type' => $quiz->type,
                                             'downloadUrl' => $quiz->isFile() ? route('muat-turun.kuiz', $quiz) : null,
                                             'questions' => $quiz->questions->map(fn ($question) => [
-                                                'text' => $question->question_text,
+                                                'text' => $question->localizedText(),
                                                 'multiple' => $question->isMultiple(),
                                                 'points' => $question->points,
                                                 'options' => $question->options->map(fn ($option) => [
                                                     'letter' => $option->letter(),
-                                                    'text' => $option->option_text,
+                                                    'text' => $option->localizedText($question->source_locale),
                                                     'correct' => (bool) $option->is_correct,
                                                 ])->all(),
                                             ])->all(),
