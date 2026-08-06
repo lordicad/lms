@@ -120,7 +120,7 @@
         {{-- Preview modal: gradient header + black video body, the shared admin shell. x-if so
              closing destroys the player and stops its audio. --}}
         <template x-if="lesson">
-            <x-content-preview obj="lesson" :pill="__('Video')">
+            <x-content-preview obj="lesson">
                 <div style="overflow-y:auto;background:#000;height:min(72vh,620px)">
                     <template x-if="lesson.kind === 'youtube'">
                         <iframe style="width:100%;height:100%;border:0;display:block" :src="lesson.src" :title="lesson.title"

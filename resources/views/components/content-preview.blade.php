@@ -1,4 +1,4 @@
-@props(['obj', 'pill'])
+@props(['obj', 'pill' => null])
 
 @php($isDark = ($theme ?? 'light') === 'dark')
 
@@ -18,7 +18,7 @@
         <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding:13px 22px;background:{{ $isDark ? 'linear-gradient(120deg,#243B52,#2E5273)' : 'linear-gradient(120deg,#5A9BD8,#7DB4E6)' }};flex-shrink:0">
             <div style="display:flex;flex-direction:column;gap:4px;min-width:0">
                 <div style="display:flex;align-items:center;gap:10px;min-width:0">
-                    <span style="flex-shrink:0;background:rgba(255,255,255,.28);color:#fff;border-radius:999px;padding:3px 11px;font-family:'Geist',sans-serif;font-size:11px;font-weight:800;letter-spacing:.02em">{{ $pill }}</span>
+                    @if ($pill)<span style="flex-shrink:0;background:rgba(255,255,255,.28);color:#fff;border-radius:999px;padding:3px 11px;font-family:'Geist',sans-serif;font-size:11px;font-weight:800;letter-spacing:.02em">{{ $pill }}</span>@endif
                     <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:18px;font-weight:800;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 2px rgba(0,0,0,.1)" x-text="{{ $obj }}.title"></h2>
                 </div>
                 <span style="font-size:12.5px;color:rgba(255,255,255,.92);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" x-text="{{ $obj }}.subtitle"></span>
