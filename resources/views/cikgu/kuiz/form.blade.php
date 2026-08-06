@@ -5,6 +5,7 @@
 
 <x-cikgu-layout :title="$editing ? __('Sunting Kuiz') : __('Kuiz Baru')"
     :heading="$editing ? __('Sunting Kuiz') : __('Kuiz Baru')"
+    heading-icon="quiz"
     :sub="__('Kuiz interaktif yang menanda sendiri, dan kuiz bercetak')">
 
     <form method="POST"
