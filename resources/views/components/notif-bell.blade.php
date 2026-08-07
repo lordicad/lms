@@ -47,7 +47,7 @@
 
         <div style="max-height:360px;overflow-y:auto">
             @forelse ($items as $n)
-                @php($m = $meta[$n->type] ?? ['icon' => '🔔', 'tint' => '#F1F0E8', 'text' => $n->title])
+                @php($m = $meta[$n->type] ?? ['icon' => 'bell', 'tint' => '#F1F0E8', 'text' => $n->title])
                 <a href="{{ $n->url ?: $allUrl }}"
                    style="display:flex;align-items:flex-start;gap:11px;padding:12px 18px;border-bottom:1px solid rgba(46,44,80,.05);text-decoration:none;{{ $n->read_at ? '' : 'background:var(--tp-surface-2, var(--wl-surface-2, #FBFAF6))' }}">
                     {{-- 'icon' may be a line-icon name (rendered as an SVG) or an emoji. --}}
@@ -59,7 +59,7 @@
                 </a>
             @empty
                 <div style="padding:30px 18px;text-align:center;color:{{ $muted }}">
-                    <div style="font-size:24px;margin-bottom:6px">🔔</div>
+                    <img src="{{ asset('images/bell.png') }}" alt="" style="width:38px;height:38px;object-fit:contain;margin-bottom:6px">
                     <span style="font-size:13px">{{ __('Tiada notifikasi lagi') }}</span>
                 </div>
             @endforelse
