@@ -106,6 +106,10 @@ class LessonController extends Controller
 
         $lesson = Lesson::create($data);
 
+        if ($lesson->is_published) {
+            \App\Models\ContentNotification::announce($lesson, \App\Models\ContentNotification::TYPE_VIDEO);
+        }
+
         return $this->savedRedirect(
             __('Video ":title" berjaya disimpan.', ['title' => $lesson->title]),
             $banner,
@@ -141,6 +145,12 @@ class LessonController extends Controller
             }
 
             $saved[] = Lesson::create($data);
+        }
+
+        foreach ($saved as $lesson) {
+            if ($lesson->is_published) {
+                \App\Models\ContentNotification::announce($lesson, \App\Models\ContentNotification::TYPE_VIDEO);
+            }
         }
 
         return $this->savedRedirect(
@@ -292,6 +302,12 @@ class LessonController extends Controller
         $this->authorize('update', $lesson);
 
         $lesson->update(['is_published' => ! $lesson->is_published]);
+
+        // A draft published later becomes visible now; announce() dedupes so a hide/show cycle
+        // never re-notifies.
+        if ($lesson->is_published) {
+            \App\Models\ContentNotification::announce($lesson, \App\Models\ContentNotification::TYPE_VIDEO);
+        }
 
         return back()->with('status', $lesson->is_published
             ? __('Video telah diterbitkan. Murid boleh menontonnya sekarang.')

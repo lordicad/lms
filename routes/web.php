@@ -103,6 +103,10 @@ Route::middleware(['auth', 'role:student'])->group(function () {
     Route::get('/kuiz-saya', StudentQuizController::class)->name('kuiz-saya.index');
     Route::get('/cari', SearchController::class)->name('cari.index');
 
+    // New-content notifications (bell + full page).
+    Route::get('/notifikasi', [App\Http\Controllers\Belajar\NotificationController::class, 'index'])->name('belajar.notifikasi');
+    Route::post('/notifikasi/baca', [App\Http\Controllers\Belajar\NotificationController::class, 'markRead'])->name('belajar.notifikasi.baca');
+
     // Playback progress (resume + Continue Watching). Throttled: the player pings often.
     Route::post('/kemajuan/{lesson}', [ProgressController::class, 'store'])
         ->middleware('throttle:60,1')->name('kemajuan.simpan');

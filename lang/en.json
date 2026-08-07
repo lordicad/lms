@@ -121,6 +121,11 @@
     "(pilihan)": "(optional)",
     "Tahun": "Year",
     "Tahun :n": "Year :n",
+    ":actor memuat naik video \":title\"": ":actor uploaded a new video \":title\"",
+    ":actor memuat naik bahan \":title\"": ":actor uploaded new material \":title\"",
+    ":actor menambah kuiz \":title\"": ":actor added a new quiz \":title\"",
+    "Kandungan baharu daripada cikgu anda": "New content from your teachers",
+    "Apabila cikgu anda memuat naik video, bahan atau kuiz baharu untuk Tahun anda, ia akan muncul di sini.": "When your teachers upload new videos, materials or quizzes for your Year, they'll appear here.",
     "Tetapan": "Settings",
     "Acak susunan jawapan": "Shuffle answer order",
     "Setiap murid melihat pilihan jawapan dalam susunan rawak.": "Each student sees the answer options in a random order.",
@@ -1176,7 +1181,6 @@
     "Purata di bawah :pct%. Mungkin terlalu sukar atau video kurang jelas. Semak di halaman Kandungan.": "Average below :pct%. It may be too hard or the video is unclear. Check the Content page.",
     "Tiada video diterbitkan untuk gabungan ini lagi. Semak di halaman Kandungan.": "No videos published for these combinations yet. Check the Content page.",
     "Akaun dicipta tetapi belum log masuk kali pertama. Semak di halaman Murid.": "Accounts created but have not signed in for the first time. Check the Students page.",
-
     "Tetapkan Kata Laluan": "Set Your Password",
     "Sahkan kata laluan baharu": "Confirm new password",
     "Simpan & Teruskan": "Save & Continue",
@@ -1225,7 +1229,6 @@
     "Tetapkan semula": "Reset",
     ":actor (:title) lupa kata laluan": ":actor (:title) forgot their password",
     "Biarkan kosong untuk mengekalkan kata laluan semasa. Jika diisi, pengguna perlu menetapkan kata laluan sendiri semula pada log masuk seterusnya.": "Leave blank to keep the current password. If filled, the user must set their own password again at their next sign-in.",
-
     "Akaun WeLearn anda telah dibuka": "Your WeLearn account is ready",
     "Selamat datang ke WeLearn!": "Welcome to WeLearn!",
     "Salam sejahtera :name,": "Hello :name,",
@@ -1368,7 +1371,6 @@
     "Tajuk video atau nama cikgu": "Video title or teacher name",
     "Nama atau emel cikgu": "Teacher name or email",
     "Menunjukkan :shown daripada :total pendaftaran. Senarai penuh ada di halaman Pengguna.": "Showing :shown of :total registrations. The full list is on the Users page.",
-
     "Gemari": "Favourite",
     "Perkara": "Item",
     "10 Teratas": "Top 10",
@@ -1394,5 +1396,8 @@
     "Anda log masuk dengan emel ini. Hanya kata laluan yang berubah.": "You sign in with this email. Only the password changes.",
     "untuk butiran log masuk": "for sign-in details",
     "Nama pengguna dan kata laluan murid dihantar ke alamat ini.": "The student's username and password are sent to this address.",
-    "Sila isi e-mel penjaga - butiran log masuk murid dihantar ke alamat ini.": "Please fill in the guardian email - the student's sign-in details are sent to this address."
+    "Sila isi e-mel penjaga - butiran log masuk murid dihantar ke alamat ini.": "Please fill in the guardian email - the student's sign-in details are sent to this address.",
+    "Ganti fail (pilihan)": "Replace file (optional)",
+    "Seret & lepas fail di sini, atau klik untuk pilih": "Drag & drop a file here, or click to choose",
+    "Biarkan kosong untuk kekalkan fail semasa. Fail baharu akan menggantikan fail lama. Had saiz :max MB.": "Leave empty to keep the current file. A new file replaces the old one. Max size :max MB."
 }

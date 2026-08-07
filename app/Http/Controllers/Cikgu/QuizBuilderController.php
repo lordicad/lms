@@ -139,6 +139,12 @@ class QuizBuilderController extends Controller
             }
         });
 
+        // An interactive quiz only becomes usable to students once it has questions (here); announce
+        // it now if it is published. announce() dedupes, so re-saving questions never re-notifies.
+        if ($quiz->is_published) {
+            \App\Models\ContentNotification::announce($quiz, \App\Models\ContentNotification::TYPE_QUIZ);
+        }
+
         return redirect()
             ->route('cikgu.kuiz.index')
             ->with('status', __('Soalan kuiz berjaya disimpan.'));

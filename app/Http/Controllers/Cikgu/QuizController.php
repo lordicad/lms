@@ -142,6 +142,13 @@ class QuizController extends Controller
             ]);
         }
 
+        // File quizzes are usable the moment they exist; announce the published ones.
+        foreach ($created as $quiz) {
+            if ($quiz->is_published) {
+                \App\Models\ContentNotification::announce($quiz, \App\Models\ContentNotification::TYPE_QUIZ);
+            }
+        }
+
         $status = count($created) === 1
             ? __('Kuiz ":title" berjaya dimuat naik.', ['title' => $created[0]->title])
             : __(':count kuiz berjaya dimuat naik.', ['count' => count($created)]);

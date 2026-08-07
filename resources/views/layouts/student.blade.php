@@ -8,6 +8,23 @@
     $current = app()->getLocale();
     $isDark = ($theme ?? 'light') === 'dark';
 
+    // New-content notifications for this student's school + Tahun. The feed is shared, so the unread
+    // count is everything newer than the student's last-read marker; each recent row gets a
+    // transient read_at so the bell can highlight what is new.
+    $notifReadAt = $user->content_notifications_read_at;
+    $notifQuery = \App\Models\ContentNotification::scopeFor($user->school_id, $user->grade_id);
+    $unreadNotifications = $notifReadAt
+        ? (clone $notifQuery)->where('created_at', '>', $notifReadAt)->count()
+        : (clone $notifQuery)->count();
+    $recentNotifications = (clone $notifQuery)->latest()->limit(8)->get()->each(function ($n) use ($notifReadAt) {
+        $n->read_at = ($notifReadAt && $n->created_at->lte($notifReadAt)) ? $n->created_at : null;
+    });
+    $notifMeta = [
+        \App\Models\ContentNotification::TYPE_VIDEO    => ['icon' => 'video', 'tint' => '#E4EEF9', 'fg' => '#2E6CA8', 'text' => __(':actor memuat naik video ":title"')],
+        \App\Models\ContentNotification::TYPE_MATERIAL => ['icon' => 'file',  'tint' => '#DCF2EE', 'fg' => '#0F7A68', 'text' => __(':actor memuat naik bahan ":title"')],
+        \App\Models\ContentNotification::TYPE_QUIZ     => ['icon' => 'quiz',  'tint' => '#FEF0CE', 'fg' => '#8A6A12', 'text' => __(':actor menambah kuiz ":title"')],
+    ];
+
     // Exact sidebar icons ported verbatim from the WeLearn prototype.
     $icons = [
         'home' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75"/></svg>',
@@ -226,9 +243,9 @@
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
             </a>
 
-            {{-- Nothing creates a notification for a student yet, so the panel opens on its empty
-                 state. Was an emoji on a button that did nothing when clicked. --}}
-            <x-notif-bell trigger-class="wl-icbtn"
+            <x-notif-bell :notifications="$recentNotifications" :unread="$unreadNotifications" :meta="$notifMeta"
+                          :all-url="route('belajar.notifikasi')" :mark-read-url="route('belajar.notifikasi.baca')"
+                          trigger-class="wl-icbtn"
                           trigger-style="width:48px;height:48px;border-radius:50%;border:1px solid var(--wl-line-2);background:var(--wl-surface);cursor:pointer;display:grid;place-items:center;color:#4A5A52" />
         </div>
 

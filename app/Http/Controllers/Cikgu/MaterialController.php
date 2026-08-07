@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Cikgu;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\MaterialRequest;
-use App\Models\Chapter;
 use App\Models\Grade;
 use App\Models\Lesson;
 use App\Models\Material;
@@ -12,7 +11,6 @@ use App\Models\Subject;
 use App\Support\Uploads;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class MaterialController extends Controller
@@ -72,6 +70,11 @@ class MaterialController extends Controller
 
         $created = $this->createMaterials($request, $request->integer('chapter_id'), $request->input('lesson_id') ?: null);
 
+        // Materials are visible to students the moment they exist, so announce each to the school + Tahun.
+        foreach ($created as $material) {
+            \App\Models\ContentNotification::announce($material, \App\Models\ContentNotification::TYPE_MATERIAL);
+        }
+
         $status = count($created) === 1
             ? __('Bahan ":title" berjaya dimuat naik.', ['title' => $created[0]->title])
             : __(':count bahan berjaya dimuat naik.', ['count' => count($created)]);
@@ -129,33 +132,30 @@ class MaterialController extends Controller
     {
         $this->authorize('update', $material);
 
-        $chapterId = $request->integer('chapter_id');
-        $lessonId = $request->input('lesson_id') ?: null;
-        $deleting = $request->boolean('delete_material');
+        $attributes = [
+            'chapter_id' => $request->integer('chapter_id'),
+            'lesson_id' => $request->input('lesson_id') ?: null,
+            'title' => $request->input('title'),
+        ];
 
-        if ($deleting) {
-            // The teacher chose to remove this material outright (its file goes with it).
+        // A replacement file takes the place of the current one - the old file is removed from disk
+        // and this material now points at the new upload. No file means the current one is kept.
+        if ($file = $request->file('file')) {
             $material->deleteFile();
-            $material->delete();
-        } else {
-            $material->update([
-                'chapter_id' => $chapterId,
-                'lesson_id' => $lessonId,
-                'title' => $request->input('title'),
-            ]);
+
+            $attributes += [
+                'file_path' => Uploads::store($file, 'materials'),
+                'original_name' => $file->getClientOriginalName(),
+                'mime_type' => $file->getClientMimeType(),
+                'size_kb' => Uploads::sizeKb($file),
+            ];
         }
 
-        // Any files dropped on the edit page become new materials in the chapter.
-        $added = count($this->createMaterials($request, $chapterId, $lessonId));
+        $material->update($attributes);
 
-        $status = match (true) {
-            $deleting && $added > 0 => __('Bahan lama dipadam; :count fail baharu ditambah.', ['count' => $added]),
-            $deleting => __('Bahan dipadam.'),
-            $added > 0 => __('Bahan dikemas kini; :count fail baharu ditambah.', ['count' => $added]),
-            default => __('Bahan ":title" berjaya dikemas kini.', ['title' => $material->title]),
-        };
-
-        return redirect()->route('cikgu.bahan.index')->with('status', $status);
+        return redirect()
+            ->route('cikgu.bahan.index')
+            ->with('status', __('Bahan ":title" berjaya dikemas kini.', ['title' => $material->title]));
     }
 
     public function destroy(Material $material): RedirectResponse
