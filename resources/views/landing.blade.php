@@ -224,28 +224,129 @@
             .wl-h1 { font-size: 36px; }
         }
 
-        /* ── Card motion: hover lift + fade-up on scroll ──────────────────────────────────
-           One eased transition drives both the reveal and the hover so the movement stays
-           smooth. The hidden start state only applies when JS is on (.wl-js) and the card is
-           not yet revealed, so without JS everything shows, and once revealed the transform
-           reverts to base/hover with no specificity clash. */
-        .wl-card, .wl-total, .wl-step {
-            transition: opacity .7s ease, transform .45s cubic-bezier(.22,.61,.36,1), box-shadow .35s ease;
+        /* ═══════════════════════════════════════════════════════════════════════════════
+           Landing motion — soft, premium entrance + hover micro-interactions.
+           Progressive enhancement: the pre-animation (hidden) states apply ONLY with JS on
+           (.wl-js), so without scripts everything renders normally. Reduced motion resets
+           every element to its final state at the end of this block.
+           --wl-shift scales the travel distance down on smaller screens.
+           ═══════════════════════════════════════════════════════════════════════════════ */
+        :root { --wl-ease: cubic-bezier(.22,1,.36,1); --wl-shift: 1; }
+
+        @keyframes wlUp     { from { opacity: 0; transform: translateY(calc(18px * var(--wl-shift))); } to { opacity: 1; transform: none; } }
+        @keyframes wlCardIn { from { opacity: 0; transform: translateX(calc(22px * var(--wl-shift))) scale(.985); } to { opacity: 1; transform: none; } }
+        @keyframes wlChipIn { from { opacity: 0; transform: translateY(6px) scale(.97); } to { opacity: 1; transform: none; } }
+        @keyframes wlTickIn { from { opacity: 0; transform: translateX(-8px); } to { opacity: 1; transform: none; } }
+        @keyframes wlShimmer{ from { transform: translateX(-120%) skewX(-12deg); } to { transform: translateX(240%) skewX(-12deg); } }
+
+        /* Scroll-reveal cards (feature steps + content totals). */
+        .wl-total, .wl-step {
+            transition: opacity .6s ease, transform .3s var(--wl-ease), box-shadow .28s ease;
             will-change: opacity, transform;
         }
-        .wl-js .wl-card:not(.is-visible),
         .wl-js .wl-total:not(.is-visible),
-        .wl-js .wl-step:not(.is-visible) { opacity: 0; transform: translateY(28px); }
+        .wl-js .wl-step:not(.is-visible) { opacity: 0; transform: translateY(calc(22px * var(--wl-shift))); }
+        .wl-total:hover, .wl-step:hover { transform: translateY(-4px); box-shadow: 0 16px 34px rgba(36,49,42,.12); }
+        .wl-step-icon, .wl-total .ico { transition: transform .28s var(--wl-ease); }
+        .wl-step:hover .wl-step-icon, .wl-total:hover .ico { transform: scale(1.06); }
 
-        .wl-card:hover, .wl-total:hover, .wl-step:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 18px 40px rgba(36,49,42,.14);
+        /* Generic reveal for section headings and the teacher column. */
+        .wl-reveal { transition: opacity .6s ease, transform .5s var(--wl-ease); }
+        .wl-js .wl-reveal:not(.is-visible) { opacity: 0; transform: translateY(calc(14px * var(--wl-shift))); }
+
+        /* Hero: staggered entrance on load (not scroll). */
+        .wl-js .wl-hero .wl-eyebrow,
+        .wl-js .wl-hero .wl-h1 .l1,
+        .wl-js .wl-hero .wl-h1 .l2,
+        .wl-js .wl-hero .wl-lead,
+        .wl-js .wl-hero .wl-hero-cta { opacity: 0; animation: wlUp .55s var(--wl-ease) forwards; }
+        .wl-hero .wl-h1 .l1, .wl-hero .wl-h1 .l2 { display: inline-block; }
+        .wl-js .wl-hero .wl-eyebrow  { animation-delay: .05s; }
+        .wl-js .wl-hero .wl-h1 .l1   { animation-delay: .12s; }
+        .wl-js .wl-hero .wl-h1 .l2   { animation-delay: .20s; }
+        .wl-js .wl-hero .wl-lead     { animation-delay: .32s; }
+        .wl-js .wl-hero .wl-hero-cta { animation-delay: .44s; }
+
+        /* Hero subject card slides in from the right; chips stagger in after. */
+        .wl-js .wl-hero .wl-card { opacity: 0; animation: wlCardIn .55s var(--wl-ease) .25s forwards; }
+        .wl-js .wl-hero .wl-chip { opacity: 0; animation: wlChipIn .4s var(--wl-ease) forwards; animation-delay: calc(.5s + var(--i, 0) * 45ms); }
+        .wl-chip { transition: transform .22s var(--wl-ease), box-shadow .22s ease, filter .22s ease; }
+        .wl-chip:hover { transform: translateY(-1px) scale(1.03); filter: saturate(1.08); box-shadow: 0 3px 10px rgba(36,49,42,.12); }
+
+        /* Nav links: an underline that grows from the centre on hover. */
+        .wl-nav-links a { position: relative; }
+        .wl-nav-links a::after {
+            content: ''; position: absolute; left: 10px; right: 10px; bottom: 5px; height: 2px;
+            border-radius: 2px; background: var(--brand); opacity: .9;
+            transform: scaleX(0); transform-origin: center; transition: transform .25s var(--wl-ease);
+        }
+        .wl-nav-links a:hover::after { transform: scaleX(1); }
+
+        /* Header condenses on scroll. */
+        header.wl-header { transition: background .3s ease, box-shadow .3s ease, border-color .3s ease; }
+        header.wl-header.is-scrolled {
+            background: color-mix(in srgb, var(--chrome) 97%, transparent);
+            box-shadow: 0 6px 20px rgba(36,49,42,.07); border-bottom-color: var(--line-strong);
+        }
+
+        /* Theme toggle: the icon eases a small turn on hover. */
+        .wl-iconbtn svg { transition: transform .3s var(--wl-ease); }
+        .wl-iconbtn:hover svg { transform: rotate(35deg) scale(1.05); }
+
+        /* Buttons: consistent lift on hover, press on active. */
+        .wl-btn { transition: background .2s ease, color .2s ease, transform .2s var(--wl-ease), box-shadow .2s ease; }
+        .wl-btn-solid:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(30,77,43,.34); }
+        .wl-btn:active { transform: translateY(0) scale(.98); }
+
+        /* Scorecard bars fill from zero once the card is in view. */
+        .wl-bar span { transition: width .85s var(--wl-ease); }
+        .wl-js .wl-score:not(.is-visible) .wl-bar span { width: 0 !important; }
+
+        /* Final CTA: gentle scale-up reveal + one shimmer sweep. */
+        .wl-cta { position: relative; overflow: hidden; transition: opacity .55s ease, transform .55s var(--wl-ease); }
+        .wl-js .wl-cta:not(.is-visible) { opacity: 0; transform: translateY(calc(16px * var(--wl-shift))) scale(.98); }
+        .wl-cta > * { position: relative; z-index: 1; }
+        .wl-cta.is-visible::after {
+            content: ''; position: absolute; top: 0; bottom: 0; left: 0; width: 45%; z-index: 0; pointer-events: none;
+            background: linear-gradient(100deg, transparent, rgba(255,255,255,.16), transparent);
+            transform: translateX(-120%) skewX(-12deg); animation: wlShimmer 1.2s var(--wl-ease) .3s 1 forwards;
+        }
+
+        /* Teacher checklist: each tick slides in, staggered. */
+        .wl-js .wl-ticks:not(.is-visible) li { opacity: 0; }
+        .wl-js .wl-ticks.is-visible li { animation: wlTickIn .5s var(--wl-ease) forwards; }
+        .wl-js .wl-ticks.is-visible li:nth-child(1) { animation-delay: .04s; }
+        .wl-js .wl-ticks.is-visible li:nth-child(2) { animation-delay: .12s; }
+        .wl-js .wl-ticks.is-visible li:nth-child(3) { animation-delay: .20s; }
+        .wl-js .wl-ticks.is-visible li:nth-child(4) { animation-delay: .28s; }
+
+        /* Thin scroll-progress bar pinned to the very top. */
+        #wl-progress {
+            position: fixed; top: 0; left: 0; height: 3px; width: 100%; z-index: 60;
+            background: var(--brand); transform: scaleX(0); transform-origin: left; will-change: transform;
+        }
+
+        /* Smaller travel on tablet/mobile. */
+        @media (max-width: 1020px) { :root { --wl-shift: .8; } }
+        @media (max-width: 760px)  { :root { --wl-shift: .55; } }
+
+        /* Reduced motion: everything jumps to its final, readable state — no entrance, no
+           shimmer, no progress bar. (Overrides the pre-animation hidden states above, which the
+           global reduced-motion rule would otherwise freeze at opacity:0.) */
+        @media (prefers-reduced-motion: reduce) {
+            .wl-js .wl-hero .wl-eyebrow, .wl-js .wl-hero .wl-h1 .l1, .wl-js .wl-hero .wl-h1 .l2,
+            .wl-js .wl-hero .wl-lead, .wl-js .wl-hero .wl-hero-cta, .wl-js .wl-hero .wl-card,
+            .wl-js .wl-hero .wl-chip { opacity: 1 !important; transform: none !important; animation: none !important; }
+            #wl-progress { display: none !important; }
+            .wl-cta.is-visible::after { display: none !important; }
         }
     </style>
 </head>
 
 <body>
     <a href="#kandungan" class="wl-skip">{{ __('Terus ke kandungan') }}</a>
+    {{-- Scroll-progress bar (top). Purely decorative, so it is aria-hidden and JS-driven. --}}
+    <div id="wl-progress" aria-hidden="true"></div>
 
     @php
         // The real WeLearn tree-and-book mark, embedded as a data URI so it needs no separate asset
@@ -297,11 +398,11 @@
                 <div class="wl-col" style="gap:22px">
                     <span class="wl-eyebrow"><span class="dot"></span>{{ __('Belajar · Membesar · Berjaya') }}</span>
 
-                    <h1 class="wl-h1">{{ __('Belajar di mana-mana,') }}<br><span style="color:#56793F">{{ __('bila-bila masa.') }}</span></h1>
+                    <h1 class="wl-h1"><span class="l1">{{ __('Belajar di mana-mana,') }}</span><br><span class="l2" style="color:#56793F">{{ __('bila-bila masa.') }}</span></h1>
 
                     <p class="wl-lead">{{ __('Video pelajaran, bahan dan kuiz daripada cikgu anda - semuanya tersusun mengikut Subjek dan Tahun, sedia ditonton seperti perkhidmatan penstriman kegemaran anda.') }}</p>
 
-                    <div class="wl-flex wl-gap-14" style="flex-wrap:wrap">
+                    <div class="wl-flex wl-gap-14 wl-hero-cta" style="flex-wrap:wrap">
                         <a href="#ciri" class="wl-btn wl-btn-solid wl-btn-lg">{{ __('Lihat Cara Ia Berfungsi') }}</a>
                     </div>
                 </div>
@@ -312,7 +413,7 @@
 
                     <div class="wl-chips">
                         @foreach ($terasSubjects as $subject)
-                            <span class="wl-chip" style="background: rgb({{ $subject->rgb }} / .13); color: rgb({{ $subject->rgb }});">
+                            <span class="wl-chip" style="--i:{{ $loop->index }}; background: rgb({{ $subject->rgb }} / .13); color: rgb({{ $subject->rgb }});">
                                 <x-subject-icon :subject="$subject" :size="17" />{{ $subject->displayName() }}
                             </span>
                         @endforeach
@@ -328,7 +429,7 @@
         <!-- HOW IT WORKS -->
         <section id="ciri" class="wl-section">
             <div class="wl-wrap wl-col" style="gap:40px">
-                <div class="wl-center">
+                <div class="wl-center wl-reveal">
                     <span class="wl-kicker">{{ __('Cara Ia Berfungsi') }}</span>
                     <h2 class="wl-h2">{{ __('Tiga langkah mudah') }}</h2>
                 </div>
@@ -373,7 +474,7 @@
         <!-- CONTENT TOTALS -->
         <section id="subjek" class="wl-section" style="padding-top:0">
             <div class="wl-wrap wl-col wl-mt-28" style="gap:28px">
-                <div class="wl-baseline" style="flex-wrap:wrap">
+                <div class="wl-baseline wl-reveal" style="flex-wrap:wrap">
                     <h2 class="wl-h2" style="font-size:28px">{{ __('Kandungan Pembelajaran') }}</h2>
                     <span style="font-size:15px; color:var(--faint);">{{ __('Tersusun mengikut Subjek → Tahun → Bab') }}</span>
                 </div>
@@ -381,19 +482,19 @@
                 <div class="wl-grid-3">
                     <div class="wl-total t-vid">
                         <span class="ico"><x-icon name="video" class="h-6 w-6" /></span>
-                        <span class="num">{{ number_format($lessonCount) }}</span>
+                        <span class="num" data-count="{{ $lessonCount }}">{{ number_format($lessonCount) }}</span>
                         <span class="name">{{ __('Video Pengajaran') }}</span>
                         <span class="sub">{{ __('Merentas semua subjek dan tahun') }}</span>
                     </div>
                     <div class="wl-total t-mat">
                         <span class="ico"><x-icon name="file" class="h-6 w-6" /></span>
-                        <span class="num">{{ number_format($materialCount) }}</span>
+                        <span class="num" data-count="{{ $materialCount }}">{{ number_format($materialCount) }}</span>
                         <span class="name">{{ __('Bahan Pembelajaran') }}</span>
                         <span class="sub">{{ __('PDF, slaid dan lembaran kerja') }}</span>
                     </div>
                     <div class="wl-total t-quiz">
                         <span class="ico"><x-icon name="quiz" class="h-6 w-6" /></span>
-                        <span class="num">{{ number_format($quizCount) }}</span>
+                        <span class="num" data-count="{{ $quizCount }}">{{ number_format($quizCount) }}</span>
                         <span class="name">{{ __('Kuiz') }}</span>
                         <span class="sub">{{ __('Kuiz interaktif semak-sendiri') }}</span>
                     </div>
@@ -404,7 +505,7 @@
         <!-- FOR TEACHERS -->
         <section id="cikgu" class="wl-band">
             <div class="wl-wrap wl-band-grid">
-                <div class="wl-col" style="gap:18px">
+                <div class="wl-col wl-reveal" style="gap:18px">
                     <span class="wl-kicker">{{ __('Untuk Cikgu') }}</span>
                     <h2 class="wl-h2" style="font-size:38px">{{ __('Studio kandungan anda - kemas, jelas, profesional.') }}</h2>
                     <p class="wl-p" style="font-size:17px; max-width:480px;">{{ __('Susun Bab, muat naik video (dari peranti atau YouTube), lampirkan bahan, dan bina kuiz semak-sendiri. Skor Bakat yang telus menunjukkan impak pengajaran anda.') }}</p>
@@ -421,12 +522,12 @@
                 <div class="wl-score">
                     <div class="wl-score-top">
                         <span class="lbl">{{ __('Skor Bakat') }}</span>
-                        <span class="val">86<small>/100</small></span>
+                        <span class="val"><span data-count="86">86</span><small>/100</small></span>
                     </div>
                     <div class="wl-col" style="gap:14px">
                         @foreach ([[__('Penglibatan'), '88'], [__('Kualiti'), '82'], [__('Hasil Pembelajaran'), '90'], [__('Keluasan'), '84']] as [$label, $val])
                             <div class="wl-bar-row">
-                                <div class="wl-bar-head"><span class="k">{{ $label }}</span><span class="v">{{ $val }}</span></div>
+                                <div class="wl-bar-head"><span class="k">{{ $label }}</span><span class="v" data-count="{{ $val }}">{{ $val }}</span></div>
                                 <div class="wl-bar"><span style="width: {{ $val }}%;"></span></div>
                             </div>
                         @endforeach
@@ -460,16 +561,64 @@
         </div>
     </footer>
 
-    {{-- Scroll-reveal: fade each card up as it enters the viewport, staggered within its row.
-         Reduced-motion or no IntersectionObserver reveals everything at once. --}}
+    {{-- Landing motion controller: scroll progress, header condense, scroll-reveal (cards,
+         headings, checklist, scorecard, CTA), count-up numbers and bar fills. Runs once per
+         element; reduced-motion / no-IntersectionObserver jumps straight to the final state. --}}
     <script>
         (function () {
-            var cards = document.querySelectorAll('.wl-card, .wl-total, .wl-step');
-            if (! cards.length) return;
-
             var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-            if (reduce || ! ('IntersectionObserver' in window)) {
-                cards.forEach(function (c) { c.classList.add('is-visible'); });
+            var hasIO  = 'IntersectionObserver' in window;
+
+            /* ── Scroll progress bar + header condense ─────────────────────────────── */
+            var bar = document.getElementById('wl-progress');
+            var header = document.querySelector('header.wl-header');
+            var ticking = false;
+            function onScroll() {
+                var y = window.pageYOffset || document.documentElement.scrollTop;
+                if (bar && ! reduce) {
+                    var h = document.documentElement.scrollHeight - window.innerHeight;
+                    bar.style.transform = 'scaleX(' + (h > 0 ? Math.min(1, y / h) : 0) + ')';
+                }
+                if (header) header.classList.toggle('is-scrolled', y > 30);
+                ticking = false;
+            }
+            window.addEventListener('scroll', function () {
+                if (! ticking) { window.requestAnimationFrame(onScroll); ticking = true; }
+            }, { passive: true });
+            onScroll();
+
+            /* ── Count-up: animate a [data-count] number from 0 to its value, once. ──── */
+            function countUp(el) {
+                var target = parseInt(el.getAttribute('data-count'), 10);
+                if (isNaN(target)) return;
+                if (reduce) { el.textContent = target.toLocaleString(); return; }
+                var dur = 850, start = null;
+                function step(ts) {
+                    if (start === null) start = ts;
+                    var p = Math.min(1, (ts - start) / dur);
+                    var eased = 1 - Math.pow(1 - p, 3); // ease-out cubic
+                    el.textContent = Math.round(target * eased).toLocaleString();
+                    if (p < 1) window.requestAnimationFrame(step);
+                    else el.textContent = target.toLocaleString();
+                }
+                window.requestAnimationFrame(step);
+            }
+
+            /* ── Reveal one element (+ any counters / bars it contains). ───────────── */
+            function reveal(el) {
+                el.classList.add('is-visible');
+                el.querySelectorAll('[data-count]').forEach(countUp);
+                // Scorecard bars: stagger the fill (width returns to its inline target as the
+                // :not(.is-visible) rule stops applying).
+                el.querySelectorAll('.wl-bar span').forEach(function (s, i) {
+                    if (! reduce) s.style.transitionDelay = (i * 120) + 'ms';
+                });
+            }
+
+            var groups = document.querySelectorAll('.wl-total, .wl-step, .wl-reveal, .wl-ticks, .wl-score, .wl-cta');
+
+            if (reduce || ! hasIO) {
+                groups.forEach(reveal);
                 return;
             }
 
@@ -477,20 +626,21 @@
                 entries.forEach(function (entry) {
                     if (! entry.isIntersecting) return;
                     var el = entry.target;
-                    // Stagger by the card's position among its reveal siblings, then clear the
-                    // delay once revealed so hover responds instantly.
-                    var sibs = Array.prototype.filter.call(el.parentNode.children, function (n) {
-                        return n === el || n.classList.contains('wl-card') || n.classList.contains('wl-total') || n.classList.contains('wl-step');
-                    });
-                    var i = Math.max(0, sibs.indexOf(el));
-                    el.style.transitionDelay = (i * 90) + 'ms';
-                    el.classList.add('is-visible');
-                    el.addEventListener('transitionend', function () { el.style.transitionDelay = '0s'; }, { once: true });
+                    // Stagger cards by their position within a row, then clear the delay so hover
+                    // stays instant.
+                    if (el.classList.contains('wl-total') || el.classList.contains('wl-step')) {
+                        var sibs = Array.prototype.filter.call(el.parentNode.children, function (n) {
+                            return n.classList.contains('wl-total') || n.classList.contains('wl-step');
+                        });
+                        el.style.transitionDelay = (Math.max(0, sibs.indexOf(el)) * 90) + 'ms';
+                        el.addEventListener('transitionend', function () { el.style.transitionDelay = '0s'; }, { once: true });
+                    }
+                    reveal(el);
                     io.unobserve(el);
                 });
-            }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+            }, { threshold: 0.2, rootMargin: '0px 0px -40px 0px' });
 
-            cards.forEach(function (c) { io.observe(c); });
+            groups.forEach(function (g) { io.observe(g); });
         })();
     </script>
 </body>
