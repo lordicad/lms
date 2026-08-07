@@ -233,8 +233,8 @@
            ═══════════════════════════════════════════════════════════════════════════════ */
         :root { --wl-ease: cubic-bezier(.22,1,.36,1); --wl-shift: 1; }
 
-        @keyframes wlUp     { from { opacity: 0; transform: translateY(calc(18px * var(--wl-shift))); } to { opacity: 1; transform: none; } }
-        @keyframes wlCardIn { from { opacity: 0; transform: translateX(calc(22px * var(--wl-shift))) scale(.985); } to { opacity: 1; transform: none; } }
+        @keyframes wlUp     { from { opacity: 0; transform: translateY(calc(13px * var(--wl-shift))); } to { opacity: 1; transform: none; } }
+        @keyframes wlCardIn { from { opacity: 0; transform: translateX(calc(14px * var(--wl-shift))) scale(.99); } to { opacity: 1; transform: none; } }
         @keyframes wlChipIn { from { opacity: 0; transform: translateY(6px) scale(.97); } to { opacity: 1; transform: none; } }
         @keyframes wlTickIn { from { opacity: 0; transform: translateX(-8px); } to { opacity: 1; transform: none; } }
         @keyframes wlShimmer{ from { transform: translateX(-120%) skewX(-12deg); } to { transform: translateX(240%) skewX(-12deg); } }
@@ -245,14 +245,14 @@
             will-change: opacity, transform;
         }
         .wl-js .wl-total:not(.is-visible),
-        .wl-js .wl-step:not(.is-visible) { opacity: 0; transform: translateY(calc(22px * var(--wl-shift))); }
-        .wl-total:hover, .wl-step:hover { transform: translateY(-4px); box-shadow: 0 16px 34px rgba(36,49,42,.12); }
+        .wl-js .wl-step:not(.is-visible) { opacity: 0; transform: translateY(calc(16px * var(--wl-shift))); }
+        .wl-total:hover, .wl-step:hover { transform: translateY(-3px); box-shadow: 0 12px 26px rgba(36,49,42,.1); }
         .wl-step-icon, .wl-total .ico { transition: transform .28s var(--wl-ease); }
         .wl-step:hover .wl-step-icon, .wl-total:hover .ico { transform: scale(1.06); }
 
         /* Generic reveal for section headings and the teacher column. */
         .wl-reveal { transition: opacity .6s ease, transform .5s var(--wl-ease); }
-        .wl-js .wl-reveal:not(.is-visible) { opacity: 0; transform: translateY(calc(14px * var(--wl-shift))); }
+        .wl-js .wl-reveal:not(.is-visible) { opacity: 0; transform: translateY(calc(9px * var(--wl-shift))); }
 
         /* Hero: staggered entrance on load (not scroll). */
         .wl-js .wl-hero .wl-eyebrow,
@@ -271,7 +271,7 @@
         .wl-js .wl-hero .wl-card { opacity: 0; animation: wlCardIn .55s var(--wl-ease) .25s forwards; }
         .wl-js .wl-hero .wl-chip { opacity: 0; animation: wlChipIn .4s var(--wl-ease) forwards; animation-delay: calc(.5s + var(--i, 0) * 45ms); }
         .wl-chip { transition: transform .22s var(--wl-ease), box-shadow .22s ease, filter .22s ease; }
-        .wl-chip:hover { transform: translateY(-1px) scale(1.03); filter: saturate(1.08); box-shadow: 0 3px 10px rgba(36,49,42,.12); }
+        .wl-chip:hover { transform: translateY(-1px) scale(1.02); filter: saturate(1.05); box-shadow: 0 2px 8px rgba(36,49,42,.1); }
 
         /* Nav links: an underline that grows from the centre on hover. */
         .wl-nav-links a { position: relative; }
@@ -291,7 +291,7 @@
 
         /* Theme toggle: the icon eases a small turn on hover. */
         .wl-iconbtn svg { transition: transform .3s var(--wl-ease); }
-        .wl-iconbtn:hover svg { transform: rotate(35deg) scale(1.05); }
+        .wl-iconbtn:hover svg { transform: rotate(22deg) scale(1.04); }
 
         /* Buttons: consistent lift on hover, press on active. */
         .wl-btn { transition: background .2s ease, color .2s ease, transform .2s var(--wl-ease), box-shadow .2s ease; }
@@ -304,12 +304,12 @@
 
         /* Final CTA: gentle scale-up reveal + one shimmer sweep. */
         .wl-cta { position: relative; overflow: hidden; transition: opacity .55s ease, transform .55s var(--wl-ease); }
-        .wl-js .wl-cta:not(.is-visible) { opacity: 0; transform: translateY(calc(16px * var(--wl-shift))) scale(.98); }
+        .wl-js .wl-cta:not(.is-visible) { opacity: 0; transform: translateY(calc(12px * var(--wl-shift))) scale(.99); }
         .wl-cta > * { position: relative; z-index: 1; }
         .wl-cta.is-visible::after {
             content: ''; position: absolute; top: 0; bottom: 0; left: 0; width: 45%; z-index: 0; pointer-events: none;
-            background: linear-gradient(100deg, transparent, rgba(255,255,255,.16), transparent);
-            transform: translateX(-120%) skewX(-12deg); animation: wlShimmer 1.2s var(--wl-ease) .3s 1 forwards;
+            background: linear-gradient(100deg, transparent, rgba(255,255,255,.11), transparent);
+            transform: translateX(-120%) skewX(-12deg); animation: wlShimmer 1.3s var(--wl-ease) .35s 1 forwards;
         }
 
         /* Teacher checklist: each tick slides in, staggered. */
