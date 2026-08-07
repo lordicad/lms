@@ -59,7 +59,7 @@
                 </a>
             @empty
                 <div style="padding:30px 18px;text-align:center;color:{{ $muted }}">
-                    <img src="{{ asset('images/bell.png') }}" alt="" style="display:block;width:38px;height:38px;object-fit:contain;margin:0 auto 6px">
+                    <img src="{{ asset('images/bell.png') }}" alt="" style="display:block;width:30px;height:30px;object-fit:contain;margin:0 auto 6px">
                     <span style="font-size:13px">{{ __('Tiada notifikasi lagi') }}</span>
                 </div>
             @endforelse
