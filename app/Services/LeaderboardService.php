@@ -41,7 +41,13 @@ class LeaderboardService
             ->where('quiz_attempts.counts_for_ranking', true)
             ->whereNotNull('quiz_attempts.completed_at')
             ->where('users.role', User::ROLE_STUDENT)
-            ->when($gradeId, fn ($q) => $q->where('users.grade_id', $gradeId))
+            // A year's board is that year's students ranked on that year's work. Constrain both the
+            // roster (users.grade_id) and the counted attempts (chapters.grade_id): a student who
+            // switches Tahun for revision still earns a grade and a result, but those out-of-grade
+            // attempts must not inflate their standing on their home-year board.
+            ->when($gradeId, fn ($q) => $q
+                ->where('users.grade_id', $gradeId)
+                ->where('chapters.grade_id', $gradeId))
             ->when($subjectId, fn ($q) => $q->where('chapters.subject_id', $subjectId))
             ->when($quizId, fn ($q) => $q->where('quizzes.id', $quizId))
             ->when($teacherId, fn ($q) => $q->where('quizzes.teacher_id', $teacherId))

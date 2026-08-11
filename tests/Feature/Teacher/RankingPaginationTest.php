@@ -3,6 +3,7 @@
 namespace Tests\Feature\Teacher;
 
 use App\Models\Chapter;
+use App\Models\Grade;
 use App\Models\Quiz;
 use App\Models\QuizAttempt;
 use App\Models\User;
@@ -27,7 +28,10 @@ class RankingPaginationTest extends TestCase
      */
     private function seedRankedStudents(int $count): Quiz
     {
-        $chapter = Chapter::factory()->create();
+        // The quiz sits in the same year as the students it is ranking: the board counts a Tahun 3
+        // student's Tahun 3 work, so the chapter's grade must match (also what the Tahun filter means).
+        $grade = Grade::firstOrCreate(['level' => 3], ['name' => 'Tahun 3']);
+        $chapter = Chapter::factory()->create(['grade_id' => $grade->id]);
         $quiz = Quiz::factory()->for($chapter)->create(['teacher_id' => $this->teacher->id]);
 
         for ($i = 0; $i < $count; $i++) {
