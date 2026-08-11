@@ -20,9 +20,20 @@ Alpine.data('appChart', (config = {}) => ({
         const canvas = this.$refs.canvas;
         if (! canvas) return;
 
-        const styles = getComputedStyle(document.documentElement);
-        const ink = (styles.getPropertyValue('--c-ink-2') || styles.getPropertyValue('--c-ink') || '#5B6675').trim();
-        const line = (styles.getPropertyValue('--c-line') || 'rgba(120,130,150,0.2)').trim();
+        // Read colours from the canvas itself, not <html>: the portal palettes (--tp-*, --wl-*) are
+        // scoped to a wrapper element, so they only resolve through the cascade to the canvas. This is
+        // what makes the legend/tick text follow the portal's ink colour (near-white in dark mode)
+        // instead of dropping to the grey fallback.
+        const styles = getComputedStyle(canvas);
+        const readVar = (...names) => {
+            for (const name of names) {
+                const value = styles.getPropertyValue(name).trim();
+                if (value) return value;
+            }
+            return '';
+        };
+        const ink = readVar('--tp-ink', '--wl-ink', '--c-ink-2', '--c-ink') || '#5B6675';
+        const line = readVar('--tp-line', '--wl-line', '--c-line') || 'rgba(120,130,150,0.2)';
 
         Chart.defaults.color = ink || '#5B6675';
         Chart.defaults.font.family = "'Nunito', system-ui, sans-serif";
