@@ -9,12 +9,10 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 /**
- * All three portals share one bell component.
- *
- * Only teachers have notifications — every TeacherNotification::record() call fires when a student
- * acts on a teacher's content — so the admin and student bells open on their empty state. That is
- * deliberate, and the assertions below say so: the point is that the panel is real and honest
- * rather than a button that does nothing, which is what both used to be.
+ * All three portals share one bell component, and each now has its own notification feed (teachers
+ * when a student acts on their content, admins and students through their own feeds). The empty-state
+ * tests below simply exercise the case where a given account has none yet: the point is that the
+ * panel is real and honest rather than a button that does nothing, which is what it used to be.
  */
 class NotificationBellTest extends TestCase
 {
@@ -72,23 +70,25 @@ class NotificationBellTest extends TestCase
     }
 
     /**
-     * markRead() posts to a route that only the teacher portal has. The other two must not be
-     * handed a URL to call — the component skips the request when there is none.
+     * Each portal hands the bell its own mark-read endpoint, so opening the panel reports that
+     * portal's notifications as read. The URL is passed to Alpine through @js(), which JSON-encodes
+     * it — so the slashes come out escaped and a plain route() string would not match.
      */
-    public function test_only_the_teacher_bell_reports_notifications_as_read(): void
+    public function test_each_portal_wires_its_own_mark_read_endpoint(): void
     {
-        $teacherHtml = $this->actingAs(User::factory()->teacher()->create())
-            ->get(route('cikgu.dashboard'))->getContent();
+        $cases = [
+            [User::factory()->teacher()->create(), route('cikgu.dashboard'), route('cikgu.notifikasi.baca')],
+            [User::factory()->admin()->create(), route('admin.dashboard'), route('admin.notifikasi.baca')],
+            [User::factory()->student(Grade::factory()->level(4)->create()->level)->create(), route('profile.edit'), route('belajar.notifikasi.baca')],
+        ];
 
-        // The URL is handed to Alpine through @js(), which JSON-encodes it — so the slashes come
-        // out escaped and a plain route() string will not match.
-        $this->assertStringContainsString(
-            \Illuminate\Support\Js::from(route('cikgu.notifikasi.baca'))->toHtml(),
-            $teacherHtml,
-        );
-
-        $adminHtml = $this->actingAs(User::factory()->admin()->create())
-            ->get(route('admin.dashboard'))->getContent();
-        $this->assertStringContainsString('markReadUrl: null', $adminHtml);
+        foreach ($cases as [$user, $page, $markReadUrl]) {
+            $html = $this->actingAs($user)->get($page)->assertOk()->getContent();
+            $this->assertStringContainsString(
+                \Illuminate\Support\Js::from($markReadUrl)->toHtml(),
+                $html,
+                "the bell on {$page} is not wired to {$markReadUrl}",
+            );
+        }
     }
 }

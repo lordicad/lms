@@ -23,8 +23,12 @@ class ProfileCollapseTest extends TestCase
 
         $this->assertStringContainsString('id="akaun-panel"', $html);
         $this->assertStringContainsString('id="kata-laluan-panel"', $html);
-        // Neither section has errors, so both render closed.
-        $this->assertSame(2, substr_count($html, 'x-data="{ open: false }"'));
+        // Both panels are reachable through their toggles, and neither is pre-opened - a panel only
+        // renders open when its own form has errors (open: true), which does not happen on a clean
+        // load. (A raw count of `open: false` is avoided: the confirm/logout modals now share that
+        // exact Alpine attribute, so it no longer maps one-to-one to the two panels.)
+        $this->assertStringContainsString('aria-controls="akaun-panel"', $html);
+        $this->assertStringContainsString('aria-controls="kata-laluan-panel"', $html);
         $this->assertStringNotContainsString('x-data="{ open: true }"', $html);
         // Balanced markup: every <section> is closed.
         $this->assertSame(substr_count($html, '<section'), substr_count($html, '</section>'));
