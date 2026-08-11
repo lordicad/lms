@@ -1399,5 +1399,13 @@
     "Sila isi e-mel penjaga - butiran log masuk murid dihantar ke alamat ini.": "Please fill in the guardian email - the student's sign-in details are sent to this address.",
     "Ganti fail (pilihan)": "Replace file (optional)",
     "Seret & lepas fail di sini, atau klik untuk pilih": "Drag & drop a file here, or click to choose",
-    "Biarkan kosong untuk kekalkan fail semasa. Fail baharu akan menggantikan fail lama. Had saiz :max MB.": "Leave empty to keep the current file. A new file replaces the old one. Max size :max MB."
+    "Biarkan kosong untuk kekalkan fail semasa. Fail baharu akan menggantikan fail lama. Had saiz :max MB.": "Leave empty to keep the current file. A new file replaces the old one. Max size :max MB.",
+    "Bertambah baik selepas cubaan rendah": "Improved after a low attempt",
+    "Terangkan dengan AI": "Explain with AI",
+    "Penerangan AI": "AI Explanation",
+    "Sedang menjana penerangan...": "Generating explanation...",
+    "Penerangan gagal dijana.": "Could not generate an explanation.",
+    "Cuba lagi": "Try again",
+    "Penerangan AI tidak tersedia.": "AI explanations are not available.",
+    "Penerangan gagal dijana. Sila cuba lagi.": "Could not generate an explanation. Please try again."
 }

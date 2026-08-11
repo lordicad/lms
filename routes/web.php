@@ -27,6 +27,7 @@ use App\Http\Controllers\OfflineController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProgressController;
 use App\Http\Controllers\QuizAttemptController;
+use App\Http\Controllers\QuizExplanationController;
 use App\Http\Controllers\RankingController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\StudentDashboardController;
@@ -125,6 +126,7 @@ Route::middleware(['auth', 'role:student'])->group(function () {
     Route::get('/kuiz/percubaan/{attempt}', [QuizAttemptController::class, 'take'])->name('kuiz.percubaan');
     Route::post('/kuiz/percubaan/{attempt}', [QuizAttemptController::class, 'submit'])->name('kuiz.hantar');
     Route::get('/keputusan/{attempt}', [QuizAttemptController::class, 'result'])->name('keputusan.show');
+    Route::post('/keputusan/{attempt}/soalan/{question}/terang', [QuizExplanationController::class, 'show'])->name('keputusan.terang');
 
     Route::get('/ranking', RankingController::class)->name('ranking.index');
 });

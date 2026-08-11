@@ -155,6 +155,8 @@ class QuizAttemptController extends Controller
             'answersByQuestion' => $attempt->answers->keyBy('question_id'),
             'badgesEarned' => $badges['earned'],
             'badgesNew' => $badges['new'],
+            // Only offer the AI "explain" button when the Claude key is configured.
+            'explainerEnabled' => app(\App\Services\AnswerExplainer::class)->enabled(),
         ]);
     }
 

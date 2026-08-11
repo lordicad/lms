@@ -149,12 +149,73 @@
                             </div>
                         @endforeach
                     </div>
+
+                    {{-- AI explainer: only for a wrong answer, and only when the Claude key is set.
+                         Loads on demand, caches server-side, so a re-open is instant. --}}
+                    @if (! $ok && $explainerEnabled)
+                        <div x-data="answerExplain(@js(route('keputusan.terang', [$attempt, $question])))">
+                            <button type="button" @click="load()" x-show="!open" x-cloak
+                                    style="display:inline-flex;align-items:center;gap:8px;border:1.5px solid {{ $isDark ? '#2DD4BF' : '#17907B' }};background:{{ $isDark ? 'rgba(45,212,191,.1)' : '#F0FBF8' }};color:{{ $isDark ? '#5EEAD4' : '#0F7A68' }};border-radius:12px;padding:9px 16px;font-family:'Geist',sans-serif;font-weight:800;font-size:13.5px;cursor:pointer">
+                                <x-icon name="sparkles" style="width:17px;height:17px" />
+                                {{ __('Terangkan dengan AI') }}
+                            </button>
+
+                            <div x-show="open" x-cloak
+                                 style="border:1.5px solid {{ $isDark ? 'rgba(45,212,191,.3)' : 'rgba(23,144,123,.25)' }};background:{{ $isDark ? 'rgba(45,212,191,.08)' : '#F0FBF8' }};border-radius:14px;padding:16px 18px;display:flex;flex-direction:column;gap:8px">
+                                <div style="display:flex;align-items:center;gap:9px">
+                                    <span style="width:28px;height:28px;flex-shrink:0;border-radius:8px;background:#17907B;color:#fff;display:grid;place-items:center"><x-icon name="sparkles" style="width:16px;height:16px" /></span>
+                                    <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:13.5px;color:{{ $isDark ? '#5EEAD4' : '#0F7A68' }}">{{ __('Penerangan AI') }}</span>
+                                </div>
+
+                                <span x-show="loading" style="font-size:13.5px;color:var(--wl-muted);font-weight:600">{{ __('Sedang menjana penerangan...') }}</span>
+
+                                <p x-show="!loading && !error" x-text="text"
+                                   style="margin:0;font-family:'Nunito',sans-serif;font-size:14px;line-height:1.6;color:var(--wl-ink)"></p>
+
+                                <div x-show="error" x-cloak style="display:flex;align-items:center;gap:10px">
+                                    <span style="font-size:13.5px;color:#C24936;font-weight:700">{{ __('Penerangan gagal dijana.') }}</span>
+                                    <button type="button" @click="load()" style="border:none;background:none;color:{{ $isDark ? '#5EEAD4' : '#0F7A68' }};font-family:'Geist',sans-serif;font-weight:800;font-size:13px;cursor:pointer;text-decoration:underline">{{ __('Cuba lagi') }}</button>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
                 </div>
             @endforeach
         </div>
 
         <a href="{{ route('kuiz-saya.index') }}" class="wl-btn-secondary" style="align-self:center;min-height:48px;display:inline-flex;align-items:center;gap:6px;border-radius:14px;border:2px solid {{ $isDark ? '#2DD4BF' : '#17907B' }};background:{{ $isDark ? 'var(--wl-surface)' : '#fff' }};color:{{ $isDark ? '#5EEAD4' : '#0F7A68' }};font-family:'Geist',sans-serif;font-weight:800;font-size:14.5px;padding:0 24px;text-decoration:none"><x-icon name="arrow-left" style="width:17px;height:17px" />{{ __('Kembali') }}</a>
     </div>
+
+    @once
+        @push('scripts')
+            <script>
+                // On-demand AI explanation for a wrong answer. Fetches once, then keeps the text so
+                // re-opening is instant; the server caches across students too.
+                function answerExplain(url) {
+                    return {
+                        open: false,
+                        loading: false,
+                        error: false,
+                        text: '',
+                        load() {
+                            this.open = true;
+                            if (this.text) { this.error = false; return; }  // already fetched
+                            this.loading = true;
+                            this.error = false;
+                            const token = document.querySelector('meta[name=csrf-token]')?.content;
+                            fetch(url, {
+                                method: 'POST',
+                                headers: { 'X-CSRF-TOKEN': token, 'Accept': 'application/json' },
+                            })
+                                .then((r) => (r.ok ? r.json() : Promise.reject(r)))
+                                .then((d) => { this.text = d.explanation || ''; this.loading = false; })
+                                .catch(() => { this.error = true; this.loading = false; });
+                        },
+                    };
+                }
+            </script>
+        @endpush
+    @endonce
 
     {{-- One-off full-screen confetti rain - only for a perfect score, and only on a fresh finish
          (not when reviewing). Self-contained canvas (no library), skipped under reduced motion. --}}
