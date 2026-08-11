@@ -170,9 +170,19 @@
         .wl-logout { width:36px; height:36px; border-radius:10px; display:grid; place-items:center; color:#C24936; flex-shrink:0; border:none; background:transparent; cursor:pointer; }
         .wl-logout:hover { background:#FDE7E0; }
 
+        /* Brand + hamburger sit on one row at the top of the rail. The burger only shows on mobile. */
+        .wl-side-top { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+        .wl-burger { display:none; align-items:center; justify-content:center; width:44px; height:44px; border-radius:11px; border:1px solid var(--wl-line-2); background:var(--wl-surface); color:var(--wl-ink); cursor:pointer; flex-shrink:0; }
+        .wl-burger:hover { background:var(--wl-hover); }
+
         @media (max-width: 900px) {
             .wl-shell { grid-template-columns: 1fr !important; }
-            .wl-side { position:static !important; width:auto !important; height:auto !important; flex-direction:row !important; flex-wrap:wrap !important; }
+            /* Rail becomes a top bar: brand + burger visible, the menu itself collapsed until tapped. */
+            .wl-side { position:static !important; width:auto !important; height:auto !important; flex-direction:column !important; gap:6px !important; }
+            .wl-burger { display:flex; }
+            .wl-side > .wl-nav, .wl-side .wl-userbar { display:none; }
+            .wl-side.is-open > .wl-nav { display:flex; }
+            .wl-side.is-open .wl-userbar { display:flex; }
             .wl-main { grid-column:auto !important; padding: 20px 16px 40px !important; }
         }
     </style>
@@ -181,14 +191,20 @@
 <body class="wl">
 <div class="wl-shell" style="min-height:100vh;display:grid;grid-template-columns:236px 1fr">
     {{-- ── SIDEBAR (wide labelled rail, matched to the Cikgu/Admin shell) ── --}}
-    <aside class="wl-side" style="background:var(--wl-surface);border-right:1px solid var(--wl-line);display:flex;flex-direction:column;padding:20px 14px;gap:4px;position:fixed;top:0;left:0;width:236px;height:100vh;overflow-y:auto;box-sizing:border-box">
-        <a href="{{ route('belajar.index') }}" class="wl-brand" title="WeLearn">
-            <img src="{{ asset('images/welearn1.png') }}" alt="WeLearn">
-            <span style="display:flex;flex-direction:column">
-                <span class="wl-brand-name">WeLearn</span>
-                <span class="wl-brand-sub">{{ __('Portal Murid') }}</span>
-            </span>
-        </a>
+    <aside class="wl-side" x-data="{ navOpen: false }" :class="{ 'is-open': navOpen }" @click.outside="navOpen = false" style="background:var(--wl-surface);border-right:1px solid var(--wl-line);display:flex;flex-direction:column;padding:20px 14px;gap:4px;position:fixed;top:0;left:0;width:236px;height:100vh;overflow-y:auto;box-sizing:border-box">
+        <div class="wl-side-top">
+            <a href="{{ route('belajar.index') }}" class="wl-brand" title="WeLearn">
+                <img src="{{ asset('images/welearn1.png') }}" alt="WeLearn">
+                <span style="display:flex;flex-direction:column">
+                    <span class="wl-brand-name">WeLearn</span>
+                    <span class="wl-brand-sub">{{ __('Portal Murid') }}</span>
+                </span>
+            </a>
+            <button type="button" class="wl-burger" @click="navOpen = !navOpen" :aria-expanded="navOpen ? 'true' : 'false'" aria-label="{{ __('Menu') }}">
+                <svg x-show="!navOpen" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                <svg x-show="navOpen" x-cloak width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="6" y1="6" x2="18" y2="18"/><line x1="6" y1="18" x2="18" y2="6"/></svg>
+            </button>
+        </div>
 
         @foreach ($nav as $n)
             <a href="{{ route($n['route']) }}" @class(['wl-nav', 'is-active' => $n['active']]) aria-current="{{ $n['active'] ? 'page' : 'false' }}">

@@ -231,9 +231,19 @@
         /* Table rows */
         .tp-tr:hover { background:var(--tp-surface-2); }
 
+        /* Brand + hamburger on one row at the top of the rail; the burger only shows on mobile. */
+        .tp-side-top { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+        .tp-burger { display:none; align-items:center; justify-content:center; width:44px; height:44px; border-radius:11px; border:1px solid var(--tp-line-2); background:var(--tp-surface); color:var(--tp-ink); cursor:pointer; flex-shrink:0; }
+        .tp-burger:hover { background:var(--tp-hover); }
+
         @media (max-width:900px) {
             .tp-shell { grid-template-columns:1fr; }
-            .tp-side { position:static; width:auto; height:auto; flex-direction:row; flex-wrap:wrap; }
+            /* Rail becomes a top bar: brand + burger visible, the menu collapsed until tapped. */
+            .tp-side { position:static; width:auto; height:auto; flex-direction:column; gap:6px; }
+            .tp-burger { display:flex; }
+            .tp-side > .tp-nav, .tp-side .tp-userbar { display:none; }
+            .tp-side.is-open > .tp-nav { display:flex; }
+            .tp-side.is-open .tp-userbar { display:flex; }
             .tp-main { grid-column:auto; padding:20px; }
         }
         @media (prefers-reduced-motion:reduce){ .tp * { transition:none !important; } }
@@ -243,14 +253,20 @@
 <body class="tp" style="margin:0;">
 <div class="tp-shell">
     {{-- SIDEBAR --}}
-    <aside class="tp-side">
-        <a href="{{ route('admin.dashboard') }}" class="tp-brand" title="WeLearn">
-            <img src="{{ asset('images/welearn1.png') }}" alt="WeLearn">
-            <span style="display:flex;flex-direction:column">
-                <span class="tp-brand-name">WeLearn</span>
-                <span class="tp-brand-sub">{{ __('Portal Admin') }}</span>
-            </span>
-        </a>
+    <aside class="tp-side" x-data="{ navOpen: false }" :class="{ 'is-open': navOpen }" @click.outside="navOpen = false">
+        <div class="tp-side-top">
+            <a href="{{ route('admin.dashboard') }}" class="tp-brand" title="WeLearn">
+                <img src="{{ asset('images/welearn1.png') }}" alt="WeLearn">
+                <span style="display:flex;flex-direction:column">
+                    <span class="tp-brand-name">WeLearn</span>
+                    <span class="tp-brand-sub">{{ __('Portal Admin') }}</span>
+                </span>
+            </a>
+            <button type="button" class="tp-burger" @click="navOpen = !navOpen" :aria-expanded="navOpen ? 'true' : 'false'" aria-label="{{ __('Menu') }}">
+                <svg x-show="!navOpen" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                <svg x-show="navOpen" x-cloak width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="6" y1="6" x2="18" y2="18"/><line x1="6" y1="18" x2="18" y2="6"/></svg>
+            </button>
+        </div>
 
         @foreach ($nav as $item)
             <a href="{{ route($item['route']) }}" @class(['tp-nav', 'is-active' => $item['active']])>
