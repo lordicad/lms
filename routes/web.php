@@ -48,6 +48,50 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', LandingController::class)->name('landing');
 
+// SEO: robots.txt and sitemap.xml served through Laravel, so they work regardless of how the
+// deploy lays out the docroot. Only the public pages are listed; the app lives behind auth.
+Route::get('/robots.txt', function () {
+    $lines = [
+        'User-agent: *',
+        'Allow: /$',
+        'Allow: /login',
+        'Allow: /daftar',
+        'Disallow: /belajar',
+        'Disallow: /cikgu',
+        'Disallow: /admin',
+        'Disallow: /kuiz',
+        'Disallow: /keputusan',
+        'Disallow: /kuiz-saya',
+        'Disallow: /ranking',
+        'Disallow: /notifikasi',
+        'Disallow: /profil',
+        'Disallow: /cari',
+        '',
+        'Sitemap: '.url('/sitemap.xml'),
+    ];
+
+    return response(implode("\n", $lines)."\n", 200)->header('Content-Type', 'text/plain');
+})->name('robots');
+
+Route::get('/sitemap.xml', function () {
+    $urls = [route('landing')];
+    if (\Illuminate\Support\Facades\Route::has('login')) {
+        $urls[] = route('login');
+    }
+    if (\Illuminate\Support\Facades\Route::has('register')) {
+        $urls[] = route('register');
+    }
+
+    $xml = '<?xml version="1.0" encoding="UTF-8"?>'."\n";
+    $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'."\n";
+    foreach ($urls as $url) {
+        $xml .= '  <url><loc>'.e($url).'</loc></url>'."\n";
+    }
+    $xml .= '</urlset>'."\n";
+
+    return response($xml, 200)->header('Content-Type', 'application/xml');
+})->name('sitemap');
+
 // Tukar bahasa antara muka (BM / EN). Terbuka kepada tetamu dan pengguna berdaftar.
 Route::get('/bahasa/{locale}', LocaleController::class)->name('locale.switch');
 

@@ -601,3 +601,16 @@ html.theme-dark {
 .ss-opt-label { flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .ss-check { width:16px; height:16px; flex-shrink:0; opacity:0; color:var(--ss-active-fg); }
 .ss-opt.is-selected .ss-check { opacity:1; }
+
+/* ------------------------------------------------------------------------- *
+   Mobile / cross-browser safety (Safari + Chrome).
+   - text-size-adjust: stop iOS inflating body text when the phone rotates.
+   - 16px text fields on small screens: below 16px, Safari zooms the page in
+     when the field is focused, which reads as the layout "jumping". 16px is
+     the smallest size that never triggers it.
+ * ------------------------------------------------------------------------- */
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+@media (max-width: 640px) {
+    input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]),
+    textarea { font-size: 16px !important; }
+}

@@ -28,8 +28,11 @@
     {{-- Tab icon. One 196px PNG serves the browser tab and the phone home screen alike. --}}
     <link rel="icon" type="image/png" href="{{ asset('images/welearn.png') }}">
     <link rel="apple-touch-icon" href="{{ asset('images/welearn.png') }}">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <title>{{ $title ? $title.' | WeLearn' : 'WeLearn' }}</title>
+
+    {{-- Canonical + Open Graph / Twitter share cards + theme-color. --}}
+    @include('partials.seo', ['seoTitle' => $title ? $title.' | WeLearn' : 'WeLearn'])
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -41,6 +44,13 @@
            input boxes 440px wide, exactly as the mockup - a border-box reset here shrinks
            every box by its padding+border and makes the fields look narrower. */
         *, *::before, *::after { box-sizing: content-box; }
+
+        /* Mobile / cross-browser safety (Safari + Chrome): no text inflation on rotate, and 16px
+           fields on small screens so focusing an input never makes Safari zoom the page in. */
+        html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+        @media (max-width: 640px) {
+            input:not([type=checkbox]):not([type=radio]), textarea, select { font-size: 16px; }
+        }
 
         :root {
             --bg: #FDFDFB; --surface: #FFFFFF;

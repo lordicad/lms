@@ -5,7 +5,8 @@
     {{-- Tab icon. One 196px PNG serves the browser tab and the phone home screen alike. --}}
     <link rel="icon" type="image/png" href="{{ asset('images/welearn.png') }}">
     <link rel="apple-touch-icon" href="{{ asset('images/welearn.png') }}">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="{{ ($theme ?? 'light') === 'dark' ? '#12181f' : '#ffffff' }}">
 
     <title>{{ isset($title) ? $title.' | '.config('app.name') : config('app.name') }}</title>
 

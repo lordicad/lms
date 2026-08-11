@@ -5,11 +5,27 @@
     {{-- Tab icon. One 196px PNG serves the browser tab and the phone home screen alike. --}}
     <link rel="icon" type="image/png" href="{{ asset('images/welearn.png') }}">
     <link rel="apple-touch-icon" href="{{ asset('images/welearn.png') }}">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 
     <title>{{ __('WeLearn. Belajar di mana-mana, bila-bila masa.') }}</title>
     <meta name="description"
           content="Platform pembelajaran untuk sekolah rendah. Murid menonton video kelas, mencuba kuiz, dan naik ranking. Guru memuat naik rakaman kelas, bahan bantu mengajar dan kuiz.">
+
+    {{-- Canonical + Open Graph / Twitter share cards + theme-color. --}}
+    @include('partials.seo', ['seoTitle' => __('WeLearn. Belajar di mana-mana, bila-bila masa.')])
+
+    {{-- Structured data: tells Google this is an education platform, for a richer search listing. --}}
+    <script type="application/ld+json">
+    {!! json_encode([
+        '@context' => 'https://schema.org',
+        '@type' => 'EducationalOrganization',
+        'name' => 'WeLearn',
+        'url' => url('/'),
+        'logo' => url('/images/welearn.png'),
+        'image' => url('/images/welearn-banner.png'),
+        'description' => __('Platform pembelajaran untuk sekolah rendah. Murid menonton video kelas, mencuba kuiz dan naik ranking.'),
+    ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
+    </script>
 
     {{--
         The landing page is deliberately self-contained: its own fonts and a scoped stylesheet, no
@@ -26,6 +42,9 @@
 
     <style>
         *, *::before, *::after { box-sizing: border-box; }
+
+        /* Mobile / cross-browser safety (Safari + Chrome): keep text from inflating on rotate. */
+        html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 
         :root {
             --bg: #FDFDFB; --surface: #FFFFFF;
