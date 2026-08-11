@@ -164,6 +164,9 @@ class QuizController extends Controller
             ]);
 
             $quiz->questions()->delete();
+            // Clear in-flight (unsubmitted) attempts served the old questions, so none grades to a
+            // bogus 0 on submit; completed attempts keep their scores (as the web builder does).
+            $quiz->attempts()->whereNull('completed_at')->delete();
             $this->replaceQuestions($quiz, $data['questions']);
         });
 

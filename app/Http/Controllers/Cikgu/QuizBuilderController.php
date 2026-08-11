@@ -116,6 +116,11 @@ class QuizBuilderController extends Controller
         DB::transaction(function () use ($quiz, $questions) {
             $quiz->questions()->delete();   // options cascade
 
+            // Clear in-flight (unsubmitted) attempts: they were served the old questions, so grading
+            // them against the new set would score a bogus 0 and lock it onto the leaderboard. The
+            // student simply retakes the new version. Completed attempts keep their scores untouched.
+            $quiz->attempts()->whereNull('completed_at')->delete();
+
             foreach ($questions as $index => $data) {
                 $question = Question::create([
                     'quiz_id' => $quiz->id,
