@@ -49,63 +49,48 @@
             <h2 class="tp-g" style="font-size:17px;font-weight:800;color:var(--tp-ink)">{{ __('Fail') }}</h2>
 
             @if ($editing)
-                <div x-data="{ del: false }" style="display:flex;flex-direction:column;gap:16px">
+                <div style="display:flex;flex-direction:column;gap:16px">
                     {{-- This material's own title. --}}
                     <div class="tp-field">
                         <label for="title" class="tp-label">{{ __('Tajuk') }}</label>
-                        <input id="title" name="title" type="text" value="{{ old('title', $material->title) }}" class="tp-input" :disabled="del" @error('title') aria-invalid="true" @enderror>
+                        <input id="title" name="title" type="text" value="{{ old('title', $material->title) }}" class="tp-input" @error('title') aria-invalid="true" @enderror>
                         @error('title') <span class="tp-error">{{ $message }}</span> @enderror
                     </div>
 
-                    {{-- Drag & drop more files into this chapter - each becomes a new material, so a
-                         teacher can add a whole set of handouts from the edit page. --}}
-                    <div class="tp-field">
-                        <label class="tp-label">{{ __('Muat naik fail baharu (pilihan)') }}</label>
-                        <x-file-dropzone
-                            name="files[]"
-                            title-name="titles[]"
-                            :extensions="config('lms.material_mimes')"
-                            :accept="collect(config('lms.material_mimes'))->map(fn ($e) => '.'.$e)->implode(',')"
-                            :max-mb="config('lms.material_max_mb')"
-                            :max-files="\App\Http\Requests\MaterialRequest::MAX_FILES"
-                            :hint="__('Setiap fail menjadi bahan baharu dalam bab ini. Had saiz :max MB setiap fail.', ['max' => config('lms.material_max_mb')])"
-                            :title-label="__('Tajuk (untuk pelajar)')" />
-                        @error('files') <span class="tp-error">{{ $message }}</span> @enderror
-                        @foreach ($errors->get('files.*') as $messages)<span class="tp-error">{{ $messages[0] }}</span>@endforeach
-                    </div>
-
-                    {{-- The current file for this material, shown below, with a delete option. --}}
+                    {{-- The current file for this material. Read-only; the replace field below swaps it. --}}
                     <div class="tp-field">
                         <label class="tp-label">{{ __('Fail semasa') }}</label>
-
-                        {{-- x-show lives on the wrapper so it never overrides the card's own
-                             display:flex (which would drop the row into a stacked column). --}}
-                        <div x-show="! del">
-                            <div style="display:flex;align-items:center;gap:14px;background:var(--tp-surface);border:1px solid var(--tp-line-2);border-radius:16px;padding:14px 16px">
-                                <span style="width:46px;height:46px;border-radius:13px;background:#FBE4ED;color:#B84A75;display:grid;place-items:center;flex-shrink:0">
-                                    <x-icon :name="$material->iconName()" class="h-[22px] w-[22px]" />
-                                </span>
-                                <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px">
-                                    <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:14px;color:var(--tp-ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ $material->original_name }}</span>
-                                    <span style="font-size:12.5px;color:var(--tp-muted-2);font-weight:700">{{ strtoupper(pathinfo($material->original_name, PATHINFO_EXTENSION)) }} · {{ $material->humanSize() }}</span>
-                                </div>
-                                <button type="button" @click="del = true" title="{{ __('Padam bahan ini') }}"
-                                        style="display:inline-flex;align-items:center;gap:7px;border:1.5px solid rgba(194,73,54,.28);background:#FDF1EE;cursor:pointer;color:#C24936;font-weight:800;font-size:13px;border-radius:11px;padding:9px 14px;flex-shrink:0">
-                                    <x-icon name="trash" class="h-4 w-4" />
-                                    {{ __('Padam') }}
-                                </button>
-                            </div>
-                        </div>
-
-                        <div x-show="del" x-cloak>
-                            <div style="display:flex;align-items:center;gap:10px;background:#FDE7E0;border:1px solid rgba(194,73,54,.25);border-radius:12px;padding:12px 14px;font-size:13px;color:#C24936">
-                                <span style="flex:1">{{ __('Bahan ini akan dipadam apabila anda simpan.') }}</span>
-                                <button type="button" @click="del = false" style="border:none;background:transparent;cursor:pointer;color:#0F7A68;font-weight:800;font-size:13px;flex-shrink:0">{{ __('Kembalikan') }}</button>
+                        <div style="display:flex;align-items:center;gap:14px;background:var(--tp-surface);border:1px solid var(--tp-line-2);border-radius:16px;padding:14px 16px">
+                            <span style="width:46px;height:46px;border-radius:13px;background:#FBE4ED;color:#B84A75;display:grid;place-items:center;flex-shrink:0">
+                                <x-icon :name="$material->iconName()" class="h-[22px] w-[22px]" />
+                            </span>
+                            <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px">
+                                <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:14px;color:var(--tp-ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ $material->original_name }}</span>
+                                <span style="font-size:12.5px;color:var(--tp-muted-2);font-weight:700">{{ strtoupper(pathinfo($material->original_name, PATHINFO_EXTENSION)) }} · {{ $material->humanSize() }}</span>
                             </div>
                         </div>
                     </div>
 
-                    <input type="hidden" name="delete_material" :value="del ? 1 : 0">
+                    {{-- Replace the file (optional). One file: it becomes this material's file, and the
+                         old one is deleted on save. Leaving it empty keeps the current file. --}}
+                    <div class="tp-field" x-data="{ picked: '' }">
+                        <label for="file" class="tp-label">{{ __('Ganti fail (pilihan)') }}</label>
+                        <label for="file"
+                               @dragover.prevent="$el.dataset.drag = 1" @dragleave="$el.dataset.drag = 0"
+                               @drop.prevent="$el.dataset.drag = 0; if ($event.dataTransfer.files.length) { $refs.file.files = $event.dataTransfer.files; picked = $event.dataTransfer.files[0].name }"
+                               style="display:flex;align-items:center;gap:12px;cursor:pointer;border:1.5px dashed var(--tp-line-2);border-radius:16px;padding:16px;background:var(--tp-surface)">
+                            <span style="width:42px;height:42px;border-radius:12px;background:color-mix(in oklab, var(--tp-teal) 14%, transparent);display:grid;place-items:center;flex-shrink:0">
+                                <x-icon name="upload" class="h-5 w-5" style="color:var(--tp-teal)" />
+                            </span>
+                            <span style="flex:1;min-width:0;font-weight:800;font-size:13.5px;color:var(--tp-ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap"
+                                  x-text="picked || '{{ __('Seret & lepas fail di sini, atau klik untuk pilih') }}'"></span>
+                        </label>
+                        <input type="file" id="file" name="file" x-ref="file" class="sr-only"
+                               accept="{{ collect(config('lms.material_mimes'))->map(fn ($e) => '.'.$e)->implode(',') }}"
+                               @change="picked = $event.target.files[0]?.name || ''">
+                        <p class="tp-hint">{{ __('Biarkan kosong untuk kekalkan fail semasa. Fail baharu akan menggantikan fail lama. Had saiz :max MB.', ['max' => config('lms.material_max_mb')]) }}</p>
+                        @error('file') <span class="tp-error">{{ $message }}</span> @enderror
+                    </div>
                 </div>
             @else
                 <x-file-dropzone

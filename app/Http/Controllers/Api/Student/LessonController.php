@@ -62,6 +62,11 @@ class LessonController extends StudentApiController
 
     public function markViewed(Request $request, Lesson $lesson): JsonResponse
     {
+        // Mirror show(): an unpublished lesson is not viewable, so it cannot be marked viewed either.
+        if (! $lesson->is_published) {
+            return response()->json(['message' => 'Video tidak tersedia.'], 404);
+        }
+
         $user = $request->user();
 
         if (! $user->isStudent()) {
@@ -85,6 +90,12 @@ class LessonController extends StudentApiController
 
     public function saveProgress(Request $request, Lesson $lesson): JsonResponse
     {
+        // Mirror show()/markViewed: an unpublished lesson is not viewable, so progress (which also
+        // backfills the lesson's duration and feeds Continue Watching) cannot be written against it.
+        if (! $lesson->is_published) {
+            return response()->json(['message' => 'Video tidak tersedia.'], 404);
+        }
+
         $data = $request->validate([
             'position_seconds' => ['required', 'integer', 'min:0', 'max:360000'],
             'duration_seconds' => ['nullable', 'integer', 'min:1', 'max:360000'],

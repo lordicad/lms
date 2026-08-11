@@ -40,4 +40,28 @@ class TalentPassFailTest extends TestCase
         $this->assertSame(3, $passFail['failed']);
         $this->assertSame(7, $passFail['total']);
     }
+
+    /**
+     * The report scope and the student's celebration must agree on the 79.5% boundary: both round,
+     * so a borderline attempt counts as a pass everywhere. A genuine sub-boundary attempt still fails
+     * on both sides, so the rounding does not simply wave everything through.
+     */
+    public function test_scope_passed_agrees_with_the_student_on_the_rounding_boundary(): void
+    {
+        $quiz = Quiz::factory()->for(Chapter::factory()->create())->create();
+
+        // 159/200 = 79.5% -> rounds to 80 -> the student is shown "lulus".
+        $borderline = QuizAttempt::factory()->for($quiz)->create(['score' => 159, 'max_score' => 200, 'completed_at' => now()]);
+        // 158/200 = 79.0% -> rounds to 79 -> a real fail on both sides (the control).
+        $justUnder = QuizAttempt::factory()->for($quiz)->create(['score' => 158, 'max_score' => 200, 'completed_at' => now()]);
+
+        $this->assertTrue($borderline->isPassed(), 'the student sees a pass at 79.5%');
+        $this->assertTrue(
+            QuizAttempt::whereKey($borderline->id)->passed()->exists(),
+            'the report must count the same borderline attempt as a pass',
+        );
+
+        $this->assertFalse($justUnder->isPassed());
+        $this->assertFalse(QuizAttempt::whereKey($justUnder->id)->passed()->exists());
+    }
 }

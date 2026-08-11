@@ -26,7 +26,7 @@
         @else
             <div style="display:flex;flex-direction:column;background:var(--wl-surface);border:1px solid var(--wl-line);border-radius:22px;overflow:hidden;box-shadow:0 4px 16px rgba(46,44,80,.04)">
                 @foreach ($notifications as $n)
-                    @php($m = $meta[$n->type] ?? ['icon' => 'bell', 'tint' => '#F1F0E8', 'fg' => 'var(--wl-muted-2)', 'text' => $n->title])
+                    @php($m = $meta[$n->type] ?? ['icon' => 'bell', 'tint' => '#F1F0E8', 'fg' => 'var(--wl-muted-2)', 'text' => e($n->title)])
                     <a href="{{ $n->url ?: route('belajar.index') }}"
                        style="display:flex;align-items:center;gap:14px;padding:16px 20px;border-bottom:1px solid var(--wl-line);text-decoration:none;{{ $n->read_at ? '' : 'background:var(--wl-surface-2)' }}">
                         <span style="width:44px;height:44px;flex-shrink:0;border-radius:13px;background:{{ $m['tint'] }};color:{{ $m['fg'] }};display:grid;place-items:center"><x-icon :name="$m['icon']" class="h-5 w-5" /></span>

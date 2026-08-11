@@ -19,7 +19,7 @@
         <div style="display:flex;flex-direction:column;gap:18px">
             <div style="background:var(--tp-surface);border:1px solid var(--tp-line);border-radius:18px;overflow:hidden;box-shadow:0 2px 10px rgba(46,44,80,.04)">
                 @foreach ($notifications as $n)
-                    @php($m = $meta[$n->type] ?? ['icon' => 'bell', 'tint' => '#F1F0E8', 'text' => $n->title])
+                    @php($m = $meta[$n->type] ?? ['icon' => 'bell', 'tint' => '#F1F0E8', 'text' => e($n->title)])
                     <div style="display:flex;align-items:center;gap:14px;padding:14px 20px;border-bottom:1px solid var(--tp-line);{{ $n->read_at ? '' : 'background:#FBFAF6' }}">
                         <span style="width:42px;height:42px;flex-shrink:0;border-radius:12px;background:{{ $m['tint'] }};color:{{ $m['fg'] ?? 'var(--tp-ink)' }};display:grid;place-items:center;font-size:19px">@if (preg_match('/^[a-z0-9-]+$/', $m['icon']))<x-icon :name="$m['icon']" class="h-[21px] w-[21px]" />@else{{ $m['icon'] }}@endif</span>
 

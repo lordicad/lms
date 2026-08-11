@@ -5,6 +5,7 @@ namespace Tests\Feature\Teacher;
 use App\Models\Chapter;
 use App\Models\Grade;
 use App\Models\Lesson;
+use App\Models\Question;
 use App\Models\Quiz;
 use App\Models\Subject;
 use App\Models\User;
@@ -63,8 +64,12 @@ class ContentFilterTest extends TestCase
         $chapterB = Chapter::factory()->create(['subject_id' => $subject->id, 'grade_id' => $grade->id]);
 
         $teacher = User::factory()->teacher()->create();
+        // Each quiz needs a question: the quiz index deletes empty interactive drafts on load, so a
+        // question-less quiz would be gone before the filter runs and this would not test the filter.
         $keep = Quiz::factory()->for($chapterA)->create(['teacher_id' => $teacher->id]);
-        Quiz::factory()->for($chapterB)->create(['teacher_id' => $teacher->id]);
+        $keep->questions()->save(Question::factory()->make());
+        $other = Quiz::factory()->for($chapterB)->create(['teacher_id' => $teacher->id]);
+        $other->questions()->save(Question::factory()->make());
 
         $response = $this->actingAs($teacher)->get(route('cikgu.kuiz.index', [
             'tahun' => 5, 'subjek' => $subject->slug, 'bab' => $chapterA->id,

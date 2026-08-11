@@ -48,6 +48,10 @@ class WatchController extends Controller
      */
     public function markViewed(Request $request, Lesson $lesson): JsonResponse
     {
+        // Same gate as show(): a student may only record a view on a lesson they can actually view.
+        // Without this, a crafted POST could count views on an unpublished draft the page itself hides.
+        $this->authorize('view', $lesson);
+
         $user = $request->user();
 
         if (! $user->isStudent()) {

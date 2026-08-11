@@ -110,11 +110,16 @@ class QuizAttempt extends Model
      * Attempts at or above the pass mark. Guards max_score, because a quiz whose questions were
      * all deleted leaves attempts scoring 0/0 - dividing by that would error, and they are not
      * passes.
+     *
+     * Rounds the percentage before comparing, exactly as percentage() does, so a borderline attempt
+     * (e.g. 79.5%, which rounds to 80) counts as a pass here too. Without the ROUND, this scope and
+     * the student's celebration screen would disagree on that boundary - one child told "lulus", the
+     * same attempt reported to MOE as a fail.
      */
     public function scopePassed(Builder $query): Builder
     {
         return $query->where('max_score', '>', 0)
-            ->whereRaw('(score / max_score) * 100 >= ?', [self::PASS_AT]);
+            ->whereRaw('ROUND(score / max_score * 100) >= ?', [self::PASS_AT]);
     }
 
     /**

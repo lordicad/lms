@@ -4,9 +4,11 @@ namespace Tests\Feature\Admin;
 
 use App\Models\Chapter;
 use App\Models\Lesson;
+use App\Models\LessonView;
 use App\Models\Material;
 use App\Models\Quiz;
 use App\Models\QuizAttempt;
+use App\Models\School;
 use App\Models\User;
 use App\Services\AdminReportService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -88,6 +90,43 @@ class DashboardTest extends TestCase
         $this->assertSame(1, end($activity['series']['passed']));
         $this->assertGreaterThanOrEqual(1, end($activity['series']['uploads']));
         $this->assertSame(0, $activity['series']['completed'][0]);
+    }
+
+    /**
+     * The views line counts every view of the admin's own school's videos - including views by
+     * students from other schools - but never views of another school's videos. It is scoped through
+     * the lesson's teacher, like the other content lines, so the whole chart stays school-consistent.
+     */
+    public function test_platform_activity_views_are_scoped_to_the_schools_own_videos(): void
+    {
+        $mine = School::factory()->create();
+        $other = School::factory()->create();
+
+        $this->actingAs(User::factory()->admin()->atSchool($mine)->create());
+
+        $chapter = Chapter::factory()->create();
+        $myTeacher = User::factory()->teacher()->atSchool($mine)->create();
+        $theirTeacher = User::factory()->teacher()->atSchool($other)->create();
+
+        $myVideo = Lesson::factory()->for($chapter)->create(['teacher_id' => $myTeacher->id]);
+        $theirVideo = Lesson::factory()->for($chapter)->create(['teacher_id' => $theirTeacher->id]);
+
+        // My video: watched by one of my students and by an outsider - both must count.
+        $this->recordView($myVideo, User::factory()->student(3)->atSchool($mine)->create());
+        $this->recordView($myVideo, User::factory()->student(3)->atSchool($other)->create());
+        // Another school's video: must not count toward my chart at all.
+        $this->recordView($theirVideo, User::factory()->student(3)->atSchool($other)->create());
+
+        $views = app(AdminReportService::class)->platformActivity('7d')['series']['views'];
+
+        $this->assertSame(2, end($views), 'both viewers of my own video count; the foreign video does not');
+    }
+
+    private function recordView(Lesson $lesson, User $student): void
+    {
+        $view = new LessonView(['lesson_id' => $lesson->id, 'student_id' => $student->id]);
+        $view->created_at = now();
+        $view->save();
     }
 
     public function test_registrations_include_only_accounts_from_the_last_seven_days(): void

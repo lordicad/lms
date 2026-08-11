@@ -157,4 +157,42 @@ class MaterialMultiUploadTest extends TestCase
         $this->assertMatchesRegularExpression('/<input[^>]*name="files\[\]"[^>]*multiple/', $html);
         $this->assertStringContainsString('name="titles[]"', $html);
     }
+
+    /**
+     * A teacher may only attach a material to their own video. The dropzone is scoped client-side,
+     * but a crafted request that names another teacher's lesson must be rejected server-side, or the
+     * material would surface on that teacher's video page.
+     */
+    public function test_a_material_cannot_be_attached_to_another_teachers_lesson(): void
+    {
+        $other = User::factory()->teacher()->create();
+        $foreignLesson = Lesson::factory()->for($this->chapter)->create(['teacher_id' => $other->id]);
+
+        $this->actingAs($this->teacher)->post(route('cikgu.bahan.store'), [
+            'chapter_id' => $this->chapter->id,
+            'lesson_id' => $foreignLesson->id,
+            'files' => [$this->pdf('sisip.pdf')],
+        ])->assertSessionHasErrors('lesson_id');
+
+        $this->assertSame(0, Material::count(), 'nothing should be saved against another teacher\'s lesson');
+    }
+
+    /** The same guard applies on edit: a replacement/relocation cannot point at a foreign lesson. */
+    public function test_editing_cannot_move_a_material_onto_another_teachers_lesson(): void
+    {
+        $other = User::factory()->teacher()->create();
+        $foreignLesson = Lesson::factory()->for($this->chapter)->create(['teacher_id' => $other->id]);
+        $material = Material::factory()->create([
+            'chapter_id' => $this->chapter->id,
+            'teacher_id' => $this->teacher->id,
+        ]);
+
+        $this->actingAs($this->teacher)->put(route('cikgu.bahan.update', $material), [
+            'chapter_id' => $this->chapter->id,
+            'lesson_id' => $foreignLesson->id,
+            'title' => 'Cuba pindah',
+        ])->assertSessionHasErrors('lesson_id');
+
+        $this->assertNull($material->fresh()->lesson_id, 'the material must not end up on the foreign lesson');
+    }
 }

@@ -139,7 +139,10 @@ class AdminReportService
         [$keys, $labels] = $this->buckets($period);
         $start = Carbon::parse($keys[0]);   // first bucket (a date, or the first of a month)
 
-        $views = $this->bucketed(LessonView::query(), 'created_at', $keys, $monthly, $start);
+        // Views of this school's own videos, counted no matter who watched them (a student from
+        // another school watching this school's content still counts). Scoped through the lesson's
+        // teacher, mirroring the content lines below, so this line agrees with the rest of the chart.
+        $views = $this->bucketed(SchoolScope::content(LessonView::query(), 'lesson.teacher'), 'created_at', $keys, $monthly, $start);
         $completed = $this->bucketed(SchoolScope::content(QuizAttempt::query(), 'quiz.teacher')->completed(), 'completed_at', $keys, $monthly, $start);
         $passed = $this->bucketed(SchoolScope::content(QuizAttempt::query(), 'quiz.teacher')->completed()->passed(), 'completed_at', $keys, $monthly, $start);
 

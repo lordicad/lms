@@ -26,7 +26,10 @@ class MaterialRequest extends FormRequest
 
         $shared = [
             'chapter_id' => ['required', 'integer', Rule::exists('chapters', 'id'), ValidSubjectGradeCombo::forChapter()],
-            'lesson_id' => ['nullable', 'integer', Rule::exists('lessons', 'id')],
+            // The lesson must be one of this teacher's own videos. Existence alone is not enough: the
+            // attach-to-video dropdown is scoped client-side, but a crafted request could point at
+            // another teacher's lesson and surface this material on their video's page.
+            'lesson_id' => ['nullable', 'integer', Rule::exists('lessons', 'id')->where('teacher_id', $this->user()?->id)],
         ];
 
         // Creating takes any number of files at once, each with its own title. Editing stays a
@@ -44,19 +47,17 @@ class MaterialRequest extends FormRequest
             ];
         }
 
-        // Editing: rename/relocate this material, optionally drop in more files (each becomes a new
-        // material in the chapter), and/or delete this one. Title is not required when deleting.
+        // Editing: rename/relocate this material and optionally replace its single file. A new file
+        // takes the place of the old one (which is deleted on save); leaving it empty keeps the
+        // current file. Deleting a material is done from the Bahan list, not this form.
         return $shared + [
-            'title' => [$this->boolean('delete_material') ? 'nullable' : 'required', 'string', 'max:255'],
-            'delete_material' => ['nullable', 'boolean'],
-            'files' => ['nullable', 'array', 'max:'.self::MAX_FILES],
-            'files.*' => [
+            'title' => ['required', 'string', 'max:255'],
+            'file' => [
+                'nullable',
                 'file',
                 'mimes:'.implode(',', config('lms.material_mimes')),
                 "max:{$max}",
             ],
-            'titles' => ['nullable', 'array', 'max:'.self::MAX_FILES],
-            'titles.*' => ['nullable', 'string', 'max:255'],
         ];
     }
 
