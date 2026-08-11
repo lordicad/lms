@@ -1,0 +1,14 @@
+User-agent: *
+Allow: /
+Disallow: /belajar
+Disallow: /cikgu
+Disallow: /admin
+Disallow: /kuiz
+Disallow: /keputusan
+Disallow: /kuiz-saya
+Disallow: /ranking
+Disallow: /notifikasi
+Disallow: /profil
+Disallow: /cari
+
+Sitemap: https://lms-moe.weststar-dev.com/sitemap.xml

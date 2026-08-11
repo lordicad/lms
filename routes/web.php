@@ -48,31 +48,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', LandingController::class)->name('landing');
 
-// SEO: robots.txt and sitemap.xml served through Laravel, so they work regardless of how the
-// deploy lays out the docroot. Only the public pages are listed; the app lives behind auth.
-Route::get('/robots.txt', function () {
-    $lines = [
-        'User-agent: *',
-        'Allow: /$',
-        'Allow: /login',
-        'Allow: /daftar',
-        'Disallow: /belajar',
-        'Disallow: /cikgu',
-        'Disallow: /admin',
-        'Disallow: /kuiz',
-        'Disallow: /keputusan',
-        'Disallow: /kuiz-saya',
-        'Disallow: /ranking',
-        'Disallow: /notifikasi',
-        'Disallow: /profil',
-        'Disallow: /cari',
-        '',
-        'Sitemap: '.url('/sitemap.xml'),
-    ];
-
-    return response(implode("\n", $lines)."\n", 200)->header('Content-Type', 'text/plain');
-})->name('robots');
-
+// SEO: sitemap.xml served through Laravel so its URLs are always the live host. robots.txt is a
+// STATIC file at public/robots.txt instead - the web server serves a robots.txt from disk before a
+// request ever reaches Laravel, so a route for it is shadowed and never runs.
 Route::get('/sitemap.xml', function () {
     $urls = [route('landing')];
     if (\Illuminate\Support\Facades\Route::has('login')) {
