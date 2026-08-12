@@ -147,7 +147,12 @@
         .wl-card { background: var(--surface); border: 1px solid var(--line); border-radius: 24px; box-shadow: var(--shadow-lg); padding: 24px; }
         .wl-card-label { font-family: 'Geist', sans-serif; font-size: 13px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--faint); }
         .wl-chips { display: flex; flex-wrap: wrap; gap: 9px; }
-        .wl-chip { display: inline-flex; align-items: center; gap: 7px; border-radius: 10px; padding: 7px 13px; font-weight: 700; font-size: 13.5px; }
+        .wl-chip { display: inline-flex; align-items: center; gap: 7px; border-radius: 10px; padding: 7px 13px; font-weight: 700; font-size: 13.5px; order: var(--i); }
+        /* Pair each wide "Eksplorasi" chip with a short one: "Sejarah" moves ahead of "Eksplorasi
+           Sains dan Teknologi", so "Sejarah" sits beside "Eksplorasi Seni dan Dunia" and "Sains"
+           beside "Eksplorasi Sains dan Teknologi". Based on the deterministic sort_order. */
+        .wl-chips .wl-chip:nth-child(10) { order: 10; }
+        .wl-chips .wl-chip:nth-child(11) { order: 9; }
 
         /* Sections */
         .wl-section { padding: clamp(48px, 7vw, 72px) 0; }
@@ -259,13 +264,8 @@
 
             /* Subject chips: smaller so they pair up two-per-row inside the card. */
             .wl-chips { gap: 8px; }
-            .wl-chip { padding: 6px 10px; font-size: 11.5px; gap: 6px; order: var(--i); }
+            .wl-chip { padding: 6px 10px; font-size: 11.5px; gap: 6px; }
             .wl-chip svg { width: 15px; height: 15px; }
-            /* Swap "Sejarah" ahead of "Eksplorasi Sains dan Teknologi": now "Sejarah" pairs with
-               "Eksplorasi Seni dan Dunia", and "Sains" pairs with "Eksplorasi Sains dan Teknologi".
-               Based on the current subject order (10th = Eksplorasi Sains dan Teknologi, 11th = Sejarah). */
-            .wl-chips .wl-chip:nth-child(10) { order: 10; }
-            .wl-chips .wl-chip:nth-child(11) { order: 9; }
 
             /* ── Mobile-only card layout (desktop / Chrome layout is untouched) ──
                "Tiga langkah mudah" and "Kandungan Pembelajaran": one card per row, icon on the
