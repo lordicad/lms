@@ -222,6 +222,9 @@
             .hero-card .hero-cta { flex-wrap: nowrap !important; gap: 8px !important; }
             .hero-card .hero-cta > * { min-height: 40px !important; font-size: 12.5px !important; padding: 0 14px !important; }
 
+            /* Section headings (Sambung menonton / Paling popular / etc.) a little smaller. */
+            .wl-main h2 { font-size: 18px !important; }
+
             /* Welcome heading: smaller icon tile and text on phones (inline sizes, so !important). */
             .wl-pagehead .hi-tile { width: 40px !important; height: 40px !important; border-radius: 12px !important; }
             .wl-pagehead .hi-tile img { width: 24px !important; height: 24px !important; }
