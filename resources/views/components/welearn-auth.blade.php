@@ -263,9 +263,9 @@
             .wla-iconbtn svg { width: 17px; height: 17px; }
 
             /* Hero copy. */
-            .wla-brand-copy { order: 3; width: 100%; max-width: 560px; margin: 26px auto 0; gap: 12px; }
-            .wla-brand h1 { font-size: 30px; }
-            .wla-brand p { font-size: 15px; }
+            .wla-brand-copy { order: 3; width: 100%; max-width: 560px; margin: 36px auto 20px; gap: 12px; }
+            .wla-brand h1 { font-size: 27px; }
+            .wla-brand p { font-size: 14px; }
 
             /* Login card. */
             .wla-card { order: 4; width: 100%; max-width: 460px; margin: 24px auto 0; padding: 30px 24px; }
