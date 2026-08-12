@@ -191,12 +191,15 @@
             .wl-main { grid-column:auto !important; padding: 20px 16px 40px !important; }
 
             /* Header: hamburger + Tahun + language + theme + bell on one row; the search box drops
-               to its own row below. Circle buttons shrink a touch so it all fits. */
-            .wl-topbar { gap: 8px; }
+               to its own row below. Everything shrinks so all five fit even on narrow phones. */
+            .wl-topbar { gap: 6px; }
             .wl-topbar > form[role="search"] { order: 5; min-width: 100% !important; }
-            .wl-burger-open { width: 42px; height: 42px; }
-            .wl-topbar .wl-icbtn { width: 42px !important; height: 42px !important; }
-            .wl-topbar .wl-year-select { min-height: 42px !important; }
+            .wl-burger-open { width: 38px; height: 38px; }
+            .wl-topbar .wl-icbtn { width: 38px !important; height: 38px !important; }
+            .wl-topbar .wl-icbtn svg { width: 17px !important; height: 17px !important; }
+            .wl-topbar .wl-year-select { min-height: 38px !important; padding: 0 28px 0 11px !important; font-size: 11.5px !important; }
+            .wl-topbar .wl-langsw { padding: 2px; }
+            .wl-topbar .wl-langsw a { min-width: 28px !important; min-height: 30px !important; padding: 4px 8px !important; font-size: 11px !important; }
 
             /* Home video rows scroll sideways instead of cramming four per line. */
             .wl-cardrow { display:flex !important; flex-wrap:nowrap; overflow-x:auto; gap:14px; padding-bottom:4px; scroll-snap-type:x proximity; -webkit-overflow-scrolling:touch; }
@@ -272,7 +275,7 @@
                 @endforeach
             </select>
 
-            <div style="display:flex;background:var(--wl-chip);border:1px solid var(--wl-line-2);border-radius:999px;padding:3px;font-family:'Geist',sans-serif;font-size:12.5px;font-weight:700">
+            <div class="wl-langsw" style="display:flex;background:var(--wl-chip);border:1px solid var(--wl-line-2);border-radius:999px;padding:3px;font-family:'Geist',sans-serif;font-size:12.5px;font-weight:700">
                 @foreach (['ms' => 'BM', 'en' => 'EN'] as $code => $lbl)
                     <a href="{{ route('locale.switch', $code) }}" @if ($current === $code) aria-current="true" @endif
                        style="min-width:40px;min-height:34px;border-radius:999px;padding:5px 12px;font-family:'Geist',sans-serif;font-size:12.5px;font-weight:800;text-decoration:none;display:flex;align-items:center;justify-content:center;{{ $current === $code ? 'background:#17907B;color:#fff' : 'background:transparent;color:var(--wl-muted-2)' }}">{{ $lbl }}</a>
