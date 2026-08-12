@@ -45,7 +45,7 @@
                                 @endunless
                             </div>
                             <h2 class="hero-title" style="margin:0;font-family:'Geist',sans-serif;font-size:26px;font-weight:800;color:#1A2433;letter-spacing:-.01em;text-wrap:balance">{{ $hero->title }}</h2>
-                            <div style="display:flex;gap:10px;flex-wrap:wrap">
+                            <div class="hero-cta" style="display:flex;gap:10px;flex-wrap:wrap">
                                 <a href="{{ route('video.show', $hero) }}" class="wl-btn-primary" style="min-height:46px;display:inline-flex;align-items:center;border-radius:12px;background:#17907B;color:#fff;font-family:'Geist',sans-serif;font-weight:800;font-size:14.5px;padding:0 22px;text-decoration:none">▶&nbsp; {{ $heroResuming ? __('Sambung Menonton') : __('Tonton') }}</a>
                                 {{-- AJAX favourite toggle (endpoint returns JSON; no navigation). --}}
                                 <button type="button" x-data="{

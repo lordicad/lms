@@ -216,6 +216,9 @@
             .hero-card .hero-thumb { order: -1; min-height: 180px !important; }
             .hero-card > div { padding: 20px !important; }
             .hero-card .hero-title { font-size: 20px !important; }
+            /* Hero buttons: side by side (no wrap) and smaller. */
+            .hero-card .hero-cta { flex-wrap: nowrap !important; gap: 8px !important; }
+            .hero-card .hero-cta > * { min-height: 40px !important; font-size: 12.5px !important; padding: 0 14px !important; }
 
             /* Welcome heading: smaller icon tile and text on phones (inline sizes, so !important). */
             .wl-pagehead .hi-tile { width: 40px !important; height: 40px !important; border-radius: 12px !important; }
