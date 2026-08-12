@@ -194,8 +194,8 @@
                to its own row below. Everything shrinks so all five fit even on narrow phones. */
             /* The header carries an inline gap:14px, so this must be !important to win. */
             .wl-topbar { gap: 6px !important; }
-            .wl-topbar > form[role="search"] { order: 5; min-width: 100% !important; margin-top: 4px; min-height: 42px !important; padding: 0 14px !important; }
-            .wl-topbar > form[role="search"] input { font-size: 13px !important; min-height: 38px !important; }
+            .wl-topbar > form[role="search"] { order: 5; flex: 0 0 74% !important; max-width: 360px; min-width: 0 !important; margin-top: 14px; min-height: 42px !important; padding: 0 14px !important; }
+            .wl-topbar > form[role="search"] input { font-size: 12px !important; min-height: 38px !important; }
             /* Hamburger stays far left; the auto margin pushes the rest to the right edge. */
             .wl-burger-open { width: 38px; height: 38px; margin-right: auto; }
             .wl-topbar .wl-icbtn { width: 38px !important; height: 38px !important; }
