@@ -210,6 +210,13 @@
             .wl-topbar .wl-langsw { padding: 2px; }
             .wl-topbar .wl-langsw a { min-width: 28px !important; min-height: 30px !important; padding: 4px 8px !important; font-size: 11px !important; }
 
+            /* Hero "Sambung Menonton" card: the two-column layout is too cramped on phones, so stack
+               the thumbnail on top and the text below, with tighter padding and a smaller title. */
+            .hero-card { grid-template-columns: 1fr !important; }
+            .hero-card .hero-thumb { order: -1; min-height: 180px !important; }
+            .hero-card > div { padding: 20px !important; }
+            .hero-card .hero-title { font-size: 20px !important; }
+
             /* Welcome heading: smaller icon tile and text on phones (inline sizes, so !important). */
             .wl-pagehead .hi-tile { width: 40px !important; height: 40px !important; border-radius: 12px !important; }
             .wl-pagehead .hi-tile img { width: 24px !important; height: 24px !important; }
