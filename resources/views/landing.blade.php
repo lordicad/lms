@@ -90,7 +90,7 @@
         img, svg { display: block; }
         @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; scroll-behavior: auto; } }
 
-        .wl-wrap { max-width: clamp(1080px, 68vw, 1280px); margin: 0 auto; padding-left: 24px; padding-right: 24px; }
+        .wl-wrap { max-width: clamp(1080px, 68vw, 1280px); margin: 0 auto; padding-left: clamp(16px, 4vw, 24px); padding-right: clamp(16px, 4vw, 24px); }
         .wl-skip { position: absolute; left: -9999px; top: 0; background: var(--brand); color: #fff; padding: 10px 16px; border-radius: 10px; z-index: 100; font-weight: 700; }
         .wl-skip:focus { left: 16px; top: 12px; }
 
@@ -136,12 +136,12 @@
         /* No veil in either mode - the artwork (light photo / DMLandingPic at night) shows through
            the hero at full strength. */
         .wl-hero { background: transparent; }
-        .wl-hero-grid { display: grid; grid-template-columns: 1.05fr .95fr; gap: 56px; align-items: center; padding: 72px 0 64px; }
+        .wl-hero-grid { display: grid; grid-template-columns: 1.05fr .95fr; gap: clamp(32px, 4vw, 56px); align-items: center; padding: clamp(40px, 6vw, 72px) 0 clamp(36px, 5vw, 64px); }
         .wl-eyebrow { display: inline-flex; align-self: flex-start; align-items: center; gap: 8px; background: var(--brand-soft); color: var(--brand-ink); border-radius: 999px; padding: 8px 16px; font-family: 'Geist', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
         .wl-eyebrow .dot { width: 8px; height: 8px; border-radius: 50%; background: #6D9C55; }
-        .wl-h1 { margin: 0; font-size: 56px; line-height: 1.08; font-weight: 800; letter-spacing: -.02em; color: var(--ink); }
+        .wl-h1 { margin: 0; font-size: clamp(30px, 6vw, 56px); line-height: 1.08; font-weight: 800; letter-spacing: -.02em; color: var(--ink); }
         .wl-h1 .accent { color: var(--brand-ink); }
-        .wl-lead { margin: 0; font-size: 19px; line-height: 1.6; color: var(--muted); max-width: 520px; }
+        .wl-lead { margin: 0; font-size: clamp(16px, 1.6vw, 19px); line-height: 1.6; color: var(--muted); max-width: 520px; }
         .wl-note { margin: 4px 0 0; font-size: 14px; color: var(--faint); }
 
         .wl-card { background: var(--surface); border: 1px solid var(--line); border-radius: 24px; box-shadow: var(--shadow-lg); padding: 24px; }
@@ -150,12 +150,12 @@
         .wl-chip { display: inline-flex; align-items: center; gap: 7px; border-radius: 10px; padding: 7px 13px; font-weight: 700; font-size: 13.5px; }
 
         /* Sections */
-        .wl-section { padding: 72px 0; }
+        .wl-section { padding: clamp(48px, 7vw, 72px) 0; }
         .wl-center { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 10px; }
         .wl-kicker { font-family: 'Geist', sans-serif; font-size: 16px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: var(--brand-ink); }
-        .wl-h2 { margin: 0; font-size: 36px; font-weight: 800; letter-spacing: -.01em; color: var(--ink); }
+        .wl-h2 { margin: 0; font-size: clamp(24px, 3.6vw, 36px); font-weight: 800; letter-spacing: -.01em; color: var(--ink); }
 
-        .wl-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+        .wl-grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 22px; }
         .wl-step { background: var(--surface); border-radius: 20px; border: 1px solid var(--line); box-shadow: var(--shadow-sm); padding: 28px; display: flex; flex-direction: column; gap: 14px; transition: transform .15s, box-shadow .15s; }
         .wl-step:hover { transform: translateY(-4px); box-shadow: 0 12px 28px rgba(36,49,42,.1); }
         .wl-step-icon { width: 52px; height: 52px; border-radius: 16px; display: grid; place-items: center; }
@@ -172,7 +172,7 @@
         .wl-total.t-vid .ico { color: #2E6CA8; }
         .wl-total.t-mat .ico { color: #0F7A68; }
         .wl-total.t-quiz .ico { color: #96721A; }
-        .wl-total .num { font-family: 'Geist', sans-serif; font-weight: 900; font-size: 34px; color: var(--ink); }
+        .wl-total .num { font-family: 'Geist', sans-serif; font-weight: 900; font-size: clamp(27px, 3vw, 34px); color: var(--ink); }
         .wl-total .name { font-family: 'Geist', sans-serif; font-weight: 800; font-size: 16px; color: var(--ink); }
         .wl-total .sub { font-size: 13px; color: var(--faint); }
         .wl-total.t-vid { background: #E3EAF3; }
@@ -186,7 +186,7 @@
            fills it solid (the photo is dropped there anyway). */
         .wl-band { background: transparent; }
         html.theme-dark .wl-band { background: var(--dark-green); }
-        .wl-band-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; padding: 64px 0; }
+        .wl-band-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(32px, 4vw, 56px); align-items: center; padding: clamp(44px, 6vw, 64px) 0; }
         .wl-ticks { margin: 6px 0 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 12px; font-size: 15.5px; color: var(--muted); }
         .wl-ticks li { display: flex; gap: 12px; align-items: flex-start; }
         .wl-ticks .tick { color: var(--brand-ink); font-weight: 800; }
@@ -195,7 +195,7 @@
         .wl-score { background: var(--dark-green); border: 1px solid rgba(255,255,255,.08); border-radius: 22px; padding: 28px; display: flex; flex-direction: column; gap: 20px; box-shadow: 0 20px 50px rgba(36,64,44,.3); }
         .wl-score-top { display: flex; align-items: baseline; justify-content: space-between; }
         .wl-score-top .lbl { font-family: 'Geist', sans-serif; font-weight: 800; font-size: 15px; color: #fff; }
-        .wl-score-top .val { font-family: 'Geist', sans-serif; font-weight: 900; font-size: 44px; color: var(--accent); }
+        .wl-score-top .val { font-family: 'Geist', sans-serif; font-weight: 900; font-size: clamp(32px, 4.2vw, 44px); color: var(--accent); }
         .wl-score-top .val small { font-size: 18px; color: #7E9878; font-weight: 800; }
         .wl-bar-row { display: flex; flex-direction: column; gap: 6px; }
         .wl-bar-head { display: flex; justify-content: space-between; font-size: 13px; }
@@ -206,8 +206,8 @@
         .wl-score-foot { margin: 0; font-size: 12px; color: #8FA98A; line-height: 1.5; }
 
         /* Final CTA */
-        .wl-cta { background: var(--dark-green); border-radius: 28px; padding: 64px 48px; display: flex; flex-direction: column; align-items: center; gap: 18px; text-align: center; box-shadow: 0 20px 50px rgba(36,64,44,.3); }
-        .wl-cta h2 { margin: 0; font-size: 40px; font-weight: 800; color: #fff; letter-spacing: -.01em; }
+        .wl-cta { background: var(--dark-green); border-radius: 28px; padding: clamp(40px, 6vw, 64px) clamp(24px, 4vw, 48px); display: flex; flex-direction: column; align-items: center; gap: 18px; text-align: center; box-shadow: 0 20px 50px rgba(36,64,44,.3); }
+        .wl-cta h2 { margin: 0; font-size: clamp(26px, 4.4vw, 40px); font-weight: 800; color: #fff; letter-spacing: -.01em; }
         .wl-cta p { margin: 0; font-size: 17px; color: #D9E5CE; max-width: 520px; line-height: 1.6; }
         .wl-cta .wl-btn-solid { background: #fff; color: var(--brand); box-shadow: none; }
         .wl-cta .wl-btn-solid:hover { background: #fff; transform: translateY(-2px); }
@@ -229,18 +229,13 @@
         @media (max-width: 1020px) {
             .wl-nav-links { display: none; }
             .wl-logo-banner { height: 40px; }
-            .wl-hero-grid { grid-template-columns: 1fr; gap: 36px; padding: 56px 0 48px; }
-            .wl-band-grid { grid-template-columns: 1fr; gap: 36px; }
-            .wl-h1 { font-size: 44px; }
-            .wl-h2 { font-size: 30px; }
+            /* Two-column layouts stack; the sizes themselves scale fluidly via clamp() above. */
+            .wl-hero-grid { grid-template-columns: 1fr; }
+            .wl-band-grid { grid-template-columns: 1fr; }
         }
         @media (max-width: 760px) {
             .wl-nav { flex-wrap: wrap; row-gap: 8px; }
             .wl-logo-banner { height: 34px; }
-            .wl-grid-3 { grid-template-columns: 1fr; }
-            .wl-cta { padding: 48px 24px; }
-            .wl-cta h2 { font-size: 30px; }
-            .wl-h1 { font-size: 36px; }
         }
 
         /* ═══════════════════════════════════════════════════════════════════════════════
