@@ -270,6 +270,8 @@
             /* Login card. */
             .wla-card { order: 4; width: 100%; max-width: 460px; margin: 24px auto 0; padding: 30px 24px; }
             .wla-btn { min-height: 46px; font-size: 14px; border-radius: 12px; }
+            .wla-head h2 { font-size: 21px; }
+            .wla-head p { font-size: 13.5px; }
 
             /* Back link, then the footer pinned to the bottom of the stack. */
             .wla-back { order: 5; width: 100%; text-align: center; margin: 20px 0 0; }
