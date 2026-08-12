@@ -289,6 +289,12 @@
             #ciri .wl-h3 { font-size: 17px; }
             #ciri .wl-p { font-size: 14px; line-height: 1.55; }
 
+            /* Teacher band ("Untuk Cikgu"): smaller heading, description and checklist on phones
+               (the heading/description carry inline sizes, so override with !important). */
+            #cikgu .wl-h2 { font-size: 30px !important; line-height: 1.16; }
+            #cikgu .wl-p { font-size: 15px !important; }
+            #cikgu .wl-ticks { font-size: 14px; }
+
             /* Totals: [icon] [big number] [name / subtitle] */
             .wl-total {
                 display: grid;
