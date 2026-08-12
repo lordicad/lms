@@ -195,7 +195,11 @@
             /* The header carries an inline gap:14px, so this must be !important to win. */
             .wl-topbar { gap: 6px !important; }
             .wl-topbar > form[role="search"] { order: 5; flex: 1 1 100% !important; max-width: none !important; min-width: 100% !important; margin-top: 14px; min-height: 42px !important; padding: 0 14px !important; }
-            .wl-topbar > form[role="search"] input { font-size: 10px !important; min-height: 38px !important; }
+            .wl-topbar > form[role="search"] input { min-height: 38px !important; }
+            /* Size the placeholder directly - the app.css anti-zoom rule pins the input itself to
+               16px, and a placeholder otherwise inherits that. */
+            .wl-topbar > form[role="search"] input::placeholder { font-size: 10px !important; opacity: 1; }
+            .wl-topbar > form[role="search"] input::-webkit-input-placeholder { font-size: 10px !important; }
             /* Hamburger stays far left; the auto margin pushes the rest to the right edge. */
             .wl-burger-open { width: 38px; height: 38px; margin-right: auto; }
             .wl-topbar .wl-icbtn { width: 38px !important; height: 38px !important; }
