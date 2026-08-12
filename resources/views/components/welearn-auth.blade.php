@@ -234,10 +234,41 @@
         [x-cloak] { display: none !important; }
 
         @media (max-width: 860px) {
-            .wla-shell { grid-template-columns: 1fr; }
-            .wla-brand { padding: 32px 28px; gap: 28px; }
+            /* ── Mobile layout (desktop split-screen above is untouched) ──
+               One stacked column over the artwork: logo + language/theme on one top row, then the
+               hero copy, the login card, the back link, and the footer at the very bottom. Both
+               panels are flattened with display:contents so their children order freely in the
+               shell; the artwork moves onto the shell so it sits behind everything. */
+            .wla-shell {
+                display: flex; flex-wrap: wrap; align-items: center; align-content: flex-start;
+                min-height: 100vh; padding: 20px 20px 30px; gap: 0;
+                background:
+                    linear-gradient(180deg, rgba(245,248,239,.12), rgba(245,248,239,.72)),
+                    #F5F8EF url('{{ asset('images/AuthPic.png') }}') center top / cover no-repeat;
+            }
+            html.theme-dark .wla-shell {
+                background:
+                    linear-gradient(180deg, rgba(12,20,16,.28), rgba(12,20,16,.86)),
+                    #0E1A14 url('{{ asset('images/DMAuthPic.png') }}') center top / cover no-repeat;
+            }
+            .wla-brand, .wla-form { display: contents; }
+
+            /* Top row: logo left, language pill + theme toggle right. */
+            .wla-brand-logo { order: 1; margin: 0 auto 0 0; padding: 8px 12px; border-radius: 12px; }
+            .wla-brand-logo img { height: 32px; }
+            .wla-topbar { order: 2; width: auto; max-width: none; }
+
+            /* Hero copy. */
+            .wla-brand-copy { order: 3; width: 100%; max-width: 560px; margin: 26px auto 0; gap: 12px; }
             .wla-brand h1 { font-size: 30px; }
-            .wla-form { padding: 32px 20px; }
+            .wla-brand p { font-size: 15px; }
+
+            /* Login card. */
+            .wla-card { order: 4; width: 100%; max-width: 460px; margin: 24px auto 0; padding: 30px 24px; }
+
+            /* Back link, then the footer pinned to the bottom of the stack. */
+            .wla-back { order: 5; width: 100%; text-align: center; margin: 20px 0 0; }
+            .wla-brand-foot { order: 6; width: 100%; text-align: center; margin: 22px auto 0; }
         }
     </style>
 </head>
