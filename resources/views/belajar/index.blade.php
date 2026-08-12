@@ -105,7 +105,7 @@
                         <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:21px;font-weight:800;color:var(--wl-ink)">{{ $trendingFallback ? __('Baru ditambah') : __('Paling popular') }}</h2>
                         <a href="{{ route('subjek.index') }}" style="font-size:13.5px;font-weight:700">{{ __('Lihat semua') }}</a>
                     </div>
-                    <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px">
+                    <div class="wl-cardrow" style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px">
                         @foreach ($trending->take(4) as $lesson)
                             <x-vid-card :lesson="$lesson" :thumbHeight="104" :showViews="! $trendingFallback" />
                         @endforeach
@@ -120,7 +120,7 @@
                         <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:21px;font-weight:800;color:var(--wl-ink)">{{ __('Baru ditambah') }}</h2>
                         <a href="{{ route('subjek.index') }}" style="font-size:13.5px;font-weight:700">{{ __('Lihat semua') }}</a>
                     </div>
-                    <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px">
+                    <div class="wl-cardrow" style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px">
                         @foreach ($newest->take(4) as $lesson)
                             <x-vid-card :lesson="$lesson" :thumbHeight="104" :showViews="true" />
                         @endforeach
@@ -132,7 +132,7 @@
             @if ($suggested->isNotEmpty())
                 <div style="display:flex;flex-direction:column;gap:16px">
                     <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:21px;font-weight:800;color:var(--wl-ink)">{{ __('Anda mungkin suka') }}</h2>
-                    <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px">
+                    <div class="wl-cardrow" style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px">
                         @foreach ($suggested->take(4) as $lesson)
                             <x-vid-card :lesson="$lesson" :thumbHeight="104" :showViews="true" />
                         @endforeach

@@ -170,28 +170,41 @@
         .wl-logout { width:36px; height:36px; border-radius:10px; display:grid; place-items:center; color:#C24936; flex-shrink:0; border:none; background:transparent; cursor:pointer; }
         .wl-logout:hover { background:#FDE7E0; }
 
-        /* Brand + hamburger sit on one row at the top of the rail. The burger only shows on mobile. */
+        /* Sidebar top row (brand + close button). The close (X) and the header hamburger only show
+           on mobile, where the sidebar becomes a slide-in drawer over the content. */
         .wl-side-top { display:flex; align-items:center; justify-content:space-between; gap:8px; }
-        .wl-burger { display:none; align-items:center; justify-content:center; width:44px; height:44px; border-radius:11px; border:1px solid var(--wl-line-2); background:var(--wl-surface); color:var(--wl-ink); cursor:pointer; flex-shrink:0; }
+        .wl-burger { display:none; align-items:center; justify-content:center; width:40px; height:40px; border-radius:11px; border:1px solid var(--wl-line-2); background:var(--wl-surface); color:var(--wl-ink); cursor:pointer; flex-shrink:0; }
         .wl-burger:hover { background:var(--wl-hover); }
+        /* Hamburger that opens the drawer; lives in the page header. */
+        .wl-burger-open { display:none; align-items:center; justify-content:center; width:48px; height:48px; flex-shrink:0; border-radius:50%; border:1px solid var(--wl-line-2); background:var(--wl-surface); color:#4A5A52; cursor:pointer; }
+        .wl-burger-open:hover { background:var(--wl-hover); }
+        /* Dim backdrop behind the open drawer. */
+        .wl-backdrop { position:fixed; inset:0; background:rgba(20,24,20,.45); z-index:55; }
 
         @media (max-width: 900px) {
             .wl-shell { grid-template-columns: 1fr !important; }
-            /* Rail becomes a top bar: brand + burger visible, the menu itself collapsed until tapped. */
-            .wl-side { position:static !important; width:auto !important; height:auto !important; flex-direction:column !important; gap:6px !important; }
-            .wl-burger { display:flex; }
-            .wl-side > .wl-nav, .wl-side .wl-userbar { display:none; }
-            .wl-side.is-open > .wl-nav { display:flex; }
-            .wl-side.is-open .wl-userbar { display:flex; }
+            /* Sidebar slides in from the left as a drawer over the content. */
+            .wl-side { width:284px !important; z-index:60; transform:translateX(-100%); transition:transform .25s ease; box-shadow:0 0 44px rgba(20,24,20,.28); }
+            .wl-side.is-open { transform:translateX(0); }
+            .wl-burger { display:flex; }        /* close (X) inside the drawer */
+            .wl-burger-open { display:flex; }    /* hamburger in the header */
             .wl-main { grid-column:auto !important; padding: 20px 16px 40px !important; }
+
+            /* Home video rows scroll sideways instead of cramming four per line. */
+            .wl-cardrow { display:flex !important; flex-wrap:nowrap; overflow-x:auto; gap:14px; padding-bottom:4px; scroll-snap-type:x proximity; -webkit-overflow-scrolling:touch; }
+            .wl-cardrow > * { flex:0 0 clamp(150px, 44vw, 200px); scroll-snap-align:start; }
         }
     </style>
 </head>
 
 <body class="wl">
-<div class="wl-shell" style="min-height:100vh;display:grid;grid-template-columns:236px 1fr">
-    {{-- ── SIDEBAR (wide labelled rail, matched to the Cikgu/Admin shell) ── --}}
-    <aside class="wl-side" x-data="{ navOpen: false }" :class="{ 'is-open': navOpen }" @click.outside="navOpen = false" style="background:var(--wl-surface);border-right:1px solid var(--wl-line);display:flex;flex-direction:column;padding:20px 14px;gap:4px;position:fixed;top:0;left:0;width:236px;height:100vh;overflow-y:auto;box-sizing:border-box">
+<div class="wl-shell" x-data="{ navOpen: false }" style="min-height:100vh;display:grid;grid-template-columns:236px 1fr">
+    {{-- Backdrop behind the mobile drawer (tap to close). Hidden on desktop - navOpen only ever
+         toggles from the mobile-only hamburger / close button. --}}
+    <div class="wl-backdrop" x-show="navOpen" x-transition.opacity x-cloak @click="navOpen = false"></div>
+
+    {{-- ── SIDEBAR (wide labelled rail; a slide-in drawer on mobile) ── --}}
+    <aside class="wl-side" :class="{ 'is-open': navOpen }" style="background:var(--wl-surface);border-right:1px solid var(--wl-line);display:flex;flex-direction:column;padding:20px 14px;gap:4px;position:fixed;top:0;left:0;width:236px;height:100vh;overflow-y:auto;box-sizing:border-box">
         <div class="wl-side-top">
             <a href="{{ route('belajar.index') }}" class="wl-brand" title="WeLearn">
                 <img src="{{ asset('images/welearn1.png') }}" alt="WeLearn">
@@ -200,9 +213,8 @@
                     <span class="wl-brand-sub">{{ __('Portal Murid') }}</span>
                 </span>
             </a>
-            <button type="button" class="wl-burger" @click="navOpen = !navOpen" :aria-expanded="navOpen ? 'true' : 'false'" aria-label="{{ __('Menu') }}">
-                <svg x-show="!navOpen" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-                <svg x-show="navOpen" x-cloak width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="6" y1="6" x2="18" y2="18"/><line x1="6" y1="18" x2="18" y2="6"/></svg>
+            <button type="button" class="wl-burger" @click="navOpen = false" aria-label="{{ __('Tutup menu') }}">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="6" y1="6" x2="18" y2="18"/><line x1="6" y1="18" x2="18" y2="6"/></svg>
             </button>
         </div>
 
@@ -233,6 +245,10 @@
     <main class="wl-main" style="min-width:0;grid-column:2;padding:28px clamp(14px, 3vw, 36px) 48px;display:flex;flex-direction:column;gap:28px;max-width:clamp(1180px, 78vw, 1440px);box-sizing:border-box;width:100%;margin:0 auto">
         {{-- HEADER --}}
         <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+            {{-- Opens the drawer on mobile (hidden on desktop). --}}
+            <button type="button" class="wl-burger-open" @click="navOpen = true" aria-label="{{ __('Menu') }}">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+            </button>
             <form method="GET" action="{{ route('cari.index') }}" role="search"
                   style="display:flex;align-items:center;gap:10px;background:var(--wl-surface);border:1px solid var(--wl-line-2);border-radius:999px;padding:0 18px;min-height:48px;flex:0 1 380px;min-width:220px;margin-right:auto">
                 <x-icon name="search" class="h-[18px] w-[18px]" style="color:var(--wl-muted);flex-shrink:0" />
