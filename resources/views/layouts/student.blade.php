@@ -215,7 +215,9 @@
             .hero-card { grid-template-columns: 1fr !important; }
             .hero-card .hero-thumb { order: -1; min-height: 180px !important; }
             .hero-card > div { padding: 20px !important; }
-            .hero-card .hero-title { font-size: 20px !important; }
+            .hero-card .hero-title { font-size: 18px !important; }
+            /* Pills (subject / Bab / Trending) a touch smaller. */
+            .hero-card .hero-subpill, .hero-card .hero-babpill, .hero-card > div > div:first-child > span { font-size: 11px !important; padding: 4px 10px !important; }
             /* Hero buttons: side by side (no wrap) and smaller. */
             .hero-card .hero-cta { flex-wrap: nowrap !important; gap: 8px !important; }
             .hero-card .hero-cta > * { min-height: 40px !important; font-size: 12.5px !important; padding: 0 14px !important; }
