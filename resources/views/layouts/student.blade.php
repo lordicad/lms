@@ -197,7 +197,9 @@
             .wl-burger-open { width: 38px; height: 38px; }
             .wl-topbar .wl-icbtn { width: 38px !important; height: 38px !important; }
             .wl-topbar .wl-icbtn svg { width: 17px !important; height: 17px !important; }
-            .wl-topbar .wl-year-select { min-height: 38px !important; padding: 0 28px 0 11px !important; font-size: 11.5px !important; }
+            .wl-topbar .wl-year-select { min-height: 34px !important; padding: 0 25px 0 10px !important; font-size: 11px !important; background-position: right 9px center !important; background-size: 11px !important; }
+            /* When the select is enhanced into a styled trigger, shrink that too. */
+            .wl-topbar .ss-wrap:has(> select.wl-year-select) .ss-trigger { min-height: 34px !important; padding: 0 11px !important; font-size: 11px !important; }
             .wl-topbar .wl-langsw { padding: 2px; }
             .wl-topbar .wl-langsw a { min-width: 28px !important; min-height: 30px !important; padding: 4px 8px !important; font-size: 11px !important; }
 
