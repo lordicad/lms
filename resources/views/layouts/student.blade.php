@@ -210,6 +210,12 @@
             .wl-topbar .wl-langsw { padding: 2px; }
             .wl-topbar .wl-langsw a { min-width: 28px !important; min-height: 30px !important; padding: 4px 8px !important; font-size: 11px !important; }
 
+            /* Welcome heading: smaller icon tile and text on phones (inline sizes, so !important). */
+            .wl-pagehead .hi-tile { width: 40px !important; height: 40px !important; border-radius: 12px !important; }
+            .wl-pagehead .hi-tile img { width: 24px !important; height: 24px !important; }
+            .wl-pagehead h1 { font-size: 21px !important; }
+            .wl-pagehead h1 + span { font-size: 13px !important; }
+
             /* Home video rows scroll sideways instead of cramming four per line. */
             .wl-cardrow { display:flex !important; flex-wrap:nowrap; overflow-x:auto; gap:14px; padding-bottom:4px; scroll-snap-type:x proximity; -webkit-overflow-scrolling:touch; }
             .wl-cardrow > * { flex:0 0 clamp(150px, 44vw, 200px); scroll-snap-align:start; }
