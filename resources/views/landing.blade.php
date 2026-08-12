@@ -234,8 +234,12 @@
             .wl-band-grid { grid-template-columns: 1fr; }
         }
         @media (max-width: 760px) {
-            .wl-nav { flex-wrap: wrap; row-gap: 8px; }
+            /* Header: logo on its own row, then the controls spread across the full width below it
+               (language pill + theme grouped left, Log Masuk pushed right) - was too cramped. */
+            .wl-nav { flex-wrap: wrap; row-gap: 16px; padding-top: 12px; padding-bottom: 12px; }
             .wl-logo-banner { height: 34px; }
+            .wl-actions { width: 100%; gap: 12px; }
+            .wl-actions > .wl-btn-outline { margin-left: auto; }
 
             /* ── Mobile-only card layout (desktop / Chrome layout is untouched) ──
                "Tiga langkah mudah" and "Kandungan Pembelajaran": one card per row, icon on the
