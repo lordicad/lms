@@ -299,7 +299,7 @@
                 padding: 18px 20px;
             }
             .wl-total > .ico { grid-area: ico; align-self: center; }
-            .wl-total > .num { grid-area: num; align-self: center; font-size: clamp(40px, 12vw, 50px); line-height: 1; }
+            .wl-total > .num { grid-area: num; align-self: center; font-size: clamp(30px, 8.5vw, 40px); line-height: 1; }
             .wl-total > .name { grid-area: name; align-self: end; }
             .wl-total > .sub { grid-area: sub; align-self: start; }
         }
