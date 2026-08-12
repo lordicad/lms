@@ -246,10 +246,13 @@
             .wl-iconbtn svg { width: 15px; height: 15px; }
             .wl-actions .wl-btn { min-height: 30px; padding: 0 11px; font-size: 12px; border-radius: 9px; }
 
-            /* Hero: bigger heading and airier spacing between eyebrow / heading / lead / button. */
+            /* More breathing room on the sides for all content on phones. */
+            .wl-wrap { padding-left: 22px; padding-right: 22px; }
+
+            /* Hero: airier spacing; heading sized to sit comfortably within the side gutters. */
             .wl-hero-grid > .wl-col:first-child { gap: 26px !important; }
-            .wl-h1 { font-size: clamp(32px, 9vw, 40px); line-height: 1.12; }
-            .wl-lead { font-size: 16px; line-height: 1.7; }
+            .wl-h1 { font-size: clamp(29px, 8vw, 36px); line-height: 1.14; }
+            .wl-lead { font-size: 15.5px; line-height: 1.7; }
 
             /* ── Mobile-only card layout (desktop / Chrome layout is untouched) ──
                "Tiga langkah mudah" and "Kandungan Pembelajaran": one card per row, icon on the
