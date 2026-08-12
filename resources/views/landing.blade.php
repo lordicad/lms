@@ -257,6 +257,11 @@
             .wl-lead { font-size: 15px; line-height: 1.7; }
             .wl-btn-lg { min-height: 44px; padding: 0 20px; font-size: 13px; border-radius: 12px; }
 
+            /* Subject chips: smaller so they pair up two-per-row inside the card. */
+            .wl-chips { gap: 8px; }
+            .wl-chip { padding: 6px 10px; font-size: 11.5px; gap: 6px; }
+            .wl-chip svg { width: 15px; height: 15px; }
+
             /* ── Mobile-only card layout (desktop / Chrome layout is untouched) ──
                "Tiga langkah mudah" and "Kandungan Pembelajaran": one card per row, icon on the
                left, text stacked to its right. Rearranged with grid areas so the markup that the
