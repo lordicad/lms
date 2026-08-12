@@ -302,6 +302,8 @@
             .wl-total > .num { grid-area: num; align-self: center; font-size: clamp(30px, 8.5vw, 40px); line-height: 1; }
             .wl-total > .name { grid-area: name; align-self: end; }
             .wl-total > .sub { grid-area: sub; align-self: start; }
+            /* All three total cards the same height, matched to the tallest, however the text wraps. */
+            #subjek .wl-grid-3 { grid-auto-rows: 1fr; }
         }
 
         /* ═══════════════════════════════════════════════════════════════════════════════
