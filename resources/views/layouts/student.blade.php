@@ -232,8 +232,9 @@
             .wl-pagehead h1 + span { font-size: 13px !important; }
 
             /* Home video rows scroll sideways instead of cramming four per line. */
-            .wl-cardrow { display:flex !important; flex-wrap:nowrap; overflow-x:auto; gap:14px; padding-bottom:4px; scroll-snap-type:x proximity; -webkit-overflow-scrolling:touch; }
-            .wl-cardrow > * { flex:0 0 clamp(150px, 44vw, 200px); scroll-snap-align:start; }
+            .wl-cardrow { display:flex !important; flex-wrap:nowrap; overflow-x:auto; gap:16px; padding-bottom:4px; scroll-snap-type:x proximity; -webkit-overflow-scrolling:touch; }
+            /* Match the continue-watching rail cards: ~280px wide with a peek of the next. */
+            .wl-cardrow > * { flex:0 0 280px !important; max-width:84%; scroll-snap-align:start; }
         }
     </style>
 </head>
