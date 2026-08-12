@@ -192,8 +192,9 @@
 
             /* Header: hamburger + Tahun + language + theme + bell on one row; the search box drops
                to its own row below. Everything shrinks so all five fit even on narrow phones. */
-            .wl-topbar { gap: 4px; }
-            .wl-topbar > form[role="search"] { order: 5; min-width: 100% !important; margin-top: 2px; }
+            /* The header carries an inline gap:14px, so this must be !important to win. */
+            .wl-topbar { gap: 6px !important; }
+            .wl-topbar > form[role="search"] { order: 5; min-width: 100% !important; margin-top: 4px; }
             /* Hamburger stays far left; the auto margin pushes the rest to the right edge. */
             .wl-burger-open { width: 38px; height: 38px; margin-right: auto; }
             .wl-topbar .wl-icbtn { width: 38px !important; height: 38px !important; }
