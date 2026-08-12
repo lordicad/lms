@@ -286,6 +286,8 @@
             .wl-step > .wl-step-icon { grid-area: icon; align-self: start; }
             .wl-step > .wl-flex { grid-area: head; }
             .wl-step > .wl-p { grid-area: body; }
+            #ciri .wl-h3 { font-size: 17px; }
+            #ciri .wl-p { font-size: 14px; line-height: 1.55; }
 
             /* Totals: [icon] [big number] [name / subtitle] */
             .wl-total {
