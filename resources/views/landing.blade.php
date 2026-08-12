@@ -234,12 +234,17 @@
             .wl-band-grid { grid-template-columns: 1fr; }
         }
         @media (max-width: 760px) {
-            /* Header: logo on its own row, then the controls spread across the full width below it
-               (language pill + theme grouped left, Log Masuk pushed right) - was too cramped. */
-            .wl-nav { flex-wrap: wrap; row-gap: 16px; padding-top: 12px; padding-bottom: 12px; }
-            .wl-logo-banner { height: 34px; }
-            .wl-actions { width: 100%; gap: 12px; }
-            .wl-actions > .wl-btn-outline { margin-left: auto; }
+            /* Header: keep everything on ONE line - logo left, compact controls pushed right - so
+               the header stays short. The logo yields space (shrinks) before the controls do. */
+            .wl-nav { flex-wrap: nowrap; gap: 8px; padding-top: 10px; padding-bottom: 10px; }
+            .wl-logo { min-width: 0; }
+            .wl-logo-banner { height: auto; max-height: 30px; max-width: 100%; }
+            .wl-actions { margin-left: auto; gap: 6px; flex-shrink: 0; }
+            .wl-langpill { font-size: 12px; }
+            .wl-langpill a { min-width: 30px; min-height: 28px; padding: 4px 9px; }
+            .wl-iconbtn { width: 34px; height: 34px; }
+            .wl-iconbtn svg { width: 16px; height: 16px; }
+            .wl-actions .wl-btn { min-height: 34px; padding: 0 13px; font-size: 13px; border-radius: 10px; }
 
             /* ── Mobile-only card layout (desktop / Chrome layout is untouched) ──
                "Tiga langkah mudah" and "Kandungan Pembelajaran": one card per row, icon on the
