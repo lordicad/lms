@@ -257,6 +257,10 @@
             .wla-brand-logo { order: 1; margin: 0 auto 0 0; padding: 8px 12px; border-radius: 12px; }
             .wla-brand-logo img { height: 32px; }
             .wla-topbar { order: 2; width: auto; max-width: none; }
+            .wla-pills { font-size: 12px; padding: 2px; }
+            .wla-pill { min-height: 22px; padding: 4px 9px; font-size: 12px; }
+            .wla-iconbtn { width: 38px; height: 38px; }
+            .wla-iconbtn svg { width: 17px; height: 17px; }
 
             /* Hero copy. */
             .wla-brand-copy { order: 3; width: 100%; max-width: 560px; margin: 26px auto 0; gap: 12px; }
