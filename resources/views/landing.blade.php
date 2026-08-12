@@ -295,6 +295,10 @@
             #cikgu .wl-p { font-size: 15px !important; }
             #cikgu .wl-ticks { font-size: 14px; }
 
+            /* Final CTA ("Sedia untuk mula belajar?"): smaller heading and text on phones. */
+            .wl-cta h2 { font-size: 23px; }
+            .wl-cta p { font-size: 15px; }
+
             /* Totals: [icon] [big number] [name / subtitle] */
             .wl-total {
                 display: grid;
