@@ -239,12 +239,12 @@
             .wl-nav { flex-wrap: nowrap; gap: 8px; padding-top: 10px; padding-bottom: 10px; }
             .wl-logo { min-width: 0; }
             .wl-logo-banner { height: auto; max-height: 30px; max-width: 100%; }
-            .wl-actions { margin-left: auto; gap: 6px; flex-shrink: 0; }
-            .wl-langpill { font-size: 12px; }
-            .wl-langpill a { min-width: 30px; min-height: 28px; padding: 4px 9px; }
-            .wl-iconbtn { width: 34px; height: 34px; }
-            .wl-iconbtn svg { width: 16px; height: 16px; }
-            .wl-actions .wl-btn { min-height: 34px; padding: 0 13px; font-size: 13px; border-radius: 10px; }
+            .wl-actions { margin-left: auto; gap: 5px; flex-shrink: 0; }
+            .wl-langpill { font-size: 11px; padding: 2px; }
+            .wl-langpill a { min-width: 26px; min-height: 24px; padding: 3px 7px; }
+            .wl-iconbtn { width: 30px; height: 30px; }
+            .wl-iconbtn svg { width: 15px; height: 15px; }
+            .wl-actions .wl-btn { min-height: 30px; padding: 0 11px; font-size: 12px; border-radius: 9px; }
 
             /* ── Mobile-only card layout (desktop / Chrome layout is untouched) ──
                "Tiga langkah mudah" and "Kandungan Pembelajaran": one card per row, icon on the
