@@ -192,9 +192,10 @@
 
             /* Header: hamburger + Tahun + language + theme + bell on one row; the search box drops
                to its own row below. Everything shrinks so all five fit even on narrow phones. */
-            .wl-topbar { gap: 6px; }
+            .wl-topbar { gap: 5px; }
             .wl-topbar > form[role="search"] { order: 5; min-width: 100% !important; }
-            .wl-burger-open { width: 38px; height: 38px; }
+            /* Hamburger stays far left; the auto margin pushes the rest to the right edge. */
+            .wl-burger-open { width: 38px; height: 38px; margin-right: auto; }
             .wl-topbar .wl-icbtn { width: 38px !important; height: 38px !important; }
             .wl-topbar .wl-icbtn svg { width: 17px !important; height: 17px !important; }
             .wl-topbar .wl-year-select { min-height: 34px !important; padding: 0 25px 0 10px !important; font-size: 11px !important; background-position: right 9px center !important; background-size: 11px !important; }
