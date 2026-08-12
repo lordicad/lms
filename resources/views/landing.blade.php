@@ -241,7 +241,7 @@
             .wl-logo-banner { height: auto; max-height: 30px; max-width: 100%; }
             .wl-actions { margin-left: auto; gap: 5px; flex-shrink: 0; }
             .wl-langpill { font-size: 9.5px; padding: 3px; }
-            .wl-langpill a { min-width: 36px; min-height: 28px; padding: 5px 11px; }
+            .wl-langpill a { min-width: 32px; min-height: 24px; padding: 4px 10px; }
             .wl-iconbtn { width: 30px; height: 30px; }
             .wl-iconbtn svg { width: 15px; height: 15px; }
             .wl-actions .wl-btn { min-height: 30px; padding: 0 11px; font-size: 12px; border-radius: 9px; }
