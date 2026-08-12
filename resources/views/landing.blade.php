@@ -259,8 +259,13 @@
 
             /* Subject chips: smaller so they pair up two-per-row inside the card. */
             .wl-chips { gap: 8px; }
-            .wl-chip { padding: 6px 10px; font-size: 11.5px; gap: 6px; }
+            .wl-chip { padding: 6px 10px; font-size: 11.5px; gap: 6px; order: var(--i); }
             .wl-chip svg { width: 15px; height: 15px; }
+            /* Swap "Sejarah" ahead of "Eksplorasi Sains dan Teknologi": now "Sejarah" pairs with
+               "Eksplorasi Seni dan Dunia", and "Sains" pairs with "Eksplorasi Sains dan Teknologi".
+               Based on the current subject order (10th = Eksplorasi Sains dan Teknologi, 11th = Sejarah). */
+            .wl-chips .wl-chip:nth-child(10) { order: 10; }
+            .wl-chips .wl-chip:nth-child(11) { order: 9; }
 
             /* ── Mobile-only card layout (desktop / Chrome layout is untouched) ──
                "Tiga langkah mudah" and "Kandungan Pembelajaran": one card per row, icon on the
