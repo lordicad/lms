@@ -251,6 +251,8 @@
 
             /* Hero: airier spacing; heading sized to sit comfortably within the side gutters. */
             .wl-hero-grid > .wl-col:first-child { gap: 26px !important; }
+            .wl-eyebrow { font-size: 11px; padding: 6px 12px; gap: 7px; }
+            .wl-eyebrow .dot { width: 7px; height: 7px; }
             .wl-h1 { font-size: clamp(29px, 8vw, 36px); line-height: 1.14; }
             .wl-lead { font-size: 15.5px; line-height: 1.7; }
 
