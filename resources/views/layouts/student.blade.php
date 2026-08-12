@@ -190,6 +190,14 @@
             .wl-burger-open { display:flex; }    /* hamburger in the header */
             .wl-main { grid-column:auto !important; padding: 20px 16px 40px !important; }
 
+            /* Header: hamburger + Tahun + language + theme + bell on one row; the search box drops
+               to its own row below. Circle buttons shrink a touch so it all fits. */
+            .wl-topbar { gap: 8px; }
+            .wl-topbar > form[role="search"] { order: 5; min-width: 100% !important; }
+            .wl-burger-open { width: 42px; height: 42px; }
+            .wl-topbar .wl-icbtn { width: 42px !important; height: 42px !important; }
+            .wl-topbar .wl-year-select { min-height: 42px !important; }
+
             /* Home video rows scroll sideways instead of cramming four per line. */
             .wl-cardrow { display:flex !important; flex-wrap:nowrap; overflow-x:auto; gap:14px; padding-bottom:4px; scroll-snap-type:x proximity; -webkit-overflow-scrolling:touch; }
             .wl-cardrow > * { flex:0 0 clamp(150px, 44vw, 200px); scroll-snap-align:start; }
@@ -244,7 +252,7 @@
     {{-- ── MAIN ── --}}
     <main class="wl-main" style="min-width:0;grid-column:2;padding:28px clamp(14px, 3vw, 36px) 48px;display:flex;flex-direction:column;gap:28px;max-width:clamp(1180px, 78vw, 1440px);box-sizing:border-box;width:100%;margin:0 auto">
         {{-- HEADER --}}
-        <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+        <div class="wl-topbar" style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
             {{-- Opens the drawer on mobile (hidden on desktop). --}}
             <button type="button" class="wl-burger-open" @click="navOpen = true" aria-label="{{ __('Menu') }}">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
