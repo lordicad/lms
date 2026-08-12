@@ -236,6 +236,42 @@
         @media (max-width: 760px) {
             .wl-nav { flex-wrap: wrap; row-gap: 8px; }
             .wl-logo-banner { height: 34px; }
+
+            /* ── Mobile-only card layout (desktop / Chrome layout is untouched) ──
+               "Tiga langkah mudah" and "Kandungan Pembelajaran": one card per row, icon on the
+               left, text stacked to its right. Rearranged with grid areas so the markup that the
+               desktop layout uses stays exactly as-is. */
+            .wl-grid-3 { grid-template-columns: 1fr; gap: 14px; }
+
+            /* Steps: [icon] [number + title] / [description] */
+            .wl-step {
+                display: grid;
+                grid-template-columns: auto 1fr;
+                grid-template-areas: "icon head" "icon body";
+                align-items: start;
+                column-gap: 16px;
+                row-gap: 8px;
+                padding: 22px;
+            }
+            .wl-step > .wl-step-icon { grid-area: icon; align-self: start; }
+            .wl-step > .wl-flex { grid-area: head; }
+            .wl-step > .wl-p { grid-area: body; }
+
+            /* Totals: [icon] [big number] [name / subtitle] */
+            .wl-total {
+                display: grid;
+                grid-template-columns: auto auto 1fr;
+                grid-template-areas: "ico num name" "ico num sub";
+                align-items: center;
+                column-gap: 16px;
+                row-gap: 0;
+                min-height: 0;
+                padding: 18px 20px;
+            }
+            .wl-total > .ico { grid-area: ico; align-self: center; }
+            .wl-total > .num { grid-area: num; align-self: center; font-size: clamp(40px, 12vw, 50px); line-height: 1; }
+            .wl-total > .name { grid-area: name; align-self: end; }
+            .wl-total > .sub { grid-area: sub; align-self: start; }
         }
 
         /* ═══════════════════════════════════════════════════════════════════════════════
