@@ -255,7 +255,7 @@
             .wl-eyebrow .dot { width: 7px; height: 7px; }
             .wl-h1 { font-size: clamp(27px, 7.4vw, 33px); line-height: 1.15; }
             .wl-lead { font-size: 15px; line-height: 1.7; }
-            .wl-btn-lg { min-height: 46px; padding: 0 22px; font-size: 15px; border-radius: 12px; }
+            .wl-btn-lg { min-height: 44px; padding: 0 20px; font-size: 13px; border-radius: 12px; }
 
             /* ── Mobile-only card layout (desktop / Chrome layout is untouched) ──
                "Tiga langkah mudah" and "Kandungan Pembelajaran": one card per row, icon on the
