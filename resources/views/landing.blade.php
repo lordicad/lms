@@ -246,6 +246,11 @@
             .wl-iconbtn svg { width: 15px; height: 15px; }
             .wl-actions .wl-btn { min-height: 30px; padding: 0 11px; font-size: 12px; border-radius: 9px; }
 
+            /* Hero: bigger heading and airier spacing between eyebrow / heading / lead / button. */
+            .wl-hero-grid > .wl-col:first-child { gap: 26px !important; }
+            .wl-h1 { font-size: clamp(32px, 9vw, 40px); line-height: 1.12; }
+            .wl-lead { font-size: 16px; line-height: 1.7; }
+
             /* ── Mobile-only card layout (desktop / Chrome layout is untouched) ──
                "Tiga langkah mudah" and "Kandungan Pembelajaran": one card per row, icon on the
                left, text stacked to its right. Rearranged with grid areas so the markup that the
