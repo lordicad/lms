@@ -293,6 +293,8 @@
             .wl-suggsub { font-size: 11.5px !important; }
             .wl-suggbtn { min-height: 40px !important; font-size: 12.5px !important; }
             .wl-suggbtn svg { width: 14px !important; height: 14px !important; }
+            /* Quiz result hero image. */
+            .wl-resultimg { width: 48px !important; height: 48px !important; }
 
             /* Subject category labels (Mata Pelajaran Teras / Wajib / Tambahan / Program ...). */
             .wl-catlabel { font-size: 11px !important; letter-spacing: .1em !important; }
