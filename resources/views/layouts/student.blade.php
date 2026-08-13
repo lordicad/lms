@@ -273,6 +273,7 @@
             .wl-quizstat-disc { width: 34px !important; height: 34px !important; }
             .wl-quizstat-disc > span { width: 21px !important; height: 21px !important; border-radius: 6px !important; }
             .wl-quizstat-disc svg { width: 15px !important; height: 15px !important; }
+            .wl-quizstat-body { align-items: center !important; text-align: center !important; }
             .wl-quizstat-body > span:first-child { font-size: 17px !important; }
             .wl-quizstat-body > span:last-child { font-size: 9.5px !important; line-height: 1.2 !important; }
 
