@@ -235,6 +235,9 @@
             .wl-main h1 { font-size: 21px !important; }
             .wl-main h1 + span { font-size: 13px !important; }
 
+            /* Subject category labels (Mata Pelajaran Teras / Wajib / Tambahan / Program ...). */
+            .wl-catlabel { font-size: 11px !important; letter-spacing: .1em !important; }
+
             /* Subject cards (Mata Pelajaran Teras): smaller/less tall on phones. */
             .wl-subjgrid { gap: 12px !important; }
             .wl-subjgrid > a { padding: 14px !important; min-height: 104px !important; }

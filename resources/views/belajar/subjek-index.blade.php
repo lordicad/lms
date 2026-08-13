@@ -44,7 +44,7 @@
                 @php($group = $subjectsByCategory[$category] ?? collect())
                 @if ($group->isNotEmpty())
                     <div style="display:flex;flex-direction:column;gap:14px;margin-bottom:10px">
-                        <span style="font-family:'Geist',sans-serif;font-size:13px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--wl-muted-2)">{{ \App\Models\Subject::categoryLabel($category) }}</span>
+                        <span class="wl-catlabel" style="font-family:'Geist',sans-serif;font-size:13px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--wl-muted-2)">{{ \App\Models\Subject::categoryLabel($category) }}</span>
                         <div class="wl-subjgrid" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px">
                             @foreach ($group as $subject)
                                 @php($gidx = $gi++ % count($grads))
