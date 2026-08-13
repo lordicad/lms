@@ -60,7 +60,7 @@
             @unless ($isPreview)
                 <form method="POST" action="{{ route('kuiz.mula', $quiz) }}">
                     @csrf
-                    <button type="submit" class="wl-btn-primary" style="width:100%;min-height:54px;border:none;cursor:pointer;border-radius:14px;background:#17907B;color:#fff;font-family:'Geist',sans-serif;font-weight:800;font-size:16px">{{ $rankedAttempt ? __('Cuba Lagi (Latihan)') : __('Mula Kuiz') }}</button>
+                    <button type="submit" class="wl-btn-primary wl-introbtn" style="width:100%;min-height:54px;border:none;cursor:pointer;border-radius:14px;background:#17907B;color:#fff;font-family:'Geist',sans-serif;font-weight:800;font-size:16px">{{ $rankedAttempt ? __('Cuba Lagi (Latihan)') : __('Mula Kuiz') }}</button>
                 </form>
             @endunless
         </div>

@@ -349,6 +349,8 @@
             .wl-rulescard { padding: 14px 16px !important; gap: 10px !important; }
             .wl-rulescard > span:first-child { font-size: 13px !important; }
             .wl-rulescard > div > span:last-child { font-size: 12px !important; line-height: 1.45 !important; }
+            /* Quiz intro start button. */
+            .wl-introbtn { min-height: 44px !important; font-size: 14px !important; }
 
             /* Subject category labels (Mata Pelajaran Teras / Wajib / Tambahan / Program ...). */
             .wl-catlabel { font-size: 11px !important; letter-spacing: .1em !important; }
