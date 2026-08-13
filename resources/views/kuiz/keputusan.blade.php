@@ -45,7 +45,7 @@
                 <img src="{{ asset('images/'.$resultImg) }}" alt="" class="wl-resultimg" style="width:68px;height:68px;object-fit:contain">
                 <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:26px;font-weight:800;letter-spacing:-.01em;color:var(--wl-ink)">{{ $good ? __('Syabas, :name!', ['name' => $name]) : __('Kerja yang baik!') }}</h2>
                 <span style="font-size:14.5px;color:var(--wl-muted)">{{ $good ? __('Keputusan cemerlang. Teruskan usaha!') : ($mid ? __('Usaha yang baik. Cuba tingkatkan lagi!') : __('Jangan putus asa - tonton semula video dan cuba lagi.')) }}</span>
-                <div style="display:flex;align-items:baseline;gap:4px;margin-top:6px">
+                <div class="wl-scorebig" style="display:flex;align-items:baseline;gap:4px;margin-top:6px">
                     <span style="font-family:'Geist',sans-serif;font-size:48px;font-weight:800;color:var(--wl-ink)">{{ $attempt->score }}</span>
                     <span style="font-family:'Geist',sans-serif;font-size:20px;font-weight:800;color:var(--wl-muted)">/{{ $attempt->max_score }}</span>
                 </div>

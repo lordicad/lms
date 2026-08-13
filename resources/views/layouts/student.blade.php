@@ -302,6 +302,9 @@
             .wl-rstat-disc svg { width: 15px !important; height: 15px !important; }
             .wl-rstat-body > span:first-child { font-size: 10px !important; line-height: 1.2 !important; }
             .wl-rstat-body > span:last-child { font-size: 15px !important; }
+            /* Big score number on the result page. */
+            .wl-scorebig > span:first-child { font-size: 38px !important; }
+            .wl-scorebig > span:last-child { font-size: 16px !important; }
 
             /* Subject category labels (Mata Pelajaran Teras / Wajib / Tambahan / Program ...). */
             .wl-catlabel { font-size: 11px !important; letter-spacing: .1em !important; }
