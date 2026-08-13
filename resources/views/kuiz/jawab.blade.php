@@ -21,6 +21,23 @@
         .qnum { width:44px; height:44px; border-radius:12px; cursor:pointer; font-family:'Geist',sans-serif; font-weight:800; font-size:15px; border:1.5px solid var(--wl-line-2); background:var(--wl-surface); color:#4A4B63; transition:all .12s; }
         .qnum.answered { border-color:#17907B; color:#0F7A68; }
         .qnum.active { border:none; background:#17907B; color:#fff; }
+
+        /* Phones/tablets: shrink the whole question card, options and footer. */
+        @media (max-width: 900px) {
+            .qcard { gap:14px !important; padding:18px !important; }
+            .qcard h2 { font-size:17px !important; }
+            .qcard h3 { font-size:15px !important; line-height:1.3 !important; }
+            .q2label { font-size:10.5px !important; }
+            .q2meta > span { font-size:12px !important; }
+            .q2timer { font-size:12.5px !important; padding:6px 12px !important; }
+            .q2timer svg { width:15px !important; height:15px !important; }
+            .qopt2 { padding:12px 14px !important; gap:10px !important; }
+            .q2letter { width:30px !important; height:30px !important; font-size:13px !important; }
+            .q2text { font-size:13px !important; }
+            .q2radio { width:22px !important; height:22px !important; }
+            .q2navbtn { min-height:42px !important; font-size:13px !important; padding:0 14px !important; }
+            .qnum { width:38px !important; height:38px !important; font-size:13px !important; }
+        }
     </style>
 
     <div style="display:flex;flex-direction:column;gap:18px;max-width:900px;margin:16px auto 0;width:100%"
@@ -42,16 +59,16 @@
                         <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:22px;font-weight:800;letter-spacing:-.01em;color:var(--wl-ink);flex:1;min-width:0">{{ $quiz->localizedTitle() }}</h2>
                         @if ($secondsLeft !== null)
                             {{-- Object syntax so the binding does not wipe the static pill styles. --}}
-                            <span :style="secondsLeft < 60 ? { background: '#FDE7E0', color: '#C24936' } : { background: '#FBEECB', color: '#8A6A12' }"
+                            <span class="q2timer" :style="secondsLeft < 60 ? { background: '#FDE7E0', color: '#C24936' } : { background: '#FBEECB', color: '#8A6A12' }"
                                   style="display:inline-flex;align-items:center;gap:7px;border-radius:999px;padding:8px 16px;font-family:'Geist',sans-serif;font-weight:800;font-size:15px"><x-icon name="clock" style="width:17px;height:17px" /><span x-text="clock()">{{ gmdate('i:s', $secondsLeft) }}</span></span>
                         @else
                             {{-- No time limit: an infinity mark rather than a misleading 00:00. --}}
-                            <span title="{{ __('Tiada had masa') }}" style="display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:9px 16px;font-family:'Geist',sans-serif;font-weight:800;background:#EDECF2;color:#6C6F87"><x-icon name="clock" style="width:18px;height:18px" /><x-icon name="infinity" style="width:22px;height:22px" /></span>
+                            <span class="q2timer" title="{{ __('Tiada had masa') }}" style="display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:9px 16px;font-family:'Geist',sans-serif;font-weight:800;background:#EDECF2;color:#6C6F87"><x-icon name="clock" style="width:18px;height:18px" /><x-icon name="infinity" style="width:22px;height:22px" /></span>
                         @endif
                     </div>
 
                     {{-- Position + points + answered count --}}
-                    <div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap">
+                    <div class="q2meta" style="display:flex;align-items:center;gap:9px;flex-wrap:wrap">
                         <span style="background:#17907B;color:#fff;border-radius:999px;padding:6px 15px;font-family:'Geist',sans-serif;font-weight:800;font-size:13.5px">{{ $index + 1 }} / {{ $questions->count() }}</span>
                         <span style="background:#DCEBF8;color:#2E6CA8;border-radius:999px;padding:6px 13px;font-family:'Geist',sans-serif;font-weight:800;font-size:13.5px">{{ $question->points }} {{ __('mata') }}</span>
                         <span style="margin-left:auto;font-size:13px;font-weight:700;color:var(--wl-muted)" x-text="answeredCount() + ' ' + labels.answered">0 {{ __('dijawab') }}</span>
@@ -67,7 +84,7 @@
                     </div>
 
                     <div style="display:flex;flex-direction:column;gap:8px">
-                        <span style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--wl-muted)">{{ $question->isMultiple() ? __('Pilih semua jawapan betul') : __('Pilih satu jawapan') }}</span>
+                        <span class="q2label" style="font-family:'Geist',sans-serif;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--wl-muted)">{{ $question->isMultiple() ? __('Pilih semua jawapan betul') : __('Pilih satu jawapan') }}</span>
                         <h3 style="margin:0;font-family:'Geist',sans-serif;font-size:20px;font-weight:800;line-height:1.35;color:var(--wl-ink)">{{ $question->localizedText() }}</h3>
                     </div>
 
@@ -100,7 +117,7 @@
 
             {{-- Footer, in its own card below the question: Sebelum · question jumper · Seterusnya/Hantar --}}
             <div style="display:flex;align-items:center;gap:12px;background:var(--wl-surface);border:1px solid var(--wl-line);border-radius:20px;padding:16px 20px;box-shadow:0 8px 24px var(--wl-line)">
-                <button type="button" @click="previous()" :style="{ visibility: current === 0 ? 'hidden' : 'visible' }"
+                <button type="button" @click="previous()" class="q2navbtn" :style="{ visibility: current === 0 ? 'hidden' : 'visible' }"
                         style="min-height:48px;cursor:pointer;border-radius:14px;border:1.5px solid var(--wl-line-2);background:var(--wl-surface);color:var(--wl-ink);font-family:'Geist',sans-serif;font-weight:800;font-size:15px;padding:0 20px">← {{ __('Sebelum') }}</button>
 
                 <div style="flex:1;display:flex;justify-content:center;gap:8px;flex-wrap:wrap">
@@ -110,11 +127,11 @@
                     @endforeach
                 </div>
 
-                <button type="submit" x-show="current === total - 1" x-cloak :disabled="submitting"
+                <button type="submit" x-show="current === total - 1" x-cloak :disabled="submitting" class="q2navbtn"
                         style="min-height:48px;border:none;cursor:pointer;border-radius:14px;background:#17907B;color:#fff;font-family:'Geist',sans-serif;font-weight:800;font-size:15px;padding:0 24px">
                     <span x-show="! submitting">{{ __('Hantar Jawapan') }}</span><span x-show="submitting" x-cloak>{{ __('Menghantar...') }}</span>
                 </button>
-                <button type="button" x-show="current < total - 1" @click="next()"
+                <button type="button" x-show="current < total - 1" @click="next()" class="q2navbtn"
                         style="min-height:48px;border:none;cursor:pointer;border-radius:14px;background:#17907B;color:#fff;font-family:'Geist',sans-serif;font-weight:800;font-size:15px;padding:0 24px">{{ __('Seterusnya') }} →</button>
             </div>
         </form>
