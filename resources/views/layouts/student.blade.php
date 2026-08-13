@@ -238,6 +238,11 @@
             /* Subject category labels (Mata Pelajaran Teras / Wajib / Tambahan / Program ...). */
             .wl-catlabel { font-size: 11px !important; letter-spacing: .1em !important; }
 
+            /* Chapter (Bab) page heading: smaller subject label and title. */
+            .wl-babhead { padding: 16px 18px !important; }
+            .wl-babhead > span { font-size: 11.5px !important; }
+            .wl-babhead h2 { font-size: 17px !important; }
+
             /* Subject detail heading (icon tile + name) on the Subjek > subject page. */
             .wl-subjhead > span:first-child { width: 44px !important; height: 44px !important; border-radius: 13px !important; }
             .wl-subjhead > span:first-child svg, .wl-subjhead > span:first-child img { width: 22px !important; height: 22px !important; }
