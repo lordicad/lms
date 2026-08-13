@@ -59,7 +59,7 @@
                     <span style="font-size:13.5px;color:var(--wl-muted)">{{ __('Cikgu belum memuat naik slaid, PDF atau lembaran kerja untuk bab ini.') }}</span>
                 </div>
             @else
-                <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px">
+                <div class="wl-rowlist" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px">
                     @foreach ($materials as $material)
                         <div style="background:var(--wl-surface);border:1px solid var(--wl-line);border-radius:16px;padding:14px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 3px 12px rgba(46,44,80,.04)">
                             <span style="width:38px;height:38px;border-radius:10px;background:#FDE7E0;color:#B84A75;display:grid;place-items:center;flex-shrink:0"><x-icon :name="$material->iconName()" style="width:19px;height:19px" /></span>
@@ -84,7 +84,7 @@
                     <span style="font-size:13.5px;color:var(--wl-muted)">{{ __('Tonton video dahulu. Kuiz akan muncul di sini apabila cikgu menyediakannya.') }}</span>
                 </div>
             @else
-                <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px">
+                <div class="wl-rowlist" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px">
                     @foreach ($quizzes as $quiz)
                         <div style="background:var(--wl-surface);border:1px solid var(--wl-line);border-radius:18px;padding:18px 20px;display:flex;flex-direction:column;gap:12px;box-shadow:0 4px 16px rgba(46,44,80,.04)">
                             <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
