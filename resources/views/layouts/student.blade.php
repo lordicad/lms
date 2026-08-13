@@ -306,6 +306,8 @@
             /* Big score number on the result page. */
             .wl-scorebig > span:first-child { font-size: 38px !important; }
             .wl-scorebig > span:last-child { font-size: 16px !important; }
+            /* Ranking info banner on the result page. */
+            .wl-rankinfo { font-size: 12px !important; line-height: 1.4 !important; }
 
             /* Subject category labels (Mata Pelajaran Teras / Wajib / Tambahan / Program ...). */
             .wl-catlabel { font-size: 11px !important; letter-spacing: .1em !important; }
