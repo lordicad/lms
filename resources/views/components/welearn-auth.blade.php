@@ -244,12 +244,12 @@
                 min-height: 100vh; padding: 20px 20px 30px; gap: 0;
                 background:
                     linear-gradient(180deg, rgba(245,248,239,.12), rgba(245,248,239,.72)),
-                    #F5F8EF url('{{ asset('images/AuthPic.png') }}') 35% 0% / cover no-repeat;
+                    #F5F8EF url('{{ asset('images/AuthPic.png') }}') 30% 0% / cover no-repeat;
             }
             html.theme-dark .wla-shell {
                 background:
                     linear-gradient(180deg, rgba(12,20,16,.28), rgba(12,20,16,.86)),
-                    #0E1A14 url('{{ asset('images/DMAuthPic.png') }}') 35% 0% / cover no-repeat;
+                    #0E1A14 url('{{ asset('images/DMAuthPic.png') }}') 30% 0% / cover no-repeat;
             }
             .wla-brand, .wla-form { display: contents; }
 
