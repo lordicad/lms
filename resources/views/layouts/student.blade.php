@@ -228,11 +228,12 @@
             /* Section headings (Sambung menonton / Paling popular / etc.) a little smaller. */
             .wl-main h2 { font-size: 18px !important; }
 
-            /* Welcome heading: smaller icon tile and text on phones (inline sizes, so !important). */
-            .wl-pagehead .hi-tile { width: 40px !important; height: 40px !important; border-radius: 12px !important; }
-            .wl-pagehead .hi-tile img { width: 24px !important; height: 24px !important; }
-            .wl-pagehead h1 { font-size: 21px !important; }
-            .wl-pagehead h1 + span { font-size: 13px !important; }
+            /* Page headings: smaller icon tile and text on phones (inline sizes, so !important). */
+            .wl-main .hi-tile { width: 40px !important; height: 40px !important; border-radius: 12px !important; }
+            .wl-main .hi-tile img { width: 24px !important; height: 24px !important; }
+            .wl-main .hi-tile svg { width: 22px !important; height: 22px !important; }
+            .wl-main h1 { font-size: 21px !important; }
+            .wl-main h1 + span { font-size: 13px !important; }
 
             /* Home video rows scroll sideways instead of cramming four per line. */
             .wl-cardrow { display:flex !important; flex-wrap:nowrap; overflow-x:auto; gap:16px; padding-bottom:6px; scroll-snap-type:x proximity; -webkit-overflow-scrolling:touch;
