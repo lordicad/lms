@@ -262,6 +262,11 @@
             .wl-offrow-act--status { align-items: stretch !important; text-align: center; padding: 0 !important; }
             .wl-offrow-act--status > span:first-child { min-height: 38px !important; padding: 0 14px !important; font-size: 12.5px !important; }
             .wl-offrow-act--status > span:last-child { font-size: 11px !important; text-align: center !important; }
+            /* Leaderboard Subject filter: smaller label + select. */
+            .wl-rankfilter > span { font-size: 12px !important; }
+            .wl-rankfilter .ss-trigger { min-height: 38px !important; font-size: 12.5px !important; padding: 0 30px 0 12px !important; }
+            .wl-rankfilter .ss-chevron { width: 14px !important; height: 14px !important; }
+            .wl-rankfilter select.js-styled-select { min-height: 38px !important; font-size: 12.5px !important; }
 
             /* Subject category labels (Mata Pelajaran Teras / Wajib / Tambahan / Program ...). */
             .wl-catlabel { font-size: 11px !important; letter-spacing: .1em !important; }
