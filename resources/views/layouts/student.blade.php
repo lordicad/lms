@@ -257,6 +257,7 @@
             /* Video watch page: the 2-column (content + 320px sidebar) grid must stack, otherwise
                the sidebar crushes the main column to a few px and everything overlaps. */
             .wl-watchgrid { grid-template-columns: 1fr !important; }
+            .wl-watchgrid h2 { font-size: 16px !important; }
 
             /* Chapter materials & quizzes: one per row, sized to the container (minmax(0,1fr) stops
                a row growing past the container, so they line up with the video rows). */
