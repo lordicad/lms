@@ -254,6 +254,10 @@
             .wl-cardtitle { font-size: 12.5px !important; white-space: normal !important; overflow: visible !important; text-overflow: clip !important; }
             .wl-quiztitle { font-size: 14px !important; }
 
+            /* Video watch page: the 2-column (content + 320px sidebar) grid must stack, otherwise
+               the sidebar crushes the main column to a few px and everything overlaps. */
+            .wl-watchgrid { grid-template-columns: 1fr !important; }
+
             /* Chapter materials & quizzes: one per row, sized to the container (minmax(0,1fr) stops
                a row growing past the container, so they line up with the video rows). */
             .wl-rowlist { grid-template-columns: minmax(0, 1fr) !important; }

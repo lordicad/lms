@@ -8,7 +8,7 @@
     <div style="display:flex;flex-direction:column;gap:18px">
         <a href="{{ route('bab.show', $chapter) }}" class="wl-back">← {{ __('Bab :number: :title', ['number' => $chapter->number, 'title' => $chapter->title]) }}</a>
 
-        <div style="display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:24px;align-items:start">
+        <div class="wl-watchgrid" style="display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:24px;align-items:start">
             {{-- LEFT: player + title/meta --}}
             <div style="display:flex;flex-direction:column;gap:16px;min-width:0">
                 <div style="border-radius:20px;overflow:hidden;box-shadow:0 10px 30px var(--wl-line-2)">
