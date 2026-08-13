@@ -21,9 +21,9 @@
                         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
                             <span style="background:{{ $tagBg }};color:{{ $tagColor }};border-radius:999px;padding:4px 12px;font-family:'Geist',sans-serif;font-size:12px;font-weight:800"><x-subject-emoji :subject="$subject" class="text-sm" /> {{ $subject->displayName() }}</span>
                             <span style="font-size:13px;font-weight:700;color:var(--wl-muted)">{{ $grade->displayName() }}</span>
-                            <span style="font-size:13px;font-weight:700;color:var(--wl-muted)">{{ $lesson->teacher->name }}</span>
                             <span style="display:inline-flex;align-items:center;gap:8px;flex-wrap:nowrap">
-                                <span style="display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:700;color:var(--wl-muted)"><img src="{{ asset('images/eye.png') }}" alt="" style="width:16px;height:16px;object-fit:contain">{{ $lesson->views_count }} {{ __('tontonan') }}</span>
+                                <span style="font-size:13px;font-weight:700;color:var(--wl-muted);white-space:nowrap">{{ $lesson->teacher->name }}</span>
+                                <span style="display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:700;color:var(--wl-muted);white-space:nowrap"><img src="{{ asset('images/eye.png') }}" alt="" style="width:16px;height:16px;object-fit:contain">{{ $lesson->views_count }} {{ __('tontonan') }}</span>
                                 @if ($me->isStudent() && $lesson->watchedBy($me))
                                     <span style="background:#DCF2EE;color:#0F7A68;border-radius:999px;padding:4px 12px;font-family:'Geist',sans-serif;font-size:12px;font-weight:800;white-space:nowrap">✓ {{ __('Ditonton') }}</span>
                                 @endif
