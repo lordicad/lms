@@ -257,8 +257,11 @@
                 display: -webkit-box !important; -webkit-line-clamp: 2 !important; -webkit-box-orient: vertical !important;
                 overflow: hidden !important; text-overflow: clip !important;
             }
-            .wl-offrow-act { flex: 1 1 100% !important; justify-content: center !important; }
-            .wl-offrow-act--status { align-items: stretch !important; text-align: center; }
+            .wl-offrow-act { flex: 1 1 100% !important; justify-content: center !important; min-height: 38px !important; padding: 0 14px !important; font-size: 12.5px !important; gap: 6px !important; }
+            .wl-offrow-act svg { width: 15px !important; height: 15px !important; }
+            .wl-offrow-act--status { align-items: stretch !important; text-align: center; padding: 0 !important; }
+            .wl-offrow-act--status > span:first-child { min-height: 38px !important; padding: 0 14px !important; font-size: 12.5px !important; }
+            .wl-offrow-act--status > span:last-child { font-size: 11px !important; text-align: center !important; }
 
             /* Subject category labels (Mata Pelajaran Teras / Wajib / Tambahan / Program ...). */
             .wl-catlabel { font-size: 11px !important; letter-spacing: .1em !important; }
