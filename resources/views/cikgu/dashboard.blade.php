@@ -16,8 +16,14 @@
             .dash-grid { grid-template-columns:1fr; }
         }
         @media (max-width: 900px) {
-            .dash-kpis { grid-template-columns:repeat(2,minmax(0,1fr)); }
+            .dash-kpis { grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; margin-top:12px !important; }
             .dash-pair { grid-template-columns:1fr; }
+            /* Tidier, more compact KPI cards on phones. */
+            .tp-stat { padding:14px 16px; gap:5px; }
+            .tp-stat-ico { width:34px; height:34px; border-radius:10px; }
+            .tp-stat-ico svg { width:16px; height:16px; }
+            .tp-stat-label { font-size:12px; }
+            .tp-stat-value { font-size:23px; }
         }
     </style>
 
