@@ -78,7 +78,7 @@
                             <a href="{{ route('video.show', $lesson) }}" class="tp-g" style="font-weight:800;font-size:14.5px;color:var(--tp-ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $lesson->title }}</a>
                             <span style="font-size:12.5px;color:var(--tp-muted)"><span style="display:inline-block;vertical-align:middle;background:color-mix(in oklab, {{ $lesson->chapter->subject->color ?: '#17907B' }} var(--pill-bw), var(--pill-bb));color:color-mix(in oklab, {{ $lesson->chapter->subject->color ?: '#17907B' }} var(--pill-fw), var(--pill-fb));border-radius:999px;padding:2px 9px;font-weight:800;font-size:11px">{{ $lesson->chapter->subject->name }}</span> · {{ $lesson->chapter->grade->displayName() }} · {{ __('Bab :n', ['n' => $lesson->chapter->number]) }}</span>
                         </div>
-                        <span class="tp-meta" style="flex-shrink:0">👁 {{ $lesson->views_count }}</span>
+                        <span class="tp-meta" style="flex-shrink:0;display:inline-flex;align-items:center;gap:4px"><x-icon name="eye" style="width:14px;height:14px" />{{ $lesson->views_count }}</span>
                         <span class="tp-meta" style="flex-shrink:0">{{ $lesson->updated_at->translatedFormat('j M Y') }}</span>
                         <span class="tp-badge {{ $lesson->is_published ? 'tp-badge-ok' : 'tp-badge-draft' }}">{{ $lesson->is_published ? __('Diterbitkan') : __('Draf') }}</span>
                     </div>

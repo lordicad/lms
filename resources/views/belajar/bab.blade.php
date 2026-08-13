@@ -41,7 +41,7 @@
                             <div style="padding:14px 16px;display:flex;flex-direction:column;gap:4px">
                                 <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:15px;color:var(--wl-ink)">{{ $lesson->title }}</span>
                                 <span style="font-size:12.5px;color:var(--wl-muted)">{{ $lesson->teacher->name }}</span>
-                                <span style="font-size:12px;font-weight:700;color:var(--wl-muted)">👁 {{ $lesson->views_count }} {{ __('tontonan') }}</span>
+                                <span style="display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:700;color:var(--wl-muted)"><x-icon name="eye" style="width:14px;height:14px" />{{ $lesson->views_count }} {{ __('tontonan') }}</span>
                             </div>
                         </a>
                     @endforeach

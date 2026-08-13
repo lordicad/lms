@@ -38,7 +38,7 @@
         ];
 
         $summary = [
-            ['icon' => '👁', 'tint' => '#E4EEF9', 'label' => __('Jumlah tontonan video'), 'value' => number_format($stats['views'])],
+            ['icon' => 'eye', 'tint' => '#E4EEF9', 'label' => __('Jumlah tontonan video'), 'value' => number_format($stats['views'])],
             ['icon' => '❤️', 'tint' => '#FBE4ED', 'label' => __('Video digemari'), 'value' => number_format($stats['favourites'])],
             ['icon' => '⬇️', 'tint' => '#DCF2EE', 'label' => __('Bahan dimuat turun'), 'value' => number_format($stats['downloads'])],
             ['icon' => '📝', 'tint' => '#FEF0CE', 'label' => __('Percubaan kuiz'), 'value' => number_format($stats['attempts'])],
@@ -50,7 +50,7 @@
         @foreach ($summary as $s)
             <div class="tp-stat">
                 <div style="display:flex;align-items:center;gap:10px">
-                    <span class="tp-stat-ico" style="background:{{ $s['tint'] }}">{{ $s['icon'] }}</span>
+                    <span class="tp-stat-ico" style="background:{{ $s['tint'] }}">@if (preg_match('/^[a-z-]+$/', $s['icon']))<x-icon :name="$s['icon']" style="width:20px;height:20px;color:#2E6CA8" />@else{{ $s['icon'] }}@endif</span>
                     <span class="tp-stat-label">{{ $s['label'] }}</span>
                 </div>
                 <span class="tp-stat-value">{{ $s['value'] }}</span>
