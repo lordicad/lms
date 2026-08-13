@@ -70,7 +70,7 @@
 
                 {{-- Badges earned, in their own bordered card. --}}
                 @if (! empty($badgesEarned))
-                    <div style="width:100%;border:1px solid var(--wl-line);border-radius:18px;padding:20px;display:flex;flex-direction:column;gap:16px;text-align:left;margin-top:4px">
+                    <div class="wl-earnedsec" style="width:100%;border:1px solid var(--wl-line);border-radius:18px;padding:20px;display:flex;flex-direction:column;gap:16px;text-align:left;margin-top:4px">
                         <div style="display:flex;align-items:center;gap:12px">
                             <span style="width:40px;height:40px;flex-shrink:0;border-radius:12px;background:#FEF0CE;color:#E0A21C;display:grid;place-items:center"><x-icon name="trophy" style="width:22px;height:22px" /></span>
                             <h3 style="margin:0;font-family:'Geist',sans-serif;font-size:17px;font-weight:800;color:var(--wl-ink)">{{ __('Lencana Diperoleh') }}</h3>
@@ -78,10 +78,10 @@
                                 <span style="background:#DCF2EE;color:#0F7A68;border-radius:999px;padding:4px 12px;font-family:'Geist',sans-serif;font-size:12px;font-weight:800">+{{ count($badgesNew) }} {{ __('baru') }}</span>
                             @endif
                         </div>
-                        <div style="display:flex;flex-wrap:wrap;gap:14px;justify-content:center">
+                        <div class="wl-earnedbadges" style="display:flex;flex-wrap:wrap;gap:14px;justify-content:center">
                             @foreach ($badgesEarned as $key)
                                 @php($new = $celebrate && in_array($key, $badgesNew, true))
-                                <div style="position:relative;flex:0 0 auto;border:1px solid var(--wl-line);border-radius:16px;padding:16px 12px 14px;background:var(--wl-surface)">
+                                <div class="wl-earnedcard" style="position:relative;flex:0 0 auto;border:1px solid var(--wl-line);border-radius:16px;padding:16px 12px 14px;background:var(--wl-surface)">
                                     @if ($new)
                                         <span style="position:absolute;top:8px;right:8px;background:#EB5E5A;color:#fff;border-radius:999px;padding:2px 10px;font-family:'Geist',sans-serif;font-size:10.5px;font-weight:800;box-shadow:0 3px 8px rgba(235,94,90,.4);z-index:4">{{ __('Baru') }}</span>
                                     @endif

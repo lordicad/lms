@@ -308,6 +308,17 @@
             .wl-scorebig > span:last-child { font-size: 16px !important; }
             /* Ranking info banner on the result page. */
             .wl-rankinfo { font-size: 12px !important; line-height: 1.4 !important; }
+            /* "Lencana Diperoleh" earned-badges block: smaller heading + badge. */
+            .wl-earnedsec { padding: 14px !important; gap: 12px !important; }
+            .wl-earnedsec > div:first-child > span:first-child { width: 34px !important; height: 34px !important; border-radius: 10px !important; }
+            .wl-earnedsec > div:first-child > span:first-child svg { width: 19px !important; height: 19px !important; }
+            .wl-earnedsec > div:first-child h3 { font-size: 15px !important; }
+            .wl-earnedcard { padding: 10px 10px 12px !important; }
+            .wl-earnedbadges { gap: 10px !important; }
+            .wl-earnedbadges .qb-badge { width: 88px !important; }
+            .wl-earnedbadges .qb-medal { transform: scale(.84) !important; transform-origin: top center; height: 76px !important; }
+            .wl-earnedbadges .qb-badge > span { font-size: 11.5px !important; }
+            .wl-earnedbadges .qb-badge > span + span { font-size: 10.5px !important; }
 
             /* Subject category labels (Mata Pelajaran Teras / Wajib / Tambahan / Program ...). */
             .wl-catlabel { font-size: 11px !important; letter-spacing: .1em !important; }
