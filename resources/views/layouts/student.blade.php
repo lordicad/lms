@@ -183,10 +183,11 @@
 
         @media (max-width: 900px) {
             .wl-shell { grid-template-columns: 1fr !important; }
-            /* Sidebar slides in from the left as a drawer over the content. Use dvh so the drawer
-               matches the real visible height (100vh is taller than the visible area on phones,
-               which pushed the user bar off-screen and forced a scroll). */
-            .wl-side { width:284px !important; height:100dvh !important; z-index:60; transform:translateX(-100%); transition:transform .25s ease; box-shadow:0 0 44px rgba(20,24,20,.28); }
+            /* Sidebar slides in from the left as a drawer over the content. Anchor it to BOTH the
+               top and bottom of the viewport (not a vh/dvh height) so it always spans exactly the
+               visible area on every device - 100vh is taller than the visible area on phones, which
+               pushed the user bar off-screen and forced a scroll. */
+            .wl-side { width:284px !important; top:0 !important; bottom:0 !important; height:auto !important; z-index:60; transform:translateX(-100%); transition:transform .25s ease; box-shadow:0 0 44px rgba(20,24,20,.28); }
             .wl-side.is-open { transform:translateX(0); }
             .wl-burger { display:flex; }        /* close (X) inside the drawer */
             .wl-burger-open { display:flex; }    /* hamburger in the header */
