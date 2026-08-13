@@ -354,6 +354,12 @@
             .wl-acccard { padding: 18px !important; }
             .wl-acccard > button h2 { font-size: 16px !important; }
             .wl-acccard > button svg { width: 17px !important; height: 17px !important; }
+            /* Smaller field labels, read-only values, hints and small buttons inside the two
+               collapsible sections. Real <input> fields keep their size (iOS zoom guard). */
+            .wl-acccard [style*="font-size:14px"] { font-size: 12.5px !important; }
+            .wl-acccard span[style*="font-size:15px"] { font-size: 13px !important; }
+            .wl-acccard [style*="font-size:13px"] { font-size: 12px !important; }
+            .wl-acccard [style*="font-size:12.5px"] { font-size: 11.5px !important; }
             /* Quiz intro stat cards (Soalan / Markah penuh / Masa). */
             .wl-introstats > div { padding: 12px 10px !important; }
             .wl-introstats > div > span:first-child { font-size: 10.5px !important; line-height: 1.2 !important; }
