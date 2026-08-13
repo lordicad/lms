@@ -242,7 +242,7 @@
             .wl-subjgrid { gap: 12px !important; }
             .wl-subjgrid > a { padding: 14px !important; min-height: 104px !important; }
             .wl-subjgrid > a svg, .wl-subjgrid > a img { width: 22px !important; height: 22px !important; }
-            .wl-subjgrid > a span { font-size: 13.5px !important; }
+            .wl-subjgrid > a span { font-size: 11px !important; line-height: 1.25 !important; overflow-wrap: break-word; word-break: break-word; }
             .wl-subjgrid > a > div { margin-bottom: 4px !important; }
 
             /* Home video rows scroll sideways instead of cramming four per line. */
