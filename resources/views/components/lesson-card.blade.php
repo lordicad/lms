@@ -70,7 +70,7 @@
                 <span class="inline-flex items-center rounded-full bg-subject-wash px-2.5 py-0.5 text-[11px] font-extrabold text-subject-ink">{{ $subject->displayName() }}</span>
                 <span class="text-[11px] font-bold text-ink-2">{{ __('Bab :n', ['n' => $lesson->chapter->number]) }}</span>
                 @if ($showViews)
-                    <span class="ml-auto inline-flex items-center gap-1 text-[11px] font-bold text-ink-2"><x-icon name="eye" class="h-[13px] w-[13px]" />{{ $lesson->views_count }}</span>
+                    <span class="ml-auto inline-flex items-center gap-1 text-[11px] font-bold text-ink-2"><img src="{{ asset('images/eye.png') }}" alt="" style="width:14px;height:14px;object-fit:contain">{{ $lesson->views_count }}</span>
                 @endif
             </div>
         </div>

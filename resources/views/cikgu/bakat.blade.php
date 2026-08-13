@@ -50,7 +50,7 @@
         @foreach ($summary as $s)
             <div class="tp-stat">
                 <div style="display:flex;align-items:center;gap:10px">
-                    <span class="tp-stat-ico" style="background:{{ $s['tint'] }}">@if (preg_match('/^[a-z-]+$/', $s['icon']))<x-icon :name="$s['icon']" style="width:20px;height:20px;color:#2E6CA8" />@else{{ $s['icon'] }}@endif</span>
+                    <span class="tp-stat-ico" style="background:{{ $s['tint'] }}">@if ($s['icon'] === 'eye')<img src="{{ asset('images/eye.png') }}" alt="" style="width:22px;height:22px;object-fit:contain">@else{{ $s['icon'] }}@endif</span>
                     <span class="tp-stat-label">{{ $s['label'] }}</span>
                 </div>
                 <span class="tp-stat-value">{{ $s['value'] }}</span>
