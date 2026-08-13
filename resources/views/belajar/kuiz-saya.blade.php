@@ -5,6 +5,8 @@
         /* Completed (wide) beside Suggested Quiz (narrow); stacked on small screens. */
         .kz-cols { display: grid; grid-template-columns: minmax(0, 1.75fr) minmax(0, 1fr); gap: 20px; align-items: start; }
         @media (max-width: 900px) { .kz-cols { grid-template-columns: 1fr; } }
+        /* Phones: a tidy 2x2 grid of achievement badges instead of a single column. */
+        @media (max-width: 640px) { .kz-ach { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px 6px; } }
     </style>
 
     <div style="display:flex;flex-direction:column;gap:24px">
