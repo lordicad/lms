@@ -235,6 +235,13 @@
             .wl-main h1 { font-size: 21px !important; }
             .wl-main h1 + span { font-size: 13px !important; }
 
+            /* Subject cards (Mata Pelajaran Teras): smaller/less tall on phones. */
+            .wl-subjgrid { gap: 12px !important; }
+            .wl-subjgrid > a { padding: 14px !important; min-height: 104px !important; }
+            .wl-subjgrid > a svg, .wl-subjgrid > a img { width: 22px !important; height: 22px !important; }
+            .wl-subjgrid > a span { font-size: 13.5px !important; }
+            .wl-subjgrid > a > div { margin-bottom: 4px !important; }
+
             /* Home video rows scroll sideways instead of cramming four per line. */
             .wl-cardrow { display:flex !important; flex-wrap:nowrap; overflow-x:auto; gap:16px; padding-bottom:6px; scroll-snap-type:x proximity; -webkit-overflow-scrolling:touch;
                           /* Hide the scrollbar and fade the trailing edge, like the continue rail. */
