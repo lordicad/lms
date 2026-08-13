@@ -52,11 +52,11 @@
                 <div style="width:70%;height:9px;border-radius:999px;background:#DCEAF8;overflow:hidden">
                     <div style="height:100%;border-radius:999px;background:#17907B;width:{{ $pct }}%"></div>
                 </div>
-                <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;width:100%;margin-top:10px">
+                <div class="wl-rstats" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;width:100%;margin-top:10px">
                     @foreach ($stats as $s)
-                        <div style="background:{{ $isDark ? '#2A3543' : '#FBFAF6' }};border:1px solid var(--wl-line-2);border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:12px;text-align:left">
-                            <span style="width:40px;height:40px;flex-shrink:0;border-radius:50%;background:{{ $s['bg'] }};color:{{ $s['ink'] }};display:grid;place-items:center"><x-icon :name="$s['icon']" style="width:20px;height:20px" /></span>
-                            <div style="display:flex;flex-direction:column;gap:1px;min-width:0">
+                        <div class="wl-rstat" style="background:{{ $isDark ? '#2A3543' : '#FBFAF6' }};border:1px solid var(--wl-line-2);border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:12px;text-align:left">
+                            <span class="wl-rstat-disc" style="width:40px;height:40px;flex-shrink:0;border-radius:50%;background:{{ $s['bg'] }};color:{{ $s['ink'] }};display:grid;place-items:center"><x-icon :name="$s['icon']" style="width:20px;height:20px" /></span>
+                            <div class="wl-rstat-body" style="display:flex;flex-direction:column;gap:1px;min-width:0">
                                 <span style="font-size:12.5px;font-weight:700;color:var(--wl-muted)">{{ $s['label'] }}</span>
                                 <span style="font-family:'Geist',sans-serif;font-size:19px;font-weight:800;color:var(--wl-ink)">{{ $s['value'] }}</span>
                             </div>
