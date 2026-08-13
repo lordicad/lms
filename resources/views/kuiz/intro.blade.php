@@ -31,7 +31,7 @@
                 </div>
             </div>
 
-            <div style="background:{{ $isDark ? '#2A3543' : '#F6F3EC' }};border:1px solid var(--wl-line);border-radius:16px;padding:20px 22px;display:flex;flex-direction:column;gap:12px">
+            <div class="wl-rulescard" style="background:{{ $isDark ? '#2A3543' : '#F6F3EC' }};border:1px solid var(--wl-line);border-radius:16px;padding:20px 22px;display:flex;flex-direction:column;gap:12px">
                 <span style="display:inline-flex;align-items:center;gap:8px;font-family:'Geist',sans-serif;font-size:14.5px;font-weight:800;color:var(--wl-ink)"><x-icon name="info-circle" style="width:18px;height:18px;color:#2E6CA8" />{{ __('Peraturan kuiz') }}</span>
                 <div style="display:flex;gap:10px;align-items:flex-start">
                     <span style="color:#17907B;flex-shrink:0;margin-top:1px"><x-icon name="check" style="width:16px;height:16px" /></span>
@@ -54,7 +54,7 @@
             </div>
 
             @if ($rankedAttempt)
-                <div style="display:flex;align-items:center;gap:8px;background:{{ $isDark ? 'rgba(45,212,191,.12)' : '#DCF2EE' }};border:1px solid {{ $isDark ? 'rgba(45,212,191,.3)' : 'rgba(23,144,123,.25)' }};border-radius:14px;padding:14px 18px;font-family:'Geist',sans-serif;font-size:13.5px;font-weight:700;color:{{ $isDark ? '#5EEAD4' : '#0F7A68' }}"><x-icon name="check-circle" style="width:18px;height:18px;flex-shrink:0" />{{ __('Percubaan pertama anda: :score/:max mata. Percubaan baharu adalah latihan.', ['score' => $rankedAttempt->score, 'max' => $rankedAttempt->max_score]) }}</div>
+                <div class="wl-rankinfo" style="display:flex;align-items:center;gap:8px;background:{{ $isDark ? 'rgba(45,212,191,.12)' : '#DCF2EE' }};border:1px solid {{ $isDark ? 'rgba(45,212,191,.3)' : 'rgba(23,144,123,.25)' }};border-radius:14px;padding:14px 18px;font-family:'Geist',sans-serif;font-size:13.5px;font-weight:700;color:{{ $isDark ? '#5EEAD4' : '#0F7A68' }}"><x-icon name="check-circle" style="width:18px;height:18px;flex-shrink:0" />{{ __('Percubaan pertama anda: :score/:max mata. Percubaan baharu adalah latihan.', ['score' => $rankedAttempt->score, 'max' => $rankedAttempt->max_score]) }}</div>
             @endif
 
             @unless ($isPreview)
