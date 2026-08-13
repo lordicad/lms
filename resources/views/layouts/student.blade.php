@@ -345,6 +345,11 @@
             .wl-profhead h2 { font-size: 19px !important; }
             .wl-profhead > div span { font-size: 11px !important; }
             .wl-profhead > span { font-size: 12px !important; }
+            /* Profile stat cards (Jumlah mata / Kuiz selesai / Video ditonton / Ranking). */
+            .pf-stats > div { padding: 14px !important; }
+            .pf-stats > div > span:first-of-type { font-size: 18px !important; }
+            .pf-stats > div > span:last-child { font-size: 11px !important; }
+            .pf-stats > div > svg { width: 20px !important; height: 20px !important; }
             /* Quiz intro stat cards (Soalan / Markah penuh / Masa). */
             .wl-introstats > div { padding: 12px 10px !important; }
             .wl-introstats > div > span:first-child { font-size: 10.5px !important; line-height: 1.2 !important; }
