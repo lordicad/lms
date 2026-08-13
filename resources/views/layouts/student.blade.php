@@ -360,6 +360,15 @@
             .wl-acccard span[style*="font-size:15px"] { font-size: 13px !important; }
             .wl-acccard [style*="font-size:13px"] { font-size: 12px !important; }
             .wl-acccard [style*="font-size:12.5px"] { font-size: 11.5px !important; }
+            /* Profile encouragement card: button drops to its own full-width line so the text
+               stops wrapping one word per line. */
+            .wl-encourage { padding: 16px !important; gap: 12px !important; }
+            .wl-encourage > span:first-child { width: 36px !important; height: 36px !important; }
+            .wl-encourage > span:first-child svg { width: 20px !important; height: 20px !important; }
+            .wl-encourage > span:nth-child(2) { flex: 1 1 140px !important; }
+            .wl-encourage > span:nth-child(2) > span:first-child { font-size: 14.5px !important; }
+            .wl-encourage > span:nth-child(2) > span:last-child { font-size: 12.5px !important; }
+            .wl-encouragebtn { flex: 1 1 100% !important; justify-content: center !important; min-height: 42px !important; font-size: 13px !important; }
             /* Quiz intro stat cards (Soalan / Markah penuh / Masa). */
             .wl-introstats > div { padding: 12px 10px !important; }
             .wl-introstats > div > span:first-child { font-size: 10.5px !important; line-height: 1.2 !important; }
