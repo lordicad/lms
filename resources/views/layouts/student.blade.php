@@ -249,7 +249,10 @@
             .wl-vidlist > a.vid-card > div:first-child { width: 132px !important; height: auto !important; flex-shrink: 0; }
             .wl-vidlist > a.vid-card > div:last-child { flex: 1 1 auto; min-width: 0; justify-content: center; padding: 12px 14px !important; gap: 3px !important; }
             .wl-vidlist .vid-card > div:last-child > span { font-size: 11.5px !important; }
-            .wl-vidlist .vid-card > div:last-child > span:first-child { font-size: 13.5px !important; line-height: 1.3; }
+            .wl-vidlist .vid-card > div:last-child > span:first-child { font-size: 12.5px !important; line-height: 1.3; }
+            /* Material and quiz titles a touch smaller too. */
+            .wl-cardtitle { font-size: 12.5px !important; }
+            .wl-quiztitle { font-size: 14px !important; }
 
             /* Chapter materials & quizzes: one per row, sized to the container (minmax(0,1fr) stops
                a row growing past the container, so they line up with the video rows). */

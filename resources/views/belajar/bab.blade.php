@@ -64,7 +64,7 @@
                         <div style="background:var(--wl-surface);border:1px solid var(--wl-line);border-radius:16px;padding:14px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 3px 12px rgba(46,44,80,.04)">
                             <span style="width:38px;height:38px;border-radius:10px;background:#FDE7E0;color:#B84A75;display:grid;place-items:center;flex-shrink:0"><x-icon :name="$material->iconName()" style="width:19px;height:19px" /></span>
                             <div style="display:flex;flex-direction:column;gap:1px;min-width:0;flex:1">
-                                <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:13.5px;color:var(--wl-ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ $material->title }}</span>
+                                <span class="wl-cardtitle" style="font-family:'Geist',sans-serif;font-weight:800;font-size:13.5px;color:var(--wl-ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ $material->title }}</span>
                                 <span style="font-size:12px;color:var(--wl-muted)">{{ $material->humanSize() }}</span>
                             </div>
                             <a href="{{ route('muat-turun.bahan', $material) }}" title="{{ __('Muat turun') }}" style="width:38px;height:38px;border-radius:10px;background:#DCF2EE;color:#0F7A68;display:grid;place-items:center;text-decoration:none;flex-shrink:0"><x-icon name="download" style="width:19px;height:19px" /></a>
@@ -93,7 +93,7 @@
                                     <span style="font-size:12px;font-weight:700;color:var(--wl-muted)">{{ __('Kuiz Bercetak') }}</span>
                                 @endif
                             </div>
-                            <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:15.5px;color:var(--wl-ink)">{{ $quiz->localizedTitle() }}</span>
+                            <span class="wl-quiztitle" style="font-family:'Geist',sans-serif;font-weight:800;font-size:15.5px;color:var(--wl-ink)">{{ $quiz->localizedTitle() }}</span>
                             <div style="display:flex;align-items:center;gap:12px;margin-top:auto">
                                 @if ($quiz->my_attempts_count > 0)
                                     <span style="font-size:12.5px;font-weight:700;color:var(--wl-muted)">{{ __('Dicuba :count kali', ['count' => $quiz->my_attempts_count]) }}</span>
