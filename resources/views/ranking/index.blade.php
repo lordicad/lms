@@ -97,11 +97,24 @@
 
         /* Mobile: stack, Rank 1 first, no elevation, hide the podium base. */
         @media (max-width: 640px) {
-            .lb-podium { grid-template-columns: 1fr; gap: 32px; }
+            /* Keep the desktop 3-up podium (2nd - 1st - 3rd, centre raised), just scaled down. */
+            .lb-podium { grid-template-columns: 1fr 1.08fr 1fr; gap: 7px; align-items: end; }
             .lb-base { display: none; }
-            .lb-card { min-height: 0 !important; padding: 32px 20px 24px !important; }
-            .lb-card--first { order: -1; }
-            .lb-card--first::before { top: 68px; }
+            .lb-deco { display: none; }
+            .lb-card { border-radius: 16px; }
+            .lb-card--first { min-height: 172px !important; padding: 10px 6px 12px !important; gap: 5px; }
+            .lb-card--second, .lb-card--third { min-height: 146px !important; padding: 9px 5px 10px !important; gap: 4px; }
+            .lb-card--first::before { top: 44px; width: 130px; height: 130px; }
+            .lb-card--first .lb-medal { width: 32px; height: 32px; }
+            .lb-card--second .lb-medal, .lb-card--third .lb-medal { width: 26px; height: 26px; }
+            .lb-card--first .lb-avatar { width: 46px; height: 46px; font-size: 17px; margin-top: -4px; }
+            .lb-card--second .lb-avatar, .lb-card--third .lb-avatar { width: 38px; height: 38px; font-size: 14px; margin-top: -3px; }
+            .lb-card--first .lb-name { font-size: 12.5px; }
+            .lb-card--second .lb-name, .lb-card--third .lb-name { font-size: 11.5px; }
+            .lb-card--first .lb-quizzes { font-size: 10px; }
+            .lb-card--second .lb-quizzes, .lb-card--third .lb-quizzes { font-size: 9.5px; }
+            .lb-card--first .lb-pill { font-size: 10px; padding: 4px 10px; margin-top: 6px; }
+            .lb-card--second .lb-pill, .lb-card--third .lb-pill { font-size: 9.5px; padding: 3px 8px; margin-top: 5px; }
         }
     </style>
 
