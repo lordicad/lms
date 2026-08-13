@@ -334,6 +334,13 @@
             .wl-reviewcard > div:first-child span { font-size: 11.5px !important; }
             .wl-reviewq { font-size: 14px !important; }
             .wl-reviewopt { font-size: 13px !important; }
+            /* Printed-quiz (file) page: smaller title, facts, note and button. */
+            .fail-view h1 { font-size: 21px !important; }
+            .fail-view .chip { font-size: 12px !important; }
+            .fail-view .text-base { font-size: 14px !important; }
+            .fail-view .text-xs { font-size: 11px !important; }
+            .fail-view p { font-size: 13px !important; line-height: 1.55 !important; }
+            .fail-view .btn-primary { font-size: 14px !important; }
 
             /* Subject category labels (Mata Pelajaran Teras / Wajib / Tambahan / Program ...). */
             .wl-catlabel { font-size: 11px !important; letter-spacing: .1em !important; }
