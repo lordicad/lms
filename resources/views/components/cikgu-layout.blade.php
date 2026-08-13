@@ -284,30 +284,45 @@
         .tp-row:hover { background:var(--tp-surface-2); }
         .tp-row:last-child { border-bottom:none; }
 
-        /* Brand + hamburger on one row at the top of the rail; the burger only shows on mobile. */
+        /* Brand + close button at the top of the drawer; the buttons only show on mobile. */
         .tp-side-top { display:flex; align-items:center; justify-content:space-between; gap:8px; }
-        .tp-burger { display:none; align-items:center; justify-content:center; width:44px; height:44px; border-radius:11px; border:1px solid var(--tp-line-2); background:var(--tp-surface); color:var(--tp-ink); cursor:pointer; flex-shrink:0; }
+        .tp-burger { display:none; align-items:center; justify-content:center; width:40px; height:40px; border-radius:11px; border:1px solid var(--tp-line-2); background:var(--tp-surface); color:var(--tp-ink); cursor:pointer; flex-shrink:0; }
         .tp-burger:hover { background:var(--tp-hover); }
+        /* Header hamburger that opens the drawer (mobile only) + the drawer backdrop - matches the student portal. */
+        .tp-burger-open { display:none; align-items:center; justify-content:center; width:48px; height:48px; flex-shrink:0; border-radius:50%; border:1px solid var(--tp-line-2); background:var(--tp-surface); color:var(--tp-icon); cursor:pointer; }
+        .tp-burger-open:hover { background:var(--tp-hover); }
+        .tp-backdrop { display:none; position:fixed; inset:0; background:rgba(20,24,20,.45); z-index:55; }
 
         @media (max-width:900px) {
             .tp-shell { grid-template-columns:1fr; }
-            /* Rail becomes a top bar: brand + burger visible, the menu collapsed until tapped. */
-            .tp-side { position:static; width:auto; height:auto; flex-direction:column; gap:6px; }
-            .tp-burger { display:flex; }
-            .tp-side > .tp-nav, .tp-side .tp-userbar { display:none; }
-            .tp-side.is-open > .tp-nav { display:flex; }
-            .tp-side.is-open .tp-userbar { display:flex; }
+            /* Sidebar slides in from the left as a drawer (exactly like the student portal). */
+            .tp-side { width:284px !important; top:0 !important; bottom:0 !important; height:auto !important; z-index:60; transform:translateX(-100%); transition:transform .25s ease; box-shadow:0 0 44px rgba(20,24,20,.28); }
+            .tp-side.is-open { transform:translateX(0); }
+            .tp-backdrop { display:block; }
+            .tp-burger { display:flex; }                                  /* close (X) inside the drawer */
+            .tp-burger-open { display:flex; width:38px; height:38px; margin-right:auto; }  /* hamburger in the header */
             .tp-main { grid-column:auto; padding:20px; }
             .tp-stats { grid-template-columns:1fr; }
+            /* Header row: hamburger + controls on one line, the page heading wraps below. */
+            .tp-head { gap:8px; }
+            .tp-head > .hi-tile { order:5; }
+            .tp-head > div:has(> .tp-h1) { order:5; min-width:0 !important; }
+            .tp-langbar { padding:2px; }
+            .tp-pill { min-height:30px; padding:4px 10px; font-size:11px; }
+            .tp-iconbtn { width:38px !important; height:38px !important; }
+            .tp-iconbtn svg { width:17px !important; height:17px !important; }
         }
         @media (prefers-reduced-motion:reduce){ .tp * { transition:none !important; } }
     </style>
 </head>
 
 <body class="tp" style="margin:0;">
-<div class="tp-shell">
+<div class="tp-shell" x-data="{ navOpen: false }">
+    {{-- Backdrop behind the mobile drawer (tap to close). Only ever visible on mobile. --}}
+    <div class="tp-backdrop" x-show="navOpen" x-transition.opacity x-cloak @click="navOpen = false"></div>
+
     {{-- SIDEBAR --}}
-    <aside class="tp-side" x-data="{ navOpen: false }" :class="{ 'is-open': navOpen }" @click.outside="navOpen = false">
+    <aside class="tp-side" :class="{ 'is-open': navOpen }">
         <div class="tp-side-top">
             <a href="{{ $user->homeRoute() }}" class="tp-brand" title="WeLearn">
                 <img src="{{ asset('images/welearn1.png') }}" alt="WeLearn">
@@ -316,9 +331,8 @@
                     <span class="tp-brand-sub">{{ __('Portal Cikgu') }}</span>
                 </span>
             </a>
-            <button type="button" class="tp-burger" @click="navOpen = !navOpen" :aria-expanded="navOpen ? 'true' : 'false'" aria-label="{{ __('Menu') }}">
-                <svg x-show="!navOpen" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-                <svg x-show="navOpen" x-cloak width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="6" y1="6" x2="18" y2="18"/><line x1="6" y1="18" x2="18" y2="6"/></svg>
+            <button type="button" class="tp-burger" @click="navOpen = false" aria-label="{{ __('Tutup menu') }}">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="6" y1="6" x2="18" y2="18"/><line x1="6" y1="18" x2="18" y2="6"/></svg>
             </button>
         </div>
 
@@ -348,6 +362,10 @@
     {{-- MAIN --}}
     <main class="tp-main">
         <div class="tp-head">
+            {{-- Mobile-only hamburger that opens the drawer (matches the student portal). --}}
+            <button type="button" class="tp-burger-open" @click="navOpen = true" aria-label="{{ __('Menu') }}">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+            </button>
             @if ($headingIcon)
                 {{-- Accepts an image filename (from public/images), an icon name (line icon), or an emoji. --}}
                 <span class="hi-tile" style="width:48px;height:48px;border-radius:14px;background:#DCF2EE;color:#0F7A68;display:grid;place-items:center;flex-shrink:0;align-self:flex-start" aria-hidden="true">@if (\Illuminate\Support\Str::endsWith($headingIcon, ['.png', '.jpg', '.jpeg', '.svg', '.webp']))<img src="{{ asset('images/'.$headingIcon) }}" alt="" style="width:30px;height:30px;object-fit:contain" />@elseif (preg_match('/^[a-z0-9-]+$/', $headingIcon))<x-icon :name="$headingIcon" style="width:24px;height:24px" />@else<span style="font-size:26px;line-height:1">{{ $headingIcon }}</span>@endif</span>
