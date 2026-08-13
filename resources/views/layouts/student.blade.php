@@ -254,6 +254,11 @@
             .wl-chaprow > span { grid-area: num; align-self: center; }
             .wl-chaprow > div:nth-of-type(1) { grid-area: body; }
             .wl-chaprow > div:nth-of-type(2) { grid-area: prog; width: auto !important; margin-top: 6px; }
+            /* Smaller text inside the chapter card. */
+            .wl-chaprow > div:nth-of-type(1) > span { font-size: 15px !important; }
+            .wl-chaprow > div:nth-of-type(1) > div { font-size: 12px !important; gap: 12px !important; }
+            .wl-chaprow > div:nth-of-type(1) > div svg { width: 14px !important; height: 14px !important; }
+            .wl-chaprow > div:nth-of-type(2) > div:first-child { font-size: 11.5px !important; }
 
             /* Subject cards (Mata Pelajaran Teras): smaller/less tall on phones. */
             .wl-subjgrid { gap: 12px !important; }
