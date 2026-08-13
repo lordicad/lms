@@ -328,6 +328,12 @@
             .wl-cheer-ic svg { width: 18px !important; height: 18px !important; }
             .wl-cheer > div > span:first-child { font-size: 13px !important; }
             .wl-cheer > div > span:last-child { font-size: 11.5px !important; line-height: 1.35 !important; }
+            /* Answer-review cards: smaller heading, question and option text. */
+            .wl-reviewh3 { font-size: 16px !important; }
+            .wl-reviewcard { padding: 16px !important; }
+            .wl-reviewcard > div:first-child span { font-size: 11.5px !important; }
+            .wl-reviewq { font-size: 14px !important; }
+            .wl-reviewopt { font-size: 13px !important; }
 
             /* Subject category labels (Mata Pelajaran Teras / Wajib / Tambahan / Program ...). */
             .wl-catlabel { font-size: 11px !important; letter-spacing: .1em !important; }
