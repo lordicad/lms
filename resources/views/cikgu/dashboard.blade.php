@@ -16,7 +16,7 @@
             .dash-grid { grid-template-columns:1fr; }
         }
         @media (max-width: 900px) {
-            .dash-kpis { grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; margin-top:12px !important; }
+            .dash-kpis { grid-template-columns:repeat(2,minmax(0,1fr)); grid-auto-rows:1fr; gap:12px; margin-top:12px !important; }
             .dash-pair { grid-template-columns:1fr; }
             /* Tidier, more compact KPI cards on phones. */
             .tp-stat { padding:14px 16px; gap:5px; }
