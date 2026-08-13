@@ -24,7 +24,7 @@
                         <span style="font-family:'Geist',sans-serif;font-size:15px;font-weight:800;color:var(--wl-ink)">{{ $sub->displayName() }}</span>
                         <span style="font-size:12.5px;font-weight:700;color:var(--wl-muted)">{{ $items->count() }} video</span>
                     </div>
-                    <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px">
+                    <div class="wl-cardrow" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px">
                         @foreach ($items as $lesson)
                             <x-vid-card :lesson="$lesson" :thumbHeight="104" :showViews="true" />
                         @endforeach
