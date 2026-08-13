@@ -297,9 +297,10 @@
             .wl-resultimg { width: 48px !important; height: 48px !important; }
             /* Quiz result stat cards (label on top, value below): compact so nothing clips. */
             .wl-rstats { gap: 8px !important; }
-            .wl-rstat { gap: 8px !important; padding: 12px 8px !important; }
+            .wl-rstat { flex-direction: column !important; align-items: center !important; text-align: center; gap: 6px !important; padding: 12px 6px !important; }
             .wl-rstat-disc { width: 32px !important; height: 32px !important; }
             .wl-rstat-disc svg { width: 15px !important; height: 15px !important; }
+            .wl-rstat-body { align-items: center !important; }
             .wl-rstat-body > span:first-child { font-size: 10px !important; line-height: 1.2 !important; }
             .wl-rstat-body > span:last-child { font-size: 15px !important; }
             /* Big score number on the result page. */
