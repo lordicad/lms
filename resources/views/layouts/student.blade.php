@@ -234,11 +234,11 @@
             .wl-main .hi-tile svg { width: 22px !important; height: 22px !important; }
             .wl-main h1 { font-size: 21px !important; }
             .wl-main h1 + span { font-size: 13px !important; }
-            /* Favourites heading: a bit smaller again. */
+            /* Favourites / Offline heading: a bit smaller again. */
             .wl-favhead .hi-tile { width: 34px !important; height: 34px !important; border-radius: 11px !important; }
             .wl-favhead .hi-tile svg { width: 19px !important; height: 19px !important; }
-            .wl-favhead h2 { font-size: 16px !important; }
-            .wl-favhead h2 + span { font-size: 12px !important; }
+            .wl-favhead h1, .wl-favhead h2 { font-size: 16px !important; }
+            .wl-favhead h1 + p, .wl-favhead h2 + span, .wl-favhead h1 + span { font-size: 12px !important; line-height: 1.45 !important; }
 
             /* Subject category labels (Mata Pelajaran Teras / Wajib / Tambahan / Program ...). */
             .wl-catlabel { font-size: 11px !important; letter-spacing: .1em !important; }
