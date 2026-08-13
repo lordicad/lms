@@ -267,6 +267,15 @@
             .wl-rankfilter .ss-trigger { min-height: 38px !important; font-size: 12.5px !important; padding: 0 30px 0 12px !important; }
             .wl-rankfilter .ss-chevron { width: 14px !important; height: 14px !important; }
             .wl-rankfilter select.js-styled-select { min-height: 38px !important; font-size: 12.5px !important; }
+            /* Kuiz stat cards: stack each card vertically so the number/label stop clipping. */
+            .wl-quizstats { gap: 8px !important; }
+            .wl-quizstat { flex-direction: column !important; align-items: center !important; text-align: center; gap: 7px !important; padding: 12px 6px !important; }
+            .wl-quizstat-disc { width: 36px !important; height: 36px !important; }
+            .wl-quizstat-disc > span { width: 22px !important; height: 22px !important; border-radius: 6px !important; }
+            .wl-quizstat-disc svg { width: 16px !important; height: 16px !important; }
+            .wl-quizstat-body { align-items: center !important; }
+            .wl-quizstat-body > span:first-child { font-size: 18px !important; }
+            .wl-quizstat-body > span:last-child { font-size: 10px !important; line-height: 1.2 !important; }
 
             /* Subject category labels (Mata Pelajaran Teras / Wajib / Tambahan / Program ...). */
             .wl-catlabel { font-size: 11px !important; letter-spacing: .1em !important; }

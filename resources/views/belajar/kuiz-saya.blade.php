@@ -39,9 +39,9 @@
                 ['accent' => '#E0A21C', 'bg' => 'linear-gradient(135deg,#FEF6E4,#FBE9C2)', 'ink' => '#8A6A12', 'spark' => '#F1D592', 'disc' => '#fff', 'type' => 'star', 'value' => $avgScore !== null ? $avgScore.'%' : '-', 'label' => __('Purata markah')],
                 ['accent' => '#3E86C9', 'bg' => 'linear-gradient(135deg,#EFF4FC,#DFEAF7)', 'ink' => '#2E6CA8', 'spark' => '#B6CEEC', 'disc' => '#fff', 'type' => 'trophy', 'value' => $rank ? '#'.$rank : '-', 'label' => __('Ranking'), 'leaf' => true],
             ])
-            <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px">
+            <div class="wl-quizstats" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px">
                 @foreach ($statCards as $c)
-                    <div style="position:relative;overflow:hidden;background:{{ $c['bg'] }};border-radius:18px;padding:18px 20px;display:flex;align-items:center;gap:16px">
+                    <div class="wl-quizstat" style="position:relative;overflow:hidden;background:{{ $c['bg'] }};border-radius:18px;padding:18px 20px;display:flex;align-items:center;gap:16px">
                         {{-- Decorations. --}}
                         <svg style="position:absolute;top:14px;right:18px;opacity:.6" width="16" height="16" viewBox="0 0 16 16" fill="{{ $c['spark'] }}"><path d="M8 0c0 4.4-3.6 8-8 8 4.4 0 8 3.6 8 8 0-4.4 3.6-8 8-8-4.4 0-8-3.6-8-8z"/></svg>
                         <span style="position:absolute;right:-34px;bottom:-46px;width:130px;height:100px;border-radius:50%;background:{{ $c['accent'] }};opacity:.07"></span>
@@ -49,7 +49,7 @@
                             <svg style="position:absolute;right:6px;bottom:0;opacity:.4" width="54" height="54" viewBox="0 0 60 60" fill="{{ $c['spark'] }}"><path d="M8 52c0-15 11-26 27-28-2 7-6 12-11 16 6-2 12-1 17 2-8 4-17 3-24-1 4 6 3 13-2 18-4-3-7-9-7-15z"/></svg>
                         @endif
                         {{-- Icon disc. --}}
-                        <span style="position:relative;z-index:1;width:46px;height:46px;flex-shrink:0;border-radius:50%;background:{{ $c['disc'] }};display:grid;place-items:center;box-shadow:0 4px 12px rgba(46,44,80,.12)">
+                        <span class="wl-quizstat-disc" style="position:relative;z-index:1;width:46px;height:46px;flex-shrink:0;border-radius:50%;background:{{ $c['disc'] }};display:grid;place-items:center;box-shadow:0 4px 12px rgba(46,44,80,.12)">
                             @if ($c['type'] === 'check')
                                 <span style="width:27px;height:27px;border-radius:8px;background:{{ $c['accent'] }};display:grid;place-items:center;color:#fff"><x-icon name="check" style="width:16px;height:16px" /></span>
                             @elseif ($c['type'] === 'star')
@@ -59,7 +59,7 @@
                             @endif
                         </span>
                         {{-- Value + label. --}}
-                        <div style="position:relative;z-index:1;display:flex;flex-direction:column;gap:1px;min-width:0">
+                        <div class="wl-quizstat-body" style="position:relative;z-index:1;display:flex;flex-direction:column;gap:1px;min-width:0">
                             <span style="font-family:'Geist',sans-serif;font-size:23px;font-weight:800;color:{{ $c['ink'] }}">{{ $c['value'] }}</span>
                             <span style="font-size:12.5px;font-weight:700;color:{{ $c['ink'] }}">{{ $c['label'] }}</span>
                         </div>
