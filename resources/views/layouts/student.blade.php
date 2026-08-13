@@ -191,7 +191,7 @@
             .wl-side.is-open { transform:translateX(0); }
             .wl-burger { display:flex; }        /* close (X) inside the drawer */
             .wl-burger-open { display:flex; }    /* hamburger in the header */
-            .wl-main { grid-column:auto !important; padding: 20px 16px 40px !important; }
+            .wl-main { grid-column:auto !important; padding: 20px 20px 40px !important; }
 
             /* Header: hamburger + Tahun + language + theme + bell on one row; the search box drops
                to its own row below. Everything shrinks so all five fit even on narrow phones. */
