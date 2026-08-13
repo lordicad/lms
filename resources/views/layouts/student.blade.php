@@ -243,6 +243,10 @@
             .wl-subjhead > span:first-child svg, .wl-subjhead > span:first-child img { width: 22px !important; height: 22px !important; }
             .wl-subjhead h2 { font-size: 17px !important; }
             .wl-subjhead h2 + span { font-size: 12.5px !important; }
+            /* "Tukar Tahun" year filter: smaller label, select, and styled trigger. */
+            .wl-subjhead label { font-size: 11px !important; gap: 4px !important; }
+            .wl-subjhead select { min-height: 38px !important; font-size: 12px !important; padding: 0 30px 0 12px !important; }
+            .wl-subjhead .ss-trigger { min-height: 38px !important; font-size: 12px !important; padding: 0 12px !important; }
 
             /* Subject cards (Mata Pelajaran Teras): smaller/less tall on phones. */
             .wl-subjgrid { gap: 12px !important; }
