@@ -93,8 +93,8 @@
                 @endif
 
                 {{-- Motivational note, tuned to the score. --}}
-                <div style="width:100%;background:{{ $isDark ? $cheer['bgDark'] : $cheer['bg'] }};border-radius:16px;padding:15px 18px;display:flex;align-items:center;gap:14px;text-align:left">
-                    <span style="width:44px;height:44px;flex-shrink:0;border-radius:50%;background:var(--wl-surface);color:{{ $isDark ? $cheer['inkDark'] : $cheer['ink'] }};display:grid;place-items:center"><x-icon :name="$cheer['icon']" style="width:22px;height:22px" /></span>
+                <div class="wl-cheer" style="width:100%;background:{{ $isDark ? $cheer['bgDark'] : $cheer['bg'] }};border-radius:16px;padding:15px 18px;display:flex;align-items:center;gap:14px;text-align:left">
+                    <span class="wl-cheer-ic" style="width:44px;height:44px;flex-shrink:0;border-radius:50%;background:var(--wl-surface);color:{{ $isDark ? $cheer['inkDark'] : $cheer['ink'] }};display:grid;place-items:center"><x-icon :name="$cheer['icon']" style="width:22px;height:22px" /></span>
                     <div style="display:flex;flex-direction:column;gap:2px;min-width:0">
                         <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:14.5px;color:var(--wl-ink)">{{ $cheer['title'] }}</span>
                         <span style="font-size:13px;font-weight:600;color:var(--wl-muted)">{{ $cheer['sub'] }}</span>
@@ -102,8 +102,8 @@
                 </div>
 
                 <div style="display:flex;gap:12px;margin-top:8px;flex-wrap:wrap;justify-content:center;width:100%">
-                    <a href="{{ route('kuiz.intro', $quiz) }}" class="wl-btn-secondary" style="flex:1;min-width:180px;min-height:48px;display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:14px;border:2px solid #17907B;background:#fff;color:#0F7A68;font-family:'Geist',sans-serif;font-weight:800;font-size:14.5px;padding:0 22px;text-decoration:none"><x-icon name="rotate" style="width:18px;height:18px" />{{ __('Cuba Lagi (Latihan)') }}</a>
-                    <a href="{{ route('ranking.index') }}" class="wl-btn-primary" style="flex:1;min-width:180px;min-height:48px;display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:14px;background:#17907B;color:#fff;font-family:'Geist',sans-serif;font-weight:800;font-size:14.5px;padding:0 22px;text-decoration:none"><x-icon name="trophy" style="width:18px;height:18px" />{{ __('Lihat Ranking') }}</a>
+                    <a href="{{ route('kuiz.intro', $quiz) }}" class="wl-btn-secondary wl-resultbtn" style="flex:1;min-width:180px;min-height:48px;display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:14px;border:2px solid #17907B;background:#fff;color:#0F7A68;font-family:'Geist',sans-serif;font-weight:800;font-size:14.5px;padding:0 22px;text-decoration:none"><x-icon name="rotate" style="width:18px;height:18px" />{{ __('Cuba Lagi (Latihan)') }}</a>
+                    <a href="{{ route('ranking.index') }}" class="wl-btn-primary wl-resultbtn" style="flex:1;min-width:180px;min-height:48px;display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:14px;background:#17907B;color:#fff;font-family:'Geist',sans-serif;font-weight:800;font-size:14.5px;padding:0 22px;text-decoration:none"><x-icon name="trophy" style="width:18px;height:18px" />{{ __('Lihat Ranking') }}</a>
                 </div>
             </div>
         </div>
