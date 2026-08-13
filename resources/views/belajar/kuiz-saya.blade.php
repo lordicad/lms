@@ -126,9 +126,9 @@
                                 @php($sub = $quiz->chapter->subject)
                                 @php($tagBg = 'color-mix(in oklab, '.($sub->color ?: '#17907B').' var(--pill-bw), var(--pill-bb))')
                                 @php($tagColor = 'color-mix(in oklab, '.($sub->color ?: '#17907B').' var(--pill-fw), var(--pill-fb))')
-                                <div style="display:flex;align-items:center;gap:14px;padding:14px 20px;border-bottom:1px solid var(--wl-line)">
+                                <div class="wl-donerow" style="display:flex;align-items:center;gap:14px;padding:14px 20px;border-bottom:1px solid var(--wl-line)">
                                     <span style="width:40px;height:40px;border-radius:12px;background:{{ $tagBg }};display:grid;place-items:center;flex-shrink:0"><x-subject-emoji :subject="$sub" class="text-base" /></span>
-                                    <div style="display:flex;flex-direction:column;gap:6px;min-width:0;flex:1">
+                                    <div class="wl-donebody" style="display:flex;flex-direction:column;gap:6px;min-width:0;flex:1">
                                         <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:14.5px;color:var(--wl-ink)">{{ $quiz->localizedTitle() }}</span>
                                         <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
                                             <span style="background:{{ $tagBg }};color:{{ $tagColor }};border-radius:999px;padding:3px 11px;font-family:'Geist',sans-serif;font-size:11.5px;font-weight:800">{{ $sub->displayName() }}</span>
@@ -138,13 +138,13 @@
                                             @endif
                                         </div>
                                     </div>
-                                    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+                                    <div class="wl-donescore" style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
                                         <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:15px;color:{{ $sc }}">{{ $pct }}%</span>
                                         <div style="width:90px;height:6px;border-radius:999px;background:var(--wl-line);overflow:hidden">
                                             <div style="height:100%;border-radius:999px;background:{{ $sc }};width:{{ $pct }}%"></div>
                                         </div>
                                     </div>
-                                    <a href="{{ route('keputusan.show', $attempt) }}" class="wl-btn-secondary" style="min-height:38px;display:inline-flex;align-items:center;border-radius:10px;border:1.5px solid var(--wl-line-2);background:var(--wl-surface);color:var(--wl-ink);font-family:'Geist',sans-serif;font-weight:700;font-size:12.5px;padding:0 14px;text-decoration:none">{{ __('Semak') }}</a>
+                                    <a href="{{ route('keputusan.show', $attempt) }}" class="wl-btn-secondary wl-donebtn" style="min-height:38px;display:inline-flex;align-items:center;border-radius:10px;border:1.5px solid var(--wl-line-2);background:var(--wl-surface);color:var(--wl-ink);font-family:'Geist',sans-serif;font-weight:700;font-size:12.5px;padding:0 14px;text-decoration:none">{{ __('Semak') }}</a>
                                 </div>
                             @endforeach
                             <div style="padding:14px;display:flex;justify-content:center">

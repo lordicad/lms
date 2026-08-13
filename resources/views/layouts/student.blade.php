@@ -277,6 +277,13 @@
             .wl-quizstat-body { flex: 0 1 auto !important; align-items: flex-start !important; text-align: left !important; }
             .wl-quizstat-body > span:first-child { font-size: 17px !important; }
             .wl-quizstat-body > span:last-child { font-size: 9.5px !important; line-height: 1.2 !important; }
+            /* Completed-quiz rows: icon left, title/meta on top, score + button on a second line. */
+            .wl-donerow { display: grid !important; grid-template-columns: auto minmax(0,1fr) auto;
+                grid-template-areas: "icon body body" "icon score btn"; align-items: center; gap: 10px 12px !important; padding: 14px 16px !important; }
+            .wl-donerow > span:first-child { grid-area: icon; align-self: center; }
+            .wl-donebody { grid-area: body; }
+            .wl-donescore { grid-area: score; flex-direction: row !important; align-items: center !important; justify-content: flex-start; gap: 10px !important; }
+            .wl-donebtn { grid-area: btn; align-self: center; }
 
             /* Subject category labels (Mata Pelajaran Teras / Wajib / Tambahan / Program ...). */
             .wl-catlabel { font-size: 11px !important; letter-spacing: .1em !important; }
