@@ -169,19 +169,19 @@
                         @php($tagColor = "color-mix(in oklab, {$col} var(--pill-fw), var(--pill-fb))")
                         <div class="wl-lift" style="background:var(--wl-surface);border:1px solid var(--wl-line);border-radius:18px;overflow:hidden;box-shadow:0 4px 16px rgba(46,44,80,.04);display:flex;flex-direction:column">
                             {{-- Decorative banner. --}}
-                            <div style="position:relative;height:120px;background:linear-gradient(160deg,#DCF2EE,#EAF6F1);display:grid;place-items:center;overflow:hidden">
+                            <div class="wl-suggbanner" style="position:relative;height:120px;background:linear-gradient(160deg,#DCF2EE,#EAF6F1);display:grid;place-items:center;overflow:hidden">
                                 <span style="color:#17907B"><x-icon name="book" style="width:44px;height:44px" /></span>
                                 <span style="position:absolute;top:18px;right:22px;color:#8FCFBE"><x-icon name="clock" style="width:26px;height:26px" /></span>
                                 <svg style="position:absolute;bottom:-6px;left:14px;opacity:.6" width="16" height="16" viewBox="0 0 16 16" fill="#8FCFBE"><path d="M8 0c0 4.4-3.6 8-8 8 4.4 0 8 3.6 8 8 0-4.4 3.6-8 8-8-4.4 0-8-3.6-8-8z"/></svg>
                             </div>
-                            <div style="padding:18px 20px;display:flex;flex-direction:column;gap:10px">
+                            <div class="wl-suggbody" style="padding:18px 20px;display:flex;flex-direction:column;gap:10px">
                                 <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
                                     <span style="background:{{ $tagBg }};color:{{ $tagColor }};border-radius:999px;padding:4px 12px;font-family:'Geist',sans-serif;font-size:11.5px;font-weight:800">{{ $sub->displayName() }}</span>
                                     <span style="font-size:12px;font-weight:700;color:var(--wl-muted)">{{ __('Bab :n', ['n' => $suggested->chapter->number]) }}</span>
                                 </div>
-                                <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:16px;color:var(--wl-ink)">{{ $suggested->localizedTitle() }}</span>
-                                <span style="font-size:12.5px;font-weight:700;color:var(--wl-muted)">@if ($suggested->isInteractive()){{ $suggested->questions_count }} {{ __('soalan') }}@if ($suggested->duration_minutes) · {{ $suggested->duration_minutes }} {{ __('minit') }}@endif @else {{ __('Kuiz Bercetak') }} @endif</span>
-                                <a href="{{ route('kuiz.intro', ['quiz' => $suggested, 'from' => 'quizzes']) }}" class="wl-btn-primary" style="margin-top:6px;width:100%;min-height:46px;display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:12px;background:#17907B;color:#fff;font-family:'Geist',sans-serif;font-weight:800;font-size:14px;text-decoration:none">{{ $suggested->isFile() ? __('Lihat Kuiz') : __('Mula Kuiz') }}<x-icon name="arrow-right" style="width:16px;height:16px" /></a>
+                                <span class="wl-suggtitle" style="font-family:'Geist',sans-serif;font-weight:800;font-size:16px;color:var(--wl-ink)">{{ $suggested->localizedTitle() }}</span>
+                                <span class="wl-suggsub" style="font-size:12.5px;font-weight:700;color:var(--wl-muted)">@if ($suggested->isInteractive()){{ $suggested->questions_count }} {{ __('soalan') }}@if ($suggested->duration_minutes) · {{ $suggested->duration_minutes }} {{ __('minit') }}@endif @else {{ __('Kuiz Bercetak') }} @endif</span>
+                                <a href="{{ route('kuiz.intro', ['quiz' => $suggested, 'from' => 'quizzes']) }}" class="wl-btn-primary wl-suggbtn" style="margin-top:6px;width:100%;min-height:46px;display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:12px;background:#17907B;color:#fff;font-family:'Geist',sans-serif;font-weight:800;font-size:14px;text-decoration:none">{{ $suggested->isFile() ? __('Lihat Kuiz') : __('Mula Kuiz') }}<x-icon name="arrow-right" style="width:16px;height:16px" /></a>
                             </div>
                         </div>
                     @else

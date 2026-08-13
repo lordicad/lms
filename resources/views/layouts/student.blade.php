@@ -284,6 +284,15 @@
             .wl-donebody { grid-area: body; }
             .wl-donescore { grid-area: score; flex-direction: row !important; align-items: center !important; justify-content: flex-start; gap: 10px !important; }
             .wl-donebtn { grid-area: btn; align-self: center; }
+            /* Suggested-quiz card: shorter banner, smaller icons/title/button. */
+            .wl-suggbanner { height: 82px !important; }
+            .wl-suggbanner > span:first-child svg { width: 34px !important; height: 34px !important; }
+            .wl-suggbanner > span:nth-of-type(2) svg { width: 20px !important; height: 20px !important; }
+            .wl-suggbody { padding: 14px 16px !important; gap: 8px !important; }
+            .wl-suggtitle { font-size: 14px !important; }
+            .wl-suggsub { font-size: 11.5px !important; }
+            .wl-suggbtn { min-height: 40px !important; font-size: 12.5px !important; }
+            .wl-suggbtn svg { width: 14px !important; height: 14px !important; }
 
             /* Subject category labels (Mata Pelajaran Teras / Wajib / Tambahan / Program ...). */
             .wl-catlabel { font-size: 11px !important; letter-spacing: .1em !important; }
