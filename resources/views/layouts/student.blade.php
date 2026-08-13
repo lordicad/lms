@@ -238,6 +238,12 @@
             /* Subject category labels (Mata Pelajaran Teras / Wajib / Tambahan / Program ...). */
             .wl-catlabel { font-size: 11px !important; letter-spacing: .1em !important; }
 
+            /* Subject detail heading (icon tile + name) on the Subjek > subject page. */
+            .wl-subjhead > span:first-child { width: 44px !important; height: 44px !important; border-radius: 13px !important; }
+            .wl-subjhead > span:first-child svg, .wl-subjhead > span:first-child img { width: 22px !important; height: 22px !important; }
+            .wl-subjhead h2 { font-size: 17px !important; }
+            .wl-subjhead h2 + span { font-size: 12.5px !important; }
+
             /* Subject cards (Mata Pelajaran Teras): smaller/less tall on phones. */
             .wl-subjgrid { gap: 12px !important; }
             .wl-subjgrid > a { padding: 14px !important; min-height: 104px !important; }
