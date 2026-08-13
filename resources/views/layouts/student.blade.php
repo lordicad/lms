@@ -251,8 +251,10 @@
             .wl-vidlist .vid-card > div:last-child > span { font-size: 11.5px !important; }
             .wl-vidlist .vid-card > div:last-child > span:first-child { font-size: 13.5px !important; line-height: 1.3; }
 
-            /* Chapter materials & quizzes: one per row (full width). */
-            .wl-rowlist { grid-template-columns: 1fr !important; }
+            /* Chapter materials & quizzes: one per row, sized to the container (minmax(0,1fr) stops
+               a row growing past the container, so they line up with the video rows). */
+            .wl-rowlist { grid-template-columns: minmax(0, 1fr) !important; }
+            .wl-rowlist > * { min-width: 0; }
 
             /* Subject detail heading (icon tile + name) on the Subjek > subject page. */
             .wl-subjhead > span:first-child { width: 44px !important; height: 44px !important; border-radius: 13px !important; }
