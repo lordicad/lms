@@ -243,7 +243,7 @@
             .ysf-form-student { flex-wrap: nowrap !important; gap: 8px !important; align-items: flex-end; }
             .ysf-form-student .tp-field { flex: 1 1 0 !important; min-width: 0 !important; gap: 4px !important; }
             .ysf-form-student .ysf-label { font-size: 11px !important; }
-            .ysf-form-student .ss-wrap { display: block !important; width: 100% !important; }
+            .ysf-form-student .ss-wrap { display: block !important; width: 100% !important; min-width: 0 !important; }
             .ysf-form-student .ss-trigger { min-height: 38px !important; padding: 0 10px !important; gap: 5px !important; font-size: 12px !important; }
             .ysf-form-student .ss-chevron { width: 13px !important; height: 13px !important; }
             .ysf-form-student select.ysf-select { min-width: 0 !important; width: 100% !important; min-height: 38px !important; font-size: 12px !important; }
