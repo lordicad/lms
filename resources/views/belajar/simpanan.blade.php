@@ -18,7 +18,7 @@
 
         {{-- Uploaded videos are downloadable; YouTube ones are honestly marked online-only. --}}
         <section class="mb-10">
-            <h2 class="mb-4 text-lg font-extrabold text-ink">{{ __('Video Pelajaran') }}</h2>
+            <h2 class="wl-offh2 mb-4 text-lg font-extrabold text-ink">{{ __('Video Pelajaran') }}</h2>
 
             @if ($lessons->isEmpty())
                 <p class="rounded-card border border-dashed border-line p-4 text-sm text-ink-2">
@@ -30,7 +30,7 @@
                         @php($ac = $lesson->chapter->subject->color ?: '#17907B')
                         @php($grad = "linear-gradient(135deg, color-mix(in oklab, {$ac} 10%, #fff), color-mix(in oklab, {$ac} 22%, #fff))")
                         @php($tint = "color-mix(in oklab, {$ac} 14%, #fff)")
-                        <li style="position:relative;overflow:hidden;display:flex;align-items:center;gap:14px;background:var(--wl-surface);border:1px solid var(--wl-line);border-radius:16px;padding:12px 16px;box-shadow:0 4px 16px rgba(46,44,80,.04)">
+                        <li class="wl-offrow" style="position:relative;overflow:hidden;display:flex;align-items:center;gap:14px;background:var(--wl-surface);border:1px solid var(--wl-line);border-radius:16px;padding:12px 16px;box-shadow:0 4px 16px rgba(46,44,80,.04)">
                             {{-- Faint leaf flourish on the right. --}}
                             <svg aria-hidden="true" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);opacity:.2;pointer-events:none;z-index:0" width="92" height="74" viewBox="0 0 92 74" fill="{{ $ac }}">
                                 <path d="M8 68 C 26 54 46 42 84 12" fill="none" stroke="{{ $ac }}" stroke-width="1.5"/>
@@ -50,7 +50,7 @@
                                 @endif
                             </span>
 
-                            <span style="position:relative;z-index:1;min-width:0;flex:1;display:flex;flex-direction:column;gap:3px">
+                            <span class="wl-offrow-body" style="position:relative;z-index:1;min-width:0;flex:1;display:flex;flex-direction:column;gap:3px">
                                 <a href="{{ route('video.show', $lesson) }}" style="font-family:'Geist',sans-serif;font-weight:800;font-size:15px;color:var(--wl-ink);text-decoration:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $lesson->title }}</a>
                                 <span style="display:inline-flex;align-items:center;gap:9px;flex-wrap:wrap">
                                     <span style="background:color-mix(in oklab, {{ $ac }} var(--pill-bw), var(--pill-bb));color:color-mix(in oklab, {{ $ac }} var(--pill-fw), var(--pill-fb));border-radius:999px;padding:3px 12px;font-family:'Geist',sans-serif;font-size:12px;font-weight:800">{{ $lesson->chapter->subject->displayName() }}</span>
@@ -62,12 +62,12 @@
                             </span>
 
                             @if ($lesson->isUpload())
-                                <a href="{{ route('muat-turun.video', $lesson) }}" @click="remember(@js($lesson->title))"
+                                <a href="{{ route('muat-turun.video', $lesson) }}" @click="remember(@js($lesson->title))" class="wl-offrow-act"
                                    style="position:relative;z-index:1;flex-shrink:0;display:inline-flex;align-items:center;gap:8px;min-height:42px;padding:0 20px;border-radius:12px;background:var(--wl-surface);border:1.5px solid color-mix(in oklab, {{ $ac }} 32%, #fff);color:{{ $ac }};font-family:'Geist',sans-serif;font-weight:800;font-size:14px;text-decoration:none">
                                     <x-icon name="download" style="width:17px;height:17px" />{{ __('Muat Turun') }}
                                 </a>
                             @else
-                                <span style="position:relative;z-index:1;flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;gap:5px">
+                                <span class="wl-offrow-act wl-offrow-act--status" style="position:relative;z-index:1;flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;gap:5px">
                                     {{-- Outlined like the Download button, but greyed out: it is a status, not a clickable action. --}}
                                     <span style="display:inline-flex;align-items:center;gap:8px;min-height:42px;padding:0 18px;border-radius:12px;background:var(--wl-surface);border:1.5px solid var(--wl-line-3);color:var(--wl-muted);font-family:'Geist',sans-serif;font-weight:800;font-size:14px;cursor:default"><x-icon name="play" style="width:16px;height:16px" />{{ __('Dalam talian sahaja') }}</span>
                                     <span style="font-size:12px;color:var(--wl-muted);text-align:right">{{ __('Video ini hanya boleh ditonton dalam talian.') }}</span>
@@ -81,7 +81,7 @@
 
         {{-- Supporting materials: genuinely useful offline even for YouTube lessons. --}}
         <section class="mb-10">
-            <h2 class="mb-4 text-lg font-extrabold text-ink">{{ __('Bahan Sokongan') }}</h2>
+            <h2 class="wl-offh2 mb-4 text-lg font-extrabold text-ink">{{ __('Bahan Sokongan') }}</h2>
 
             @if ($materialsByChapter->isEmpty())
                 <p class="rounded-card border border-dashed border-line p-4 text-sm text-ink-2">
@@ -96,7 +96,7 @@
                             @php($tint = "color-mix(in oklab, {$ac} 14%, #fff)")
                             @php($tintInk = "color-mix(in oklab, {$ac} 80%, #000)")
                             @php($grad = "linear-gradient(135deg, color-mix(in oklab, {$ac} 10%, #fff), color-mix(in oklab, {$ac} 22%, #fff))")
-                            <li style="position:relative;overflow:hidden;display:flex;align-items:center;gap:16px;background:var(--wl-surface);border:1px solid var(--wl-line);border-radius:16px;padding:12px 16px;box-shadow:0 4px 16px rgba(46,44,80,.04)">
+                            <li class="wl-offrow" style="position:relative;overflow:hidden;display:flex;align-items:center;gap:16px;background:var(--wl-surface);border:1px solid var(--wl-line);border-radius:16px;padding:12px 16px;box-shadow:0 4px 16px rgba(46,44,80,.04)">
                                 {{-- Faint leaf flourish. --}}
                                 <svg aria-hidden="true" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);opacity:.18;pointer-events:none;z-index:0" width="92" height="74" viewBox="0 0 92 74" fill="{{ $ac }}">
                                     <path d="M8 68 C 26 54 46 42 84 12" fill="none" stroke="{{ $ac }}" stroke-width="1.5"/>
@@ -110,7 +110,7 @@
                                 {{-- File-type icon on a soft gradient. --}}
                                 <span style="position:relative;z-index:1;flex-shrink:0;width:96px;height:66px;border-radius:13px;background:{{ $grad }};display:grid;place-items:center;color:{{ $ac }}"><x-icon :name="$material->iconName()" style="width:30px;height:30px" /></span>
 
-                                <span style="position:relative;z-index:1;min-width:0;flex:1;display:flex;flex-direction:column;gap:5px">
+                                <span class="wl-offrow-body" style="position:relative;z-index:1;min-width:0;flex:1;display:flex;flex-direction:column;gap:5px">
                                     <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:15.5px;color:var(--wl-ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $material->title }}</span>
                                     <span style="display:inline-flex;align-items:center;gap:9px;flex-wrap:wrap">
                                         <span style="background:color-mix(in oklab, {{ $ac }} var(--pill-bw), var(--pill-bb));color:color-mix(in oklab, {{ $ac }} var(--pill-fw), var(--pill-fb));border-radius:999px;padding:3px 12px;font-family:'Geist',sans-serif;font-size:12px;font-weight:800">{{ $chapter->subject->displayName() }}</span>
@@ -125,7 +125,7 @@
                                     </span>
                                 </span>
 
-                                <a href="{{ route('muat-turun.bahan', $material) }}" @click="remember(@js($material->title))"
+                                <a href="{{ route('muat-turun.bahan', $material) }}" @click="remember(@js($material->title))" class="wl-offrow-act"
                                    style="position:relative;z-index:1;flex-shrink:0;display:inline-flex;align-items:center;gap:8px;min-height:42px;padding:0 20px;border-radius:12px;background:var(--wl-surface);border:1.5px solid color-mix(in oklab, {{ $ac }} 32%, #fff);color:{{ $ac }};font-family:'Geist',sans-serif;font-weight:800;font-size:14px;text-decoration:none">
                                     <x-icon name="download" style="width:17px;height:17px" />{{ __('Muat Turun') }}
                                 </a>

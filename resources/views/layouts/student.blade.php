@@ -248,6 +248,17 @@
             .ysf-form-student .ss-chevron { width: 13px !important; height: 13px !important; }
             .ysf-form-student select.ysf-select { min-width: 0 !important; width: 100% !important; min-height: 38px !important; font-size: 12px !important; }
             .ysf-form-student .ysf-reset { min-height: 38px !important; font-size: 11.5px !important; flex-shrink: 0; padding-left: 2px; }
+            /* Offline download rows: wrap so the button drops full-width, title gets room to breathe. */
+            .wl-offh2 { font-size: 15px !important; }
+            .wl-offrow { flex-wrap: wrap !important; row-gap: 10px !important; padding: 12px !important; }
+            .wl-offrow-body { flex: 1 1 120px !important; }
+            .wl-offrow-body > a, .wl-offrow-body > span:first-child {
+                font-size: 13.5px !important; white-space: normal !important; line-height: 1.3 !important;
+                display: -webkit-box !important; -webkit-line-clamp: 2 !important; -webkit-box-orient: vertical !important;
+                overflow: hidden !important; text-overflow: clip !important;
+            }
+            .wl-offrow-act { flex: 1 1 100% !important; justify-content: center !important; }
+            .wl-offrow-act--status { align-items: stretch !important; text-align: center; }
 
             /* Subject category labels (Mata Pelajaran Teras / Wajib / Tambahan / Program ...). */
             .wl-catlabel { font-size: 11px !important; letter-spacing: .1em !important; }
