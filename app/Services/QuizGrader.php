@@ -89,13 +89,19 @@ class QuizGrader
 
             $completedAt = now();
 
+            // Only meaningful for timed quizzes. Without a limit the attempt can sit open for
+            // days, so the wall-clock elapsed time is noise - store 0 (shown as "-").
+            $duration = $quiz->duration_minutes
+                ? max(0, $completedAt->diffInSeconds($attempt->started_at, absolute: true))
+                : 0;
+
             $attempt->update([
                 'score' => $score,
                 'max_score' => (int) $quiz->questions->sum('points'),
                 'correct_count' => $correctCount,
                 'question_count' => $quiz->questions->count(),
                 'completed_at' => $completedAt,
-                'duration_seconds' => max(0, $completedAt->diffInSeconds($attempt->started_at, absolute: true)),
+                'duration_seconds' => $duration,
             ]);
 
             return $attempt->fresh();

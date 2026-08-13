@@ -10,14 +10,17 @@
     <div style="display:flex;flex-direction:column;gap:24px;max-width:760px;margin:0 auto;width:100%">
         {{-- Score card --}}
         @php($isDark = ($theme ?? 'light') === 'dark')
+        {{-- No time limit: the stored duration is just wall-clock elapsed (a quiz can sit open for
+             days), so it is meaningless. Only show a time for quizzes that actually have a limit. --}}
+        @php($timeValue = $quiz->duration_minutes ? $attempt->humanDuration() : '—')
         @php($stats = $isDark ? [
             ['icon' => 'check-circle', 'bg' => 'rgba(45,212,191,.15)', 'ink' => '#5EEAD4', 'label' => __('Betul'), 'value' => $attempt->correct_count.'/'.$attempt->question_count],
             ['icon' => 'target-arrow', 'bg' => 'rgba(96,140,200,.16)', 'ink' => '#7FB2EA', 'label' => __('Ketepatan'), 'value' => $pct.'%'],
-            ['icon' => 'clock', 'bg' => 'rgba(146,126,214,.20)', 'ink' => '#B7A6E8', 'label' => __('Masa'), 'value' => $attempt->humanDuration()],
+            ['icon' => 'clock', 'bg' => 'rgba(146,126,214,.20)', 'ink' => '#B7A6E8', 'label' => __('Masa'), 'value' => $timeValue],
         ] : [
             ['icon' => 'check-circle', 'bg' => '#DCF2EE', 'ink' => '#0F7A68', 'label' => __('Betul'), 'value' => $attempt->correct_count.'/'.$attempt->question_count],
             ['icon' => 'target-arrow', 'bg' => '#E4EEF9', 'ink' => '#2E6CA8', 'label' => __('Ketepatan'), 'value' => $pct.'%'],
-            ['icon' => 'clock', 'bg' => '#E9E4F9', 'ink' => '#7C5CBF', 'label' => __('Masa'), 'value' => $attempt->humanDuration()],
+            ['icon' => 'clock', 'bg' => '#E9E4F9', 'ink' => '#7C5CBF', 'label' => __('Masa'), 'value' => $timeValue],
         ])
         @php($cheer = match (true) {
             $pct >= 100 => ['icon' => 'target-arrow', 'bg' => '#EEF3FC', 'bgDark' => 'rgba(96,140,200,.14)', 'ink' => '#2E6CA8', 'inkDark' => '#7FB2EA', 'title' => __('Hebat! Semua jawapan betul.'), 'sub' => __('Teruskan mencabar diri untuk mencapai lebih!')],
