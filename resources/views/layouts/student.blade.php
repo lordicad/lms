@@ -232,7 +232,12 @@
             .wl-pagehead h1 + span { font-size: 13px !important; }
 
             /* Home video rows scroll sideways instead of cramming four per line. */
-            .wl-cardrow { display:flex !important; flex-wrap:nowrap; overflow-x:auto; gap:16px; padding-bottom:4px; scroll-snap-type:x proximity; -webkit-overflow-scrolling:touch; }
+            .wl-cardrow { display:flex !important; flex-wrap:nowrap; overflow-x:auto; gap:16px; padding-bottom:6px; scroll-snap-type:x proximity; -webkit-overflow-scrolling:touch;
+                          /* Hide the scrollbar and fade the trailing edge, like the continue rail. */
+                          scrollbar-width:none; -ms-overflow-style:none;
+                          -webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 40px),transparent 100%);
+                          mask-image:linear-gradient(90deg,#000 calc(100% - 40px),transparent 100%); }
+            .wl-cardrow::-webkit-scrollbar { display:none; }
             /* Match the continue-watching rail cards: ~280px wide with a peek of the next. */
             .wl-cardrow > * { flex:0 0 280px !important; max-width:84%; scroll-snap-align:start; }
         }
