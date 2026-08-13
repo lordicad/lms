@@ -37,6 +37,10 @@
             .q2radio { width:22px !important; height:22px !important; }
             .q2navbtn { min-height:42px !important; font-size:13px !important; padding:0 14px !important; }
             .qnum { width:38px !important; height:38px !important; font-size:13px !important; }
+            /* Footer: put the question jumper on its own full-width row above the nav buttons. */
+            .q2footer { flex-wrap:wrap !important; }
+            .q2jumper { flex:1 1 100% !important; order:-1; }
+            .q2actbtn { margin-left:auto !important; }
         }
     </style>
 
@@ -116,22 +120,22 @@
             @endforeach
 
             {{-- Footer, in its own card below the question: Sebelum · question jumper · Seterusnya/Hantar --}}
-            <div style="display:flex;align-items:center;gap:12px;background:var(--wl-surface);border:1px solid var(--wl-line);border-radius:20px;padding:16px 20px;box-shadow:0 8px 24px var(--wl-line)">
+            <div class="q2footer" style="display:flex;align-items:center;gap:12px;background:var(--wl-surface);border:1px solid var(--wl-line);border-radius:20px;padding:16px 20px;box-shadow:0 8px 24px var(--wl-line)">
                 <button type="button" @click="previous()" class="q2navbtn" :style="{ visibility: current === 0 ? 'hidden' : 'visible' }"
                         style="min-height:48px;cursor:pointer;border-radius:14px;border:1.5px solid var(--wl-line-2);background:var(--wl-surface);color:var(--wl-ink);font-family:'Geist',sans-serif;font-weight:800;font-size:15px;padding:0 20px">← {{ __('Sebelum') }}</button>
 
-                <div style="flex:1;display:flex;justify-content:center;gap:8px;flex-wrap:wrap">
+                <div class="q2jumper" style="flex:1;display:flex;justify-content:center;gap:8px;flex-wrap:wrap">
                     @foreach ($questions as $index => $question)
                         <button type="button" class="qnum" @click="go({{ $index }})"
                                 :class="{ 'active': current === {{ $index }}, 'answered': current !== {{ $index }} && answered[{{ $index }}] }">{{ $index + 1 }}</button>
                     @endforeach
                 </div>
 
-                <button type="submit" x-show="current === total - 1" x-cloak :disabled="submitting" class="q2navbtn"
+                <button type="submit" x-show="current === total - 1" x-cloak :disabled="submitting" class="q2navbtn q2actbtn"
                         style="min-height:48px;border:none;cursor:pointer;border-radius:14px;background:#17907B;color:#fff;font-family:'Geist',sans-serif;font-weight:800;font-size:15px;padding:0 24px">
                     <span x-show="! submitting">{{ __('Hantar Jawapan') }}</span><span x-show="submitting" x-cloak>{{ __('Menghantar...') }}</span>
                 </button>
-                <button type="button" x-show="current < total - 1" @click="next()" class="q2navbtn"
+                <button type="button" x-show="current < total - 1" @click="next()" class="q2navbtn q2actbtn"
                         style="min-height:48px;border:none;cursor:pointer;border-radius:14px;background:#17907B;color:#fff;font-family:'Geist',sans-serif;font-weight:800;font-size:15px;padding:0 24px">{{ __('Seterusnya') }} →</button>
             </div>
         </form>
