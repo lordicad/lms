@@ -39,7 +39,7 @@
                     <span style="width:84px;height:84px;border-radius:50%;background:#17907B;color:#fff;display:grid;place-items:center;font-family:'Geist',sans-serif;font-weight:800;font-size:32px;flex-shrink:0;border:4px solid #DCF2EE;overflow:hidden">
                         @if ($user->avatarUrl())<img src="{{ $user->avatarUrl() }}" alt="" style="width:100%;height:100%;object-fit:cover">@else{{ $user->initials() }}@endif
                     </span>
-                    <div style="display:flex;flex-direction:column;gap:7px;min-width:0;flex:1">
+                    <div class="wl-profhead" style="display:flex;flex-direction:column;gap:7px;min-width:0;flex:1">
                         <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:24px;font-weight:800;letter-spacing:-.01em;color:var(--wl-ink)">{{ $user->name }}</h2>
                         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
                             @if ($user->grade)<span style="background:#E4EEF9;color:#2E6CA8;border-radius:999px;padding:4px 12px;font-family:'Geist',sans-serif;font-size:12px;font-weight:800">{{ $user->grade->displayName() }}</span>@endif

@@ -341,6 +341,10 @@
             .fail-view .text-xs { font-size: 11px !important; }
             .fail-view p { font-size: 13px !important; line-height: 1.55 !important; }
             .fail-view .btn-primary { font-size: 14px !important; }
+            /* Profile header card. */
+            .wl-profhead h2 { font-size: 19px !important; }
+            .wl-profhead > div span { font-size: 11px !important; }
+            .wl-profhead > span { font-size: 12px !important; }
             /* Quiz intro stat cards (Soalan / Markah penuh / Masa). */
             .wl-introstats > div { padding: 12px 10px !important; }
             .wl-introstats > div > span:first-child { font-size: 10.5px !important; line-height: 1.2 !important; }
