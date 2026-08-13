@@ -251,7 +251,7 @@
             .wl-vidlist .vid-card > div:last-child > span { font-size: 11.5px !important; }
             .wl-vidlist .vid-card > div:last-child > span:first-child { font-size: 12.5px !important; line-height: 1.3; }
             /* Material and quiz titles a touch smaller too. */
-            .wl-cardtitle { font-size: 12.5px !important; }
+            .wl-cardtitle { font-size: 12.5px !important; white-space: normal !important; overflow: visible !important; text-overflow: clip !important; }
             .wl-quiztitle { font-size: 14px !important; }
 
             /* Chapter materials & quizzes: one per row, sized to the container (minmax(0,1fr) stops
