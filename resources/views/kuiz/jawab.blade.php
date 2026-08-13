@@ -35,8 +35,8 @@
             .q2letter { width:30px !important; height:30px !important; font-size:13px !important; }
             .q2text { font-size:13px !important; }
             .q2radio { width:22px !important; height:22px !important; }
-            .q2navbtn { min-height:42px !important; font-size:13px !important; padding:0 14px !important; }
-            .qnum { width:38px !important; height:38px !important; font-size:13px !important; }
+            .q2navbtn { min-height:40px !important; font-size:12px !important; padding:0 14px !important; }
+            .qnum { width:36px !important; height:36px !important; font-size:12.5px !important; }
             /* Footer: put the question jumper on its own full-width row above the nav buttons. */
             .q2footer { flex-wrap:wrap !important; }
             .q2jumper { flex:1 1 100% !important; order:-1; }
