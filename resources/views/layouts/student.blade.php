@@ -239,6 +239,15 @@
             .wl-favhead .hi-tile svg { width: 19px !important; height: 19px !important; }
             .wl-favhead h1, .wl-favhead h2 { font-size: 16px !important; }
             .wl-favhead h1 + p, .wl-favhead h2 + span, .wl-favhead h1 + span { font-size: 12px !important; line-height: 1.45 !important; }
+            /* Offline filter: keep Year / Subject / Chapters / Clear on one line, shrunk. */
+            .ysf-form-student { flex-wrap: nowrap !important; gap: 8px !important; align-items: flex-end; }
+            .ysf-form-student .tp-field { flex: 1 1 0 !important; min-width: 0 !important; gap: 4px !important; }
+            .ysf-form-student .ysf-label { font-size: 11px !important; }
+            .ysf-form-student .ss-wrap { display: block !important; width: 100% !important; }
+            .ysf-form-student .ss-trigger { min-height: 38px !important; padding: 0 10px !important; gap: 5px !important; font-size: 12px !important; }
+            .ysf-form-student .ss-chevron { width: 13px !important; height: 13px !important; }
+            .ysf-form-student select.ysf-select { min-width: 0 !important; width: 100% !important; min-height: 38px !important; font-size: 12px !important; }
+            .ysf-form-student .ysf-reset { min-height: 38px !important; font-size: 11.5px !important; flex-shrink: 0; padding-left: 2px; }
 
             /* Subject category labels (Mata Pelajaran Teras / Wajib / Tambahan / Program ...). */
             .wl-catlabel { font-size: 11px !important; letter-spacing: .1em !important; }

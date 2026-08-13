@@ -65,7 +65,7 @@
         : ['label' => 'tp-label', 'select' => 'tp-filter-select'];
 @endphp
 
-<form method="GET" action="{{ $action }}"
+<form method="GET" action="{{ $action }}" class="ysf-form-{{ $variant }}"
       x-data="yearSubjectFilter({
           level: '{{ $selLevel }}',
           subject: @js($selSubjek ?? ''),
