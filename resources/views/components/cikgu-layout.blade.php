@@ -143,6 +143,8 @@
         /* Main + header */
         .tp-main { grid-column:2; padding:28px 40px 48px; display:flex; flex-direction:column; gap:24px; min-width:0; max-width:clamp(1240px, 78vw, 1440px); width:100%; margin:0 auto; }
         .tp-head { display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
+        .tp-heading { display:flex; align-items:center; gap:14px; flex:1; min-width:200px; }
+        .tp-topbar { display:flex; align-items:center; gap:14px; }
         .tp-h1  { font-family:'Geist',sans-serif; font-size:24px; font-weight:800; letter-spacing:-.01em; color:var(--tp-ink); }
         .tp-hsub{ font-size:14px; color:var(--tp-muted); }
         .tp-langbar { display:flex; align-items:center; background:var(--tp-chip); border:1px solid var(--tp-line-3); border-radius:999px; padding:4px; }
@@ -303,10 +305,10 @@
             .tp-burger-open { display:flex; width:38px; height:38px; margin-right:auto; }  /* hamburger in the header */
             .tp-main { grid-column:auto; padding:20px; }
             .tp-stats { grid-template-columns:1fr; }
-            /* Header row: hamburger + controls on one line, the page heading wraps below. */
-            .tp-head { gap:8px; }
-            .tp-head > .hi-tile { order:5; }
-            .tp-head > div:has(> .tp-h1) { order:5; min-width:0 !important; }
+            /* Controls become the full-width top header row; the heading drops below it. */
+            .tp-head { gap:14px; }
+            .tp-topbar { order:-1; flex:1 1 100%; gap:8px; }
+            .tp-heading { flex:1 1 100%; min-width:0; }
             .tp-langbar { padding:2px; }
             .tp-pill { min-height:30px; padding:4px 10px; font-size:11px; }
             .tp-iconbtn { width:38px !important; height:38px !important; }
@@ -362,36 +364,43 @@
     {{-- MAIN --}}
     <main class="tp-main">
         <div class="tp-head">
-            {{-- Mobile-only hamburger that opens the drawer (matches the student portal). --}}
-            <button type="button" class="tp-burger-open" @click="navOpen = true" aria-label="{{ __('Menu') }}">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-            </button>
-            @if ($headingIcon)
-                {{-- Accepts an image filename (from public/images), an icon name (line icon), or an emoji. --}}
-                <span class="hi-tile" style="width:48px;height:48px;border-radius:14px;background:#DCF2EE;color:#0F7A68;display:grid;place-items:center;flex-shrink:0;align-self:flex-start" aria-hidden="true">@if (\Illuminate\Support\Str::endsWith($headingIcon, ['.png', '.jpg', '.jpeg', '.svg', '.webp']))<img src="{{ asset('images/'.$headingIcon) }}" alt="" style="width:30px;height:30px;object-fit:contain" />@elseif (preg_match('/^[a-z0-9-]+$/', $headingIcon))<x-icon :name="$headingIcon" style="width:24px;height:24px" />@else<span style="font-size:26px;line-height:1">{{ $headingIcon }}</span>@endif</span>
-            @endif
-            <div style="display:flex;flex-direction:column;gap:2px;flex:1;min-width:200px">
-                <h1 class="tp-h1">{{ $heading }}</h1>
-                @if ($sub)
-                    <span class="tp-hsub">{{ $sub }}</span>
+            {{-- Heading (icon + title). On mobile it drops below the controls row. --}}
+            <div class="tp-heading">
+                @if ($headingIcon)
+                    {{-- Accepts an image filename (from public/images), an icon name (line icon), or an emoji. --}}
+                    <span class="hi-tile" style="width:48px;height:48px;border-radius:14px;background:#DCF2EE;color:#0F7A68;display:grid;place-items:center;flex-shrink:0;align-self:flex-start" aria-hidden="true">@if (\Illuminate\Support\Str::endsWith($headingIcon, ['.png', '.jpg', '.jpeg', '.svg', '.webp']))<img src="{{ asset('images/'.$headingIcon) }}" alt="" style="width:30px;height:30px;object-fit:contain" />@elseif (preg_match('/^[a-z0-9-]+$/', $headingIcon))<x-icon :name="$headingIcon" style="width:24px;height:24px" />@else<span style="font-size:26px;line-height:1">{{ $headingIcon }}</span>@endif</span>
                 @endif
+                <div style="display:flex;flex-direction:column;gap:2px;flex:1;min-width:0">
+                    <h1 class="tp-h1">{{ $heading }}</h1>
+                    @if ($sub)
+                        <span class="tp-hsub">{{ $sub }}</span>
+                    @endif
+                </div>
             </div>
 
-            <div class="tp-langbar">
-                <a href="{{ route('locale.switch', 'ms') }}" @class(['tp-pill', 'is-on' => $current === 'ms'])>BM</a>
-                <a href="{{ route('locale.switch', 'en') }}" @class(['tp-pill', 'is-on' => $current === 'en'])>EN</a>
+            {{-- Controls: hamburger (mobile) + language pill + night mode + notifications. On mobile
+                 this is the full-width top header row (matches the student portal). --}}
+            <div class="tp-topbar">
+                <button type="button" class="tp-burger-open" @click="navOpen = true" aria-label="{{ __('Menu') }}">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                </button>
+
+                <div class="tp-langbar">
+                    <a href="{{ route('locale.switch', 'ms') }}" @class(['tp-pill', 'is-on' => $current === 'ms'])>BM</a>
+                    <a href="{{ route('locale.switch', 'en') }}" @class(['tp-pill', 'is-on' => $current === 'en'])>EN</a>
+                </div>
+
+                @php($isDark = ($theme ?? 'light') === 'dark')
+                <a href="{{ route('theme.switch', $isDark ? 'light' : 'dark') }}" class="tp-iconbtn" title="{{ $isDark ? __('Mod Terang') : __('Mod Malam') }}">
+                    <x-icon :name="$isDark ? 'sun' : 'moon'" class="h-[19px] w-[19px]" />
+                </a>
+
+                <x-notif-bell :notifications="$recentNotifications"
+                              :unread="$unreadNotifications"
+                              :meta="$notifMeta"
+                              :all-url="route('cikgu.notifikasi')"
+                              :mark-read-url="route('cikgu.notifikasi.baca')" />
             </div>
-
-            @php($isDark = ($theme ?? 'light') === 'dark')
-            <a href="{{ route('theme.switch', $isDark ? 'light' : 'dark') }}" class="tp-iconbtn" title="{{ $isDark ? __('Mod Terang') : __('Mod Malam') }}">
-                <x-icon :name="$isDark ? 'sun' : 'moon'" class="h-[19px] w-[19px]" />
-            </a>
-
-            <x-notif-bell :notifications="$recentNotifications"
-                          :unread="$unreadNotifications"
-                          :meta="$notifMeta"
-                          :all-url="route('cikgu.notifikasi')"
-                          :mark-read-url="route('cikgu.notifikasi.baca')" />
         </div>
 
         <x-flash />
