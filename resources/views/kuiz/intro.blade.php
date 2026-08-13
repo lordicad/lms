@@ -16,7 +16,7 @@
             <span style="align-self:flex-start;background:{{ $tagBg }};color:{{ $tagColor }};border-radius:999px;padding:5px 14px;font-family:'Geist',sans-serif;font-size:12.5px;font-weight:800"><x-subject-emoji :subject="$subject" class="text-sm" /> {{ $subject->name }}</span>
             <h2 style="margin:0;font-family:'Geist',sans-serif;font-size:26px;font-weight:800;letter-spacing:-.01em;color:var(--wl-ink)">{{ $quiz->localizedTitle() }}</h2>
 
-            <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px">
+            <div class="wl-introstats" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px">
                 <div style="background:{{ $isDark ? '#2A3543' : '#F6F3EC' }};border:1px solid var(--wl-line-2);border-radius:14px;padding:14px 18px;display:flex;flex-direction:column;gap:3px">
                     <span style="font-size:12.5px;font-weight:700;color:var(--wl-muted)">{{ __('Soalan') }}</span>
                     <span style="font-family:'Geist',sans-serif;font-size:20px;font-weight:800;color:var(--wl-ink)">{{ $questionCount }}</span>

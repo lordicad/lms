@@ -341,6 +341,10 @@
             .fail-view .text-xs { font-size: 11px !important; }
             .fail-view p { font-size: 13px !important; line-height: 1.55 !important; }
             .fail-view .btn-primary { font-size: 14px !important; }
+            /* Quiz intro stat cards (Soalan / Markah penuh / Masa). */
+            .wl-introstats > div { padding: 12px 10px !important; }
+            .wl-introstats > div > span:first-child { font-size: 10.5px !important; line-height: 1.2 !important; }
+            .wl-introstats > div > span:last-child { font-size: 15px !important; }
 
             /* Subject category labels (Mata Pelajaran Teras / Wajib / Tambahan / Program ...). */
             .wl-catlabel { font-size: 11px !important; letter-spacing: .1em !important; }
