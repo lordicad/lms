@@ -115,6 +115,16 @@
             .lb-card--second .lb-quizzes, .lb-card--third .lb-quizzes { font-size: 9.5px; }
             .lb-card--first .lb-pill { font-size: 10px; padding: 4px 10px; margin-top: 6px; }
             .lb-card--second .lb-pill, .lb-card--third .lb-pill { font-size: 9.5px; padding: 3px 8px; margin-top: 5px; }
+
+            /* Ranks 4-10 table: smaller text + avatar; shrink the header so "Kedudukan" stops overlapping. */
+            .lb-tbl-head, .lb-tr { gap: 8px; padding: 10px 12px; }
+            .lb-th { font-size: 9.5px !important; letter-spacing: -.01em; }
+            .lb-rank { width: 32px; height: 32px; font-size: 12.5px; border-radius: 9px; }
+            .lb-part { gap: 9px; }
+            .lb-pav { width: 32px; height: 32px; font-size: 12.5px; }
+            .lb-pname { font-size: 12.5px; }
+            .lb-psub { font-size: 10.5px; }
+            .lb-pts { font-size: 12.5px; }
         }
     </style>
 
