@@ -243,6 +243,14 @@
             .wl-babhead > span { font-size: 11.5px !important; }
             .wl-babhead h2 { font-size: 17px !important; }
 
+            /* Chapter video list: one video per row - thumbnail left, text right - with smaller text. */
+            .wl-vidlist { grid-template-columns: 1fr !important; gap: 12px !important; }
+            .wl-vidlist > a.vid-card { display: flex !important; align-items: stretch; }
+            .wl-vidlist > a.vid-card > div:first-child { width: 132px !important; height: auto !important; flex-shrink: 0; }
+            .wl-vidlist > a.vid-card > div:last-child { flex: 1 1 auto; min-width: 0; justify-content: center; padding: 12px 14px !important; gap: 3px !important; }
+            .wl-vidlist .vid-card > div:last-child > span { font-size: 11.5px !important; }
+            .wl-vidlist .vid-card > div:last-child > span:first-child { font-size: 13.5px !important; line-height: 1.3; }
+
             /* Subject detail heading (icon tile + name) on the Subjek > subject page. */
             .wl-subjhead > span:first-child { width: 44px !important; height: 44px !important; border-radius: 13px !important; }
             .wl-subjhead > span:first-child svg, .wl-subjhead > span:first-child img { width: 22px !important; height: 22px !important; }

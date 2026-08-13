@@ -22,7 +22,7 @@
                     <span style="font-size:13.5px;color:var(--wl-muted)">{{ __('Cikgu belum memuat naik sebarang video untuk bab ini.') }}</span>
                 </div>
             @else
-                <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px">
+                <div class="wl-vidlist" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px">
                     @foreach ($lessons as $lesson)
                         <a href="{{ route('video.show', $lesson) }}" class="vid-card"
                            style="display:block;text-decoration:none;background:var(--wl-surface);border:1px solid var(--wl-line);border-radius:18px;overflow:hidden;box-shadow:0 4px 16px rgba(46,44,80,.04);cursor:pointer">
