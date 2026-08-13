@@ -350,6 +350,10 @@
             .pf-stats > div > span:first-of-type { font-size: 18px !important; }
             .pf-stats > div > span:last-child { font-size: 11px !important; }
             .pf-stats > div > svg { width: 20px !important; height: 20px !important; }
+            /* Profile collapsible section cards (Maklumat akaun / Tukar kata laluan). */
+            .wl-acccard { padding: 18px !important; }
+            .wl-acccard > button h2 { font-size: 16px !important; }
+            .wl-acccard > button svg { width: 17px !important; height: 17px !important; }
             /* Quiz intro stat cards (Soalan / Markah penuh / Masa). */
             .wl-introstats > div { padding: 12px 10px !important; }
             .wl-introstats > div > span:first-child { font-size: 10.5px !important; line-height: 1.2 !important; }

@@ -135,7 +135,7 @@
         {{-- Account info form. Collapsed by default: it is a long form, and most visits to this
              page are only a look at the profile. It opens itself when the last save came back with
              errors, so a validation message is never left hidden behind a closed panel. --}}
-        <section style="{{ $cardStyle }}"
+        <section class="wl-acccard" style="{{ $cardStyle }}"
                  x-data="{ open: @js($errors->getBag('default')->any()) }">
             <button type="button" @click="open = ! open"
                     :aria-expanded="open ? 'true' : 'false'" aria-controls="akaun-panel"
@@ -252,7 +252,7 @@
 
         {{-- Change password. Same treatment, and it opens on its own error bag: this form posts
              to password.update, which reports into 'updatePassword' rather than the default bag. --}}
-        <section style="{{ $cardStyle }}"
+        <section class="wl-acccard" style="{{ $cardStyle }}"
                  x-data="{ open: @js($errors->getBag('updatePassword')->any()) }">
             <button type="button" @click="open = ! open"
                     :aria-expanded="open ? 'true' : 'false'" aria-controls="kata-laluan-panel"
