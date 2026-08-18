@@ -24,6 +24,9 @@
             .tp-stat-ico svg { width:16px; height:16px; }
             .tp-stat-label { font-size:12px; }
             .tp-stat-value { font-size:23px; }
+            /* Recent-videos rows: views/date/badge drop to their own line so nothing overlaps. */
+            .tp-vidrow { flex-wrap:wrap; row-gap:10px; padding:14px 16px; }
+            .tp-vidmeta { flex:1 1 100% !important; gap:14px; flex-wrap:wrap; }
         }
     </style>
 
@@ -72,7 +75,7 @@
                 </div>
 
                 @forelse ($recentLessons as $lesson)
-                    <div class="tp-row">
+                    <div class="tp-row tp-vidrow">
                         <span style="width:64px;height:42px;border-radius:9px;overflow:hidden;background:#E4EEF9;display:grid;place-items:center;color:rgba(66,118,174,.8);flex-shrink:0">
                             @if ($lesson->thumbnailUrl())
                                 <img src="{{ $lesson->thumbnailUrl() }}" alt="" loading="lazy" style="width:100%;height:100%;object-fit:cover">
@@ -84,9 +87,11 @@
                             <a href="{{ route('video.show', $lesson) }}" class="tp-g" style="font-weight:800;font-size:14.5px;color:var(--tp-ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $lesson->title }}</a>
                             <span style="font-size:12.5px;color:var(--tp-muted)"><span style="display:inline-block;vertical-align:middle;background:color-mix(in oklab, {{ $lesson->chapter->subject->color ?: '#17907B' }} var(--pill-bw), var(--pill-bb));color:color-mix(in oklab, {{ $lesson->chapter->subject->color ?: '#17907B' }} var(--pill-fw), var(--pill-fb));border-radius:999px;padding:2px 9px;font-weight:800;font-size:11px">{{ $lesson->chapter->subject->name }}</span> · {{ $lesson->chapter->grade->displayName() }} · {{ __('Bab :n', ['n' => $lesson->chapter->number]) }}</span>
                         </div>
-                        <span class="tp-meta" style="flex-shrink:0;display:inline-flex;align-items:center;gap:4px"><img src="{{ asset('images/eye.png') }}" alt="" style="width:15px;height:15px;object-fit:contain">{{ $lesson->views_count }}</span>
-                        <span class="tp-meta" style="flex-shrink:0">{{ $lesson->updated_at->translatedFormat('j M Y') }}</span>
-                        <span class="tp-badge {{ $lesson->is_published ? 'tp-badge-ok' : 'tp-badge-draft' }}">{{ $lesson->is_published ? __('Diterbitkan') : __('Draf') }}</span>
+                        <div class="tp-vidmeta" style="display:flex;align-items:center;gap:16px;flex-shrink:0">
+                            <span class="tp-meta" style="display:inline-flex;align-items:center;gap:4px"><img src="{{ asset('images/eye.png') }}" alt="" style="width:15px;height:15px;object-fit:contain">{{ $lesson->views_count }}</span>
+                            <span class="tp-meta">{{ $lesson->updated_at->translatedFormat('j M Y') }}</span>
+                            <span class="tp-badge {{ $lesson->is_published ? 'tp-badge-ok' : 'tp-badge-draft' }}">{{ $lesson->is_published ? __('Diterbitkan') : __('Draf') }}</span>
+                        </div>
                     </div>
                 @empty
                     <div style="padding:28px 22px;text-align:center;color:var(--tp-muted);font-size:14px">{{ __('Belum ada video. Muat naik video pertama anda.') }}</div>
