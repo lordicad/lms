@@ -323,14 +323,14 @@
             /* Year / Subject / Chapter filter: keep the dropdowns on one line, shrunk. */
             /* Row 1 = the three filters (a real basis so they fill the row); row 2 = Clear (left) +
                Video Baru button (right), sharing one line below the filters. */
-            .ysf-form-cikgu { flex-wrap:wrap !important; column-gap:8px !important; row-gap:12px !important; align-items:flex-end; margin-bottom:-10px; }
+            .ysf-form-cikgu { flex-wrap:wrap !important; column-gap:8px !important; row-gap:7px !important; align-items:flex-end; margin-bottom:-10px; }
             .ysf-form-cikgu .tp-field { flex:1 1 30% !important; min-width:0 !important; gap:4px !important; }
             .ysf-form-cikgu .tp-label { font-size:11px !important; }
             .ysf-form-cikgu .ss-wrap { display:block !important; width:100% !important; min-width:0 !important; }
             .ysf-form-cikgu .ss-trigger { min-height:38px !important; font-size:12px !important; padding:0 30px 0 12px !important; }
             .ysf-form-cikgu .ss-chevron { width:14px !important; height:14px !important; }
             .ysf-form-cikgu select.tp-filter-select { min-width:0 !important; width:100% !important; min-height:38px !important; font-size:12px !important; }
-            .ysf-form-cikgu > .ysf-reset { flex:0 0 auto !important; margin-right:auto !important; margin-left:0 !important; min-height:38px !important; font-size:12.5px !important; }
+            .ysf-form-cikgu > .ysf-reset { flex:0 0 auto !important; margin-right:auto !important; margin-left:12px !important; min-height:38px !important; font-size:12.5px !important; }
             .ysf-form-cikgu > .tp-newbtn-wrap { flex:0 0 auto !important; display:flex; justify-content:flex-end; margin-left:auto !important; }
             .ysf-form-cikgu > .tp-newbtn-wrap .tp-btn { min-height:38px !important; padding:0 16px !important; font-size:12.5px !important; }
             .ysf-form-cikgu > .tp-newbtn-wrap .tp-btn svg { width:14px !important; height:14px !important; }
