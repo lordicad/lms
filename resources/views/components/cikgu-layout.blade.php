@@ -353,6 +353,12 @@
             .tp-listactions .tp-icon-action { width:34px !important; height:34px !important; }
             .tp-listactions .tp-icon-action svg { width:16px !important; height:16px !important; }
             .tp-listactions .tp-lihatbtn { min-height:34px !important; font-size:12px !important; padding:0 12px !important; }
+            /* Subject header (chapters page): smaller icon/font, a little space above and below. */
+            .tp-subjhead { gap:12px !important; margin:8px 0 !important; }
+            .tp-subjhead > span:first-child { width:40px !important; height:40px !important; border-radius:11px !important; }
+            .tp-subjhead > span:first-child svg { width:20px !important; height:20px !important; }
+            .tp-subjhead h2 { font-size:17px !important; }
+            .tp-subjhead > div > span:last-child { font-size:12px !important; }
             /* Smaller card text: title, subject pill and meta. */
             .tp-listcard button.tp-g { font-size:14px !important; }
             .tp-listcard .tp-tag { font-size:10.5px !important; }

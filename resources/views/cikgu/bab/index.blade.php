@@ -16,7 +16,7 @@
             :all-years="false" />
 
         @if ($subject && $grade)
-            <div style="display:flex;align-items:center;gap:14px">
+            <div class="tp-subjhead" style="display:flex;align-items:center;gap:14px">
                 <span style="width:52px;height:52px;border-radius:14px;background:rgb({{ $subject->rgb }} / .14);color:rgb({{ $subject->rgb }});display:grid;place-items:center;flex-shrink:0"><x-icon :name="$subject->iconName()" class="h-6 w-6" /></span>
                 <div style="display:flex;flex-direction:column;gap:3px">
                     <h2 class="tp-g" style="font-size:22px;font-weight:800;letter-spacing:-.01em;color:var(--tp-ink)">{{ $subject->name }} – {{ $grade->displayName() }}</h2>
