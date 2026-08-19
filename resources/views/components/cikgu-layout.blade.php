@@ -330,6 +330,10 @@
             .ysf-form-cikgu select.tp-filter-select { min-width:0 !important; width:100% !important; min-height:38px !important; font-size:12px !important; }
             /* "Video Baru" button + reset link wrap to their own full-width row below the filters. */
             .ysf-form-cikgu > .tp-btn, .ysf-form-cikgu > .ysf-reset { flex:1 1 100% !important; margin-left:0 !important; justify-content:center; }
+            /* List cards (video etc.): wrap so the action buttons drop below instead of overlapping. */
+            .tp-listcard { flex-wrap:wrap; row-gap:12px; padding:14px 16px; }
+            .tp-listcard:has(.tp-listactions) > button { width:104px !important; height:66px !important; }
+            .tp-listactions { flex:1 1 100% !important; gap:10px; }
         }
         @media (prefers-reduced-motion:reduce){ .tp * { transition:none !important; } }
     </style>

@@ -86,30 +86,31 @@
                         </div>
                     </div>
 
-                    {{-- Publish toggle: green with a check when live, amber when a draft. Still a
-                         button - clicking it flips the state. --}}
-                    <form method="POST" action="{{ route('cikgu.video.terbit', $lesson) }}" style="flex-shrink:0">
-                        @csrf
-                        <button type="submit" class="tp-badge {{ $lesson->is_published ? 'tp-badge-ok' : 'tp-badge-draft' }}" style="border:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px">
-                            @if ($lesson->is_published)
-                                <x-icon name="check-circle" class="h-4 w-4" />
-                            @endif
-                            {{ $lesson->is_published ? __('Diterbitkan') : __('Draf') }}
-                        </button>
-                    </form>
+                    {{-- Actions: publish toggle + edit + delete. On mobile they drop to their own row. --}}
+                    <div class="tp-listactions" style="display:flex;align-items:center;gap:14px;flex-shrink:0">
+                        <form method="POST" action="{{ route('cikgu.video.terbit', $lesson) }}" style="flex-shrink:0">
+                            @csrf
+                            <button type="submit" class="tp-badge {{ $lesson->is_published ? 'tp-badge-ok' : 'tp-badge-draft' }}" style="border:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px">
+                                @if ($lesson->is_published)
+                                    <x-icon name="check-circle" class="h-4 w-4" />
+                                @endif
+                                {{ $lesson->is_published ? __('Diterbitkan') : __('Draf') }}
+                            </button>
+                        </form>
 
-                    <a href="{{ route('cikgu.video.edit', $lesson) }}" class="tp-btn-ghost" style="flex-shrink:0;display:inline-flex;align-items:center;gap:6px">
-                        <x-icon name="pencil" class="h-4 w-4" />{{ __('Sunting') }}
-                    </a>
+                        <a href="{{ route('cikgu.video.edit', $lesson) }}" class="tp-btn-ghost" style="flex-shrink:0;display:inline-flex;align-items:center;gap:6px">
+                            <x-icon name="pencil" class="h-4 w-4" />{{ __('Sunting') }}
+                        </a>
 
-                    @php($delMsg = __('Padam video ":title"? Fail video juga akan dipadam. Tindakan ini tidak boleh dibatalkan.', ['title' => $lesson->title]))
-                    <x-confirm-modal id="del-video-{{ $lesson->id }}" :action="route('cikgu.video.destroy', $lesson)"
-                        :title="__('Padam video?')" :message="$delMsg">
-                        <button type="button" class="tp-icon-action tp-icon-danger" title="{{ __('Padam') }}" style="flex-shrink:0;background:#FDECEC;border:none;border-radius:14px">
-                            <x-icon name="trash" class="h-[18px] w-[18px]" />
-                            <span class="sr-only">{{ __('Padam :title', ['title' => $lesson->title]) }}</span>
-                        </button>
-                    </x-confirm-modal>
+                        @php($delMsg = __('Padam video ":title"? Fail video juga akan dipadam. Tindakan ini tidak boleh dibatalkan.', ['title' => $lesson->title]))
+                        <x-confirm-modal id="del-video-{{ $lesson->id }}" :action="route('cikgu.video.destroy', $lesson)"
+                            :title="__('Padam video?')" :message="$delMsg">
+                            <button type="button" class="tp-icon-action tp-icon-danger" title="{{ __('Padam') }}" style="flex-shrink:0;background:#FDECEC;border:none;border-radius:14px">
+                                <x-icon name="trash" class="h-[18px] w-[18px]" />
+                                <span class="sr-only">{{ __('Padam :title', ['title' => $lesson->title]) }}</span>
+                            </button>
+                        </x-confirm-modal>
+                    </div>
                 </div>
             @endforeach
         </div>
