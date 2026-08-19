@@ -342,6 +342,11 @@
             .tp-listactions .tp-btn-ghost svg { width:14px !important; height:14px !important; }
             .tp-listactions .tp-icon-action { width:34px !important; height:34px !important; }
             .tp-listactions .tp-icon-action svg { width:16px !important; height:16px !important; }
+            /* Smaller card text: title, subject pill and meta. */
+            .tp-listcard button.tp-g { font-size:14px !important; }
+            .tp-listcard .tp-tag { font-size:10.5px !important; }
+            .tp-listcard .tp-meta { font-size:11.5px !important; }
+            .tp-listcard .tp-meta svg, .tp-listcard .tp-meta img { width:14px !important; height:14px !important; }
         }
         @media (prefers-reduced-motion:reduce){ .tp * { transition:none !important; } }
     </style>
