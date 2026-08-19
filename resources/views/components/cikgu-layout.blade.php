@@ -347,6 +347,8 @@
             .tp-listcard .tp-tag { font-size:10.5px !important; }
             .tp-listcard .tp-meta { font-size:11.5px !important; }
             .tp-listcard .tp-meta svg, .tp-listcard .tp-meta img { width:14px !important; height:14px !important; }
+            /* Year/Chapter on its own line; YouTube + views share the line below it. */
+            .tp-listcard .tp-meta:first-child { flex-basis:100% !important; }
         }
         @media (prefers-reduced-motion:reduce){ .tp * { transition:none !important; } }
     </style>
