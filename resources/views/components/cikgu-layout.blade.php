@@ -359,6 +359,10 @@
             .tp-subjhead > span:first-child svg { width:20px !important; height:20px !important; }
             .tp-subjhead h2 { font-size:17px !important; }
             .tp-subjhead > div > span:last-child { font-size:12px !important; }
+            /* Chapter card meta (video / materials / quizzes) on one line. */
+            .tp-chapmeta { gap:10px !important; flex-wrap:nowrap !important; }
+            .tp-chapmeta .tp-meta { font-size:11px !important; white-space:nowrap; }
+            .tp-chapmeta .tp-meta svg { width:13px !important; height:13px !important; }
             /* Smaller card text: title, subject pill and meta. */
             .tp-listcard button.tp-g { font-size:14px !important; }
             .tp-listcard .tp-tag { font-size:10.5px !important; }
