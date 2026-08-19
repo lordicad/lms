@@ -333,7 +333,7 @@
             .ysf-form-cikgu > .ysf-reset { flex:1 1 100% !important; margin-left:0 !important; justify-content:center; }
             .ysf-form-cikgu { margin-bottom:-10px; }
             .ysf-form-cikgu > .tp-newbtn-wrap { flex:1 1 100% !important; display:flex; justify-content:flex-end; margin-left:0 !important; }
-            .ysf-form-cikgu > .tp-newbtn-wrap .tp-btn { min-height:32px !important; padding:0 14px !important; font-size:12px !important; }
+            .ysf-form-cikgu > .tp-newbtn-wrap .tp-btn { min-height:38px !important; padding:0 16px !important; font-size:12.5px !important; }
             .ysf-form-cikgu > .tp-newbtn-wrap .tp-btn svg { width:14px !important; height:14px !important; }
             /* List cards (video etc.): wrap so the action buttons drop below instead of overlapping. */
             .tp-listcard { flex-wrap:wrap; row-gap:12px; padding:14px 16px; }
