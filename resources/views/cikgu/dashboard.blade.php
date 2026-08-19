@@ -28,6 +28,7 @@
             .tp-vidrow { flex-wrap:wrap; row-gap:10px; padding:14px 16px; }
             /* Indent the meta row so it lines up with the title/subject (past the 64px thumb + 16px gap). */
             .tp-vidmeta { flex:1 1 100% !important; gap:14px; flex-wrap:wrap; margin-left:80px; }
+            .tp-vidmeta .tp-badge { padding:4px 10px; font-size:10.5px; }
         }
     </style>
 
