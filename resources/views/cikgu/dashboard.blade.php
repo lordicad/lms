@@ -26,7 +26,8 @@
             .tp-stat-value { font-size:23px; }
             /* Recent-videos rows: views/date/badge drop to their own line so nothing overlaps. */
             .tp-vidrow { flex-wrap:wrap; row-gap:10px; padding:14px 16px; }
-            .tp-vidmeta { flex:1 1 100% !important; gap:14px; flex-wrap:wrap; }
+            /* Indent the meta row so it lines up with the title/subject (past the 64px thumb + 16px gap). */
+            .tp-vidmeta { flex:1 1 100% !important; gap:14px; flex-wrap:wrap; margin-left:80px; }
         }
     </style>
 
