@@ -346,7 +346,7 @@
             .ysf-form-cikgu > .tp-newbtn-wrap .tp-btn svg { width:14px !important; height:14px !important; }
             /* List cards (video etc.): wrap so the action buttons drop below instead of overlapping. */
             .tp-listcard { flex-wrap:wrap; row-gap:12px; padding:14px 16px; }
-            .tp-listcard:has(.tp-listactions) > button { width:104px !important; height:66px !important; }
+            .tp-listcard .tp-vidthumb { width:104px !important; height:66px !important; }
             .tp-listactions { flex:1 1 100% !important; gap:10px; justify-content:flex-end; }
             .tp-listactions .tp-btn-ghost { min-height:34px !important; padding:0 12px !important; font-size:12px !important; }
             .tp-listactions .tp-btn-ghost svg { width:14px !important; height:14px !important; }
@@ -357,8 +357,8 @@
             .tp-listcard .tp-tag { font-size:10.5px !important; }
             .tp-listcard .tp-meta { font-size:11.5px !important; }
             .tp-listcard .tp-meta svg, .tp-listcard .tp-meta img { width:14px !important; height:14px !important; }
-            /* Year/Chapter on its own line; YouTube + views share the line below it. */
-            .tp-listcard .tp-meta:first-child { flex-basis:100% !important; }
+            /* Video card only: Year/Chapter on its own line; YouTube + views share the line below. */
+            .tp-listcard:has(.tp-vidthumb) .tp-meta:first-child { flex-basis:100% !important; }
         }
         @media (prefers-reduced-motion:reduce){ .tp * { transition:none !important; } }
     </style>

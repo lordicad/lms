@@ -79,23 +79,26 @@
                     </div>
 
 
-                    <a href="{{ route('muat-turun.bahan', $material) }}" class="tp-icon-action" style="flex-shrink:0;background:#DCF2EE;color:#0F7A68" title="{{ __('Muat turun') }}">
-                        <x-icon name="download" class="h-[18px] w-[18px]" />
-                        <span class="sr-only">{{ __('Muat turun :title', ['title' => $material->title]) }}</span>
-                    </a>
+                    {{-- Actions: download + edit + delete. On mobile they drop to their own row. --}}
+                    <div class="tp-listactions" style="display:flex;align-items:center;gap:14px;flex-shrink:0">
+                        <a href="{{ route('muat-turun.bahan', $material) }}" class="tp-icon-action" style="flex-shrink:0;background:#DCF2EE;color:#0F7A68" title="{{ __('Muat turun') }}">
+                            <x-icon name="download" class="h-[18px] w-[18px]" />
+                            <span class="sr-only">{{ __('Muat turun :title', ['title' => $material->title]) }}</span>
+                        </a>
 
-                    <a href="{{ route('cikgu.bahan.edit', $material) }}" class="tp-btn-ghost" style="flex-shrink:0;display:inline-flex;align-items:center;gap:6px">
-                        <x-icon name="pencil" class="h-4 w-4" />{{ __('Sunting') }}
-                    </a>
+                        <a href="{{ route('cikgu.bahan.edit', $material) }}" class="tp-btn-ghost" style="flex-shrink:0;display:inline-flex;align-items:center;gap:6px">
+                            <x-icon name="pencil" class="h-4 w-4" />{{ __('Sunting') }}
+                        </a>
 
-                    @php($delMsg = __('Padam bahan ":title"? Fail juga akan dipadam.', ['title' => $material->title]))
-                    <x-confirm-modal id="del-bahan-{{ $material->id }}" :action="route('cikgu.bahan.destroy', $material)"
-                        :title="__('Padam bahan?')" :message="$delMsg">
-                        <button type="button" class="tp-icon-action tp-icon-danger" title="{{ __('Padam') }}" style="flex-shrink:0;background:#FDE7E0">
-                            <x-icon name="trash" class="h-[18px] w-[18px]" />
-                            <span class="sr-only">{{ __('Padam :title', ['title' => $material->title]) }}</span>
-                        </button>
-                    </x-confirm-modal>
+                        @php($delMsg = __('Padam bahan ":title"? Fail juga akan dipadam.', ['title' => $material->title]))
+                        <x-confirm-modal id="del-bahan-{{ $material->id }}" :action="route('cikgu.bahan.destroy', $material)"
+                            :title="__('Padam bahan?')" :message="$delMsg">
+                            <button type="button" class="tp-icon-action tp-icon-danger" title="{{ __('Padam') }}" style="flex-shrink:0;background:#FDE7E0">
+                                <x-icon name="trash" class="h-[18px] w-[18px]" />
+                                <span class="sr-only">{{ __('Padam :title', ['title' => $material->title]) }}</span>
+                            </button>
+                        </x-confirm-modal>
+                    </div>
                 </div>
             @endforeach
         </div>

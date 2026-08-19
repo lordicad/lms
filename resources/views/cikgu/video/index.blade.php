@@ -53,7 +53,7 @@
                 <div class="tp-listcard">
                     {{-- Thumbnail: click to preview. A play disc sits over the frame and, once a
                          duration has been captured, a badge in the corner shows it. --}}
-                    <button type="button" @click="open(@js($preview))" title="{{ __('Lihat video') }}"
+                    <button type="button" @click="open(@js($preview))" title="{{ __('Lihat video') }}" class="tp-vidthumb"
                             style="position:relative;width:128px;height:80px;border-radius:12px;overflow:hidden;background:rgb({{ $subject->rgb }} / .14);border:none;padding:0;cursor:pointer;flex-shrink:0">
                         @if ($lesson->thumbnailUrl())
                             <img src="{{ $lesson->thumbnailUrl() }}" alt="" loading="lazy" style="width:100%;height:100%;object-fit:cover">
