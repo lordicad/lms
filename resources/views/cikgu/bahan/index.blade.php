@@ -15,10 +15,12 @@
     </div>
 
     <x-year-subject-filter :subjects="$subjects" :grades="$grades" :filter="$filter" with-chapter :action="route('cikgu.bahan.index')">
-        <a href="{{ route('cikgu.bahan.create') }}" class="tp-btn" style="margin-left:auto">
-            <x-icon name="plus" class="h-4 w-4" />
-            {{ __('Bahan Baru') }}
-        </a>
+        <div class="tp-newbtn-wrap" style="margin-left:auto">
+            <a href="{{ route('cikgu.bahan.create') }}" class="tp-btn">
+                <x-icon name="plus" class="h-4 w-4" />
+                {{ __('Bahan Baru') }}
+            </a>
+        </div>
     </x-year-subject-filter>
 
     {{-- Clicking a material's name opens a preview here, the same shell the admin content list uses.
