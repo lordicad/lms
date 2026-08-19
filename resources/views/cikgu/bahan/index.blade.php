@@ -105,7 +105,7 @@
             @endforeach
         </div>
 
-        <div>{{ $materials->links() }}</div>
+        <div>{{ $materials->links('pagination.tp') }}</div>
     @endif
 
         {{-- Preview modal: PDFs and images render in place, other files show a document card with a
