@@ -328,11 +328,12 @@
             .ysf-form-cikgu .ss-trigger { min-height:38px !important; font-size:12px !important; padding:0 30px 0 12px !important; }
             .ysf-form-cikgu .ss-chevron { width:14px !important; height:14px !important; }
             .ysf-form-cikgu select.tp-filter-select { min-width:0 !important; width:100% !important; min-height:38px !important; font-size:12px !important; }
-            /* "Video Baru" button + reset link wrap to their own row below the filters. The button
-               is small and pinned to the right; the reset link (when shown) stays centered. */
+            /* "Video Baru" button + reset link drop to their own row below the filters. The button
+               wrapper takes a full row so the button sits on its own line, pinned to the right. */
             .ysf-form-cikgu > .ysf-reset { flex:1 1 100% !important; margin-left:0 !important; justify-content:center; }
-            .ysf-form-cikgu > .tp-btn { flex:1 1 100% !important; max-width:max-content; margin-left:auto !important; min-height:36px !important; padding:0 15px !important; font-size:12.5px !important; }
-            .ysf-form-cikgu > .tp-btn svg { width:15px !important; height:15px !important; }
+            .ysf-form-cikgu > .tp-newbtn-wrap { flex:1 1 100% !important; display:flex; justify-content:flex-end; margin-left:0 !important; }
+            .ysf-form-cikgu > .tp-newbtn-wrap .tp-btn { min-height:36px !important; padding:0 15px !important; font-size:12.5px !important; }
+            .ysf-form-cikgu > .tp-newbtn-wrap .tp-btn svg { width:15px !important; height:15px !important; }
             /* List cards (video etc.): wrap so the action buttons drop below instead of overlapping. */
             .tp-listcard { flex-wrap:wrap; row-gap:12px; padding:14px 16px; }
             .tp-listcard:has(.tp-listactions) > button { width:104px !important; height:66px !important; }
