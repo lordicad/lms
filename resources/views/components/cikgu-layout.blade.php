@@ -320,6 +320,16 @@
             .tp-pill { min-height:30px; padding:4px 10px; font-size:11px; }
             .tp-iconbtn { width:38px !important; height:38px !important; }
             .tp-iconbtn svg { width:17px !important; height:17px !important; }
+            /* Year / Subject / Chapter filter: keep the dropdowns on one line, shrunk. */
+            .ysf-form-cikgu { flex-wrap:wrap !important; gap:8px !important; align-items:flex-end; }
+            .ysf-form-cikgu .tp-field { flex:1 1 0 !important; min-width:0 !important; gap:4px !important; }
+            .ysf-form-cikgu .tp-label { font-size:11px !important; }
+            .ysf-form-cikgu .ss-wrap { display:block !important; width:100% !important; min-width:0 !important; }
+            .ysf-form-cikgu .ss-trigger { min-height:38px !important; font-size:12px !important; padding:0 30px 0 12px !important; }
+            .ysf-form-cikgu .ss-chevron { width:14px !important; height:14px !important; }
+            .ysf-form-cikgu select.tp-filter-select { min-width:0 !important; width:100% !important; min-height:38px !important; font-size:12px !important; }
+            /* "Video Baru" button + reset link wrap to their own full-width row below the filters. */
+            .ysf-form-cikgu > .tp-btn, .ysf-form-cikgu > .ysf-reset { flex:1 1 100% !important; margin-left:0 !important; justify-content:center; }
         }
         @media (prefers-reduced-motion:reduce){ .tp * { transition:none !important; } }
     </style>
