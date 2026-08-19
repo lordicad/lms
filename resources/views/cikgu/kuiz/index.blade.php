@@ -15,10 +15,12 @@
     </div>
 
     <x-year-subject-filter :subjects="$subjects" :grades="$grades" :filter="$filter" with-chapter :action="route('cikgu.kuiz.index')">
-        <a href="{{ route('cikgu.kuiz.mod') }}" class="tp-btn" style="margin-left:auto">
-            <x-icon name="plus" class="h-4 w-4" />
-            {{ __('Kuiz Baru') }}
-        </a>
+        <div class="tp-newbtn-wrap" style="margin-left:auto">
+            <a href="{{ route('cikgu.kuiz.mod') }}" class="tp-btn">
+                <x-icon name="plus" class="h-4 w-4" />
+                {{ __('Kuiz Baru') }}
+            </a>
+        </div>
     </x-year-subject-filter>
 
     <div x-data="{ quiz: null, open(data) { this.quiz = data }, close() { this.quiz = null } }">
