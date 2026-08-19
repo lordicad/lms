@@ -70,7 +70,9 @@
                                 </div>
                             </div>
 
-                            <a href="{{ route('cikgu.bab.show', $chapter) }}" style="flex-shrink:0;display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 18px;border-radius:12px;border:1.5px solid {{ $c['accent'] }};color:{{ $c['accent'] }};background:var(--tp-surface);font-family:'Geist',sans-serif;font-weight:800;font-size:14px;text-decoration:none">{{ __('Lihat') }}</a>
+                            <div class="tp-listactions" style="display:flex;align-items:center;flex-shrink:0">
+                                <a href="{{ route('cikgu.bab.show', $chapter) }}" style="flex-shrink:0;display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 18px;border-radius:12px;border:1.5px solid {{ $c['accent'] }};color:{{ $c['accent'] }};background:var(--tp-surface);font-family:'Geist',sans-serif;font-weight:800;font-size:14px;text-decoration:none">{{ __('Lihat') }}</a>
+                            </div>
                         </div>
                     @endforeach
                 </div>
