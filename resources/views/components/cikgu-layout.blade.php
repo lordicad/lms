@@ -332,7 +332,7 @@
                wrapper takes a full row so the button sits on its own line, pinned to the right. */
             .ysf-form-cikgu > .ysf-reset { flex:1 1 100% !important; margin-left:0 !important; justify-content:center; }
             .ysf-form-cikgu { margin-bottom:-10px; }
-            .ysf-form-cikgu > .tp-newbtn-wrap { flex:1 1 100% !important; display:flex; justify-content:flex-end; margin-left:0 !important; }
+            .ysf-form-cikgu > .tp-newbtn-wrap { flex:1 1 100% !important; display:flex; justify-content:flex-end; margin-left:0 !important; margin-top:8px; }
             .ysf-form-cikgu > .tp-newbtn-wrap .tp-btn { min-height:38px !important; padding:0 16px !important; font-size:12.5px !important; }
             .ysf-form-cikgu > .tp-newbtn-wrap .tp-btn svg { width:14px !important; height:14px !important; }
             /* List cards (video etc.): wrap so the action buttons drop below instead of overlapping. */
