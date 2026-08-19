@@ -352,6 +352,7 @@
             .tp-listactions .tp-btn-ghost svg { width:14px !important; height:14px !important; }
             .tp-listactions .tp-icon-action { width:34px !important; height:34px !important; }
             .tp-listactions .tp-icon-action svg { width:16px !important; height:16px !important; }
+            .tp-listactions .tp-lihatbtn { min-height:34px !important; font-size:12px !important; padding:0 12px !important; }
             /* Smaller card text: title, subject pill and meta. */
             .tp-listcard button.tp-g { font-size:14px !important; }
             .tp-listcard .tp-tag { font-size:10.5px !important; }

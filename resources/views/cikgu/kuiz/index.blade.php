@@ -73,7 +73,7 @@
                     {{-- Actions: on mobile they drop to their own row below the details. --}}
                     <div class="tp-listactions" style="display:flex;align-items:center;gap:14px;flex-shrink:0">
                     @if ($quiz->isInteractive())
-                        <button type="button" style="flex-shrink:0;display:inline-flex;align-items:center;gap:7px;min-height:42px;border-radius:11px;border:1.5px solid #0F7A68;background:var(--tp-surface);color:#0F7A68;font-family:'Geist',sans-serif;font-weight:800;font-size:13px;padding:0 16px;cursor:pointer" @click="open(@js([
+                        <button type="button" class="tp-lihatbtn" style="flex-shrink:0;display:inline-flex;align-items:center;gap:7px;min-height:42px;border-radius:11px;border:1.5px solid #0F7A68;background:var(--tp-surface);color:#0F7A68;font-family:'Geist',sans-serif;font-weight:800;font-size:13px;padding:0 16px;cursor:pointer" @click="open(@js([
                             'title' => $quiz->localizedTitle(),
                             'subtitle' => collect([$quiz->chapter->subject->displayName(), $quiz->chapter->grade->displayName(), __(':count soalan', ['count' => $quiz->questions_count])])->filter()->implode(' · '),
                             'questions' => $quiz->questions->map(fn ($question) => [
