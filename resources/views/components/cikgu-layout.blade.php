@@ -295,8 +295,18 @@
         .tp-burger-open:hover { background:var(--tp-hover); }
         .tp-backdrop { display:none; position:fixed; inset:0; background:rgba(20,24,20,.45); z-index:55; }
 
+        /* Pagination (pagination.tp view): numbered links styled like the portal's other buttons. */
+        .tp-pg-desktop { display:flex; }
+        .tp-pg-num { display:inline-flex; align-items:center; justify-content:center; min-width:38px; height:38px; padding:0 10px; border-radius:10px; border:1px solid var(--tp-line-2); background:var(--tp-surface); color:var(--tp-ink); font-family:'Geist',sans-serif; font-weight:800; font-size:13px; text-decoration:none; transition:background .15s; }
+        .tp-pg-num:hover { background:var(--tp-hover); }
+        .tp-pg-num.is-active { background:var(--tp-active-bg); color:var(--tp-active-fg); border-color:transparent; }
+        .tp-pg-num.is-disabled { opacity:.4; cursor:not-allowed; }
+
         @media (max-width:900px) {
             .tp-shell { grid-template-columns:1fr; }
+            /* Pagination: show the ghost-button Prev/Next, hide the desktop numbered strip. */
+            .tp-pg-mobile { display:flex !important; }
+            .tp-pg-desktop { display:none; }
             /* Sidebar slides in from the left as a drawer (exactly like the student portal). */
             .tp-side { width:284px !important; top:0 !important; bottom:0 !important; height:auto !important; z-index:60; transform:translateX(-100%); transition:transform .25s ease; box-shadow:0 0 44px rgba(20,24,20,.28); }
             .tp-side.is-open { transform:translateX(0); }

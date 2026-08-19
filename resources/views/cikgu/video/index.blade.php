@@ -117,7 +117,7 @@
             @endforeach
         </div>
 
-        <div>{{ $lessons->links() }}</div>
+        <div>{{ $lessons->links('pagination.tp') }}</div>
     @endif
 
         {{-- Preview modal: gradient header + black video body, the shared admin shell. x-if so
