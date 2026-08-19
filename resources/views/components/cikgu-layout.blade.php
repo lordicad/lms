@@ -337,7 +337,7 @@
             /* List cards (video etc.): wrap so the action buttons drop below instead of overlapping. */
             .tp-listcard { flex-wrap:wrap; row-gap:12px; padding:14px 16px; }
             .tp-listcard:has(.tp-listactions) > button { width:104px !important; height:66px !important; }
-            .tp-listactions { flex:1 1 100% !important; gap:10px; }
+            .tp-listactions { flex:1 1 100% !important; gap:10px; justify-content:flex-end; }
             .tp-listactions .tp-btn-ghost { min-height:34px !important; padding:0 12px !important; font-size:12px !important; }
             .tp-listactions .tp-btn-ghost svg { width:14px !important; height:14px !important; }
             .tp-listactions .tp-icon-action { width:34px !important; height:34px !important; }
