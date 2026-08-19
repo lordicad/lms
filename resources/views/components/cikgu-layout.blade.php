@@ -320,12 +320,12 @@
             .tp-topbar { order:-1; flex:1 1 100%; gap:8px; }
             /* Heading sized + spaced to match the student "Selamat datang" home heading. */
             .tp-heading { flex:1 1 100%; min-width:0; margin-top:8px; }
-            .tp-heading .hi-tile { width:40px !important; height:40px !important; border-radius:12px !important; }
-            .tp-heading .hi-tile img { width:24px !important; height:24px !important; }
-            .tp-heading .hi-tile svg { width:22px !important; height:22px !important; }
-            .tp-heading .hi-tile > span { font-size:22px !important; }
-            .tp-heading .tp-h1 { font-size:21px !important; }
-            .tp-heading .tp-hsub { font-size:13px !important; }
+            .tp-heading .hi-tile { width:34px !important; height:34px !important; border-radius:10px !important; }
+            .tp-heading .hi-tile img { width:20px !important; height:20px !important; }
+            .tp-heading .hi-tile svg { width:19px !important; height:19px !important; }
+            .tp-heading .hi-tile > span { font-size:19px !important; }
+            .tp-heading .tp-h1 { font-size:19px !important; }
+            .tp-heading .tp-hsub { font-size:12.5px !important; }
             .tp-langbar { padding:2px; }
             .tp-pill { min-height:30px; padding:4px 10px; font-size:11px; }
             .tp-iconbtn { width:38px !important; height:38px !important; }
