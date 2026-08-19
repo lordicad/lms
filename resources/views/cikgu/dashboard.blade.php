@@ -29,6 +29,9 @@
             /* Indent the meta row so it lines up with the title/subject (past the 64px thumb + 16px gap). */
             .tp-vidmeta { flex:1 1 100% !important; gap:14px; flex-wrap:wrap; margin-left:80px; }
             .tp-vidmeta .tp-badge { padding:4px 10px; font-size:10.5px; }
+            /* Chapter + type always on their own line below the subject pill. */
+            .tp-metasep { display:none; }
+            .tp-metasub { display:block; margin-top:3px; }
         }
     </style>
 
@@ -115,7 +118,7 @@
                         </span>
                         <div style="display:flex;flex-direction:column;gap:2px;min-width:0;flex:1">
                             <span class="tp-g" style="font-weight:800;font-size:14.5px;color:var(--tp-ink)">{{ $quiz->title }}</span>
-                            <span style="font-size:12.5px;color:var(--tp-muted)"><span style="display:inline-block;vertical-align:middle;background:color-mix(in oklab, {{ $quiz->chapter->subject->color ?: '#17907B' }} var(--pill-bw), var(--pill-bb));color:color-mix(in oklab, {{ $quiz->chapter->subject->color ?: '#17907B' }} var(--pill-fw), var(--pill-fb));border-radius:999px;padding:2px 9px;font-weight:800;font-size:11px">{{ $quiz->chapter->subject->name }}</span> · {{ __('Bab :n', ['n' => $quiz->chapter->number]) }} · {{ $quiz->isInteractive() ? __('Interaktif') : __('Bercetak') }}</span>
+                            <span style="font-size:12.5px;color:var(--tp-muted)"><span style="display:inline-block;vertical-align:middle;background:color-mix(in oklab, {{ $quiz->chapter->subject->color ?: '#17907B' }} var(--pill-bw), var(--pill-bb));color:color-mix(in oklab, {{ $quiz->chapter->subject->color ?: '#17907B' }} var(--pill-fw), var(--pill-fb));border-radius:999px;padding:2px 9px;font-weight:800;font-size:11px">{{ $quiz->chapter->subject->name }}</span><span class="tp-metasep"> · </span><span class="tp-metasub">{{ __('Bab :n', ['n' => $quiz->chapter->number]) }} · {{ $quiz->isInteractive() ? __('Interaktif') : __('Bercetak') }}</span></span>
                         </div>
                         <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0">
                             <span class="tp-meta">{{ __(':taken/:total murid', ['taken' => $quiz->taken_students_count, 'total' => $totalStudents]) }}</span>
