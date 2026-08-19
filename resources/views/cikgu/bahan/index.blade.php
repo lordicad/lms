@@ -72,8 +72,8 @@
                             @if ($material->lesson)
                                 <span class="tp-meta" style="display:inline-flex;align-items:center;gap:6px;max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><x-icon name="file" class="h-4 w-4" style="color:#0F7A68;flex-shrink:0" />{{ $material->lesson->title }}</span>
                             @endif
-                            <span style="background:#EAEBFB;color:#4F46E5;border-radius:999px;padding:4px 12px;font-family:'Geist',sans-serif;font-size:11.5px;font-weight:800">{{ strtoupper($material->extension()) }}</span>
                             <span class="tp-meta">{{ $material->humanSize() }}</span>
+                            <span style="background:#EAEBFB;color:#4F46E5;border-radius:999px;padding:4px 12px;font-family:'Geist',sans-serif;font-size:11.5px;font-weight:800">{{ strtoupper($material->extension()) }}</span>
                             <span class="tp-meta" style="display:inline-flex;align-items:center;gap:6px"><x-icon name="download" class="h-4 w-4" style="color:var(--tp-muted-2)" />{{ $material->download_count }}</span>
                         </div>
                     </div>
