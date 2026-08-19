@@ -70,6 +70,8 @@
                         @endif
                     </div>
 
+                    {{-- Actions: on mobile they drop to their own row below the details. --}}
+                    <div class="tp-listactions" style="display:flex;align-items:center;gap:14px;flex-shrink:0">
                     @if ($quiz->isInteractive())
                         <button type="button" style="flex-shrink:0;display:inline-flex;align-items:center;gap:7px;min-height:42px;border-radius:11px;border:1.5px solid #0F7A68;background:var(--tp-surface);color:#0F7A68;font-family:'Geist',sans-serif;font-weight:800;font-size:13px;padding:0 16px;cursor:pointer" @click="open(@js([
                             'title' => $quiz->localizedTitle(),
@@ -107,11 +109,12 @@
                             <span class="sr-only">{{ __('Padam :title', ['title' => $quiz->title]) }}</span>
                         </button>
                     </x-confirm-modal>
+                    </div>
                 </div>
             @endforeach
         </div>
 
-        <div>{{ $quizzes->links() }}</div>
+        <div>{{ $quizzes->links('pagination.tp') }}</div>
     @endif
 
         {{-- Read-only question preview (WeLearn Admin design: gradient header + green body) --}}
