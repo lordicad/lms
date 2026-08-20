@@ -385,6 +385,13 @@
             /* Form section headings + field labels: a little smaller on mobile. */
             .tp-g[style*="font-size:17px"] { font-size:15px !important; }
             .tp-label { font-size:12px !important; }
+            /* Chapter picker (Tahun/Subjek/Bab on the video/material forms): smaller. */
+            .tp-chapicker { gap:8px !important; }
+            .tp-chapicker .tp-label { font-size:11px !important; }
+            .tp-chapicker .ss-trigger { min-height:34px !important; font-size:11.5px !important; padding:0 26px 0 10px !important; }
+            .tp-chapicker .ss-chevron { width:13px !important; height:13px !important; }
+            .tp-chapicker select.tp-select { min-height:34px !important; font-size:11.5px !important; }
+            .tp-chapicker .tp-hint { font-size:11px !important; }
             /* Smaller card text: title, subject pill and meta. */
             .tp-listcard button.tp-g { font-size:14px !important; }
             .tp-listcard .tp-tag { font-size:10.5px !important; }

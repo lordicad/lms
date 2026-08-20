@@ -43,7 +43,7 @@
         labels: { loading: @js(__('Memuatkan bab...')), placeholder: @js(__('Pilih bab')) },
      })"
      x-init="init()"
-     style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px">
+     class="tp-chapicker" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px">
 
     <div class="tp-field">
         <label for="grade_id" class="tp-label">{{ __('Tahun') }}</label>
