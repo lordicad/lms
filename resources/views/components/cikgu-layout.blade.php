@@ -366,7 +366,7 @@
             /* Chapter card: smaller number tile + title. */
             .tp-listcard:has(.tp-chapmeta) > span:first-child { width:40px !important; height:40px !important; border-radius:11px !important; font-size:16px !important; }
             .tp-listcard:has(.tp-chapmeta) .tp-g { font-size:14px !important; }
-            .tp-listcard:has(.tp-chapmeta) .tp-listactions a { min-height:34px !important; font-size:12.5px !important; padding:0 14px !important; }
+            .tp-listcard:has(.tp-chapmeta) .tp-listactions a { min-height:37px !important; font-size:13px !important; padding:0 14px !important; }
             /* Smaller card text: title, subject pill and meta. */
             .tp-listcard button.tp-g { font-size:14px !important; }
             .tp-listcard .tp-tag { font-size:10.5px !important; }
