@@ -358,7 +358,7 @@
             .tp-listcard .tp-vidthumb { width:104px !important; height:66px !important; }
             .tp-listactions { flex:1 1 100% !important; gap:10px; justify-content:flex-end; }
             /* A bare Lihat/preview button that sits directly in a list card drops to its own row. */
-            .tp-listcard > button.tp-btn-outline { flex:1 1 100% !important; justify-content:center; margin-top:2px; }
+            .tp-listcard > button.tp-btn-outline { flex:1 1 100% !important; justify-content:center; margin-top:2px; min-height:36px !important; font-size:12.5px !important; padding:0 14px !important; }
             .tp-listactions .tp-btn-ghost { min-height:34px !important; padding:0 12px !important; font-size:12px !important; }
             .tp-listactions .tp-btn-ghost svg { width:14px !important; height:14px !important; }
             .tp-listactions .tp-icon-action { width:34px !important; height:34px !important; }
