@@ -446,6 +446,11 @@
             .tp-crumb { font-size:11px !important; padding:4px 12px !important; }
             .tp-crumb svg { width:13px !important; height:13px !important; }
             .tp-statsect { margin-top:10px; }
+            /* Per-question correctness cards: smaller text. */
+            .tp-statsect [style*="font-size:15px"] { font-size:13.5px !important; }
+            .tp-statsect [style*="font-size:13.5px"] { font-size:12px !important; }
+            .tp-statsect [style*="font-size:13px"] { font-size:11.5px !important; }
+            .tp-statsect [style*="font-size:12px"] { font-size:11px !important; }
             /* All styled-select dropdown list options: a little smaller. */
             .ss-opt-label { font-size:12.5px !important; }
             /* KPI stat cards: more compact on mobile. */
