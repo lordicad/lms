@@ -415,6 +415,9 @@
             .tp-note { font-size:12px !important; }
             /* Filter dropdown list options: a little smaller. */
             .ysf-form-cikgu .ss-opt-label, .tp-chapicker .ss-opt-label, .tp-toolbar .ss-opt-label { font-size:12.5px !important; }
+            /* Open the filter dropdown panels right-aligned (leftward) so the wide list never runs
+               off the right edge on the narrow triggers. */
+            .ysf-form-cikgu .ss-panel, .tp-chapicker .ss-panel, .tp-toolbar .ss-panel { left:auto !important; right:0 !important; }
             /* Smaller card text: title, subject pill and meta. */
             .tp-listcard button.tp-g { font-size:14px !important; }
             .tp-listcard .tp-tag { font-size:10.5px !important; }
