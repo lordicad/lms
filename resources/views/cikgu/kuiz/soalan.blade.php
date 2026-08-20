@@ -228,6 +228,14 @@
             }
             .qb-del:hover:not(:disabled) { background:#FDE7E0; }
             .qb-del:disabled { opacity:.35; cursor:default; }
+
+            @media (max-width:900px) {
+                .qb-optrow { gap:8px; padding:8px 10px; }
+                .qb-optrow input[type=radio], .qb-optrow input[type=checkbox] { width:18px !important; height:18px !important; }
+                .qb-letter { width:26px; height:26px; font-size:12px; }
+                .qb-optinput { min-height:38px; padding:0 10px; }
+                .qb-del { width:26px; height:26px; font-size:16px; }
+            }
         </style>
     @endonce
 
