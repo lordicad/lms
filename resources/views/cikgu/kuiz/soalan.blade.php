@@ -126,12 +126,12 @@
                         </template>
 
                         <button type="button" @click="addOption(question)" :disabled="question.options.length >= defaults.max_options"
-                                class="tp-g" style="align-self:flex-start;display:inline-flex;align-items:center;gap:8px;min-height:40px;border:none;cursor:pointer;border-radius:10px;background:transparent;color:#17907B;font-weight:800;font-size:13.5px;padding:0 4px">
+                                class="tp-g qb-addopt" style="align-self:flex-start;display:inline-flex;align-items:center;gap:8px;min-height:40px;border:none;cursor:pointer;border-radius:10px;background:transparent;color:#17907B;font-weight:800;font-size:13.5px;padding:0 4px">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M12 3 21 12 12 21 3 12z"/><line x1="12" y1="9" x2="12" y2="15"/><line x1="9" y1="12" x2="15" y2="12"/></svg>
                             {{ __('Tambah pilihan') }}
                         </button>
 
-                        <span style="font-size:13px;font-weight:700;color:#C24936" x-show="! isQuestionValid(question)" x-cloak x-text="questionError(question)"></span>
+                        <span class="qb-qerror" style="font-size:13px;font-weight:700;color:#C24936" x-show="! isQuestionValid(question)" x-cloak x-text="questionError(question)"></span>
                     </fieldset>
 
                     {{-- Translation review: the auto-translated question + options, editable, so a
@@ -237,6 +237,9 @@
                 .qb-optinput:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]) { font-size:13px !important; }
                 .qb-optinput::placeholder { font-size:12.5px !important; }
                 .qb-del { width:24px; height:24px; font-size:15px; }
+                .qb-addopt { font-size:12px !important; min-height:34px !important; }
+                .qb-addopt svg { width:14px !important; height:14px !important; }
+                .qb-qerror { font-size:11.5px !important; }
             }
         </style>
     @endonce
