@@ -99,6 +99,6 @@
         {{-- total(), not count(): count() would only report the rows on this page. --}}
         <span style="font-size:13px;color:var(--tp-muted)">{{ __(':count murid dalam senarai ini.', ['count' => $rows->total()]) }}</span>
 
-        <div>{{ $rows->links() }}</div>
+        <div>{{ $rows->links('pagination.tp') }}</div>
     @endif
 </x-cikgu-layout>
