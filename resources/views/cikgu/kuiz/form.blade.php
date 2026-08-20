@@ -288,6 +288,7 @@
                 .kf-type-desc { font-size:11.5px; }
                 .kf-setrow .tp-g { font-size:13px !important; }
                 .kf-setrow [style*="font-size:12.5px"] { font-size:11.5px !important; }
+                .kf-actionbar .tp-btn, .kf-actionbar .tp-btn-outline { min-height:40px !important; font-size:13px !important; padding:0 16px !important; }
             }
         </style>
     @endonce
