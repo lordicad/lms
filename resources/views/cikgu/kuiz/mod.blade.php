@@ -94,6 +94,15 @@
                 border-radius:14px; padding:13px 18px;
             }
             .km-btn svg { width:26px; height:26px; flex-shrink:0; }
+
+            @media (max-width:900px) {
+                .km-tile { width:46px; height:46px; border-radius:13px; }
+                .km-tile svg { width:22px; height:22px; }
+                .km-title { font-size:16px; }
+                .km-desc { font-size:12.5px; margin-bottom:16px; }
+                .km-btn { font-size:13px; padding:11px 16px; }
+                .km-btn svg { width:20px; height:20px; }
+            }
         </style>
     @endonce
 </x-cikgu-layout>
