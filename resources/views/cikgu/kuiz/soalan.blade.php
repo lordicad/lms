@@ -172,7 +172,7 @@
             </template>
 
             <button type="button" @click="addQuestion()"
-                    class="tp-g" style="min-height:52px;cursor:pointer;border-radius:14px;border:1.5px dashed var(--tp-line-2, rgba(46,44,80,.2));background:var(--tp-surface-2, #F1F0E8);color:var(--tp-ink);font-weight:800;font-size:14.5px">+ {{ __('Tambah Soalan') }}</button>
+                    class="tp-g qb-addq" style="min-height:52px;cursor:pointer;border-radius:14px;border:1.5px dashed var(--tp-line-2, rgba(46,44,80,.2));background:var(--tp-surface-2, #F1F0E8);color:var(--tp-ink);font-weight:800;font-size:14.5px">+ {{ __('Tambah Soalan') }}</button>
 
             <div>
                 <div class="tp-card" style="border-radius:18px;padding:16px 22px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
@@ -245,6 +245,7 @@
                 .qb-qerror { font-size:11.5px !important; }
                 /* Batal + Simpan drop to their own row below the summary. */
                 .qb-actbtns { flex:1 1 100% !important; }
+                .qb-addq { font-size:13px !important; min-height:46px !important; }
             }
         </style>
     @endonce
