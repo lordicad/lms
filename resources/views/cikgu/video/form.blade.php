@@ -214,7 +214,7 @@
                 {{-- Localised file button: the browser's native "Choose File / No file chosen" cannot
                      be retexted, so the input is hidden and driven from a styled label in the form's
                      own Alpine scope (keeps x-ref / onThumbnailPicked working). --}}
-                <label for="thumbnail" style="display:flex;align-items:center;gap:14px;width:100%;min-height:46px;box-sizing:border-box;padding:5px;cursor:pointer;border:1.5px solid var(--tp-line-2);border-radius:12px;background:var(--tp-input)">
+                <label for="thumbnail" class="tp-filepick" style="display:flex;align-items:center;gap:14px;width:100%;min-height:46px;box-sizing:border-box;padding:5px;cursor:pointer;border:1.5px solid var(--tp-line-2);border-radius:12px;background:var(--tp-input)">
                     <span style="display:inline-flex;align-items:center;min-height:36px;padding:0 16px;border-radius:10px;background:var(--tp-teal);color:#fff;white-space:nowrap;font-family:'Geist',sans-serif;font-weight:800;font-size:13px">{{ __('Pilih Fail') }}</span>
                     <span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:'Nunito',sans-serif;font-size:13.5px;color:var(--tp-muted)" x-text="thumbName || '{{ __('Tiada fail dipilih') }}'"></span>
                 </label>

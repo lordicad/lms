@@ -396,6 +396,12 @@
             .tp-input, .tp-select { min-height:40px !important; padding:0 12px !important; }
             .tp-textarea { padding:9px 12px !important; }
             textarea.tp-textarea { height:88px !important; }
+            /* Source tabs, hints and the file picker: a little smaller. */
+            .tp-toggle { min-height:40px !important; font-size:12.5px !important; }
+            .tp-hint { font-size:11.5px !important; }
+            .tp-filepick { min-height:40px !important; }
+            .tp-filepick > span:first-child { min-height:30px !important; font-size:12px !important; padding:0 12px !important; }
+            .tp-filepick > span:last-child { font-size:12px !important; }
             /* Smaller card text: title, subject pill and meta. */
             .tp-listcard button.tp-g { font-size:14px !important; }
             .tp-listcard .tp-tag { font-size:10.5px !important; }
