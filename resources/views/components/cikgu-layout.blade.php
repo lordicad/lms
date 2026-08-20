@@ -413,10 +413,13 @@
             .tp-checkrow .tp-g { font-size:13px !important; }
             .tp-checkrow [style*="font-size:12.5px"] { font-size:11.5px !important; }
             /* Current-file card + replace-file dropzone: smaller text/icon. */
-            .tp-filecard > span:first-child { width:38px !important; height:38px !important; }
-            .tp-filecard [style*="font-size:14px"] { font-size:13px !important; }
-            .tp-filecard [style*="font-size:12.5px"] { font-size:11.5px !important; }
-            .tp-filedrop [style*="font-size:13.5px"] { font-size:12.5px !important; }
+            .tp-filecard > span:first-child { width:34px !important; height:34px !important; border-radius:10px !important; }
+            .tp-filecard > span:first-child svg { width:18px !important; height:18px !important; }
+            .tp-filecard [style*="font-size:14px"] { font-size:12.5px !important; }
+            .tp-filecard [style*="font-size:12.5px"] { font-size:11px !important; }
+            .tp-filedrop > span:first-child { width:34px !important; height:34px !important; }
+            .tp-filedrop > span:first-child svg { width:17px !important; height:17px !important; }
+            .tp-filedrop [style*="font-size:13.5px"] { font-size:12px !important; }
             /* Form footer (Simpan / Batal) buttons: smaller. */
             .tp-formfooter .tp-btn, .tp-formfooter .tp-btn-outline { min-height:40px !important; font-size:13px !important; padding:0 16px !important; }
             /* Upload dropzone + info note: a little smaller. */
