@@ -413,6 +413,8 @@
             .tp-dropzone .tp-g { font-size:13px !important; }
             .tp-dropzone > svg { width:24px !important; height:24px !important; }
             .tp-note { font-size:12px !important; }
+            /* Filter dropdown list options: a little smaller. */
+            .ysf-form-cikgu .ss-opt-label, .tp-chapicker .ss-opt-label, .tp-toolbar .ss-opt-label { font-size:12.5px !important; }
             /* Smaller card text: title, subject pill and meta. */
             .tp-listcard button.tp-g { font-size:14px !important; }
             .tp-listcard .tp-tag { font-size:10.5px !important; }

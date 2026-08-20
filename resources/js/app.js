@@ -442,12 +442,17 @@ function enhanceSelect(sel) {
         build();
         panel.hidden = false;
         panel.classList.remove('ss-align-right');
+        panel.style.transform = '';
         open = true;
         trigger.setAttribute('aria-expanded', 'true');
         wrap.classList.add('is-open');
-        // Flip to right-aligned if the panel would run past the viewport edge.
+        // Keep the panel fully on screen: shift it horizontally so it never runs off either edge.
+        // (A narrow trigger can otherwise leave a wider list clipped past the viewport.)
         const r = panel.getBoundingClientRect();
-        if (r.right > window.innerWidth - 8) panel.classList.add('ss-align-right');
+        let shift = 0;
+        if (r.right > window.innerWidth - 8) shift = (window.innerWidth - 8) - r.right;
+        if (r.left + shift < 8) shift = 8 - r.left;
+        if (shift) panel.style.transform = `translateX(${Math.round(shift)}px)`;
         const cur = panel.querySelector('.ss-opt.is-selected') || rows()[0];
         if (cur) cur.scrollIntoView({ block: 'nearest' });
     };
