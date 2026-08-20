@@ -291,7 +291,7 @@
                 /* All action buttons share the row equally (text wraps inside if needed) so up to
                    three sit side by side on one line. */
                 .kf-actionbar { gap:6px !important; padding:12px 12px !important; flex-wrap:nowrap !important; overflow:visible !important; align-items:stretch !important; }
-                .kf-actionbar .tp-btn, .kf-actionbar .tp-btn-outline { flex:1 1 0 !important; min-width:0 !important; min-height:36px !important; font-size:11px !important; padding:0 8px !important; gap:4px !important; text-align:center; line-height:1.15; }
+                .kf-actionbar .tp-btn, .kf-actionbar .tp-btn-outline { flex:1 1 0 !important; min-width:0 !important; min-height:36px !important; font-size:10px !important; padding:0 7px !important; gap:4px !important; text-align:center; line-height:1.15; }
                 .kf-actionbar .tp-btn svg, .kf-actionbar .tp-btn-outline svg { width:13px !important; height:13px !important; }
             }
         </style>
