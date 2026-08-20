@@ -126,7 +126,7 @@
                     </template>
 
                     <template x-if="quiz.questions.length">
-                        <div style="padding:24px;display:flex;flex-direction:column;gap:16px">
+                        <div class="qb-preview" style="padding:24px;display:flex;flex-direction:column;gap:16px">
                             <div style="display:flex;align-items:center;gap:8px;background:#fff;border:1px solid #B7E3D8;border-radius:12px;padding:10px 16px;align-self:flex-start">
                                 <span style="width:16px;height:16px;border-radius:5px;background:#E9F7F2;border:1.5px solid #0F7A68;display:inline-block;flex-shrink:0"></span>
                                 <span style="font-size:12.5px;font-weight:800;color:#0F7A68;font-family:'Geist',sans-serif">{{ __('Jawapan betul ditanda hijau') }}</span>

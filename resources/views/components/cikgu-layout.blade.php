@@ -435,6 +435,10 @@
             .tp-quizhead h2 { font-size:18px !important; }
             /* All styled-select dropdown list options: a little smaller. */
             .ss-opt-label { font-size:12.5px !important; }
+            /* Quiz question preview: smaller question/option text. */
+            .qb-preview [style*="font-size:15px"] { font-size:13.5px !important; }
+            .qb-preview [style*="font-size:13.5px"] { font-size:12.5px !important; }
+            .qb-preview [style*="font-size:13px"] { font-size:11.5px !important; }
             /* Open the filter dropdown panels right-aligned (leftward) so the wide list never runs
                off the right edge on the narrow triggers. */
             .ysf-form-cikgu .ss-panel, .tp-chapicker .ss-panel, .tp-toolbar .ss-panel { left:auto !important; right:0 !important; }
