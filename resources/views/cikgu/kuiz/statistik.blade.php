@@ -73,7 +73,7 @@
         </div>
 
         {{-- Attempts --}}
-        <div style="display:flex;flex-direction:column;gap:12px">
+        <div class="tp-sectgap" style="display:flex;flex-direction:column;gap:12px">
             <h2 class="tp-g" style="font-size:17px;font-weight:800;color:var(--tp-ink)">{{ __('Percubaan murid') }}</h2>
 
             @if ($attempts->isEmpty())

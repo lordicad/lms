@@ -445,7 +445,7 @@
             /* Subject/chapter breadcrumb pill. */
             .tp-crumb { font-size:11px !important; padding:4px 12px !important; }
             .tp-crumb svg { width:13px !important; height:13px !important; }
-            .tp-statsect { margin-top:10px; }
+            .tp-statsect, .tp-sectgap { margin-top:10px; }
             /* Per-question correctness cards: smaller text. */
             .tp-statsect [style*="font-size:15px"] { font-size:13.5px !important; }
             .tp-statsect [style*="font-size:13.5px"] { font-size:12px !important; }
