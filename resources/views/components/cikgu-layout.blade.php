@@ -397,6 +397,7 @@
             .tp-chapicker .tp-hint { font-size:11px !important; }
             /* Form inputs: shorter/tighter on mobile (text stays 16px to avoid iOS zoom-on-focus). */
             .tp-input, .tp-select { min-height:40px !important; padding:0 12px !important; }
+            .tp-input, .tp-textarea { font-size:14px !important; }
             .tp-input::placeholder, .tp-textarea::placeholder { font-size:12.5px !important; opacity:1; }
             .tp-input::-webkit-input-placeholder, .tp-textarea::-webkit-input-placeholder { font-size:12.5px !important; }
             .tp-textarea { padding:9px 12px !important; }
