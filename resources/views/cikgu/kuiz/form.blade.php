@@ -288,10 +288,11 @@
                 .kf-type-desc { font-size:11.5px; }
                 .kf-setrow .tp-g { font-size:13px !important; }
                 .kf-setrow [style*="font-size:12.5px"] { font-size:11.5px !important; }
-                /* Shrink enough that "Seterusnya: Tambah Soalan" sits beside "Batal" on one row. */
-                .kf-actionbar { gap:8px !important; padding:14px 14px !important; }
-                .kf-actionbar .tp-btn, .kf-actionbar .tp-btn-outline { min-height:36px !important; font-size:11.5px !important; padding:0 12px !important; gap:6px !important; }
-                .kf-actionbar .tp-btn svg, .kf-actionbar .tp-btn-outline svg { width:15px !important; height:15px !important; }
+                /* All action buttons share the row equally (text wraps inside if needed) so up to
+                   three sit side by side on one line. */
+                .kf-actionbar { gap:6px !important; padding:12px 12px !important; flex-wrap:nowrap !important; overflow:visible !important; align-items:stretch !important; }
+                .kf-actionbar .tp-btn, .kf-actionbar .tp-btn-outline { flex:1 1 0 !important; min-width:0 !important; min-height:36px !important; font-size:11px !important; padding:0 8px !important; gap:4px !important; text-align:center; line-height:1.15; }
+                .kf-actionbar .tp-btn svg, .kf-actionbar .tp-btn-outline svg { width:13px !important; height:13px !important; }
             }
         </style>
     @endonce
