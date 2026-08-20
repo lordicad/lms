@@ -433,8 +433,8 @@
             .tp-quizhead { gap:11px !important; }
             .tp-quizhead > span { font-size:11px !important; padding:4px 12px !important; }
             .tp-quizhead h2 { font-size:18px !important; }
-            /* Filter dropdown list options: a little smaller. */
-            .ysf-form-cikgu .ss-opt-label, .tp-chapicker .ss-opt-label, .tp-toolbar .ss-opt-label { font-size:12.5px !important; }
+            /* All styled-select dropdown list options: a little smaller. */
+            .ss-opt-label { font-size:12.5px !important; }
             /* Open the filter dropdown panels right-aligned (leftward) so the wide list never runs
                off the right edge on the narrow triggers. */
             .ysf-form-cikgu .ss-panel, .tp-chapicker .ss-panel, .tp-toolbar .ss-panel { left:auto !important; right:0 !important; }
