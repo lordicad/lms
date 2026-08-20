@@ -409,6 +409,10 @@
             .tp-checkrow [style*="font-size:12.5px"] { font-size:11.5px !important; }
             /* Form footer (Simpan / Batal) buttons: smaller. */
             .tp-formfooter .tp-btn, .tp-formfooter .tp-btn-outline { min-height:40px !important; font-size:13px !important; padding:0 16px !important; }
+            /* Upload dropzone + info note: a little smaller. */
+            .tp-dropzone .tp-g { font-size:13px !important; }
+            .tp-dropzone > svg { width:24px !important; height:24px !important; }
+            .tp-note { font-size:12px !important; }
             /* Smaller card text: title, subject pill and meta. */
             .tp-listcard button.tp-g { font-size:14px !important; }
             .tp-listcard .tp-tag { font-size:10.5px !important; }

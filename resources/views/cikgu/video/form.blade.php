@@ -200,7 +200,7 @@
 
                 <p x-show="sizeError" x-cloak class="tp-error" x-text="sizeError"></p>
                 @error('video') <span class="tp-error">{{ $message }}</span> @enderror
-                <div style="display:flex;gap:10px;background:#FEF0CE;border:1px solid rgba(138,106,18,.25);border-radius:12px;padding:12px 14px;font-size:13px;color:#8A6A12;margin-top:6px">
+                <div class="tp-note" style="display:flex;gap:10px;background:#FEF0CE;border:1px solid rgba(138,106,18,.25);border-radius:12px;padding:12px 14px;font-size:13px;color:#8A6A12;margin-top:6px">
                     <span>ℹ️</span>
                     <div>{{ __('Untuk rakaman kelas penuh (video panjang atau besar), kami syorkan muat naik ke YouTube (Unlisted) dan tampal pautan di sini. Muat naik terus sesuai untuk klip pendek sahaja.') }}</div>
                 </div>
