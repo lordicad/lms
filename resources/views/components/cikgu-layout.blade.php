@@ -314,7 +314,16 @@
             .tp-burger { display:flex; }                                  /* close (X) inside the drawer */
             .tp-burger-open { display:flex; width:38px; height:38px; margin-right:auto; }  /* hamburger in the header */
             .tp-main { grid-column:auto; padding:20px; }
-            .tp-stats { grid-template-columns:1fr; }
+            /* Keep the 3 stat cards side by side (they only appear on the statistik page). Stack each
+               card vertically and shrink it so three fit on a phone. */
+            .tp-stats { grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; }
+            .tp-stats .tp-stat { padding:12px 6px !important; align-items:center; text-align:center; gap:4px !important; }
+            .tp-stats .tp-stat > div:first-child { flex-direction:column !important; gap:5px !important; }
+            .tp-stats .tp-stat-ico { width:30px !important; height:30px !important; }
+            .tp-stats .tp-stat-ico svg { width:15px !important; height:15px !important; }
+            .tp-stats .tp-stat-label { font-size:10.5px !important; line-height:1.2; }
+            .tp-stats .tp-stat-value { font-size:19px !important; }
+            .tp-stats .tp-stat-value [style*="font-size:18px"] { font-size:12px !important; }
             /* Controls become the full-width top header row; the heading drops below it. */
             .tp-head { gap:14px; }
             .tp-topbar { order:-1; flex:1 1 100%; gap:8px; }
