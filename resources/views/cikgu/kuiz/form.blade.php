@@ -286,6 +286,8 @@
                 .kf-title { font-size:15px; }
                 .kf-type-title { font-size:13px; }
                 .kf-type-desc { font-size:11.5px; }
+                .kf-setrow .tp-g { font-size:13px; }
+                .kf-setrow [style*="font-size:12.5px"] { font-size:11.5px; }
             }
         </style>
     @endonce
