@@ -110,7 +110,7 @@
             @endif
         </div>
 
-        <div style="display:flex;gap:12px">
+        <div class="tp-formfooter" style="display:flex;gap:12px">
             <button type="submit" class="tp-btn" style="min-height:48px">{{ $editing ? __('Simpan Perubahan') : __('Muat Naik Bahan') }}</button>
             <a href="{{ route('cikgu.bahan.index') }}" class="tp-btn-outline" style="min-height:48px">{{ __('Batal') }}</a>
         </div>
