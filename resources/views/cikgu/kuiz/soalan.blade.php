@@ -230,11 +230,13 @@
             .qb-del:disabled { opacity:.35; cursor:default; }
 
             @media (max-width:900px) {
-                .qb-optrow { gap:8px; padding:8px 10px; }
-                .qb-optrow input[type=radio], .qb-optrow input[type=checkbox] { width:18px !important; height:18px !important; }
-                .qb-letter { width:26px; height:26px; font-size:12px; }
-                .qb-optinput { min-height:38px; padding:0 10px; }
-                .qb-del { width:26px; height:26px; font-size:16px; }
+                .qb-optrow { gap:6px; padding:6px 8px; }
+                .qb-optrow input[type=radio], .qb-optrow input[type=checkbox] { width:17px !important; height:17px !important; }
+                .qb-letter { width:24px; height:24px; font-size:11.5px; }
+                .qb-optinput { min-height:36px; padding:0 9px; }
+                .qb-optinput:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]) { font-size:13px !important; }
+                .qb-optinput::placeholder { font-size:12.5px !important; }
+                .qb-del { width:24px; height:24px; font-size:15px; }
             }
         </style>
     @endonce
