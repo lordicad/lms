@@ -59,7 +59,7 @@
     @else
         <div class="tp-card" style="overflow:hidden">
             <div style="overflow-x:auto">
-                <div style="min-width:820px">
+                <div class="tp-ranktable" style="min-width:820px">
                     <div style="display:grid;grid-template-columns:{{ $cols }};gap:12px;align-items:center;padding:14px 20px;border-bottom:1px solid var(--tp-line)">
                         <span class="tp-g" style="font-size:12px;font-weight:800;color:var(--tp-muted)">#</span>
                         <span class="tp-g" style="font-size:12px;font-weight:800;color:var(--tp-muted)">{{ __('Murid') }}</span>

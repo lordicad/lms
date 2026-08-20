@@ -375,6 +375,11 @@
             .tp-toolbar .ss-trigger { min-height:38px !important; font-size:12px !important; padding:0 28px 0 11px !important; }
             .tp-toolbar .ss-chevron { width:14px !important; height:14px !important; }
             .tp-toolbar select.tp-filter-select { min-width:0 !important; width:100% !important; min-height:38px !important; font-size:12px !important; }
+            /* Ranking table: slightly smaller text throughout. */
+            .tp-ranktable [style*="font-size:15px"] { font-size:13px !important; }
+            .tp-ranktable [style*="font-size:14.5px"] { font-size:13px !important; }
+            .tp-ranktable [style*="font-size:13.5px"] { font-size:12px !important; }
+            .tp-ranktable [style*="font-size:12px"] { font-size:11px !important; }
             /* Smaller card text: title, subject pill and meta. */
             .tp-listcard button.tp-g { font-size:14px !important; }
             .tp-listcard .tp-tag { font-size:10.5px !important; }
