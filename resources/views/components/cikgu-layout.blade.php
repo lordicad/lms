@@ -426,6 +426,9 @@
             .tp-dropzone .tp-g { font-size:13px !important; }
             .tp-dropzone > svg { width:24px !important; height:24px !important; }
             .tp-note { font-size:12px !important; }
+            /* Flash / alert banners: smaller. */
+            .alert { padding:12px 14px !important; font-size:13px !important; gap:10px !important; }
+            .alert svg { width:18px !important; height:18px !important; }
             /* Filter dropdown list options: a little smaller. */
             .ysf-form-cikgu .ss-opt-label, .tp-chapicker .ss-opt-label, .tp-toolbar .ss-opt-label { font-size:12.5px !important; }
             /* Open the filter dropdown panels right-aligned (leftward) so the wide list never runs
