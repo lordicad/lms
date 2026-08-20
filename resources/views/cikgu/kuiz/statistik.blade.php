@@ -85,7 +85,7 @@
             @else
                 <div class="tp-card" style="overflow:hidden">
                     <div style="overflow-x:auto">
-                        <div style="min-width:800px">
+                        <div class="tp-atttable" style="min-width:800px">
                             @php($cols = '44px minmax(0,2fr) 1fr 1fr 1fr 1fr 1fr 1.4fr')
                             <div style="display:grid;grid-template-columns:{{ $cols }};gap:12px;padding:14px 20px;border-bottom:1px solid var(--tp-line);justify-items:center;text-align:center">
                                 @foreach (['#', __('Murid'), __('Tahun'), __('Markah'), __('Betul'), __('Masa'), __('Jenis'), __('Tarikh')] as $h)

@@ -451,6 +451,13 @@
             .tp-statsect [style*="font-size:13.5px"] { font-size:12px !important; }
             .tp-statsect [style*="font-size:13px"] { font-size:11.5px !important; }
             .tp-statsect [style*="font-size:12px"] { font-size:11px !important; }
+            /* Attempts table: smaller text throughout. */
+            .tp-atttable { font-size:11.5px !important; }
+            .tp-atttable [style*="font-size:14px"] { font-size:12.5px !important; }
+            .tp-atttable [style*="font-size:12px"] { font-size:11px !important; }
+            .tp-atttable [style*="font-size:11px"] { font-size:10px !important; }
+            .tp-atttable .tp-meta { font-size:11px !important; }
+            .tp-atttable .tp-tag, .tp-atttable .tp-tag-neutral { font-size:10.5px !important; }
             /* All styled-select dropdown list options: a little smaller. */
             .ss-opt-label { font-size:12.5px !important; }
             /* KPI stat cards: more compact on mobile. */
