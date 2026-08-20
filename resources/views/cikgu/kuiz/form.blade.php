@@ -282,6 +282,11 @@
                 .kf-grid  { grid-template-columns:1fr; }
                 .kf-types { grid-template-columns:1fr; }
             }
+            @media (max-width:900px) {
+                .kf-title { font-size:15px; }
+                .kf-type-title { font-size:13px; }
+                .kf-type-desc { font-size:11.5px; }
+            }
         </style>
     @endonce
 
