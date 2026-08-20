@@ -382,6 +382,9 @@
             .tp-ranktable [style*="font-size:12px"] { font-size:11px !important; }
             /* Back button (← ...): smaller on mobile. */
             .tp-back { min-height:34px !important; font-size:12px !important; padding:0 12px !important; gap:6px !important; }
+            /* Form section headings + field labels: a little smaller on mobile. */
+            .tp-g[style*="font-size:17px"] { font-size:15px !important; }
+            .tp-label { font-size:12px !important; }
             /* Smaller card text: title, subject pill and meta. */
             .tp-listcard button.tp-g { font-size:14px !important; }
             .tp-listcard .tp-tag { font-size:10.5px !important; }
