@@ -179,13 +179,16 @@
                     <span style="width:38px;height:38px;border-radius:11px;background:#DCF2EE;color:#0F7A68;display:grid;place-items:center;flex-shrink:0"><x-icon name="quiz" class="h-[19px] w-[19px]" /></span>
                     <span style="font-size:13.5px;font-weight:700;color:var(--tp-muted-2);flex:1;min-width:140px"><span x-text="questions.length"></span> {{ __('soalan.') }} <span x-text="totalPoints()"></span> {{ __('mata keseluruhan.') }}</span>
                     {{-- Cancel posts to the discard endpoint (a separate form, so it is not nested in
-                         the questions form): an empty quiz is thrown away, one with questions is kept. --}}
-                    <button type="submit" form="kuiz-batal" class="tp-btn-ghost">{{ __('Batal') }}</button>
-                    <button type="submit" class="tp-btn tp-btn-sm" :disabled="submitting" style="display:inline-flex;align-items:center;gap:8px">
-                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-                        <span x-show="! submitting">{{ __('Simpan Soalan') }}</span>
-                        <span x-show="submitting" x-cloak>{{ __('Menyimpan...') }}</span>
-                    </button>
+                         the questions form): an empty quiz is thrown away, one with questions is kept.
+                         On mobile the two buttons drop to their own row below the summary. --}}
+                    <div class="qb-actbtns" style="display:flex;align-items:center;gap:10px">
+                        <button type="submit" form="kuiz-batal" class="tp-btn-ghost">{{ __('Batal') }}</button>
+                        <button type="submit" class="tp-btn tp-btn-sm" :disabled="submitting" style="display:inline-flex;align-items:center;gap:8px">
+                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                            <span x-show="! submitting">{{ __('Simpan Soalan') }}</span>
+                            <span x-show="submitting" x-cloak>{{ __('Menyimpan...') }}</span>
+                        </button>
+                    </div>
                 </div>
                 {{-- Shown once they try to save an incomplete quiz, rather than a permanently greyed
                      button that never says why. --}}
@@ -240,6 +243,8 @@
                 .qb-addopt { font-size:12px !important; min-height:34px !important; }
                 .qb-addopt svg { width:14px !important; height:14px !important; }
                 .qb-qerror { font-size:11.5px !important; }
+                /* Batal + Simpan drop to their own row below the summary. */
+                .qb-actbtns { flex:1 1 100% !important; }
             }
         </style>
     @endonce
