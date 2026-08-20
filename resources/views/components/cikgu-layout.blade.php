@@ -395,7 +395,7 @@
             /* Form inputs: shorter/tighter on mobile (text stays 16px to avoid iOS zoom-on-focus). */
             .tp-input, .tp-select { min-height:40px !important; padding:0 12px !important; }
             .tp-textarea { padding:9px 12px !important; }
-            textarea.tp-textarea { height:82px !important; }
+            textarea.tp-textarea { height:88px !important; }
             /* Smaller card text: title, subject pill and meta. */
             .tp-listcard button.tp-g { font-size:14px !important; }
             .tp-listcard .tp-tag { font-size:10.5px !important; }
