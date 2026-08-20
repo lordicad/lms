@@ -407,6 +407,8 @@
             /* Publish checkbox row: smaller title + subtitle. */
             .tp-checkrow .tp-g { font-size:13px !important; }
             .tp-checkrow [style*="font-size:12.5px"] { font-size:11.5px !important; }
+            /* Form footer (Simpan / Batal) buttons: smaller. */
+            .tp-formfooter .tp-btn, .tp-formfooter .tp-btn-outline { min-height:40px !important; font-size:13px !important; padding:0 16px !important; }
             /* Smaller card text: title, subject pill and meta. */
             .tp-listcard button.tp-g { font-size:14px !important; }
             .tp-listcard .tp-tag { font-size:10.5px !important; }

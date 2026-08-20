@@ -258,7 +258,7 @@
             <div x-text="failed"></div>
         </div>
 
-        <div style="display:flex;gap:12px">
+        <div class="tp-formfooter" style="display:flex;gap:12px">
             <button type="submit" class="tp-btn" style="min-height:48px" :disabled="uploading">
                 <span x-show="! uploading">{{ $editing ? __('Simpan Perubahan') : __('Simpan Video') }}</span>
                 <span x-show="uploading" x-cloak>{{ __('Menyimpan...') }}</span>
