@@ -445,6 +445,7 @@
             /* Subject/chapter breadcrumb pill. */
             .tp-crumb { font-size:11px !important; padding:4px 12px !important; }
             .tp-crumb svg { width:13px !important; height:13px !important; }
+            .tp-statsect { margin-top:10px; }
             /* All styled-select dropdown list options: a little smaller. */
             .ss-opt-label { font-size:12.5px !important; }
             /* KPI stat cards: more compact on mobile. */
