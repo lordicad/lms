@@ -429,6 +429,10 @@
             /* Flash / alert banners: smaller. */
             .alert { padding:12px 14px !important; font-size:13px !important; gap:10px !important; }
             .alert svg { width:18px !important; height:18px !important; }
+            /* Quiz questions page header: smaller pill/title, more space above the title. */
+            .tp-quizhead { gap:11px !important; }
+            .tp-quizhead > span { font-size:11px !important; padding:4px 12px !important; }
+            .tp-quizhead h2 { font-size:18px !important; }
             /* Filter dropdown list options: a little smaller. */
             .ysf-form-cikgu .ss-opt-label, .tp-chapicker .ss-opt-label, .tp-toolbar .ss-opt-label { font-size:12.5px !important; }
             /* Open the filter dropdown panels right-aligned (leftward) so the wide list never runs
