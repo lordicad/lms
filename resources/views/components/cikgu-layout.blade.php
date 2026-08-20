@@ -435,6 +435,10 @@
             .tp-dropzone .tp-g { font-size:13px !important; }
             .tp-dropzone > svg { width:24px !important; height:24px !important; }
             .tp-note { font-size:12px !important; }
+            /* Empty-state cards: smaller heading/text/icon. */
+            .tp-empty h3, .tp-empty .tp-g { font-size:16px !important; }
+            .tp-empty p { font-size:13px !important; }
+            .tp-empty > svg, .tp-empty > span > svg { width:26px !important; height:26px !important; }
             /* Flash / alert banners: smaller. */
             .alert { padding:12px 14px !important; font-size:13px !important; gap:10px !important; }
             .alert svg { width:18px !important; height:18px !important; }
