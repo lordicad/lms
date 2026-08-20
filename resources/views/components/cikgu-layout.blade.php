@@ -391,6 +391,9 @@
             .tp-chapicker .ss-trigger { min-height:37px !important; font-size:12px !important; padding:0 26px 0 10px !important; }
             .tp-chapicker .ss-chevron { width:13px !important; height:13px !important; }
             .tp-chapicker select.tp-select { min-height:37px !important; font-size:12px !important; }
+            /* Every styled form dropdown (tp-select) matches the chapter picker size. */
+            .ss-wrap:has(> select.tp-select) .ss-trigger { min-height:37px !important; font-size:12px !important; padding:0 26px 0 10px !important; }
+            .ss-wrap:has(> select.tp-select) .ss-chevron { width:13px !important; height:13px !important; }
             .tp-chapicker .tp-hint { font-size:11px !important; }
             /* Form inputs: shorter/tighter on mobile (text stays 16px to avoid iOS zoom-on-focus). */
             .tp-input, .tp-select { min-height:40px !important; padding:0 12px !important; }
