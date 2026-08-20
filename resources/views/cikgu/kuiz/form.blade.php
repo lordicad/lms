@@ -288,7 +288,10 @@
                 .kf-type-desc { font-size:11.5px; }
                 .kf-setrow .tp-g { font-size:13px !important; }
                 .kf-setrow [style*="font-size:12.5px"] { font-size:11.5px !important; }
-                .kf-actionbar .tp-btn, .kf-actionbar .tp-btn-outline { min-height:40px !important; font-size:13px !important; padding:0 16px !important; }
+                /* Shrink enough that "Seterusnya: Tambah Soalan" sits beside "Batal" on one row. */
+                .kf-actionbar { gap:8px !important; padding:14px 14px !important; }
+                .kf-actionbar .tp-btn, .kf-actionbar .tp-btn-outline { min-height:36px !important; font-size:11.5px !important; padding:0 12px !important; gap:6px !important; }
+                .kf-actionbar .tp-btn svg, .kf-actionbar .tp-btn-outline svg { width:15px !important; height:15px !important; }
             }
         </style>
     @endonce
