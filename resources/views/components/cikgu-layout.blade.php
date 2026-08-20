@@ -442,6 +442,9 @@
             .tp-quizhead { gap:11px !important; }
             .tp-quizhead > span { font-size:11px !important; padding:4px 12px !important; }
             .tp-quizhead h2 { font-size:18px !important; }
+            /* Subject/chapter breadcrumb pill. */
+            .tp-crumb { font-size:11px !important; padding:4px 12px !important; }
+            .tp-crumb svg { width:13px !important; height:13px !important; }
             /* All styled-select dropdown list options: a little smaller. */
             .ss-opt-label { font-size:12.5px !important; }
             /* KPI stat cards: more compact on mobile. */
