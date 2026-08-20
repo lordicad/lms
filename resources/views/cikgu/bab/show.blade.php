@@ -57,7 +57,7 @@
                                         'kind' => $lesson->isYoutube() ? 'youtube' : 'upload',
                                         'src' => $lesson->isYoutube() ? $lesson->embedUrl() : $lesson->videoUrl(),
                                         'poster' => $lesson->thumbnailUrl(),
-                                    ]))"><x-icon name="eye" class="h-4 w-4" />{{ __('Lihat') }}</button>
+                                    ]))">{{ __('Lihat') }}</button>
                         </div>
                     @endforeach
                 </div>
@@ -99,7 +99,7 @@
                                         'type' => strtoupper($material->extension()),
                                         'size' => $material->humanSize(),
                                         'downloadUrl' => route('muat-turun.bahan', $material),
-                                    ]))"><x-icon name="eye" class="h-4 w-4" />{{ __('Lihat') }}</button>
+                                    ]))">{{ __('Lihat') }}</button>
                         </div>
                     @endforeach
                 </div>
@@ -154,7 +154,7 @@
                                                 'correct' => (bool) $option->is_correct,
                                             ])->all(),
                                         ])->all(),
-                                    ]))"><x-icon name="eye" class="h-4 w-4" />{{ __('Lihat') }}</button>
+                                    ]))">{{ __('Lihat') }}</button>
                         </div>
                     @endforeach
                 </div>
