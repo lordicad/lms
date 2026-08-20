@@ -410,6 +410,11 @@
             /* Publish checkbox row: smaller title + subtitle. */
             .tp-checkrow .tp-g { font-size:13px !important; }
             .tp-checkrow [style*="font-size:12.5px"] { font-size:11.5px !important; }
+            /* Current-file card + replace-file dropzone: smaller text/icon. */
+            .tp-filecard > span:first-child { width:38px !important; height:38px !important; }
+            .tp-filecard [style*="font-size:14px"] { font-size:13px !important; }
+            .tp-filecard [style*="font-size:12.5px"] { font-size:11.5px !important; }
+            .tp-filedrop [style*="font-size:13.5px"] { font-size:12.5px !important; }
             /* Form footer (Simpan / Batal) buttons: smaller. */
             .tp-formfooter .tp-btn, .tp-formfooter .tp-btn-outline { min-height:40px !important; font-size:13px !important; padding:0 16px !important; }
             /* Upload dropzone + info note: a little smaller. */

@@ -60,7 +60,7 @@
                     {{-- The current file for this material. Read-only; the replace field below swaps it. --}}
                     <div class="tp-field">
                         <label class="tp-label">{{ __('Fail semasa') }}</label>
-                        <div style="display:flex;align-items:center;gap:14px;background:var(--tp-surface);border:1px solid var(--tp-line-2);border-radius:16px;padding:14px 16px">
+                        <div class="tp-filecard" style="display:flex;align-items:center;gap:14px;background:var(--tp-surface);border:1px solid var(--tp-line-2);border-radius:16px;padding:14px 16px">
                             <span style="width:46px;height:46px;border-radius:13px;background:#FBE4ED;color:#B84A75;display:grid;place-items:center;flex-shrink:0">
                                 <x-icon :name="$material->iconName()" class="h-[22px] w-[22px]" />
                             </span>
@@ -75,7 +75,7 @@
                          old one is deleted on save. Leaving it empty keeps the current file. --}}
                     <div class="tp-field" x-data="{ picked: '' }">
                         <label for="file" class="tp-label">{{ __('Ganti fail (pilihan)') }}</label>
-                        <label for="file"
+                        <label for="file" class="tp-filedrop"
                                @dragover.prevent="$el.dataset.drag = 1" @dragleave="$el.dataset.drag = 0"
                                @drop.prevent="$el.dataset.drag = 0; if ($event.dataTransfer.files.length) { $refs.file.files = $event.dataTransfer.files; picked = $event.dataTransfer.files[0].name }"
                                style="display:flex;align-items:center;gap:12px;cursor:pointer;border:1.5px dashed var(--tp-line-2);border-radius:16px;padding:16px;background:var(--tp-surface)">
