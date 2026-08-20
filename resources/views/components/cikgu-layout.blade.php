@@ -435,6 +435,13 @@
             .tp-quizhead h2 { font-size:18px !important; }
             /* All styled-select dropdown list options: a little smaller. */
             .ss-opt-label { font-size:12.5px !important; }
+            /* KPI stat cards: more compact on mobile. */
+            .tp-stat { padding:14px 16px !important; gap:5px !important; }
+            .tp-stat-ico { width:34px !important; height:34px !important; border-radius:10px !important; }
+            .tp-stat-ico svg { width:16px !important; height:16px !important; }
+            .tp-stat-label { font-size:12px !important; }
+            .tp-stat-value { font-size:23px !important; }
+            .tp-stat-value [style*="font-size:18px"] { font-size:15px !important; }
             /* Quiz question preview: smaller question/option text. */
             .qb-preview [style*="font-size:15px"] { font-size:13.5px !important; }
             .qb-preview [style*="font-size:13.5px"] { font-size:12.5px !important; }
