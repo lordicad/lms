@@ -30,6 +30,10 @@
         .pf-head  { display:flex; align-items:center; gap:12px; }
         .pf-eye   { position:absolute; right:7px; top:50%; transform:translateY(-50%); width:32px; height:32px; border:none; background:transparent; cursor:pointer; color:var(--tp-muted-2); display:grid; place-items:center; }
         @media (max-width:820px) { .pf-grid2, .pf-cards { grid-template-columns:1fr; } }
+        @media (max-width:900px) {
+            .wl-primary { min-height:40px !important; font-size:12.5px !important; padding:0 16px !important; gap:7px !important; }
+            .wl-primary svg { width:15px !important; height:15px !important; }
+        }
     </style>
 
     <div style="display:flex;flex-direction:column;gap:20px;max-width:1040px">
