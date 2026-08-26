@@ -355,7 +355,16 @@
             .ysf-form-cikgu > .tp-newbtn-wrap .tp-btn svg { width:14px !important; height:14px !important; }
             /* List cards (video etc.): wrap so the action buttons drop below instead of overlapping. */
             .tp-listcard { flex-wrap:wrap; row-gap:12px; padding:14px 16px; }
-            .tp-listcard .tp-vidthumb { width:104px !important; height:66px !important; }
+            /* Video index card: a vertical sectioned card - thumbnail + title on top, meta and
+               actions each on their own row, separated by dividers. */
+            .tp-listcard:has(.tp-vidthumb) { display:grid !important; grid-template-columns:auto 1fr;
+                grid-template-areas:"thumb info" "meta meta" "actions actions"; gap:14px; align-items:center; padding:16px !important; }
+            .tp-listcard:has(.tp-vidthumb) .tp-vidbody { display:contents; }
+            .tp-listcard:has(.tp-vidthumb) > .tp-vidthumb { grid-area:thumb; width:104px !important; height:104px !important; align-self:start; }
+            .tp-listcard:has(.tp-vidthumb) .tp-vidinfo { grid-area:info; }
+            .tp-listcard:has(.tp-vidthumb) .tp-vidinfo > button { white-space:normal !important; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; line-height:1.25; }
+            .tp-listcard:has(.tp-vidthumb) .tp-vidmetarow { grid-area:meta; border-top:1px solid var(--tp-line); padding-top:14px; }
+            .tp-listcard:has(.tp-vidthumb) .tp-listactions { grid-area:actions; border-top:1px solid var(--tp-line); padding-top:14px; justify-content:flex-start; flex:unset !important; }
             .tp-listactions { flex:1 1 100% !important; gap:10px; justify-content:flex-end; }
             /* A bare Lihat/preview button that sits directly in a list card drops to its own row. */
             .tp-listcard > button.tp-btn-outline { flex:1 1 100% !important; justify-content:center; margin-top:2px; min-height:36px !important; font-size:12.5px !important; padding:0 14px !important; }

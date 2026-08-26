@@ -68,17 +68,19 @@
                         @endif
                     </button>
 
-                    <div style="display:flex;flex-direction:column;gap:8px;min-width:0;flex:1">
-                        <button type="button" @click="open(@js($preview))" class="tp-g" style="text-align:left;background:none;border:none;padding:0;cursor:pointer;font-family:inherit;font-weight:800;font-size:16px;color:var(--tp-ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $lesson->title }}</button>
+                    <div class="tp-vidbody" style="display:flex;flex-direction:column;gap:8px;min-width:0;flex:1">
+                        <div class="tp-vidinfo" style="display:flex;flex-direction:column;gap:8px;min-width:0">
+                            <button type="button" @click="open(@js($preview))" class="tp-g" style="text-align:left;background:none;border:none;padding:0;cursor:pointer;font-family:inherit;font-weight:800;font-size:16px;color:var(--tp-ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $lesson->title }}</button>
 
-                        {{-- Subject on its own line: the coloured chip is what the eye picks out
-                             when scanning the list. --}}
-                        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-                            <span class="tp-tag" style="background:rgb({{ $subject->rgb }} / .14);color:rgb({{ $subject->rgb }})">{{ $subject->name }}</span>
+                            {{-- Subject on its own line: the coloured chip is what the eye picks out
+                                 when scanning the list. --}}
+                            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                                <span class="tp-tag" style="background:rgb({{ $subject->rgb }} / .14);color:rgb({{ $subject->rgb }})">{{ $subject->name }}</span>
+                            </div>
                         </div>
 
                         {{-- Detail row, each item led by an icon. --}}
-                        <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+                        <div class="tp-vidmetarow" style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
                             <span class="tp-meta" style="display:inline-flex;align-items:center;gap:6px"><x-icon name="calendar" class="h-4 w-4" style="color:var(--tp-muted-2)" />{{ $lesson->chapter->grade->displayName() }} · {{ __('Bab :n', ['n' => $lesson->chapter->number]) }}</span>
                             <span class="tp-meta" style="display:inline-flex;align-items:center;gap:6px"><x-icon name="{{ $lesson->isYoutube() ? 'youtube' : 'upload' }}" class="h-4 w-4" style="color:var(--tp-muted-2)" />{{ $lesson->isYoutube() ? 'YouTube' : __('Muat naik') }}</span>
                             <span class="tp-meta" style="display:inline-flex;align-items:center;gap:6px"><img src="{{ asset('images/eye.png') }}" alt="" style="width:16px;height:16px;object-fit:contain">{{ $lesson->views_count }} {{ __('tontonan') }}</span>
