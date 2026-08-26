@@ -358,7 +358,7 @@
             /* Video index card: a vertical sectioned card - thumbnail + title on top, meta and
                actions each on their own row, separated by dividers. */
             .tp-listcard:has(.tp-vidthumb) { display:grid !important; grid-template-columns:auto 1fr;
-                grid-template-areas:"thumb info" "meta meta" "actions actions"; gap:10px 14px; align-items:center; padding:16px !important; }
+                grid-template-areas:"thumb info" "meta meta" "actions actions"; gap:8px 14px; align-items:center; padding:16px !important; }
             .tp-listcard:has(.tp-vidthumb) .tp-vidbody { display:contents; }
             .tp-listcard:has(.tp-vidthumb) > .tp-vidthumb { grid-area:thumb; width:104px !important; height:72px !important; align-self:start; }
             .tp-listcard:has(.tp-vidthumb) .tp-vidinfo { grid-area:info; }
