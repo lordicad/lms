@@ -446,6 +446,12 @@
             .tp-dropzone .tp-g { font-size:13px !important; }
             .tp-dropzone > svg { width:24px !important; height:24px !important; }
             .tp-note { font-size:12px !important; }
+            /* Notification rows: smaller text and Lihat button. */
+            .tp-notifrow { gap:10px !important; padding:12px 16px !important; }
+            .tp-notifrow > span:first-child { width:36px !important; height:36px !important; }
+            .tp-notifrow > div > span:first-child { font-size:12.5px !important; }
+            .tp-notifrow > div > span:last-child { font-size:11px !important; }
+            .tp-notifrow .tp-btn-outline { min-height:32px !important; font-size:12px !important; padding:0 12px !important; }
             /* Empty-state cards: smaller heading/text/icon. */
             .tp-empty h3, .tp-empty .tp-g { font-size:16px !important; }
             .tp-empty p { font-size:13px !important; }
