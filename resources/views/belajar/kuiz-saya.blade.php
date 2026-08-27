@@ -7,6 +7,22 @@
         @media (max-width: 900px) { .kz-cols { grid-template-columns: 1fr; } }
         /* Phones: a tidy 2x2 grid of achievement badges instead of a single column. */
         @media (max-width: 640px) { .kz-ach { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px 6px; } }
+
+        /* "Fokus Saya" - per-subject strength, weakest first, each expanding to its topics. */
+        .kz-focsub { background: var(--wl-surface); border: 1px solid var(--wl-line); border-radius: 16px; overflow: hidden; box-shadow: 0 4px 16px rgba(46,44,80,.04); }
+        .kz-fochead { width: 100%; display: flex; align-items: center; gap: 14px; padding: 14px 18px; background: none; border: none; cursor: pointer; text-align: left; font-family: inherit; color: var(--wl-ink); }
+        .kz-fochead:hover { background: color-mix(in oklab, var(--wl-ink) 4%, transparent); }
+        .kz-fochead:focus-visible { outline: 2px solid #17907B; outline-offset: -2px; }
+        .kz-focscore { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; flex-shrink: 0; }
+        .kz-bar { width: 92px; height: 7px; border-radius: 999px; background: var(--wl-line); overflow: hidden; }
+        .kz-bar > i { display: block; height: 100%; border-radius: 999px; }
+        .kz-pill { font-family: 'Geist', sans-serif; font-size: 10.5px; font-weight: 800; padding: 2px 9px; border-radius: 999px; white-space: nowrap; }
+        .kz-foctopic { display: flex; align-items: center; gap: 14px; padding: 12px 18px; border-top: 1px solid var(--wl-line); text-decoration: none; color: var(--wl-ink); }
+        .kz-foctopic:hover { background: color-mix(in oklab, var(--wl-ink) 4%, transparent); }
+        @media (max-width: 640px) {
+            .kz-fochead, .kz-foctopic { padding: 12px 14px; gap: 11px; }
+            .kz-bar { width: 68px; }
+        }
     </style>
 
     <div style="display:flex;flex-direction:column;gap:24px">
@@ -68,6 +84,77 @@
                     </div>
                 @endforeach
             </div>
+
+            {{-- Fokus Saya: quiz strength per subject, weakest first; tap a subject to see which
+                 topics (Bab) need work, each linking to that chapter's videos + quiz. --}}
+            @php($perfSubjects = $performance['subjects'])
+            @php($bandMeta = [
+                'high' => ['color' => '#17907B', 'label' => __('Bagus!')],
+                'mid'  => ['color' => '#E3A31C', 'label' => __('Semakin baik')],
+                'low'  => ['color' => '#EB5E5A', 'label' => __('Perlu latihan lagi')],
+            ])
+            @if (! empty($perfSubjects))
+                <div style="display:flex;flex-direction:column;gap:12px;margin-top:34px">
+                    <div style="display:flex;align-items:flex-start;gap:12px">
+                        <span style="width:34px;height:34px;border-radius:10px;background:#EAF2FB;color:#2E6CA8;display:grid;place-items:center;flex-shrink:0"><x-icon name="target" style="width:19px;height:19px" /></span>
+                        <div style="display:flex;flex-direction:column;gap:1px;min-width:0">
+                            <h3 style="margin:0;font-family:'Geist',sans-serif;font-size:17px;font-weight:800;color:var(--wl-ink)">{{ __('Fokus Saya') }}</h3>
+                            <span style="font-size:12.5px;font-weight:600;color:var(--wl-muted)">{{ __('Prestasi kuiz ikut subjek — yang perlu latihan didahulukan. Ketik untuk lihat topik.') }}</span>
+                        </div>
+                    </div>
+
+                    <div style="display:flex;flex-direction:column;gap:10px">
+                        @foreach ($perfSubjects as $row)
+                            @php($sub = $row['subject'])
+                            @php($bm = $bandMeta[$row['band']])
+                            @php($subCol = $sub->color ?: '#17907B')
+                            @php($subBg = 'color-mix(in oklab, '.$subCol.' var(--pill-bw), var(--pill-bb))')
+                            <div class="kz-focsub" x-data="{ open: false }">
+                                <button type="button" class="kz-fochead" @click="open = ! open" :aria-expanded="open ? 'true' : 'false'">
+                                    <span style="width:40px;height:40px;border-radius:12px;background:{{ $subBg }};display:grid;place-items:center;flex-shrink:0"><x-subject-emoji :subject="$sub" class="text-base" /></span>
+                                    <div style="display:flex;flex-direction:column;gap:4px;min-width:0;flex:1">
+                                        <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:14.5px;color:var(--wl-ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $sub->displayName() }}</span>
+                                        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                                            <span class="kz-pill" style="background:color-mix(in oklab, {{ $bm['color'] }} 16%, transparent);color:{{ $bm['color'] }}">{{ $bm['label'] }}</span>
+                                            <span style="font-size:12px;font-weight:700;color:var(--wl-muted)">{{ __(':a / :b kuiz dicuba', ['a' => $row['quizzesAttempted'], 'b' => $row['quizzesTotal']]) }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="kz-focscore">
+                                        <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:16px;color:{{ $bm['color'] }}">{{ $row['percent'] }}%</span>
+                                        <div class="kz-bar"><i style="width:{{ max(3, $row['percent']) }}%;background:{{ $bm['color'] }}"></i></div>
+                                    </div>
+                                    <x-icon name="chevron-down" style="width:18px;height:18px;color:var(--wl-muted-2);transition:transform .18s;flex-shrink:0" ::style="open ? 'transform:rotate(180deg)' : ''" />
+                                </button>
+
+                                <div x-show="open" x-cloak style="display:flex;flex-direction:column">
+                                    @foreach ($row['chapters'] as $ch)
+                                        @php($chBm = $bandMeta[$ch['band']])
+                                        <a href="{{ route('bab.show', $ch['chapter']) }}" class="kz-foctopic">
+                                            <span style="min-width:52px;height:26px;padding:0 9px;border-radius:8px;background:{{ $subBg }};color:{{ $subCol }};display:inline-flex;align-items:center;justify-content:center;font-family:'Geist',sans-serif;font-weight:800;font-size:11.5px;flex-shrink:0">{{ __('Bab :n', ['n' => $ch['chapter']->number]) }}</span>
+                                            <span style="flex:1;min-width:0;font-weight:700;font-size:13.5px;color:var(--wl-ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $ch['chapter']->title }}</span>
+                                            <div class="kz-focscore">
+                                                <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:13.5px;color:{{ $chBm['color'] }}">{{ $ch['percent'] }}%</span>
+                                                <div class="kz-bar"><i style="width:{{ max(3, $ch['percent']) }}%;background:{{ $chBm['color'] }}"></i></div>
+                                            </div>
+                                            <x-icon name="arrow-right" style="width:16px;height:16px;color:var(--wl-muted-2);flex-shrink:0" />
+                                        </a>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+
+                    @if ($performance['notAttempted']->isNotEmpty())
+                        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:2px">
+                            <span style="font-size:12px;font-weight:700;color:var(--wl-muted)">{{ __('Belum dicuba:') }}</span>
+                            @foreach ($performance['notAttempted'] as $naSub)
+                                @php($naCol = $naSub->color ?: '#17907B')
+                                <span class="kz-pill" style="background:color-mix(in oklab, {{ $naCol }} var(--pill-bw), var(--pill-bb));color:color-mix(in oklab, {{ $naCol }} var(--pill-fw), var(--pill-fb))">{{ $naSub->displayName() }}</span>
+                            @endforeach
+                        </div>
+                    @endif
+                </div>
+            @endif
 
             {{-- Achievements: perfect-score milestone badges, evenly spread. --}}
             <div style="display:flex;flex-direction:column;gap:12px;margin-top:34px">

@@ -50,6 +50,8 @@ class StudentQuizController extends Controller
             'rank' => $myRow?->rank,
             // Perfect-score tally that drives the milestone badges below the stats strip.
             'perfectCount' => app(\App\Services\BadgeService::class)->perfectQuizCount($user),
+            // "Fokus Saya": per-subject / per-topic strength, weakest first, from best attempts.
+            'performance' => app(\App\Services\PerformanceService::class)->forStudent($user, $grade),
         ]);
     }
 }
