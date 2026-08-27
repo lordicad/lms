@@ -12,7 +12,9 @@ use Illuminate\Support\Collection;
  * "Fokus Saya" - a student's quiz performance broken down by subject and, within each subject,
  * by topic (Bab / chapter). It answers "where should I practise more?" without ever calling a
  * child a failure: subjects are ranked weakest-first so the areas that need work surface at the
- * top, but every subject the student has tried is shown, with an encouraging band label.
+ * top. Every subject that has a quiz in the child's Tahun is listed - ones they have tried carry
+ * a score, ones still untried are shown greyed so they can see what is left to attempt. (Subjects
+ * with no quiz at all are left out; there is nothing to measure or attempt there.)
  *
  * A subject/topic percentage is the mean of the student's BEST attempt on each scoreable quiz
  * they have tried there. Best (not first) is deliberate: it reflects what the child has managed
@@ -30,12 +32,12 @@ class PerformanceService
     public const BAND_MID = 50;
 
     /**
-     * @return array{subjects: array<int, array<string, mixed>>, notAttempted: Collection<int, \App\Models\Subject>}
+     * @return array{subjects: array<int, array<string, mixed>>}
      */
     public function forStudent(User $student, ?Grade $grade): array
     {
         if (! $grade) {
-            return ['subjects' => [], 'notAttempted' => collect()];
+            return ['subjects' => []];
         }
 
         // Every scoreable quiz on offer in the student's Tahun, with its topic + subject.
@@ -47,7 +49,7 @@ class PerformanceService
             ->keyBy('id');
 
         if ($quizzes->isEmpty()) {
-            return ['subjects' => [], 'notAttempted' => collect()];
+            return ['subjects' => []];
         }
 
         // Best percentage the student has scored on each quiz they have finished. Attempts on a
@@ -61,12 +63,12 @@ class PerformanceService
             ->groupBy('quiz_id')
             ->map(fn (Collection $attempts) => $attempts->max(fn (QuizAttempt $a) => $a->percentage()));
 
-        // Group the on-offer quizzes by subject, then by chapter, carrying each quiz's best score
-        // (or null when untried) so we can show "3 of 5 tried" alongside the average.
+        // Every subject that has a quiz on offer in the student's Tahun. Subjects with no quiz at
+        // all are left out - there is nothing to attempt or measure there, and listing the whole
+        // curriculum would bury the real signal under rows the child can do nothing with.
         $bySubject = $quizzes->groupBy(fn (Quiz $q) => $q->chapter->subject_id);
 
         $subjects = [];
-        $notAttempted = collect();
 
         foreach ($bySubject as $subjectQuizzes) {
             $subject = $subjectQuizzes->first()->chapter->subject;
@@ -82,50 +84,65 @@ class PerformanceService
                     ->filter(fn ($p) => $p !== null)
                     ->values();
 
-                if ($scores->isEmpty()) {
-                    continue; // topic not tried yet - leave it out of the subject's average
+                $tried = $scores->isNotEmpty();
+                $pct = $tried ? (int) round($scores->avg()) : null;
+
+                if ($tried) {
+                    $attemptedScores = $attemptedScores->concat($scores);
                 }
 
-                $attemptedScores = $attemptedScores->concat($scores);
-                $pct = (int) round($scores->avg());
-
+                // Every topic (Bab) with a quiz is listed - tried topics carry a score, untried
+                // ones are shown greyed so the child can see what is left to attempt.
                 $chapters[] = [
                     'chapter' => $chapter,
+                    'number' => $chapter->number,
+                    'attempted' => $tried,
                     'percent' => $pct,
-                    'band' => $this->band($pct),
-                    'attempted' => $scores->count(),
+                    'band' => $tried ? $this->band($pct) : null,
+                    'attemptedCount' => $scores->count(),
                     'total' => $chapterQuizzes->count(),
                 ];
             }
 
-            if ($attemptedScores->isEmpty()) {
-                $notAttempted->push($subject);
+            // Within a subject: tried topics first (weakest first), then untried ones in Bab order.
+            usort($chapters, function ($a, $b) {
+                if ($a['attempted'] !== $b['attempted']) {
+                    return $a['attempted'] ? -1 : 1;
+                }
 
-                continue;
-            }
+                return $a['attempted']
+                    ? $a['percent'] <=> $b['percent']
+                    : $a['number'] <=> $b['number'];
+            });
 
-            // Weakest topic first, so the child sees what to practise at a glance.
-            usort($chapters, fn ($a, $b) => $a['percent'] <=> $b['percent']);
-
-            $pct = (int) round($attemptedScores->avg());
+            $tried = $attemptedScores->isNotEmpty();
+            $pct = $tried ? (int) round($attemptedScores->avg()) : null;
 
             $subjects[] = [
                 'subject' => $subject,
+                'attempted' => $tried,
+                'hasQuiz' => $subjectQuizzes->isNotEmpty(),
                 'percent' => $pct,
-                'band' => $this->band($pct),
+                'band' => $tried ? $this->band($pct) : null,
                 'quizzesAttempted' => $attemptedScores->count(),
                 'quizzesTotal' => $subjectQuizzes->count(),
                 'chapters' => $chapters,
             ];
         }
 
-        // Weakest subject first.
-        usort($subjects, fn ($a, $b) => $a['percent'] <=> $b['percent']);
+        // Tried subjects first (weakest first, so focus areas surface), then the ones the child
+        // has a quiz waiting for but has not tried yet, ordered by name.
+        usort($subjects, function ($a, $b) {
+            if ($a['attempted'] !== $b['attempted']) {
+                return $a['attempted'] ? -1 : 1;
+            }
 
-        return [
-            'subjects' => $subjects,
-            'notAttempted' => $notAttempted->sortBy(fn ($s) => $s->displayName())->values(),
-        ];
+            return $a['attempted']
+                ? $a['percent'] <=> $b['percent']
+                : strcmp($a['subject']->displayName(), $b['subject']->displayName());
+        });
+
+        return ['subjects' => $subjects];
     }
 
     /** Strength band for a percentage: high / mid / low. Colour + wording live in the view. */

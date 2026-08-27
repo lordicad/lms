@@ -85,15 +85,17 @@
                 @endforeach
             </div>
 
-            {{-- Fokus Saya: quiz strength per subject, weakest first; tap a subject to see which
-                 topics (Bab) need work, each linking to that chapter's videos + quiz. --}}
+            {{-- Fokus Saya: quiz strength per subject. Tried subjects rank weakest-first; every
+                 subject in the Tahun is listed, and ones not yet tried show greyed as "Belum
+                 dicuba". Tap a subject to see its topics (Bab), each linking to that chapter. --}}
             @php($perfSubjects = $performance['subjects'])
+            @php($hasAnyPerf = collect($perfSubjects)->contains(fn ($s) => $s['attempted']))
             @php($bandMeta = [
                 'high' => ['color' => '#17907B', 'label' => __('Bagus!')],
                 'mid'  => ['color' => '#E3A31C', 'label' => __('Semakin baik')],
                 'low'  => ['color' => '#EB5E5A', 'label' => __('Perlu latihan lagi')],
             ])
-            @if (! empty($perfSubjects))
+            @if ($hasAnyPerf)
                 <div style="display:flex;flex-direction:column;gap:12px;margin-top:34px">
                     <div style="display:flex;align-items:flex-start;gap:12px">
                         <span style="width:34px;height:34px;border-radius:10px;background:#EAF2FB;color:#2E6CA8;display:grid;place-items:center;flex-shrink:0"><x-icon name="target" style="width:19px;height:19px" /></span>
@@ -106,53 +108,57 @@
                     <div style="display:flex;flex-direction:column;gap:10px">
                         @foreach ($perfSubjects as $row)
                             @php($sub = $row['subject'])
-                            @php($bm = $bandMeta[$row['band']])
+                            @php($tried = $row['attempted'])
+                            @php($bm = $tried ? $bandMeta[$row['band']] : null)
                             @php($subCol = $sub->color ?: '#17907B')
                             @php($subBg = 'color-mix(in oklab, '.$subCol.' var(--pill-bw), var(--pill-bb))')
                             <div class="kz-focsub" x-data="{ open: false }">
                                 <button type="button" class="kz-fochead" @click="open = ! open" :aria-expanded="open ? 'true' : 'false'">
-                                    <span style="width:40px;height:40px;border-radius:12px;background:{{ $subBg }};display:grid;place-items:center;flex-shrink:0"><x-subject-emoji :subject="$sub" class="text-base" /></span>
+                                    <span style="width:40px;height:40px;border-radius:12px;background:{{ $subBg }};display:grid;place-items:center;flex-shrink:0;{{ $tried ? '' : 'opacity:.6' }}"><x-subject-emoji :subject="$sub" class="text-base" /></span>
                                     <div style="display:flex;flex-direction:column;gap:4px;min-width:0;flex:1">
-                                        <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:14.5px;color:var(--wl-ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $sub->displayName() }}</span>
+                                        <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:14.5px;color:{{ $tried ? 'var(--wl-ink)' : 'var(--wl-muted-2)' }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $sub->displayName() }}</span>
                                         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-                                            <span class="kz-pill" style="background:color-mix(in oklab, {{ $bm['color'] }} 16%, transparent);color:{{ $bm['color'] }}">{{ $bm['label'] }}</span>
-                                            <span style="font-size:12px;font-weight:700;color:var(--wl-muted)">{{ __(':a / :b kuiz dicuba', ['a' => $row['quizzesAttempted'], 'b' => $row['quizzesTotal']]) }}</span>
+                                            @if ($tried)
+                                                <span class="kz-pill" style="background:color-mix(in oklab, {{ $bm['color'] }} 16%, transparent);color:{{ $bm['color'] }}">{{ $bm['label'] }}</span>
+                                                <span style="font-size:12px;font-weight:700;color:var(--wl-muted)">{{ __(':a / :b kuiz dicuba', ['a' => $row['quizzesAttempted'], 'b' => $row['quizzesTotal']]) }}</span>
+                                            @else
+                                                <span class="kz-pill" style="background:color-mix(in oklab, var(--wl-ink) 8%, transparent);color:var(--wl-muted)">{{ $row['hasQuiz'] ? __('Belum dicuba') : __('Tiada kuiz lagi') }}</span>
+                                            @endif
                                         </div>
                                     </div>
-                                    <div class="kz-focscore">
-                                        <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:16px;color:{{ $bm['color'] }}">{{ $row['percent'] }}%</span>
-                                        <div class="kz-bar"><i style="width:{{ max(3, $row['percent']) }}%;background:{{ $bm['color'] }}"></i></div>
-                                    </div>
+                                    @if ($tried)
+                                        <div class="kz-focscore">
+                                            <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:16px;color:{{ $bm['color'] }}">{{ $row['percent'] }}%</span>
+                                            <div class="kz-bar"><i style="width:{{ max(3, $row['percent']) }}%;background:{{ $bm['color'] }}"></i></div>
+                                        </div>
+                                    @endif
                                     <x-icon name="chevron-down" style="width:18px;height:18px;color:var(--wl-muted-2);transition:transform .18s;flex-shrink:0" ::style="open ? 'transform:rotate(180deg)' : ''" />
                                 </button>
 
                                 <div x-show="open" x-cloak style="display:flex;flex-direction:column">
-                                    @foreach ($row['chapters'] as $ch)
-                                        @php($chBm = $bandMeta[$ch['band']])
+                                    @forelse ($row['chapters'] as $ch)
+                                        @php($chTried = $ch['attempted'])
+                                        @php($chBm = $chTried ? $bandMeta[$ch['band']] : null)
                                         <a href="{{ route('bab.show', $ch['chapter']) }}" class="kz-foctopic">
-                                            <span style="min-width:52px;height:26px;padding:0 9px;border-radius:8px;background:{{ $subBg }};color:{{ $subCol }};display:inline-flex;align-items:center;justify-content:center;font-family:'Geist',sans-serif;font-weight:800;font-size:11.5px;flex-shrink:0">{{ __('Bab :n', ['n' => $ch['chapter']->number]) }}</span>
-                                            <span style="flex:1;min-width:0;font-weight:700;font-size:13.5px;color:var(--wl-ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $ch['chapter']->title }}</span>
-                                            <div class="kz-focscore">
-                                                <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:13.5px;color:{{ $chBm['color'] }}">{{ $ch['percent'] }}%</span>
-                                                <div class="kz-bar"><i style="width:{{ max(3, $ch['percent']) }}%;background:{{ $chBm['color'] }}"></i></div>
-                                            </div>
+                                            <span style="min-width:52px;height:26px;padding:0 9px;border-radius:8px;background:{{ $subBg }};color:{{ $subCol }};display:inline-flex;align-items:center;justify-content:center;font-family:'Geist',sans-serif;font-weight:800;font-size:11.5px;flex-shrink:0;{{ $chTried ? '' : 'opacity:.6' }}">{{ __('Bab :n', ['n' => $ch['chapter']->number]) }}</span>
+                                            <span style="flex:1;min-width:0;font-weight:700;font-size:13.5px;color:{{ $chTried ? 'var(--wl-ink)' : 'var(--wl-muted-2)' }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $ch['chapter']->title }}</span>
+                                            @if ($chTried)
+                                                <div class="kz-focscore">
+                                                    <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:13.5px;color:{{ $chBm['color'] }}">{{ $ch['percent'] }}%</span>
+                                                    <div class="kz-bar"><i style="width:{{ max(3, $ch['percent']) }}%;background:{{ $chBm['color'] }}"></i></div>
+                                                </div>
+                                            @else
+                                                <span style="font-size:11.5px;font-weight:700;color:var(--wl-muted);white-space:nowrap">{{ __('Belum dicuba') }}</span>
+                                            @endif
                                             <x-icon name="arrow-right" style="width:16px;height:16px;color:var(--wl-muted-2);flex-shrink:0" />
                                         </a>
-                                    @endforeach
+                                    @empty
+                                        <div style="padding:14px 18px;border-top:1px solid var(--wl-line);font-size:12.5px;font-weight:600;color:var(--wl-muted)">{{ __('Belum ada kuiz untuk subjek ini lagi.') }}</div>
+                                    @endforelse
                                 </div>
                             </div>
                         @endforeach
                     </div>
-
-                    @if ($performance['notAttempted']->isNotEmpty())
-                        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:2px">
-                            <span style="font-size:12px;font-weight:700;color:var(--wl-muted)">{{ __('Belum dicuba:') }}</span>
-                            @foreach ($performance['notAttempted'] as $naSub)
-                                @php($naCol = $naSub->color ?: '#17907B')
-                                <span class="kz-pill" style="background:color-mix(in oklab, {{ $naCol }} var(--pill-bw), var(--pill-bb));color:color-mix(in oklab, {{ $naCol }} var(--pill-fw), var(--pill-fb))">{{ $naSub->displayName() }}</span>
-                            @endforeach
-                        </div>
-                    @endif
                 </div>
             @endif
 
