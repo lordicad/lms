@@ -4,7 +4,8 @@
         .kz-ach { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 22px 8px; justify-items: center; }
         /* Completed (wide) beside Suggested Quiz (narrow); stacked on small screens. */
         .kz-cols { display: grid; grid-template-columns: minmax(0, 1.75fr) minmax(0, 1fr); gap: 20px; align-items: start; }
-        @media (max-width: 900px) { .kz-cols { grid-template-columns: 1fr; } }
+        /* Stacked on phones: match the 34px gap above "Telah Selesai" above "Kuiz Dicadangkan" too. */
+        @media (max-width: 900px) { .kz-cols { grid-template-columns: 1fr; gap: 34px; } }
         /* Phones: a tidy 2x2 grid of achievement badges instead of a single column. */
         @media (max-width: 640px) { .kz-ach { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px 6px; } }
 
