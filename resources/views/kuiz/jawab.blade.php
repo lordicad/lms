@@ -123,7 +123,7 @@
             {{-- Footer, in its own card below the question: Sebelum · question jumper · Seterusnya/Hantar --}}
             <div class="q2footer" style="display:flex;align-items:center;gap:12px;background:var(--wl-surface);border:1px solid var(--wl-line);border-radius:20px;padding:16px 20px;box-shadow:0 8px 24px var(--wl-line)">
                 <button type="button" @click="previous()" class="q2navbtn" :style="{ visibility: current === 0 ? 'hidden' : 'visible' }"
-                        style="min-height:48px;cursor:pointer;border-radius:14px;border:1.5px solid var(--wl-line-2);background:var(--wl-surface);color:var(--wl-ink);font-family:'Geist',sans-serif;font-weight:800;font-size:15px;padding:0 20px">← {{ __('Sebelum') }}</button>
+                        style="min-height:48px;cursor:pointer;border-radius:14px;border:1.5px solid var(--wl-line-2);background:var(--wl-surface);color:var(--wl-ink);font-family:'Geist',sans-serif;font-weight:800;font-size:15px;padding:0 20px;display:inline-flex;align-items:center;gap:8px"><x-icon name="arrow-left" class="h-4 w-4" /> {{ __('Sebelum') }}</button>
 
                 <div class="q2jumper" style="flex:1;display:flex;justify-content:center;gap:8px;flex-wrap:wrap">
                     @foreach ($questions as $index => $question)
@@ -137,7 +137,7 @@
                     <span x-show="! submitting">{{ __('Hantar Jawapan') }}</span><span x-show="submitting" x-cloak>{{ __('Menghantar...') }}</span>
                 </button>
                 <button type="button" x-show="current < total - 1" @click="next()" class="q2navbtn q2actbtn"
-                        style="min-height:48px;border:none;cursor:pointer;border-radius:14px;background:#17907B;color:#fff;font-family:'Geist',sans-serif;font-weight:800;font-size:15px;padding:0 24px">{{ __('Seterusnya') }} →</button>
+                        style="min-height:48px;border:none;cursor:pointer;border-radius:14px;background:#17907B;color:#fff;font-family:'Geist',sans-serif;font-weight:800;font-size:15px;padding:0 24px;display:inline-flex;align-items:center;gap:8px">{{ __('Seterusnya') }} <x-icon name="arrow-right" class="h-4 w-4" /></button>
             </div>
         </form>
     </div>

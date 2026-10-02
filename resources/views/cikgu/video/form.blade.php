@@ -21,7 +21,7 @@
                   'serverTooBig' => __('Fail terlalu besar untuk server. Sila guna pautan YouTube.'),
                   'uploadFailed' => __('Muat naik gagal (ralat :status). Sila cuba lagi.'),
                   'networkFailed' => __('Muat naik gagal. Sila semak sambungan internet anda dan cuba lagi.'),
-                  'thumbReady' => __('✓ Gambar kecil diambil daripada video anda.'),
+                  'thumbReady' => __('Gambar kecil diambil daripada video anda.'),
                   'thumbFailed' => __('Gambar kecil tidak dapat diambil daripada video ini. Anda boleh muat naik gambar sendiri.'),
                   'notVideo' => __('":name" bukan fail video. Guna MP4 atau WEBM.'),
                   'tooManyFiles' => __('Had :max video sekali muat naik.'),
@@ -32,7 +32,7 @@
         @csrf
         @if ($editing) @method('PUT') @endif
 
-        <a href="{{ route('cikgu.video.index') }}" class="tp-back">← {{ __('Video') }}</a>
+        <a href="{{ route('cikgu.video.index') }}" class="tp-back" style="display:inline-flex;align-items:center;gap:6px"><x-icon name="arrow-left" class="h-4 w-4" /> {{ __('Video') }}</a>
 
         {{-- Location --}}
         <div class="tp-panelform">
@@ -63,21 +63,32 @@
         <div class="tp-panelform">
             <h2 class="tp-g" style="font-size:17px;font-weight:800;color:var(--tp-ink)">{{ __('Sumber video') }}</h2>
 
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px" role="tablist" aria-label="{{ __('Sumber video') }}">
-                <button type="button" role="tab" id="tab-youtube" :aria-selected="source === 'youtube'" aria-controls="panel-youtube"
-                        @click="source = 'youtube'" class="tp-toggle" :class="{ 'is-on': source === 'youtube' }">
-                    ▶ {{ __('Pautan YouTube') }}
+            {{-- A radiogroup, not a tablist: choosing a source also decides which value the form
+                 submits, so radio semantics (single choice) fit better than tabs. --}}
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px" role="radiogroup" aria-label="{{ __('Sumber video') }}">
+                <button type="button" role="radio" :aria-checked="source === 'youtube' ? 'true' : 'false'"
+                        @click="switchSource('youtube')" class="tp-toggle" :class="{ 'is-on': source === 'youtube' }">
+                    <x-icon name="play" class="h-4 w-4" /> {{ __('Pautan YouTube') }}
                 </button>
-                <button type="button" role="tab" id="tab-upload" :aria-selected="source === 'upload'" aria-controls="panel-upload"
-                        @click="source = 'upload'" class="tp-toggle" :class="{ 'is-on': source === 'upload' }">
-                    ⬆ {{ __('Muat Naik Video') }}
+                <button type="button" role="radio" :aria-checked="source === 'upload' ? 'true' : 'false'"
+                        @click="switchSource('upload')" class="tp-toggle" :class="{ 'is-on': source === 'upload' }">
+                    <x-icon name="upload" class="h-4 w-4" /> {{ __('Muat Naik Video') }}
                 </button>
             </div>
 
             <input type="hidden" name="source" :value="source">
 
+            {{-- Both panels are rendered and stacked in the SAME grid cell, so the box is always
+                 as tall as the taller panel. Switching source only flips which one is visible -
+                 the height never changes, so iOS/WebKit (which has no scroll anchoring) has
+                 nothing to jump to. The inactive panel is visibility:hidden - it keeps its space
+                 in the grid but drops out of tab order and the accessibility tree. --}}
+            <div class="tp-sourcestack" style="display:grid" x-cloak>
             {{-- YouTube --}}
-            <div id="panel-youtube" role="tabpanel" aria-labelledby="tab-youtube" x-show="source === 'youtube'" x-cloak class="tp-field">
+            <div id="panel-youtube" role="group" aria-label="{{ __('Pautan YouTube') }}"
+                 style="grid-area:1 / 1"
+                 :style="source === 'youtube' ? {} : { visibility: 'hidden', pointerEvents: 'none' }"
+                 :aria-hidden="source !== 'youtube'" class="tp-field">
                 <label for="youtube_url" class="tp-label">{{ __('Pautan YouTube') }}</label>
                 <input id="youtube_url" name="youtube_url" type="url"
                        value="{{ old('youtube_url', $lesson->youtube_id ? 'https://www.youtube.com/watch?v='.$lesson->youtube_id : '') }}"
@@ -88,7 +99,10 @@
             </div>
 
             {{-- Upload --}}
-            <div id="panel-upload" role="tabpanel" aria-labelledby="tab-upload" x-show="source === 'upload'" x-cloak class="tp-field">
+            <div id="panel-upload" role="group" aria-label="{{ __('Muat Naik Video') }}"
+                 style="grid-area:1 / 1"
+                 :style="source === 'upload' ? {} : { visibility: 'hidden', pointerEvents: 'none' }"
+                 :aria-hidden="source !== 'upload'" class="tp-field">
                 <label class="tp-label">{{ $editing ? __('Fail video') : __('Fail video') }}</label>
 
                 @if ($editing)
@@ -201,10 +215,11 @@
                 <p x-show="sizeError" x-cloak class="tp-error" x-text="sizeError"></p>
                 @error('video') <span class="tp-error">{{ $message }}</span> @enderror
                 <div class="tp-note" style="display:flex;gap:10px;background:#FEF0CE;border:1px solid rgba(138,106,18,.25);border-radius:12px;padding:12px 14px;font-size:13px;color:#8A6A12;margin-top:6px">
-                    <span>ℹ️</span>
+                    <x-icon name="info-circle" class="h-5 w-5" style="flex-shrink:0;margin-top:1px" />
                     <div>{{ __('Untuk rakaman kelas penuh (video panjang atau besar), kami syorkan muat naik ke YouTube (Unlisted) dan tampal pautan di sini. Muat naik terus sesuai untuk klip pendek sahaja.') }}</div>
                 </div>
             </div>
+            </div>{{-- /.tp-sourcestack --}}
 
             {{-- Thumbnail. A batch captures one frame per video automatically, so a single
                  picker here would only be ambiguous. --}}
@@ -222,7 +237,7 @@
                        x-ref="thumbnail" @change="thumbName = $event.target.files[0]?.name || ''; onThumbnailPicked()" aria-describedby="thumbnail-help">
                 <p id="thumbnail-help" class="tp-hint">{{ __('Dibuat secara automatik daripada video anda. Muat naik gambar sendiri untuk menggantikannya.') }}</p>
                 {{-- Live status for the frame we capture from the chosen video file. --}}
-                <p x-show="thumbBusy" x-cloak class="tp-hint" aria-live="polite">⏳ {{ __('Sedang mengambil gambar daripada video…') }}</p>
+                <p x-show="thumbBusy" x-cloak class="tp-hint" aria-live="polite" style="display:flex;align-items:center;gap:6px"><x-icon name="clock" class="h-4 w-4" /> {{ __('Sedang mengambil gambar daripada video…') }}</p>
                 <p x-show="thumbNote" x-cloak class="tp-hint" style="color:#0F7A68;font-weight:700" aria-live="polite" x-text="thumbNote"></p>
                 <p x-show="thumbError" x-cloak class="tp-hint" style="color:#8A6A12" aria-live="polite" x-text="thumbError"></p>
                 @error('thumbnail') <span class="tp-error">{{ $message }}</span> @enderror
@@ -254,7 +269,7 @@
         </div>
 
         <div x-show="failed" x-cloak style="display:flex;gap:10px;background:#FDE7E0;border:1px solid rgba(194,73,54,.25);border-radius:14px;padding:14px 18px;font-size:13.5px;color:#C24936">
-            <span>⚠️</span>
+            <x-icon name="alert" class="h-5 w-5" style="flex-shrink:0;margin-top:1px" />
             <div x-text="failed"></div>
         </div>
 
@@ -285,6 +300,16 @@
                     /** Creating on the upload tab: one lesson per file, each titled by its row. */
                     get batch() {
                         return ! this.editing && this.source === 'upload';
+                    },
+
+                    /** Switch the video source. Both panels share one grid cell, so the box
+                     *  height never changes and the page cannot reflow; we still pin the scroll
+                     *  position across the toggle because iOS/WebKit has no scroll anchoring. */
+                    switchSource(next) {
+                        if (this.source === next) return;
+                        const y = window.scrollY;
+                        this.source = next;
+                        this.$nextTick(() => window.scrollTo(0, y));
                     },
 
                     take(fileList) {

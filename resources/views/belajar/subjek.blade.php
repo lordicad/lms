@@ -3,7 +3,7 @@
     @php($selGrad = "linear-gradient(135deg, color-mix(in oklab, {$col} 30%, #fff), color-mix(in oklab, {$col} 12%, #fff))")
 
     <div style="display:flex;flex-direction:column;gap:20px">
-        <a href="{{ route('subjek.index', ['tahun' => $grade->level]) }}" class="wl-back">← {{ __('Semua subjek') }}</a>
+        <a href="{{ route('subjek.index', ['tahun' => $grade->level]) }}" class="wl-back" style="display:inline-flex;align-items:center;gap:6px"><x-icon name="arrow-left" class="h-4 w-4" /> {{ __('Semua subjek') }}</a>
 
         <div class="wl-subjhead" style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
             <span style="width:56px;height:56px;border-radius:16px;background:{{ $selGrad }};display:grid;place-items:center"><x-subject-icon :subject="$subject" :size="26" /></span>

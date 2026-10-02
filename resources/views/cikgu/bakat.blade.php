@@ -4,32 +4,30 @@
     :sub="__('Perkembangan kandungan yang anda muat naik - tontonan, kegemaran, muat turun dan percubaan kuiz')">
 
     @php
-        $medals = ['🥇', '🥈', '🥉'];
-
         $lists = [
             [
-                'icon' => '🎬', 'title' => __('Video Paling Ditonton'), 'sub' => __('Tontonan pada video anda'),
+                'icon' => 'video', 'title' => __('Video Paling Ditonton'), 'sub' => __('Tontonan pada video anda'),
                 'items' => $topVideos->map(fn ($l) => [
                     'subject' => $l->chapter->subject, 'title' => $l->title,
                     'detail' => $l->chapter->subject->name.' · '.__('Bab :n', ['n' => $l->chapter->number]), 'value' => $l->views_count,
                 ]),
             ],
             [
-                'icon' => '❤️', 'title' => __('Video Paling Digemari'), 'sub' => __('Murid menandakan ♥ pada video anda'),
+                'icon' => 'heart', 'title' => __('Video Paling Digemari'), 'sub' => __('Murid menggemari video anda'),
                 'items' => $topFavourites->map(fn ($e) => [
                     'subject' => $e->lesson->chapter->subject, 'title' => $e->lesson->title,
                     'detail' => $e->lesson->chapter->subject->name.' · '.__('Bab :n', ['n' => $e->lesson->chapter->number]), 'value' => $e->favourites,
                 ]),
             ],
             [
-                'icon' => '📄', 'title' => __('Bahan Paling Dimuat Turun'), 'sub' => __('Muat turun pada bahan anda'),
+                'icon' => 'file-text', 'title' => __('Bahan Paling Dimuat Turun'), 'sub' => __('Muat turun pada bahan anda'),
                 'items' => $topMaterials->map(fn ($m) => [
                     'subject' => $m->chapter->subject, 'title' => $m->title,
                     'detail' => $m->chapter->subject->name.' · '.__('Bab :n', ['n' => $m->chapter->number]), 'value' => $m->download_count,
                 ]),
             ],
             [
-                'icon' => '📝', 'title' => __('Kuiz Paling Dicuba'), 'sub' => __('Percubaan murid pada kuiz anda'),
+                'icon' => 'quiz', 'title' => __('Kuiz Paling Dicuba'), 'sub' => __('Percubaan murid pada kuiz anda'),
                 'items' => $topQuizzes->map(fn ($q) => [
                     'subject' => $q->chapter->subject, 'title' => $q->title,
                     'detail' => $q->chapter->subject->name.' · '.__('Bab :n', ['n' => $q->chapter->number]), 'value' => $q->completed_attempts_count,
@@ -38,10 +36,10 @@
         ];
 
         $summary = [
-            ['icon' => 'eye', 'tint' => '#E4EEF9', 'label' => __('Jumlah tontonan video'), 'value' => number_format($stats['views'])],
-            ['icon' => '❤️', 'tint' => '#FBE4ED', 'label' => __('Video digemari'), 'value' => number_format($stats['favourites'])],
-            ['icon' => '⬇️', 'tint' => '#DCF2EE', 'label' => __('Bahan dimuat turun'), 'value' => number_format($stats['downloads'])],
-            ['icon' => '📝', 'tint' => '#FEF0CE', 'label' => __('Percubaan kuiz'), 'value' => number_format($stats['attempts'])],
+            ['icon' => 'eye', 'tint' => '#E4EEF9', 'fg' => '#2E6CA8', 'label' => __('Jumlah tontonan video'), 'value' => number_format($stats['views'])],
+            ['icon' => 'heart', 'tint' => '#FBE4ED', 'fg' => '#B84A75', 'label' => __('Video digemari'), 'value' => number_format($stats['favourites'])],
+            ['icon' => 'download', 'tint' => '#DCF2EE', 'fg' => '#2E8B7F', 'label' => __('Bahan dimuat turun'), 'value' => number_format($stats['downloads'])],
+            ['icon' => 'quiz', 'tint' => '#FEF0CE', 'fg' => '#8A6A12', 'label' => __('Percubaan kuiz'), 'value' => number_format($stats['attempts'])],
         ];
     @endphp
 
@@ -50,7 +48,7 @@
         @foreach ($summary as $s)
             <div class="tp-stat">
                 <div style="display:flex;align-items:center;gap:10px">
-                    <span class="tp-stat-ico" style="background:{{ $s['tint'] }}">@if ($s['icon'] === 'eye')<img src="{{ asset('images/eye.png') }}" alt="" style="width:22px;height:22px;object-fit:contain">@else{{ $s['icon'] }}@endif</span>
+                    <span class="tp-stat-ico" style="background:{{ $s['tint'] }}">@if ($s['icon'] === 'eye')<img src="{{ asset('images/eye.png') }}" alt="" style="width:22px;height:22px;object-fit:contain">@else<x-icon :name="$s['icon']" class="h-[22px] w-[22px]" style="color:{{ $s['fg'] }}" />@endif</span>
                     <span class="tp-stat-label">{{ $s['label'] }}</span>
                 </div>
                 <span class="tp-stat-value">{{ $s['value'] }}</span>
@@ -75,7 +73,7 @@
         ];
     @endphp
     <div class="tp-card" style="padding:22px;margin:20px 0">
-        <h2 class="tp-g" style="font-size:16px;font-weight:800;color:var(--tp-ink);margin-bottom:14px">📝 {{ __('Lulus / Gagal Kuiz') }}</h2>
+        <h2 class="tp-g" style="font-size:16px;font-weight:800;color:var(--tp-ink);margin-bottom:14px;display:inline-flex;align-items:center;gap:8px"><x-icon name="quiz" class="h-[18px] w-[18px]" style="color:var(--tp-muted-2)" /> {{ __('Lulus / Gagal Kuiz') }}</h2>
 
         @if ($passFail['total'] === 0)
             <p style="text-align:center;color:var(--tp-muted);padding:30px 0;font-weight:700">{{ __('Belum ada percubaan kuiz selesai lagi.') }}</p>
@@ -114,7 +112,7 @@
         @foreach ($lists as $list)
             <div class="tp-card" style="overflow:hidden">
                 <div style="padding:18px 22px;border-bottom:1px solid var(--tp-line);display:flex;flex-direction:column;gap:2px">
-                    <h2 class="tp-g" style="font-size:16px;font-weight:800;color:var(--tp-ink)">{{ $list['icon'] }} {{ $list['title'] }}</h2>
+                    <h2 class="tp-g" style="font-size:16px;font-weight:800;color:var(--tp-ink);display:inline-flex;align-items:center;gap:8px"><x-icon :name="$list['icon']" class="h-[18px] w-[18px]" style="color:var(--tp-muted-2)" /> {{ $list['title'] }}</h2>
                     <span style="font-size:12.5px;color:var(--tp-muted)">{{ $list['sub'] }}</span>
                 </div>
 

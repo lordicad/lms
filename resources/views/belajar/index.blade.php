@@ -46,7 +46,7 @@
                             </div>
                             <h2 class="hero-title" style="margin:0;font-family:'Geist',sans-serif;font-size:26px;font-weight:800;color:#1A2433;letter-spacing:-.01em;text-wrap:balance">{{ $hero->title }}</h2>
                             <div class="hero-cta" style="display:flex;gap:10px;flex-wrap:wrap">
-                                <a href="{{ route('video.show', $hero) }}" class="wl-btn-primary" style="min-height:46px;display:inline-flex;align-items:center;border-radius:12px;background:#17907B;color:#fff;font-family:'Geist',sans-serif;font-weight:800;font-size:14.5px;padding:0 22px;text-decoration:none">▶&nbsp; {{ $heroResuming ? __('Sambung Menonton') : __('Tonton') }}</a>
+                                <a href="{{ route('video.show', $hero) }}" class="wl-btn-primary" style="min-height:46px;display:inline-flex;align-items:center;gap:8px;border-radius:12px;background:#17907B;color:#fff;font-family:'Geist',sans-serif;font-weight:800;font-size:14.5px;padding:0 22px;text-decoration:none"><x-icon name="play" class="h-4 w-4" /> {{ $heroResuming ? __('Sambung Menonton') : __('Tonton') }}</a>
                                 {{-- AJAX favourite toggle (endpoint returns JSON; no navigation). --}}
                                 <button type="button" x-data="{
                                             fav: {{ $heroFav ? 'true' : 'false' }},
@@ -69,7 +69,7 @@
                                         :aria-pressed="fav ? 'true' : 'false'"
                                         class="wl-btn-secondary"
                                         style="min-height:46px;cursor:pointer;border-radius:12px;border:1.5px solid var(--wl-line-3);background:var(--wl-surface);color:var(--wl-ink);font-family:'Geist',sans-serif;font-weight:700;font-size:14.5px;padding:0 18px;display:inline-flex;align-items:center;gap:6px">
-                                    <span x-text="fav ? '♥' : '♡'" :style="fav ? 'color:#EB5E5A' : ''"></span>
+                                    <x-icon name="heart" class="h-4 w-4" ::style="fav ? 'fill:currentColor;color:#EB5E5A' : 'fill:none'" />
                                     <span>{{ __('Gemari') }}</span>
                                 </button>
                             </div>
@@ -78,7 +78,7 @@
                             @if ($hero->thumbnailUrl())
                                 <img src="{{ $hero->thumbnailUrl() }}" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
                             @endif
-                            <span style="width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,.92);display:grid;place-items:center;color:#4276AE;font-size:17px;z-index:1">▶</span>
+                            <span style="width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,.92);display:grid;place-items:center;color:#4276AE;z-index:1"><x-icon name="play" class="h-[18px] w-[18px]" style="margin-left:2px" /></span>
                             @if ($hero->durationLabel())
                                 <span style="position:absolute;right:12px;bottom:10px;background:rgba(66,118,174,.85);color:#fff;font-size:11px;font-weight:700;border-radius:999px;padding:3px 9px">{{ $hero->durationLabel() }}</span>
                             @endif

@@ -6,7 +6,7 @@
 
     <div style="display:flex;flex-direction:column;gap:16px;max-width:760px;margin:0 auto;width:100%">
         @php($backToQuizzes = request('from') === 'quizzes')
-        <a href="{{ $backToQuizzes ? route('kuiz-saya.index') : route('bab.show', $chapter) }}" class="wl-back">← {{ $backToQuizzes ? __('Kuiz Saya') : __('Kembali') }}</a>
+        <a href="{{ $backToQuizzes ? route('kuiz-saya.index') : route('bab.show', $chapter) }}" class="wl-back" style="display:inline-flex;align-items:center;gap:6px"><x-icon name="arrow-left" class="h-4 w-4" /> {{ $backToQuizzes ? __('Kuiz Saya') : __('Kembali') }}</a>
 
         @if ($isPreview)
             <div style="background:#FEF0CE;border-radius:14px;padding:14px 18px;font-weight:700;font-size:14px;color:#8A6A12">{{ __('Anda melihat kuiz ini sebagai cikgu. Guru tidak boleh mencuba kuiz, hanya menyemak.') }}</div>
@@ -47,7 +47,7 @@
                 </div>
                 @if ($quiz->duration_minutes)
                     <div style="display:flex;gap:10px;align-items:flex-start">
-                        <span style="color:#E3A31C;font-size:13px;flex-shrink:0">⏰</span>
+                        <x-icon name="clock" class="h-[18px] w-[18px]" style="color:#E3A31C;flex-shrink:0;margin-top:1px" />
                         <span style="font-size:13.5px;color:{{ $isDark ? 'var(--wl-body)' : '#4A4B63' }};line-height:1.5">{{ __('Anda ada :minutes minit. Jawapan dihantar secara automatik apabila masa tamat.', ['minutes' => $quiz->duration_minutes]) }}</span>
                     </div>
                 @endif

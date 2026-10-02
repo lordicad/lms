@@ -5,7 +5,7 @@
 
     {{-- Back link keeps its original left position; the content block below is centred in the wide
          column. The "now add questions" message comes from the layout flash, no banner here. --}}
-    <a href="{{ route('cikgu.kuiz.edit', $quiz) }}" class="tp-back">← {{ __('Kembali') }}</a>
+    <a href="{{ route('cikgu.kuiz.edit', $quiz) }}" class="tp-back" style="display:inline-flex;align-items:center;gap:6px"><x-icon name="arrow-left" class="h-4 w-4" /> {{ __('Kembali') }}</a>
 
     <div class="tp-formwrap" style="margin:0 auto;width:100%">
         <div class="tp-quizhead" style="display:flex;flex-direction:column;gap:6px">
@@ -15,14 +15,14 @@
 
         @if ($hasAttempts)
             <div style="display:flex;gap:10px;background:#FEF0CE;border:1px solid rgba(138,106,18,.25);border-radius:14px;padding:14px 18px;font-size:13.5px;color:#8A6A12">
-                <span>⚠️</span>
+                <x-icon name="alert" class="h-5 w-5" style="flex-shrink:0;margin-top:1px" />
                 <div>{{ __('Kuiz ini sudah ada percubaan murid. Menyimpan soalan baharu akan menggantikan semua soalan lama, dan semakan jawapan percubaan lama tidak lagi dapat dipaparkan. Mata dan ranking yang sudah diperoleh murid kekal tidak berubah.') }}</div>
             </div>
         @endif
 
         @error('questions')
             <div style="display:flex;gap:10px;background:#FDE7E0;border:1px solid rgba(194,73,54,.25);border-radius:14px;padding:14px 18px;font-size:13.5px;color:#C24936">
-                <span>⚠️</span><div>{{ $message }}</div>
+                <x-icon name="alert" class="h-5 w-5" style="flex-shrink:0;margin-top:1px" /><div>{{ $message }}</div>
             </div>
         @enderror
 
@@ -47,7 +47,7 @@
             @method('PUT')
 
             @if ($translatorEnabled)
-                {{-- Auto-translate the whole quiz BM⇄EN in one click. Fills the editable
+                {{-- Auto-translate the whole quiz BM<->EN in one click. Fills the editable
                      "Terjemahan" panel under each question so the teacher can review and correct
                      the machine translation before saving. Runs on save too, so it is optional. --}}
                 <div class="tp-card" style="border-radius:16px;padding:16px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
@@ -57,7 +57,7 @@
                     </div>
                     <span style="font-size:12.5px;font-weight:700;color:#C24936" x-show="translateError" x-cloak x-text="translateError"></span>
                     <button type="button" class="tp-btn tp-btn-sm" @click="translateAll()" :disabled="translating">
-                        <span x-show="! translating">✦ {{ __('Terjemah automatik') }}</span>
+                        <span x-show="! translating" style="display:inline-flex;align-items:center;gap:6px"><x-icon name="sparkles" class="h-4 w-4" /> {{ __('Terjemah automatik') }}</span>
                         <span x-show="translating" x-cloak>{{ __('Menterjemah...') }}</span>
                     </button>
                 </div>
@@ -143,7 +143,7 @@
 
                             <button type="button" @click="question._showT = ! question._showT"
                                     class="tp-g" style="align-self:flex-start;display:inline-flex;align-items:center;gap:6px;border:none;background:transparent;cursor:pointer;color:#2E6CA8;font-weight:800;font-size:13px;padding:0">
-                                <span x-text="question._showT ? '▾' : '▸'"></span>
+                                <x-icon name="chevron-down" class="h-4 w-4" style="transition:transform .15s" ::style="question._showT ? {} : { transform: 'rotate(-90deg)' }" />
                                 {{ __('Terjemahan') }}
                                 <span x-show="question.source_locale" x-cloak style="font-weight:700;color:var(--tp-muted)"
                                       x-text="question.source_locale === 'en' ? '· English → Bahasa Melayu' : '· Bahasa Melayu → English'"></span>

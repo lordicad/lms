@@ -28,7 +28,7 @@
     @endphp
 
     <div class="tp-formwrap">
-        <a href="{{ route('cikgu.kuiz.index') }}" class="tp-back">← {{ __('Kembali') }}</a>
+        <a href="{{ route('cikgu.kuiz.index') }}" class="tp-back" style="display:inline-flex;align-items:center;gap:6px"><x-icon name="arrow-left" class="h-4 w-4" /> {{ __('Kembali') }}</a>
     </div>
 
     {{-- Cards centred in the wide content column; the back link above keeps its original left spot. --}}

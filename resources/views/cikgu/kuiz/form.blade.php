@@ -31,11 +31,11 @@
         <input type="hidden" name="type" :value="type">
 
         {{-- Editing came from the quizzes list; creating came through the quiz-mode step. --}}
-        <a href="{{ $editing ? route('cikgu.kuiz.index') : route('cikgu.kuiz.mod') }}" class="tp-back">← {{ __('Kembali') }}</a>
+        <a href="{{ $editing ? route('cikgu.kuiz.index') : route('cikgu.kuiz.mod') }}" class="tp-back" style="display:inline-flex;align-items:center;gap:6px"><x-icon name="arrow-left" class="h-4 w-4" /> {{ __('Kembali') }}</a>
 
         @if ($editing && ($hasAttempts ?? false))
             <div style="display:flex;gap:10px;background:#FEF0CE;border:1px solid rgba(138,106,18,.25);border-radius:14px;padding:14px 18px;font-size:13.5px;color:#8A6A12">
-                <span>⚠️</span>
+                <x-icon name="alert" class="h-5 w-5" style="flex-shrink:0;margin-top:1px" />
                 <div>{{ __('Kuiz ini sudah ada percubaan murid. Menukar soalan akan menggantikan semua soalan lama, dan semakan jawapan percubaan lama tidak lagi dapat dipaparkan. Mata dan ranking yang sudah diperoleh murid kekal tidak berubah.') }}</div>
             </div>
         @endif
@@ -101,7 +101,7 @@
                                 </div>
                                 <span style="font-size:12.5px;font-weight:700;color:#C24936" x-show="translateError" x-cloak x-text="translateError"></span>
                                 <button type="button" class="tp-btn-outline tp-btn-sm" @click="translateMeta()" :disabled="translating">
-                                    <span x-show="! translating">✦ {{ __('Terjemah automatik') }}</span>
+                                    <span x-show="! translating" style="display:inline-flex;align-items:center;gap:6px"><x-icon name="sparkles" class="h-4 w-4" /> {{ __('Terjemah automatik') }}</span>
                                     <span x-show="translating" x-cloak>{{ __('Menterjemah...') }}</span>
                                 </button>
                             </div>

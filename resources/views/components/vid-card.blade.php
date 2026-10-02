@@ -28,12 +28,12 @@
             <img src="{{ $thumb }}" alt="" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
         @endif
 
-        <button type="button" class="fav-btn" data-fav="{{ $fav ? 'true' : 'false' }}" title="{{ __('Kegemaran') }}"
+        <button type="button" class="fav-btn" data-fav="{{ $fav ? 'true' : 'false' }}" title="{{ __('Kegemaran') }}" aria-label="{{ __('Kegemaran') }}"
                 data-add="{{ route('kegemaran.simpan', $lesson) }}" data-remove="{{ route('kegemaran.padam', $lesson) }}"
                 onclick="wlToggleFav(event, this)"
-                style="position:absolute;top:10px;right:10px;width:34px;height:34px;border-radius:50%;border:none;cursor:pointer;background:rgba(255,255,255,.92);display:grid;place-items:center;font-size:15px;z-index:2;color:{{ $fav ? '#EB5E5A' : '#6C6F87' }};box-shadow:0 2px 8px var(--wl-line-3)">{{ $fav ? '♥' : '♡' }}</button>
+                style="position:absolute;top:10px;right:10px;width:34px;height:34px;border-radius:50%;border:none;cursor:pointer;background:rgba(255,255,255,.92);display:grid;place-items:center;z-index:2;color:{{ $fav ? '#EB5E5A' : '#6C6F87' }};box-shadow:0 2px 8px var(--wl-line-3)"><x-icon name="heart" class="h-[18px] w-[18px]" style="fill:{{ $fav ? 'currentColor' : 'none' }}" /></button>
 
-        <span style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.9);display:grid;place-items:center;color:#4276AE;font-size:13px;z-index:1">▶</span>
+        <span style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.9);display:grid;place-items:center;color:#4276AE;z-index:1"><x-icon name="play" class="h-[15px] w-[15px]" style="margin-left:2px" /></span>
 
         @if ($lesson->durationLabel())
             <span style="position:absolute;right:10px;bottom:10px;background:rgba(66,118,174,.85);color:#fff;font-size:11px;font-weight:700;border-radius:999px;padding:3px 9px">{{ $lesson->durationLabel() }}</span>
@@ -78,17 +78,18 @@
                 if (btn.dataset.busy) return;
                 const on = btn.dataset.fav === 'true';
                 const url = on ? btn.dataset.remove : btn.dataset.add;
+                const svg = btn.querySelector('svg');
                 btn.dataset.busy = '1';
                 // optimistic
                 btn.dataset.fav = on ? 'false' : 'true';
-                btn.textContent = on ? '♡' : '♥';
+                if (svg) svg.style.fill = on ? 'none' : 'currentColor';
                 btn.style.color = on ? '#6C6F87' : '#EB5E5A';
                 const token = document.querySelector('meta[name=csrf-token]')?.content;
                 fetch(url, { method: on ? 'DELETE' : 'POST', headers: { 'X-CSRF-TOKEN': token, 'Accept': 'application/json' } })
                     .then(r => { if (!r.ok) throw new Error('failed'); })
                     .catch(() => {
                         btn.dataset.fav = on ? 'true' : 'false';
-                        btn.textContent = on ? '♥' : '♡';
+                        if (svg) svg.style.fill = on ? 'currentColor' : 'none';
                         btn.style.color = on ? '#EB5E5A' : '#6C6F87';
                     })
                     .finally(() => { delete btn.dataset.busy; });

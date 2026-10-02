@@ -50,6 +50,7 @@
             --tp-ink:#28293F; --tp-body:#2D2F44;
             --tp-muted:#8B8AA3; --tp-muted-2:#6C6F87;
             --tp-line:rgba(46,44,80,.08); --tp-line-2:rgba(46,44,80,.12); --tp-line-3:rgba(46,44,80,.1);
+            --tp-seg-border:#8A909C; /* segmented-control resting border, >=3:1 on the white card */
             --tp-shadow:0 2px 10px rgba(46,44,80,.04);
             --tp-shadow-lift:0 6px 18px rgba(46,44,80,.08);
             --tp-input:#F6F5F0; --tp-active-bg:#E6F5F1; --tp-active-fg:#0F7A68;
@@ -65,6 +66,7 @@
             --tp-ink:#EDF2F8; --tp-body:#C9D2DC;
             --tp-muted:#8A94A3; --tp-muted-2:#A6AFBC;
             --tp-line:rgba(255,255,255,.09); --tp-line-2:rgba(255,255,255,.14); --tp-line-3:rgba(255,255,255,.11);
+            --tp-seg-border:#6E7A8A; /* segmented-control resting border, >=3:1 on the dark surface */
             --tp-shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -8px rgba(0,0,0,.55);
             --tp-shadow-lift:0 2px 6px rgba(0,0,0,.45), 0 18px 44px -14px rgba(0,0,0,.6);
             --tp-input:#1E2731; --tp-active-bg:#123029; --tp-active-fg:#5EEAD4;
@@ -255,8 +257,11 @@
         .tp-back:hover { background:var(--tp-active-bg); color:var(--tp-teal); }
         .tp-check { width:24px; height:24px; border-radius:7px; flex-shrink:0; display:grid; place-items:center; font-size:14px; margin-top:2px; background:var(--tp-teal); color:#fff; border:2px solid var(--tp-teal); }
         .tp-check-off { width:24px; height:24px; border-radius:7px; flex-shrink:0; display:grid; place-items:center; margin-top:2px; background:var(--tp-surface); border:2px solid rgba(46,44,80,.25); }
-        .tp-toggle { min-height:48px; cursor:pointer; border-radius:12px; font-family:'Geist',sans-serif; font-weight:800; font-size:14px; display:inline-flex; align-items:center; justify-content:center; gap:8px; flex:1; transition:all .15s; border:1.5px solid var(--tp-line-2); background:var(--tp-surface); color:#28293F; }
-        .tp-toggle.is-on { border:none; background:var(--tp-teal); color:#fff; }
+        .tp-toggle { min-height:48px; cursor:pointer; border-radius:12px; font-family:'Geist',sans-serif; font-weight:800; font-size:14px; display:inline-flex; align-items:center; justify-content:center; gap:8px; flex:1; transition:all .15s; border:1.5px solid var(--tp-seg-border); background:var(--tp-surface-2); color:var(--tp-ink); }
+        .tp-toggle:hover { border-color:var(--tp-teal); color:var(--tp-teal); }
+        .tp-toggle:focus-visible { outline:2px solid var(--tp-teal); outline-offset:2px; }
+        .tp-toggle.is-on { border-color:var(--tp-teal); background:var(--tp-teal); color:#fff; }
+        .tp-toggle.is-on:hover { color:#fff; }
         .tp-dropzone { border:2px dashed rgba(46,44,80,.18); border-radius:14px; padding:36px; display:flex; flex-direction:column; align-items:center; gap:8px; text-align:center; background:var(--tp-surface-2); cursor:pointer; transition:border-color .15s, background .15s; }
         .tp-dropzone:hover { border-color:var(--tp-teal); }
         /* Without this, crossing onto a child fires dragleave and the highlight flickers. */
@@ -400,7 +405,7 @@
             .tp-ranktable [style*="font-size:14.5px"] { font-size:13px !important; }
             .tp-ranktable [style*="font-size:13.5px"] { font-size:12px !important; }
             .tp-ranktable [style*="font-size:12px"] { font-size:11px !important; }
-            /* Back button (← ...): smaller on mobile. */
+            /* Back button (arrow-left link): smaller on mobile. */
             .tp-back { min-height:34px !important; font-size:12px !important; padding:0 12px !important; gap:6px !important; }
             /* Form section headings + field labels: a little smaller on mobile. */
             .tp-g[style*="font-size:17px"] { font-size:15px !important; }
@@ -424,7 +429,7 @@
             .tp-textarea { padding:9px 12px !important; }
             textarea.tp-textarea { height:88px !important; }
             /* Source tabs, hints and the file picker: a little smaller. */
-            .tp-toggle { min-height:40px !important; font-size:12.5px !important; }
+            .tp-toggle { min-height:44px !important; font-size:12.5px !important; }
             .tp-hint { font-size:11.5px !important; }
             .tp-filepick { min-height:40px !important; }
             .tp-filepick > span:first-child { min-height:30px !important; font-size:12px !important; padding:0 12px !important; }

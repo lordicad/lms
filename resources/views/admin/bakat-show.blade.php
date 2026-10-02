@@ -15,8 +15,8 @@
 
     <div style="display:flex;flex-direction:column;gap:20px">
 
-        <a href="{{ route('admin.bakat') }}" class="tp-linkbtn is-muted" style="align-self:flex-start;padding:0">
-            ← {{ __('Kembali ke senarai') }}
+        <a href="{{ route('admin.bakat') }}" class="tp-linkbtn is-muted" style="align-self:flex-start;padding:0;display:inline-flex;align-items:center;gap:6px">
+            <x-icon name="arrow-left" class="h-4 w-4" /> {{ __('Kembali ke senarai') }}
         </a>
 
         {{-- Talent scorecard: the transparent headline + four sub-scores, in the WeLearn palette. --}}

@@ -11,7 +11,7 @@
         @csrf
         @if ($editing) @method('PUT') @endif
 
-        <a href="{{ route('cikgu.bahan.index') }}" class="tp-back">← {{ __('Bahan Bantu Mengajar') }}</a>
+        <a href="{{ route('cikgu.bahan.index') }}" class="tp-back" style="display:inline-flex;align-items:center;gap:6px"><x-icon name="arrow-left" class="h-4 w-4" /> {{ __('Bahan Bantu Mengajar') }}</a>
 
         {{-- Location --}}
         <div class="tp-panelform">

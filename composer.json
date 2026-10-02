@@ -53,6 +53,9 @@
             "@php artisan config:clear --ansi",
             "@php artisan test"
         ],
+        "lint:emoji": [
+            "@php scripts/lint-emoji.php"
+        ],
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover --ansi"

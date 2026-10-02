@@ -336,7 +336,7 @@
         </div>
 
         @if ($back)
-            <a href="{{ url('/') }}" class="wla-back">← {{ __('Kembali ke halaman utama') }}</a>
+            <a href="{{ url('/') }}" class="wla-back" style="display:inline-flex;align-items:center;gap:6px"><x-icon name="arrow-left" class="h-4 w-4" /> {{ __('Kembali ke halaman utama') }}</a>
         @endif
         {{ $footer ?? '' }}
     </main>

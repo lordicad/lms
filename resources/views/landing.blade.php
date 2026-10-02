@@ -605,10 +605,10 @@
                     <p class="wl-p" style="font-size:17px; max-width:480px;">{{ __('Susun Bab, muat naik video (dari peranti atau YouTube), lampirkan bahan, dan bina kuiz semak-sendiri. Skor Bakat yang telus menunjukkan impak pengajaran anda.') }}</p>
 
                     <ul class="wl-ticks">
-                        <li><span class="tick">✓</span><span>{{ __('Muat naik dari peranti atau pautkan saluran YouTube anda sendiri') }}</span></li>
-                        <li><span class="tick">✓</span><span>{{ __('Lampirkan bahan - PDF, DOCX, PPTX dan lembaran kerja') }}</span></li>
-                        <li><span class="tick">✓</span><span>{{ __('Bina kuiz interaktif yang menyemak sendiri') }}</span></li>
-                        <li><span class="tick">✓</span><span>{{ __('Statistik per-pelajaran dan Skor Bakat yang telus') }}</span></li>
+                        <li><span class="tick" style="display:inline-flex;align-items:center"><x-icon name="check" class="h-[18px] w-[18px]" /></span><span>{{ __('Muat naik dari peranti atau pautkan saluran YouTube anda sendiri') }}</span></li>
+                        <li><span class="tick" style="display:inline-flex;align-items:center"><x-icon name="check" class="h-[18px] w-[18px]" /></span><span>{{ __('Lampirkan bahan - PDF, DOCX, PPTX dan lembaran kerja') }}</span></li>
+                        <li><span class="tick" style="display:inline-flex;align-items:center"><x-icon name="check" class="h-[18px] w-[18px]" /></span><span>{{ __('Bina kuiz interaktif yang menyemak sendiri') }}</span></li>
+                        <li><span class="tick" style="display:inline-flex;align-items:center"><x-icon name="check" class="h-[18px] w-[18px]" /></span><span>{{ __('Statistik per-pelajaran dan Skor Bakat yang telus') }}</span></li>
                     </ul>
                 </div>
 

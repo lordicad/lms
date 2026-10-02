@@ -118,7 +118,7 @@
                         <div style="padding:48px 28px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px">
                             <p style="margin:0;font-family:'Geist',sans-serif;font-weight:800;font-size:15px;color:{{ $isDark ? '#F3F5F8' : '#28293F' }}">{{ __('Kuiz ini ialah fail untuk dicetak.') }}</p>
                             <p style="margin:0;font-size:13.5px;color:{{ $isDark ? '#9AA3B2' : '#6C6F87' }};max-width:360px">{{ __('Ia tiada soalan dalam sistem. Muat turun fail untuk melihatnya.') }}</p>
-                            <a :href="quiz.downloadUrl" style="margin-top:12px;display:inline-flex;align-items:center;gap:8px;min-height:44px;border-radius:12px;background:#17907B;color:#fff;font-family:'Geist',sans-serif;font-weight:800;font-size:14px;padding:0 20px;text-decoration:none">⬇ {{ __('Muat Turun') }}</a>
+                            <a :href="quiz.downloadUrl" style="margin-top:12px;display:inline-flex;align-items:center;gap:8px;min-height:44px;border-radius:12px;background:#17907B;color:#fff;font-family:'Geist',sans-serif;font-weight:800;font-size:14px;padding:0 20px;text-decoration:none"><x-icon name="download" class="h-4 w-4" /> {{ __('Muat Turun') }}</a>
                         </div>
                     </template>
 

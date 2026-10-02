@@ -121,9 +121,9 @@
                     <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
                         <span style="font-family:'Geist',sans-serif;font-size:13px;font-weight:800;color:var(--wl-muted)">{{ __('Soalan') }} {{ $index + 1 }}</span>
                         @if ($ok)
-                            <span style="border-radius:999px;padding:5px 14px;font-family:'Geist',sans-serif;font-size:12.5px;font-weight:800;{{ $isDark ? 'background:rgba(45,212,191,.15);color:#5EEAD4' : 'background:#DCF2EE;color:#0F7A68' }}">✓ {{ __('Betul.') }} {{ $answer->points_awarded }} {{ __('mata') }}</span>
+                            <span style="border-radius:999px;padding:5px 14px;font-family:'Geist',sans-serif;font-size:12.5px;font-weight:800;display:inline-flex;align-items:center;gap:6px;{{ $isDark ? 'background:rgba(45,212,191,.15);color:#5EEAD4' : 'background:#DCF2EE;color:#0F7A68' }}"><x-icon name="check" class="h-[15px] w-[15px]" /> {{ __('Betul.') }} {{ $answer->points_awarded }} {{ __('mata') }}</span>
                         @else
-                            <span style="border-radius:999px;padding:5px 14px;font-family:'Geist',sans-serif;font-size:12.5px;font-weight:800;{{ $isDark ? 'background:rgba(235,94,90,.16);color:#F0857F' : 'background:#FDE7E0;color:#C24936' }}">✗ {{ __('Salah. 0 mata') }}</span>
+                            <span style="border-radius:999px;padding:5px 14px;font-family:'Geist',sans-serif;font-size:12.5px;font-weight:800;display:inline-flex;align-items:center;gap:6px;{{ $isDark ? 'background:rgba(235,94,90,.16);color:#F0857F' : 'background:#FDE7E0;color:#C24936' }}"><x-icon name="x" class="h-[15px] w-[15px]" /> {{ __('Salah. 0 mata') }}</span>
                         @endif
                     </div>
                     <h4 class="wl-reviewq" style="margin:0;font-family:'Geist',sans-serif;font-size:17px;font-weight:800;line-height:1.4;color:var(--wl-ink)">{{ $question->localizedText() }}</h4>

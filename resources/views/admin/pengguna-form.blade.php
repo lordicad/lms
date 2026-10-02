@@ -27,7 +27,7 @@
          }">
         {{-- Same outlined button as the "back to Dashboard" link on the contributors page. --}}
         <a href="{{ route('admin.pengguna') }}" class="tp-btn-outline"
-           style="align-self:flex-start;min-height:40px;border-radius:11px;font-size:13px;padding:0 14px;border-width:1.5px;margin-bottom:16px">← {{ __('Semua pengguna') }}</a>
+           style="align-self:flex-start;min-height:40px;border-radius:11px;font-size:13px;padding:0 14px;border-width:1.5px;margin-bottom:16px;display:inline-flex;align-items:center;gap:6px"><x-icon name="arrow-left" class="h-4 w-4" /> {{ __('Semua pengguna') }}</a>
 
         <form method="POST" action="{{ $editing ? route('admin.pengguna.update', $user) : route('admin.pengguna.store') }}"
               style="background:var(--tp-surface);border:1px solid var(--tp-line);border-radius:18px;padding:24px;display:flex;flex-direction:column;gap:16px;box-shadow:0 2px 10px rgba(46,44,80,.04)">
@@ -191,8 +191,9 @@
             @if ($editing)
                 @php($ownsPassword = $user->password_changed_at !== null)
                 <div style="border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:3px;{{ $ownsPassword ? 'background:#DCF2EE;border:1px solid rgba(15,122,104,.25)' : 'background:#FEF0CE;border:1px solid rgba(138,106,18,.25)' }}">
-                    <span style="font-family:'Geist',sans-serif;font-size:13px;font-weight:800;color:{{ $ownsPassword ? '#0F7A68' : '#8A6A12' }}">
-                        {{ $ownsPassword ? '✓ '.__('Kata laluan sendiri') : '⏳ '.__('Masih guna kata laluan yang anda beri') }}
+                    <span style="font-family:'Geist',sans-serif;font-size:13px;font-weight:800;display:inline-flex;align-items:center;gap:6px;color:{{ $ownsPassword ? '#0F7A68' : '#8A6A12' }}">
+                        <x-icon name="{{ $ownsPassword ? 'check' : 'clock' }}" class="h-4 w-4" />
+                        {{ $ownsPassword ? __('Kata laluan sendiri') : __('Masih guna kata laluan yang anda beri') }}
                     </span>
                     <span style="font-size:12.5px;color:var(--tp-muted-2)">
                         @if ($ownsPassword)

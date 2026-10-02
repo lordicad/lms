@@ -6,7 +6,7 @@
     @php($tagColor = "color-mix(in oklab, {$col} var(--pill-fw), var(--pill-fb))")
 
     <div style="display:flex;flex-direction:column;gap:18px">
-        <a href="{{ route('bab.show', $chapter) }}" class="wl-back">← {{ __('Bab :number: :title', ['number' => $chapter->number, 'title' => $chapter->title]) }}</a>
+        <a href="{{ route('bab.show', $chapter) }}" class="wl-back" style="display:inline-flex;align-items:center;gap:6px"><x-icon name="arrow-left" class="h-4 w-4" /> {{ __('Bab :number: :title', ['number' => $chapter->number, 'title' => $chapter->title]) }}</a>
 
         <div class="wl-watchgrid" style="display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:24px;align-items:start">
             {{-- LEFT: player + title/meta --}}
@@ -25,7 +25,7 @@
                                 <span style="font-size:13px;font-weight:700;color:var(--wl-muted);white-space:nowrap">{{ $lesson->teacher->name }}</span>
                                 <span style="display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:700;color:var(--wl-muted);white-space:nowrap"><img src="{{ asset('images/eye.png') }}" alt="" style="width:16px;height:16px;object-fit:contain">{{ $lesson->views_count }} {{ __('tontonan') }}</span>
                                 @if ($me->isStudent() && $lesson->watchedBy($me))
-                                    <span style="background:#DCF2EE;color:#0F7A68;border-radius:999px;padding:4px 12px;font-family:'Geist',sans-serif;font-size:12px;font-weight:800;white-space:nowrap;margin-left:20px">✓ {{ __('Ditonton') }}</span>
+                                    <span style="background:#DCF2EE;color:#0F7A68;border-radius:999px;padding:4px 12px;font-family:'Geist',sans-serif;font-size:12px;font-weight:800;white-space:nowrap;margin-left:20px;display:inline-flex;align-items:center;gap:5px"><x-icon name="check" class="h-[14px] w-[14px]" /> {{ __('Ditonton') }}</span>
                                 @endif
                             </span>
                         </div>
@@ -53,7 +53,7 @@
                                 @click="toggle()"
                                 :aria-pressed="fav ? 'true' : 'false'"
                                 style="flex-shrink:0;min-height:46px;cursor:pointer;border-radius:12px;border:1.5px solid var(--wl-line-2);background:var(--wl-surface);font-family:'Geist',sans-serif;font-weight:800;font-size:14px;padding:0 18px;display:flex;align-items:center;gap:8px;color:var(--wl-ink)">
-                            <span x-text="fav ? '♥' : '♡'" :style="fav ? 'color:#EB5E5A;font-size:16px' : 'color:var(--wl-muted-2);font-size:16px'"></span>
+                            <x-icon name="heart" class="h-[17px] w-[17px]" ::style="fav ? 'fill:currentColor;color:#EB5E5A' : 'fill:none;color:var(--wl-muted-2)'" />
                             <span>{{ __('Gemari') }}</span>
                         </button>
                     @endif

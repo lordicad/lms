@@ -3,7 +3,7 @@
     :sub="__('Namakan semula bab supaya sepadan dengan sukatan KSSR sekolah anda')">
 
     <div class="tp-formwrap" style="max-width:560px">
-        <a href="{{ route('cikgu.bab.index', ['subjek' => $chapter->subject->slug, 'tahun' => $chapter->grade->level]) }}" class="tp-back">← {{ __('Pengurusan Bab') }}</a>
+        <a href="{{ route('cikgu.bab.index', ['subjek' => $chapter->subject->slug, 'tahun' => $chapter->grade->level]) }}" class="tp-back" style="display:inline-flex;align-items:center;gap:6px"><x-icon name="arrow-left" class="h-4 w-4" /> {{ __('Pengurusan Bab') }}</a>
 
         <span style="align-self:flex-start;background:#E4EEF9;color:#2E6CA8;border-radius:999px;padding:5px 14px;font-family:'Geist',sans-serif;font-size:12.5px;font-weight:800;display:inline-flex;align-items:center;gap:6px"><x-icon :name="$chapter->subject->iconName()" class="h-[15px] w-[15px]" />{{ $chapter->subject->name }} – {{ $chapter->grade->displayName() }}</span>
 

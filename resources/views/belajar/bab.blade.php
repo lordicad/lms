@@ -5,7 +5,7 @@
     @php($tagColor = "color-mix(in oklab, {$col} var(--pill-fw), var(--pill-fb))")
 
     <div style="display:flex;flex-direction:column;gap:22px">
-        <a href="{{ route('belajar.subjek', ['subject' => $subject->slug, 'grade' => $grade->level]) }}" class="wl-back">← {{ __('Kembali') }}</a>
+        <a href="{{ route('belajar.subjek', ['subject' => $subject->slug, 'grade' => $grade->level]) }}" class="wl-back" style="display:inline-flex;align-items:center;gap:6px"><x-icon name="arrow-left" class="h-4 w-4" /> {{ __('Kembali') }}</a>
 
         <div class="wl-babhead" style="background:var(--wl-surface);border:1px solid var(--wl-line);border-radius:18px;padding:20px 24px;display:flex;flex-direction:column;gap:4px;box-shadow:0 3px 12px rgba(46,44,80,.04)">
             <span style="font-family:'Geist',sans-serif;font-size:13px;font-weight:800;color:#2E6CA8"><x-subject-emoji :subject="$subject" class="text-sm" /> {{ $subject->name }} · {{ $grade->displayName() }}</span>
@@ -31,9 +31,9 @@
                                     <img src="{{ $lesson->thumbnailUrl() }}" alt="" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
                                 @endif
                                 @if ($watchedIds->contains($lesson->id))
-                                    <span style="position:absolute;top:10px;left:10px;background:#17907B;color:#fff;border-radius:999px;padding:4px 12px;font-family:'Geist',sans-serif;font-size:11.5px;font-weight:800;z-index:2">✓ {{ __('Ditonton') }}</span>
+                                    <span style="position:absolute;top:10px;left:10px;background:#17907B;color:#fff;border-radius:999px;padding:4px 12px;font-family:'Geist',sans-serif;font-size:11.5px;font-weight:800;z-index:2;display:inline-flex;align-items:center;gap:5px"><x-icon name="check" class="h-[13px] w-[13px]" /> {{ __('Ditonton') }}</span>
                                 @endif
-                                <span style="width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.9);display:grid;place-items:center;color:#4276AE;font-size:14px;z-index:1">▶</span>
+                                <span style="width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.9);display:grid;place-items:center;color:#4276AE;z-index:1"><x-icon name="play" class="h-[15px] w-[15px]" style="margin-left:2px" /></span>
                                 @if ($lesson->durationLabel())
                                     <span style="position:absolute;right:10px;bottom:10px;background:rgba(66,118,174,.85);color:#fff;font-size:11px;font-weight:700;border-radius:999px;padding:3px 9px">{{ $lesson->durationLabel() }}</span>
                                 @endif

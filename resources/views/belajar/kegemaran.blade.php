@@ -10,7 +10,7 @@
 
         @if ($lessons->isEmpty())
             <div style="background:var(--wl-surface);border:1px dashed var(--wl-line-3);border-radius:22px;padding:56px;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center">
-                <span style="font-size:32px">❤️</span>
+                <x-icon name="heart" class="h-9 w-9" style="color:#EB5E5A;fill:currentColor" />
                 <h3 style="margin:0;font-family:'Geist',sans-serif;font-size:19px;font-weight:800;color:var(--wl-ink)">{{ __('Tiada kegemaran lagi') }}</h3>
                 <p style="margin:0;font-size:14.5px;color:var(--wl-muted);max-width:360px">{{ __('Klik ikon ♡ pada mana-mana video untuk menyimpannya di sini.') }}</p>
             </div>

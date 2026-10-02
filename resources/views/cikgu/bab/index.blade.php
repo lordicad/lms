@@ -29,7 +29,7 @@
 
             @unless ($isOffered)
                 <div style="display:flex;gap:10px;background:#FEF0CE;border:1px solid rgba(138,106,18,.25);border-radius:14px;padding:14px 18px;font-size:13.5px;color:#8A6A12">
-                    <span>ℹ️</span>
+                    <x-icon name="info-circle" class="h-5 w-5" style="flex-shrink:0;margin-top:1px" />
                     <div>{{ __(':subject tidak ditawarkan untuk :grade dalam Kurikulum 2027. Anda tidak boleh menambah bab baharu di sini. Bab lama yang masih mengandungi kandungan ditandakan tidak aktif - sila pindahkan kandungannya ke Tahun yang betul.', ['subject' => $subject->name, 'grade' => $grade->displayName()]) }}</div>
                 </div>
             @endunless

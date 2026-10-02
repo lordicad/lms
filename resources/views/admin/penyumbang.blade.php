@@ -4,7 +4,7 @@
                 :sub="__('Guru mengikut jumlah kandungan yang dicipta')">
 
     <div style="display:flex;flex-direction:column;gap:16px">
-        <a href="{{ route('admin.dashboard') }}" class="tp-btn-outline" style="align-self:flex-start;min-height:40px;border-radius:11px;font-size:13px;padding:0 14px;border-width:1.5px">← {{ __('Papan Pemuka') }}</a>
+        <a href="{{ route('admin.dashboard') }}" class="tp-btn-outline" style="align-self:flex-start;min-height:40px;border-radius:11px;font-size:13px;padding:0 14px;border-width:1.5px;display:inline-flex;align-items:center;gap:6px"><x-icon name="arrow-left" class="h-4 w-4" /> {{ __('Papan Pemuka') }}</a>
 
         <p style="margin:0;font-size:13px;color:var(--tp-muted)">{{ __('Sumbangan = bilangan Video + Bahan + Kuiz yang dicipta. Seri dipisahkan mengikut Video, Bahan, Kuiz, kemudian nama.') }}</p>
 
