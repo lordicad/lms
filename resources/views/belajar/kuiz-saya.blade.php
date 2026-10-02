@@ -133,7 +133,7 @@
                                             <div class="kz-bar"><i style="width:{{ max(3, $row['percent']) }}%;background:{{ $bm['color'] }}"></i></div>
                                         </div>
                                     @endif
-                                    <x-icon name="chevron-down" style="width:18px;height:18px;color:var(--wl-muted-2);transition:transform .18s;flex-shrink:0" ::style="open ? 'transform:rotate(180deg)' : ''" />
+                                    <x-icon name="chevron-down" style="width:18px;height:18px;color:var(--wl-muted-2);transition:transform .18s;flex-shrink:0" ::style="open ? { transform: 'rotate(180deg)' } : {}" />
                                 </button>
 
                                 <div x-show="open" x-cloak style="display:flex;flex-direction:column">

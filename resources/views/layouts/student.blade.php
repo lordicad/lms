@@ -419,7 +419,7 @@
             .wl-subjhead select { min-height: 38px !important; font-size: 12px !important; padding: 0 30px 0 12px !important; }
             .wl-subjhead .ss-trigger { min-height: 38px !important; font-size: 12px !important; padding: 0 12px !important; }
 
-            /* Chapter card: put the Ditonton progress BELOW the video/bahan/kuiz meta (number stays
+            /* Chapter card: put the watched-progress BELOW the video/bahan/kuiz meta (number stays
                on the left) instead of cramped beside it. */
             .wl-chaprow { display: grid !important; grid-template-columns: auto 1fr; grid-template-areas: "num body" "num prog"; align-items: center; column-gap: 16px !important; row-gap: 0; }
             .wl-chaprow > span { grid-area: num; align-self: center; width: 44px !important; height: 44px !important; font-size: 17px !important; border-radius: 12px !important; }

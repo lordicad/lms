@@ -105,7 +105,7 @@
                 </div>
 
                 <div style="display:flex;gap:12px;margin-top:8px;flex-wrap:wrap;justify-content:center;width:100%">
-                    <a href="{{ route('kuiz.intro', $quiz) }}" class="wl-btn-secondary wl-resultbtn" style="flex:1;min-width:180px;min-height:48px;display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:14px;border:2px solid #17907B;background:#fff;color:#0F7A68;font-family:'Geist',sans-serif;font-weight:800;font-size:14.5px;padding:0 22px;text-decoration:none"><x-icon name="rotate" style="width:18px;height:18px" />{{ __('Cuba Lagi (Latihan)') }}</a>
+                    <a href="{{ route('kuiz.intro', $quiz) }}" class="wl-btn-secondary wl-resultbtn" style="flex:1;min-width:180px;min-height:48px;display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:14px;border:2px solid {{ $isDark ? '#2DD4BF' : '#17907B' }};background:{{ $isDark ? 'var(--wl-surface)' : '#fff' }};color:{{ $isDark ? '#5EEAD4' : '#0F7A68' }};font-family:'Geist',sans-serif;font-weight:800;font-size:14.5px;padding:0 22px;text-decoration:none"><x-icon name="rotate" style="width:18px;height:18px" />{{ __('Cuba Lagi (Latihan)') }}</a>
                     <a href="{{ route('ranking.index') }}" class="wl-btn-primary wl-resultbtn" style="flex:1;min-width:180px;min-height:48px;display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:14px;background:#17907B;color:#fff;font-family:'Geist',sans-serif;font-weight:800;font-size:14.5px;padding:0 22px;text-decoration:none"><x-icon name="trophy" style="width:18px;height:18px" />{{ __('Lihat Ranking') }}</a>
                 </div>
             </div>
