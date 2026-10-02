@@ -129,7 +129,8 @@ class AdminReportService
     /**
      * Time-series platform activity for a reporting period: video views, completed quiz attempts,
      * passed quiz attempts, and content uploads (videos + materials + quizzes). Zero periods are
-     * included so the axis is continuous, and buckets use the application timezone.
+     * included so the axis is continuous, and buckets follow the report timezone (Malaysia), so an
+     * evening's activity is not filed under the next day the way UTC buckets did.
      *
      * @return array{labels: array<int, string>, series: array<string, array<int, int>>}
      */
@@ -137,7 +138,8 @@ class AdminReportService
     {
         $monthly = $period === '12m';
         [$keys, $labels] = $this->buckets($period);
-        $start = Carbon::parse($keys[0]);   // first bucket (a date, or the first of a month)
+        // First bucket (a date, or the first of a month) at local midnight.
+        $start = Carbon::parse($keys[0], $this->reportTimezone());
 
         // Views of this school's own videos, counted no matter who watched them (a student from
         // another school watching this school's content still counts). Scoped through the lesson's
@@ -163,14 +165,16 @@ class AdminReportService
     }
 
     /**
-     * The bucket keys and human labels for a period, in the application timezone.
+     * The bucket keys and human labels for a period, in the report timezone.
      *
      * @return array{0: array<int, string>, 1: array<int, string>}
      */
     private function buckets(string $period): array
     {
+        $tz = $this->reportTimezone();
+
         if ($period === '12m') {
-            $start = Carbon::now()->startOfMonth()->subMonths(11);
+            $start = Carbon::now($tz)->startOfMonth()->subMonths(11);
             $keys = [];
             $labels = [];
             for ($i = 0; $i < 12; $i++) {
@@ -183,7 +187,7 @@ class AdminReportService
         }
 
         $days = $period === '30d' ? 30 : 7;
-        $start = Carbon::today()->subDays($days - 1);
+        $start = Carbon::today($tz)->subDays($days - 1);
         $keys = [];
         $labels = [];
         for ($i = 0; $i < $days; $i++) {
@@ -206,13 +210,22 @@ class AdminReportService
     {
         $format = $monthly ? '%Y-%m' : '%Y-%m-%d';
 
+        // Timestamps are stored in UTC. Filter from local midnight converted back to UTC, and group
+        // by the local date. A numeric offset needs no MySQL time-zone tables; Malaysia has no DST.
+        $offset = $start->format('P');
+
         $counts = $query
-            ->where($column, '>=', $start->copy()->startOfDay())
-            ->selectRaw("DATE_FORMAT({$column}, ?) as bucket, COUNT(*) as aggregate", [$format])
+            ->where($column, '>=', $start->copy()->startOfDay()->utc())
+            ->selectRaw("DATE_FORMAT(CONVERT_TZ({$column}, '+00:00', ?), ?) as bucket, COUNT(*) as aggregate", [$offset, $format])
             ->groupBy('bucket')
             ->pluck('aggregate', 'bucket');
 
         return array_map(fn (string $key) => (int) ($counts[$key] ?? 0), $keys);
+    }
+
+    private function reportTimezone(): string
+    {
+        return config('lms.report_timezone', 'Asia/Kuala_Lumpur');
     }
 
     /**

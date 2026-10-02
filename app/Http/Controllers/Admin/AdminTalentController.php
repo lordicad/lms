@@ -270,13 +270,13 @@ class AdminTalentController extends Controller
         return response()->streamDownload(function () use ($cohort) {
             $out = fopen('php://output', 'w');
 
-            fputcsv($out, [
+            fputcsv($out, $this->csvSafe([
                 'Guru', 'Emel', 'Skor Bakat', 'Engagement', 'Quality (%)', 'Breadth (bab)',
                 'Outcome', 'Murid terlibat', 'Channel disambung', 'Data mencukupi',
-            ]);
+            ]));
 
             foreach ($cohort as $row) {
-                fputcsv($out, [
+                fputcsv($out, $this->csvSafe([
                     $row->teacher->name,
                     $row->teacher->email,
                     $row->headline ?? '',
@@ -287,10 +287,28 @@ class AdminTalentController extends Controller
                     $row->engaged_students,
                     $row->channels,
                     $row->sufficient ? 'Ya' : 'Tidak',
-                ]);
+                ]));
             }
 
             fclose($out);
         }, 'skor-bakat-'.now()->format('Ymd').'.csv', ['Content-Type' => 'text/csv; charset=UTF-8']);
+    }
+
+    /**
+     * Spreadsheet apps run a cell that starts with = + - @ (or a tab/CR) as a formula, so a crafted
+     * name could execute when an admin opens the export. Prefix such text with an apostrophe so it
+     * shows as plain text. Only strings: real numbers (including negatives) stay numbers.
+     *
+     * @param  array<int, mixed>  $cells
+     * @return array<int, mixed>
+     */
+    private function csvSafe(array $cells): array
+    {
+        return array_map(
+            fn ($cell) => is_string($cell) && $cell !== '' && in_array($cell[0], ['=', '+', '-', '@', "\t", "\r"], true)
+                ? "'".$cell
+                : $cell,
+            $cells,
+        );
     }
 }

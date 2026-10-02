@@ -30,6 +30,10 @@ return [
     // Long enough that a paused lesson or an open preview never dies mid-way; short enough that
     // a link copied out of the page stops working the same day.
     'media_url_ttl_minutes' => (int) env('MEDIA_URL_TTL_MINUTES', 360),
+
+    // The day boundaries the admin reports use. The app stores and runs in UTC; reports are read
+    // by Malaysian admins, so "today" and daily buckets follow local midnight, not UTC's.
+    'report_timezone' => env('REPORT_TIMEZONE', 'Asia/Kuala_Lumpur'),
     'material_max_mb' => (int) env('MATERIAL_MAX_MB', 30),
     'quiz_file_max_mb' => (int) env('QUIZ_FILE_MAX_MB', 30),
 
