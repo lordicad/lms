@@ -23,10 +23,13 @@ class MaterialPolicy
     }
 
     /**
-     * Everyone signed in may download bahan bantu mengajar.
+     * Teachers and admins browse and audit the whole library. A student only gets what they could
+     * have reached from a chapter page (Material::visibleToStudents): material ids are sequential,
+     * so "everyone may download" let a student walk /muat-turun/bahan/1..N and pull files from
+     * retired chapters and from lessons still in draft.
      */
     public function download(User $user, Material $material): bool
     {
-        return true;
+        return ! $user->isStudent() || $material->isVisibleToStudents();
     }
 }

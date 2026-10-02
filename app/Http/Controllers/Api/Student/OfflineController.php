@@ -41,6 +41,7 @@ class OfflineController extends StudentApiController
             ->latest('id')
             ->get();
         $materials = Material::query()
+            ->visibleToStudents()
             ->whereHas('chapter', fn ($query) => $query
                 ->where('grade_id', $grade->id)
                 ->where('is_active', true))
@@ -97,7 +98,7 @@ class OfflineController extends StudentApiController
     {
         $chapter = $this->availableChapter($request, $material->chapter_id);
 
-        abort_if($chapter === null, Response::HTTP_NOT_FOUND);
+        abort_if($chapter === null || ! $material->isVisibleToStudents(), Response::HTTP_NOT_FOUND);
 
         $disk = Storage::disk('uploads');
         abort_unless($material->file_path && $disk->exists($material->file_path), Response::HTTP_NOT_FOUND);

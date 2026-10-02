@@ -40,7 +40,10 @@ class ChapterBrowseController extends Controller
             'grade' => $chapter->grade,
             'lessons' => $lessons,
             'watchedIds' => $watchedIds,
-            'materials' => $chapter->materials()->orderBy('id')->get(),
+            'materials' => $chapter->materials()
+                ->when($user->isStudent(), fn ($q) => $q->visibleToStudents())
+                ->orderBy('id')
+                ->get(),
             'quizzes' => $quizzes,
         ]);
     }

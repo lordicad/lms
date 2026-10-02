@@ -244,7 +244,7 @@ class LearnController extends StudentApiController
             'lessons' => $lessons->map(fn ($l) => array_merge($this->lessonCard($l), [
                 'watched' => in_array($l->id, $watchedIds, true),
             ]))->all(),
-            'materials' => $chapter->materials()->orderBy('id')->get()->map(fn ($m) => $this->materialCard($m))->all(),
+            'materials' => $chapter->materials()->visibleToStudents()->orderBy('id')->get()->map(fn ($m) => $this->materialCard($m))->all(),
             'quizzes' => $quizzes->map(fn ($q) => [
                 'id' => $q->id,
                 'title' => $q->title,

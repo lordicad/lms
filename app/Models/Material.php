@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Database\Factories\MaterialFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -34,6 +35,26 @@ class Material extends Model
             'size_kb' => 'integer',
             'download_count' => 'integer',
         ];
+    }
+
+    /**
+     * What a student may see and download: materials in a current (active) chapter that are not
+     * attached to a video still in draft. Materials have no publish flag of their own, so a file
+     * attached to a draft lesson used to be listed and downloadable before the lesson went live.
+     * One rule for every student-facing list and the download check, so they cannot disagree.
+     */
+    public function scopeVisibleToStudents(Builder $query): Builder
+    {
+        return $query
+            ->whereHas('chapter', fn (Builder $chapter) => $chapter->where('is_active', true))
+            ->where(fn (Builder $q) => $q
+                ->whereNull('lesson_id')
+                ->orWhereHas('lesson', fn (Builder $lesson) => $lesson->where('is_published', true)));
+    }
+
+    public function isVisibleToStudents(): bool
+    {
+        return static::whereKey($this->id)->visibleToStudents()->exists();
     }
 
     public function chapter(): BelongsTo

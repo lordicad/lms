@@ -47,7 +47,7 @@ class OfflineController extends Controller
         $materials = $grade
             ? $filter->apply(
                 Material::query()
-                    ->whereHas('chapter', fn ($q) => $q->where('is_active', true))
+                    ->visibleToStudents()
                     ->with('chapter.subject', 'teacher:id,name')
             )
                 ->orderBy('chapter_id')
