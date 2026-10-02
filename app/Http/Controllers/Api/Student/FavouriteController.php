@@ -53,10 +53,8 @@ class FavouriteController extends StudentApiController
 
         if ($existing) {
             $existing->delete();
-            $lesson->decrement('favourites_count');
-            Lesson::where('id', $lesson->id)
-                ->where('favourites_count', '<', 0)
-                ->update(['favourites_count' => 0]);
+            // Unsigned column: decrementing at 0 is an "out of range" error, so only while above 0.
+            Lesson::whereKey($lesson->id)->where('favourites_count', '>', 0)->decrement('favourites_count');
             $favourited = false;
         } else {
             Favourite::create([

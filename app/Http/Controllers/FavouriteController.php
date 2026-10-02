@@ -66,9 +66,10 @@ class FavouriteController extends Controller
             ->delete();
 
         if ($deleted) {
-            // Guard the counter against ever going negative.
-            $lesson->decrement('favourites_count');
-            $lesson->where('favourites_count', '<', 0)->update(['favourites_count' => 0]);
+            // favourites_count is unsigned, so decrementing it at 0 is an "out of range" error (the
+            // old clamp after the fact could never run, and was a bare $lesson->where(), i.e. a write
+            // over the whole table). Only decrement this lesson, and only while it is above zero.
+            Lesson::whereKey($lesson->id)->where('favourites_count', '>', 0)->decrement('favourites_count');
         }
 
         return response()->json([

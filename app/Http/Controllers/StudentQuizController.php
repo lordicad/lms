@@ -38,7 +38,10 @@ class StudentQuizController extends Controller
 
         // Headline stats for the WeLearn stats strip.
         $doneCount = $rankedAttempts->count();
-        $avgScore = $doneCount > 0 ? (int) round($rankedAttempts->avg->percentage()) : null;
+        // Average only real scores: a quiz whose questions were all deleted leaves 0/0 attempts that
+        // read as 0% and would drag this down (PerformanceService skips them for the same reason).
+        $scored = $rankedAttempts->filter(fn ($a) => $a->max_score > 0);
+        $avgScore = $scored->isNotEmpty() ? (int) round($scored->avg->percentage()) : null;
         $myRow = app(LeaderboardService::class)->rowFor($user);
 
         return view('belajar.kuiz-saya', [
