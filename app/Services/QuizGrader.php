@@ -17,6 +17,29 @@ class QuizGrader
      * The flag is decided here, at start time, by asking whether a ranked attempt already
      * exists. Retrying is unlimited and never changes a student's points.
      */
+    /**
+     * Resumes the student's open attempt on this quiz, or opens a new one.
+     *
+     * Runs under a row lock on the student so two simultaneous starts (a double-tap, or the web
+     * app and the mobile app at once) are handled one after the other. Without the lock both
+     * requests saw "no open attempt, no ranked attempt" and each created a ranked attempt, so the
+     * leaderboard summed that quiz twice.
+     */
+    public function startOrResume(Quiz $quiz, User $student): QuizAttempt
+    {
+        return DB::transaction(function () use ($quiz, $student) {
+            User::whereKey($student->id)->lockForUpdate()->first();
+
+            $open = $quiz->attempts()
+                ->where('student_id', $student->id)
+                ->whereNull('completed_at')
+                ->latest('id')
+                ->first();
+
+            return $open ?? $this->start($quiz, $student);
+        });
+    }
+
     public function start(Quiz $quiz, User $student): QuizAttempt
     {
         $alreadyRanked = $quiz->attempts()

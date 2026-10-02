@@ -61,13 +61,7 @@ class QuizAttemptController extends Controller
         }
 
         // Resume rather than duplicate if the student left one open (closed tab, flat battery).
-        $open = $quiz->attempts()
-            ->where('student_id', $request->user()->id)
-            ->whereNull('completed_at')
-            ->latest('id')
-            ->first();
-
-        $attempt = $open ?? $this->grader->start($quiz, $request->user());
+        $attempt = $this->grader->startOrResume($quiz, $request->user());
 
         return redirect()->route('kuiz.percubaan', $attempt);
     }

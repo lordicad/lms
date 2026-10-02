@@ -146,13 +146,7 @@ class QuizController extends StudentApiController
         }
 
         // Resume rather than duplicate if the student left one open.
-        $open = $quiz->attempts()
-            ->where('student_id', $user->id)
-            ->whereNull('completed_at')
-            ->latest('id')
-            ->first();
-
-        $attempt = $open ?? $this->grader->start($quiz, $user);
+        $attempt = $this->grader->startOrResume($quiz, $user);
 
         $quiz->load('questions.options');
 
