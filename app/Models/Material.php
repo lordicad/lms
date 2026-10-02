@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Storage;
+use App\Support\MediaUrl;
 
 class Material extends Model
 {
@@ -92,7 +93,10 @@ class Material extends Model
      */
     public function fileUrl(): ?string
     {
-        return $this->file_path ? Storage::disk('uploads')->url($this->file_path) : null;
+        // Signed and short-lived: the materials folder is closed to direct web access.
+        return $this->file_path
+            ? MediaUrl::for('media.material', $this)
+            : null;
     }
 
     /**

@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Storage;
+use App\Support\MediaUrl;
 
 class Lesson extends Model
 {
@@ -167,12 +168,15 @@ class Lesson extends Model
     }
 
     /**
-     * Direct URL to the uploaded file. Served by the web server, so byte-range requests
-     * work and students can scrub through a long recording.
+     * Short-lived signed URL to the uploaded file. The videos folder is closed to direct web
+     * access, so this is the only way in (MediaController). Byte-range requests still work, so
+     * students can scrub through a long recording.
      */
     public function videoUrl(): ?string
     {
-        return $this->video_path ? Storage::disk('uploads')->url($this->video_path) : null;
+        return $this->video_path
+            ? MediaUrl::for('media.lesson', $this)
+            : null;
     }
 
     /**

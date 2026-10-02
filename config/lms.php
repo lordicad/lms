@@ -25,6 +25,11 @@ return [
     */
 
     'video_max_mb' => (int) env('VIDEO_MAX_MB', 100),
+
+    // How long a signed link to a private upload (video, material, printable quiz) stays valid.
+    // Long enough that a paused lesson or an open preview never dies mid-way; short enough that
+    // a link copied out of the page stops working the same day.
+    'media_url_ttl_minutes' => (int) env('MEDIA_URL_TTL_MINUTES', 360),
     'material_max_mb' => (int) env('MATERIAL_MAX_MB', 30),
     'quiz_file_max_mb' => (int) env('QUIZ_FILE_MAX_MB', 30),
 

@@ -76,6 +76,15 @@ Route::get('/bahasa/{locale}', LocaleController::class)->name('locale.switch');
 // Tukar tema (terang / gelap). Terbuka kepada tetamu dan pengguna berdaftar.
 Route::get('/tema/{theme}', ThemeController::class)->name('theme.switch');
 
+// Private uploads (videos, materials, printable quizzes). The folders are closed to direct web
+// access; these signed, expiring URLs are the only way in. No `auth` middleware on purpose: the
+// signature is the permission, so the Flutter app (token auth, no session cookie) can use them.
+Route::middleware('signed:relative')->prefix('fail')->name('media.')->group(function () {
+    Route::get('video/{lesson}', [App\Http\Controllers\MediaController::class, 'lesson'])->name('lesson');
+    Route::get('bahan/{material}', [App\Http\Controllers\MediaController::class, 'material'])->name('material');
+    Route::get('kuiz/{quiz}', [App\Http\Controllers\MediaController::class, 'quiz'])->name('quiz');
+});
+
 // Session keep-alive. The front-end pings this every few minutes while a page is open (see
 // resources/js/app.js) so the login session slides forward and does not idle-expire, which is what
 // leaves a long-open form submitting into a "419 Page Expired". A bare 204 through the web (session)

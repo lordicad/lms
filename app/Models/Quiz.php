@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Storage;
+use App\Support\MediaUrl;
 
 class Quiz extends Model
 {
@@ -133,7 +134,10 @@ class Quiz extends Model
 
     public function fileUrl(): ?string
     {
-        return $this->file_path ? Storage::disk('uploads')->url($this->file_path) : null;
+        // Signed and short-lived: the quizzes folder is closed to direct web access.
+        return $this->file_path
+            ? MediaUrl::for('media.quiz', $this)
+            : null;
     }
 
     /** The uploaded file's type, e.g. "PDF" - from its original name. */
