@@ -34,7 +34,77 @@ class LeaderboardService
         // which resets each week; left null for the all-time standings.
         ?\Illuminate\Support\Carbon $since = null,
     ): Collection {
-        $rows = DB::table('quiz_attempts')
+        $rows = $this->aggregates($gradeId, $subjectId, $quizId, $teacherId, $since)->get();
+
+        $students = User::with('grade')
+            ->whereIn('id', $rows->pluck('student_id'))
+            ->get()
+            ->keyBy('id');
+
+        return $rows
+            ->map(fn ($row) => $this->toRow($row, $students[$row->student_id]))
+            ->sort(fn ($a, $b) => $this->compare($a, $b))
+            ->values()
+            ->each(fn ($row, $index) => $row->rank = $index + 1)
+            ->when($limit, fn (Collection $c) => $c->take($limit))
+            ->values();
+    }
+
+    /**
+     * A student's own row, wherever they sit in the table. Used to pin them below the Top 10
+     * so they always see their standing even when they are 47th.
+     *
+     * Gives exactly what ranking()->firstWhere(student) would, without building the whole board:
+     * students with more points are counted in SQL, and the PHP tie-break only runs over the few
+     * students level with them on points. This is on the student home and Kuiz Saya pages, so it
+     * runs on almost every page view and used to aggregate and load the entire year each time.
+     *
+     * @return object|null
+     */
+    public function rowFor(User $student, ?int $subjectId = null): ?object
+    {
+        $gradeId = $student->grade_id;
+
+        $mine = $this->aggregates($gradeId, $subjectId)->where('users.id', $student->id)->first();
+
+        if (! $mine) {
+            return null; // not on this board yet
+        }
+
+        $ahead = DB::query()
+            ->fromSub($this->aggregates($gradeId, $subjectId), 'board')
+            ->where('points', '>', $mine->points)
+            ->count();
+
+        $level = DB::query()
+            ->fromSub($this->aggregates($gradeId, $subjectId), 'board')
+            ->where('points', '=', $mine->points)
+            ->get();
+
+        $students = User::with('grade')->whereIn('id', $level->pluck('student_id'))->get()->keyBy('id');
+
+        $tied = $level
+            ->map(fn ($row) => $this->toRow($row, $students[$row->student_id]))
+            ->sort(fn ($a, $b) => $this->compare($a, $b))
+            ->values();
+
+        $me = $tied->first(fn ($row) => $row->student->id === $student->id);
+        $me->rank = $ahead + $tied->search($me, true) + 1;
+
+        return $me;
+    }
+
+    /**
+     * One row per student: their ranked points and the figures the tie-breaks need.
+     */
+    private function aggregates(
+        ?int $gradeId = null,
+        ?int $subjectId = null,
+        ?int $quizId = null,
+        ?int $teacherId = null,
+        ?\Illuminate\Support\Carbon $since = null,
+    ): \Illuminate\Database\Query\Builder {
+        return DB::table('quiz_attempts')
             ->join('users', 'users.id', '=', 'quiz_attempts.student_id')
             ->join('quizzes', 'quizzes.id', '=', 'quiz_attempts.quiz_id')
             ->join('chapters', 'chapters.id', '=', 'quizzes.chapter_id')
@@ -60,51 +130,34 @@ class LeaderboardService
                 DB::raw('SUM(quiz_attempts.question_count) as questions'),
                 DB::raw('COUNT(quiz_attempts.id) as quizzes'),
                 DB::raw('MAX(quiz_attempts.completed_at) as last_completed_at'),
-            ])
-            ->get();
+            ]);
+    }
 
-        $students = User::with('grade')
-            ->whereIn('id', $rows->pluck('student_id'))
-            ->get()
-            ->keyBy('id');
+    private function toRow(object $row, User $student): object
+    {
+        $questions = (int) $row->questions;
 
-        return $rows
-            ->map(function ($row) use ($students) {
-                $questions = (int) $row->questions;
-
-                return (object) [
-                    'student' => $students[$row->student_id],
-                    'points' => (int) $row->points,
-                    'correct' => (int) $row->correct,
-                    'questions' => $questions,
-                    'accuracy' => $questions > 0 ? round((int) $row->correct / $questions * 100, 1) : 0.0,
-                    'quizzes' => (int) $row->quizzes,
-                    'last_completed_at' => $row->last_completed_at,
-                    'rank' => 0,
-                ];
-            })
-            // Tie-breakers, applied in order: points, then accuracy, then who got there first.
-            ->sortBy([
-                fn ($a, $b) => $b->points <=> $a->points,
-                fn ($a, $b) => $b->accuracy <=> $a->accuracy,
-                fn ($a, $b) => ($a->last_completed_at ?? '9999') <=> ($b->last_completed_at ?? '9999'),
-            ])
-            ->values()
-            ->each(fn ($row, $index) => $row->rank = $index + 1)
-            ->when($limit, fn (Collection $c) => $c->take($limit))
-            ->values();
+        return (object) [
+            'student' => $student,
+            'points' => (int) $row->points,
+            'correct' => (int) $row->correct,
+            'questions' => $questions,
+            'accuracy' => $questions > 0 ? round((int) $row->correct / $questions * 100, 1) : 0.0,
+            'quizzes' => (int) $row->quizzes,
+            'last_completed_at' => $row->last_completed_at,
+            'rank' => 0,
+        ];
     }
 
     /**
-     * A student's own row, wherever they sit in the table. Used to pin them below the Top 10
-     * so they always see their standing even when they are 47th.
-     *
-     * @return object|null
+     * Tie-breakers, applied in order: points, then accuracy, then who got there first. Student id
+     * settles a dead heat on all three, so the order never depends on how the database happened
+     * to return the rows (and ranking() and rowFor() always agree).
      */
-    public function rowFor(User $student, ?int $subjectId = null): ?object
+    private function compare(object $a, object $b): int
     {
-        return $this->ranking(gradeId: $student->grade_id, subjectId: $subjectId)
-            ->firstWhere('student.id', $student->id);
+        return [$b->points, $b->accuracy, $a->last_completed_at ?? '9999', $a->student->id]
+            <=> [$a->points, $a->accuracy, $b->last_completed_at ?? '9999', $b->student->id];
     }
 
     /**
