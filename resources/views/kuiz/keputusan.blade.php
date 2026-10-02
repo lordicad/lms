@@ -52,7 +52,7 @@
                     <span style="font-family:'Geist',sans-serif;font-size:48px;font-weight:800;color:var(--wl-ink)">{{ $attempt->score }}</span>
                     <span style="font-family:'Geist',sans-serif;font-size:20px;font-weight:800;color:var(--wl-muted)">/{{ $attempt->max_score }}</span>
                 </div>
-                <div style="width:70%;height:9px;border-radius:999px;background:#DCEAF8;overflow:hidden">
+                <div style="width:70%;height:9px;border-radius:999px;background:{{ $isDark ? 'var(--wl-line-2)' : '#DCEAF8' }};overflow:hidden">
                     <div style="height:100%;border-radius:999px;background:#17907B;width:{{ $pct }}%"></div>
                 </div>
                 <div class="wl-rstats" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;width:100%;margin-top:10px">

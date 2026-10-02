@@ -525,7 +525,7 @@
                 @endforeach
             </div>
 
-            <a href="{{ route('theme.switch', $isDark ? 'light' : 'dark') }}" title="{{ __('Mod Malam') }}" class="wl-icbtn"
+            <a href="{{ route('theme.switch', $isDark ? 'light' : 'dark') }}" title="{{ $isDark ? __('Mod Terang') : __('Mod Gelap') }}" class="wl-icbtn"
                style="width:48px;height:48px;border-radius:50%;border:1px solid var(--wl-line-2);background:var(--wl-surface);display:grid;place-items:center;color:#4A5A52;text-decoration:none">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
             </a>

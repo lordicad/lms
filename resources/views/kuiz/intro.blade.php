@@ -27,7 +27,7 @@
                 </div>
                 <div style="background:{{ $isDark ? '#2A3543' : '#F6F3EC' }};border:1px solid var(--wl-line-2);border-radius:14px;padding:14px 18px;display:flex;flex-direction:column;gap:3px">
                     <span style="font-size:12.5px;font-weight:700;color:var(--wl-muted)">{{ __('Masa') }}</span>
-                    <span style="font-family:'Geist',sans-serif;font-size:20px;font-weight:800;color:var(--wl-ink)">{{ $quiz->duration_minutes ? $quiz->duration_minutes.' minit' : __('Bebas') }}</span>
+                    <span style="font-family:'Geist',sans-serif;font-size:20px;font-weight:800;color:var(--wl-ink)">{{ $quiz->duration_minutes ? $quiz->duration_minutes.' '.__('minit') : __('Bebas') }}</span>
                 </div>
             </div>
 

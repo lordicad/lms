@@ -211,7 +211,9 @@
                         <span style="width:30px;height:30px;border-radius:9px;background:#DCF2EE;color:#0F7A68;display:grid;place-items:center;flex-shrink:0"><x-icon name="book" style="width:17px;height:17px" /></span>
                         <h3 style="margin:0;font-family:'Geist',sans-serif;font-size:17px;font-weight:800;color:var(--wl-ink)">{{ __('Telah Selesai') }}</h3>
                     </div>
-                    <div style="background:var(--wl-surface);border:1px solid var(--wl-line);border-radius:18px;overflow:hidden;box-shadow:0 4px 16px rgba(46,44,80,.04)">
+                    {{-- The first few rows show; "Lihat semua kuiz" expands the rest in place. --}}
+                    @php($doneShown = 5)
+                    <div x-data="{ all: false }" style="background:var(--wl-surface);border:1px solid var(--wl-line);border-radius:18px;overflow:hidden;box-shadow:0 4px 16px rgba(46,44,80,.04)">
                         @if ($done->isNotEmpty())
                             @foreach ($done as $quiz)
                                 @php($attempt = $rankedAttempts[$quiz->id])
@@ -220,7 +222,8 @@
                                 @php($sub = $quiz->chapter->subject)
                                 @php($tagBg = 'color-mix(in oklab, '.($sub->color ?: '#17907B').' var(--pill-bw), var(--pill-bb))')
                                 @php($tagColor = 'color-mix(in oklab, '.($sub->color ?: '#17907B').' var(--pill-fw), var(--pill-fb))')
-                                <div class="wl-donerow" style="display:flex;align-items:center;gap:14px;padding:14px 20px;border-bottom:1px solid var(--wl-line)">
+                                <div class="wl-donerow" style="display:flex;align-items:center;gap:14px;padding:14px 20px;border-bottom:1px solid var(--wl-line)"
+                                     @if ($loop->index >= $doneShown) x-show="all" x-cloak @endif>
                                     <span style="width:40px;height:40px;border-radius:12px;background:{{ $tagBg }};display:grid;place-items:center;flex-shrink:0"><x-subject-emoji :subject="$sub" class="text-base" /></span>
                                     <div class="wl-donebody" style="display:flex;flex-direction:column;gap:6px;min-width:0;flex:1">
                                         <span style="font-family:'Geist',sans-serif;font-weight:800;font-size:14.5px;color:var(--wl-ink)">{{ $quiz->localizedTitle() }}</span>
@@ -241,9 +244,16 @@
                                     <a href="{{ route('keputusan.show', $attempt) }}" class="wl-btn-secondary wl-donebtn" style="min-height:38px;display:inline-flex;align-items:center;border-radius:10px;border:1.5px solid var(--wl-line-2);background:var(--wl-surface);color:var(--wl-ink);font-family:'Geist',sans-serif;font-weight:700;font-size:12.5px;padding:0 14px;text-decoration:none">{{ __('Semak') }}</a>
                                 </div>
                             @endforeach
-                            <div style="padding:14px;display:flex;justify-content:center">
-                                <a href="#telah-selesai" onclick="event.preventDefault();document.getElementById('telah-selesai')?.scrollIntoView({behavior:'smooth',block:'start'})" class="wl-btn-secondary" style="min-height:40px;display:inline-flex;align-items:center;gap:8px;border-radius:12px;border:1.5px solid var(--wl-line-2);background:var(--wl-surface);color:var(--wl-ink);font-family:'Geist',sans-serif;font-weight:700;font-size:13px;padding:0 18px;text-decoration:none;cursor:pointer"><x-icon name="dashboard" style="width:16px;height:16px" />{{ __('Lihat semua kuiz') }}</a>
-                            </div>
+                            {{-- It used to only scroll to the top of this same list, which already showed
+                                 everything. Now it reveals the hidden rows, and only exists when there are some. --}}
+                            @if ($done->count() > $doneShown)
+                                <div style="padding:14px;display:flex;justify-content:center">
+                                    <button type="button" @click="all = ! all" :aria-expanded="all ? 'true' : 'false'" class="wl-btn-secondary" style="min-height:44px;display:inline-flex;align-items:center;gap:8px;border-radius:12px;border:1.5px solid var(--wl-line-2);background:var(--wl-surface);color:var(--wl-ink);font-family:'Geist',sans-serif;font-weight:700;font-size:13px;padding:0 18px;cursor:pointer">
+                                        <x-icon name="dashboard" style="width:16px;height:16px" />
+                                        <span x-text="all ? @js(__('Tunjuk kurang')) : @js(__('Lihat semua kuiz').' ('.$done->count().')')">{{ __('Lihat semua kuiz') }} ({{ $done->count() }})</span>
+                                    </button>
+                                </div>
+                            @endif
                         @else
                             <div style="padding:44px;text-align:center;color:var(--wl-muted);font-size:14px;font-weight:600">{{ __('Anda belum menyelesaikan sebarang kuiz.') }}</div>
                         @endif

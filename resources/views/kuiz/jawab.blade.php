@@ -81,9 +81,10 @@
                     {{-- Segmented progress: one bar per question - solid where answered, brighter on the
                          current one, faint for the rest. --}}
                     <div style="display:flex;gap:8px">
+                        @php($track = $isDark ? 'var(--wl-line-2)' : '#DCEAF8')
                         @for ($i = 0; $i < $questions->count(); $i++)
                             <div style="flex:1;height:8px;border-radius:999px"
-                                 :style="answered[{{ $i }}] ? { background: '#17907B' } : (current === {{ $i }} ? { background: '#2BB39B' } : { background: '#DCEAF8' })"></div>
+                                 :style="answered[{{ $i }}] ? { background: '#17907B' } : (current === {{ $i }} ? { background: '#2BB39B' } : { background: @js($track) })"></div>
                         @endfor
                     </div>
 

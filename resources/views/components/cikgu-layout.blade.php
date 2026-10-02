@@ -580,7 +580,7 @@
                 </div>
 
                 @php($isDark = ($theme ?? 'light') === 'dark')
-                <a href="{{ route('theme.switch', $isDark ? 'light' : 'dark') }}" class="tp-iconbtn" title="{{ $isDark ? __('Mod Terang') : __('Mod Malam') }}">
+                <a href="{{ route('theme.switch', $isDark ? 'light' : 'dark') }}" class="tp-iconbtn" title="{{ $isDark ? __('Mod Terang') : __('Mod Gelap') }}">
                     <x-icon :name="$isDark ? 'sun' : 'moon'" class="h-[19px] w-[19px]" />
                 </a>
 
