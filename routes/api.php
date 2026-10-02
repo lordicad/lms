@@ -31,7 +31,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::prefix('auth')->group(function () {
-    Route::post('login', [AuthController::class, 'login']);
+    // Per-IP backstop on top of the per-account lockout in the controller.
+    Route::post('login', [AuthController::class, 'login'])->middleware('throttle:20,1');
 
     Route::middleware('auth:sanctum')->group(function () {
         Route::get('me', [AuthController::class, 'me']);

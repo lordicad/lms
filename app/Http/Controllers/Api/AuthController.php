@@ -14,7 +14,9 @@ use App\Services\LeaderboardService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\ValidationException;
 
@@ -36,16 +38,33 @@ class AuthController extends Controller
         ]);
 
         $login = mb_strtolower(trim($validated['login']));
+
+        // Same lockout as the web login (LoginRequest): 5 failed tries per login + IP. Without it
+        // the API was a second front door where passwords could be guessed with no limit.
+        $throttleKey = Str::transliterate($login.'|'.$request->ip());
+
+        if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
+            throw ValidationException::withMessages([
+                'login' => [__('Terlalu banyak cubaan log masuk. Sila cuba lagi dalam :seconds saat.', [
+                    'seconds' => RateLimiter::availableIn($throttleKey),
+                ])],
+            ])->status(429);
+        }
+
         // New accounts use the stable email identifier just like the web app.
         // Username remains a fallback only for older accounts without an email.
         $user = User::where('email', $login)->first()
             ?? User::whereNull('email')->where('username', $validated['login'])->first();
 
         if (! $user || ! Hash::check($validated['password'], $user->password)) {
+            RateLimiter::hit($throttleKey);
+
             throw ValidationException::withMessages([
                 'login' => [__('Nama pengguna atau kata laluan tidak betul.')],
             ]);
         }
+
+        RateLimiter::clear($throttleKey);
 
         // Same gate as the web login: the mobile app is a second front door, and a deactivated
         // account must not be able to walk through it.
